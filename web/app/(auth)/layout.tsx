@@ -1,6 +1,11 @@
+import React from "react";
 import type { Metadata } from "next";
+import "../globals.css";
 import { Inter } from "next/font/google";
-import "./globals.css";
+
+interface PropsWithChildren {
+  children: React.ReactNode;
+}
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -9,14 +14,12 @@ export const metadata: Metadata = {
   description: "Dashboard",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const RootLayout = ({ children }: PropsWithChildren) => {
   return (
-    <html lang="en">
+    <html>
       <body className={inter.className}>{children}</body>
     </html>
   );
-}
+};
+
+export default RootLayout;
