@@ -28,6 +28,14 @@ else
   git pull origin master
   echo "in master else"
 fi
+cd api/
+nvm use
+yarn install
+yarn build
+cp .env build/
+cd build
+yarn install --production
+cd ../../
 
 cd web/
 nvm use
