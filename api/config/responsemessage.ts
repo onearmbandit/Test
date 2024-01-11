@@ -25,6 +25,7 @@ export const AUTH_RESPONSE = {
   invalidEmail: 'Invalid Email',
   incorrectEmail:'Incorrect email, please try again',
   incorrectPassword:'Incorrect password, please try again',
+  userNotExist:'User with this email not exist.'
 
 }
 
