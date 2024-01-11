@@ -23,6 +23,7 @@ export const AUTH_RESPONSE = {
   emailTokenExpired: 'Token does not exist or expired.',
   emailUrlVerify: 'Please verify the url.',
   invalidEmail: 'Invalid Email',
+  incorrectEmail:'Incorrect email, please try again',
   incorrectPassword:'Incorrect password, please try again',
 
 }

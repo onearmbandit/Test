@@ -151,7 +151,7 @@ export default class AuthController {
                 return apiResponse(response, false, 422, {
                     'errors': {
                         "field": "email",
-                        "message": Config.get('responsemessage.AUTH_RESPONSE.invalidEmail')
+                        "message": Config.get('responsemessage.AUTH_RESPONSE.incorrectEmail')
                     }
                 }, Config.get('responsemessage.COMMON_RESPONSE.validationFailed'))
             }
