@@ -11,10 +11,11 @@ export default class extends BaseSchema {
 
       table.string('email').unique()
       table.string('password')
-      table.dateTime('email_verified_at').nullable()
+      table.timestamp('email_verified_at').nullable()
       table.string('email_verify_token').nullable()
       table.integer('user_status').defaultTo(1)
       table.string('remember_token')
+      table.timestamp('remember_token_expires').nullable()
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
