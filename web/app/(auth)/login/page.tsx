@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 
-function page() {
+const Page = () => {
   const router = useRouter();
   return (
     <div className="h-screen flex justify-center items-center">
@@ -95,6 +95,6 @@ function page() {
       </form>
     </div>
   );
-}
+};
 
-export default page;
+export default Page;
