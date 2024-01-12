@@ -1,0 +1,35 @@
+api/node_modules
+api/build
+api/coverage
+api/.env
+api/tmp
+.vscode
+.DS_STORE
+
+# dependencies
+web/node_modules
+
+
+# testing
+api/coverage
+web/coverage
+
+# next.js
+web/.next/
+web/out/
+
+# production
+api/build
+web/build
+
+# misc
+api/.DS_Store
+api/*.pem
+web/.DS_Store
+web/*.pem
+
+# debug
+web/npm-debug.log*
+web/yarn-debug.log*
+web/yarn-error.log*
+web/.pnpm-debug.log*
