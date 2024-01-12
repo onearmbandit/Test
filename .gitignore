@@ -17,6 +17,7 @@ web/coverage
 # next.js
 web/.next/
 web/out/
+web/.env.local
 
 # production
 api/build
