@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
 import React from "react";
 
-const loading = () => {
+const Loading = () => {
   return (
     <div className="h-screen w-screen grid place-items-center">
       <Loader2 size={40} className="animate-spin text-blue-600" />
@@ -9,4 +9,4 @@ const loading = () => {
   );
 };
 
-export default loading;
+export default Loading;

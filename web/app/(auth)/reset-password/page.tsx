@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React from "react";
 
-function page() {
+const Page = () => {
   return (
     <div className="h-screen grid place-items-center">
       <form className="justify-center items-center border w-full border-[#E5E7EB] shadow-sm flex max-w-[828px] flex-col py-12 rounded-lg border-solid">
@@ -140,6 +140,6 @@ function page() {
       </form>
     </div>
   );
-}
+};
 
-export default page;
+export default Page;

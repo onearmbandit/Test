@@ -197,7 +197,7 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
         className="justify-center text-neutral-900 text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl"
         aria-label="Name Question"
       >
-        What's your name?
+        Whats your name?
       </header>
       {!ssoReg ? (
         <div className="justify-center items-stretch self-stretch space-y-10 flex flex-col mt-14 mb-52 py-6 max-md:max-w-full max-md:mr-2.5 max-md:my-10 max-md:px-5">

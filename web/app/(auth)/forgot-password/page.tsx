@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import * as React from "react";
 
-function page() {
+function Page() {
   return (
     <div className="h-screen grid place-items-center">
       <form className="justify-center items-center border border-[#E5E7EB] w-full shadow-sm flex max-w-[828px] flex-col py-12 rounded-lg border-solid">
@@ -19,7 +19,7 @@ function page() {
 
         <div className="self-center text-neutral-500 text-center text-xs font-light leading-4 max-w-[346px] mt-14 max-md:mt-10">
           Just enter the email address associated with your account below, and
-          we'll send you a link to reset your password.
+          well send you a link to reset your password.
           <br />
         </div>
 
@@ -55,4 +55,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
