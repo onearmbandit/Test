@@ -1,0 +1,122 @@
+{
+	"info": {
+		"_postman_id": "565b0f06-e34a-4487-a544-5f81e24b8bf5",
+		"name": "C3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "17650332"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"anjpawar+4@cxr.agency\",\n    \"password\":\"Anuja11@\",\n    \"first_name\":\"Anuja\",\n    \"last_name\":\"Pawar\",\n    \"company_name\":\"Biga\",\n    \"company_street_address\":\"Pune\",\n    \"invitedUser\":false   //if user invited by mail then true otherwise false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify link API",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "token",
+									"value": "JM7FLlMHQgnJwKdWo2z5_4_2wptvmdyJLT9RL-K4PIxVZrCcuQNg1THcYm8XjtT6.dDFkU0s2MlhDRGY5X0FKUg.XNsD2UHScv",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/api/v1/verify-email"
+					},
+					"response": [
+						{
+							"name": "error example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "token",
+											"value": "JM7FLlMHQgnJwKdWo2z5_4_2wptvmdyJLT9RL-K4PIxVZrCcuQNg1THcYm8XjtT6.dDFkU0s2MlhDRGY5X0FKUg.XNsD2UHScv",
+											"type": "text"
+										}
+									]
+								},
+								"url": "{{base_url}}/api/v1/verify-email"
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "72"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 11 Jan 2024 09:13:49 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": false,\n    \"code\": 400,\n    \"message\": \"Token does not exist or expired.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "anjpawar+4@cxr.agency",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Anuja11@",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/api/v1/login"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
