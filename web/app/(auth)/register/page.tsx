@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function Page() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSSOregistration, setiSSOregistration] = useState(false);
   const steps: { [key: number]: ({ setCurrentStep }: any) => JSX.Element } = {
     1: Step1,
     2: Step2,
@@ -22,7 +23,11 @@ export default function Page() {
       />
       <div className="flex container justify-between h-screen w-full">
         <form>
-          <RegistraionSteps setCurrentStep={setCurrentStep} />
+          <RegistraionSteps
+            setCurrentStep={setCurrentStep}
+            ssoReg={isSSOregistration}
+            setSSOReg={setiSSOregistration}
+          />
         </form>
 
         <div className="flex-1 mt-9 max-w flex flex-col items-end">
@@ -46,7 +51,7 @@ export default function Page() {
   );
 }
 
-const Step1 = ({ setCurrentStep }: any) => {
+const Step1 = ({ setCurrentStep, setSSOReg }: any) => {
   return (
     <div className="items-center flex flex-1 max-w-[840px] w-full flex-col px-20 py-12 max-md:px-5">
       <header className="header justify-center text-neutral-900 text-center text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl">
@@ -162,7 +167,13 @@ const Step1 = ({ setCurrentStep }: any) => {
           Continue
         </Button>
       </div>
-      <div className="text-blue-700 text-center text-sm font-bold leading-5 mt-6 max-md:max-w-full">
+      <div
+        onClick={() => {
+          setCurrentStep(2);
+          setSSOReg(true);
+        }}
+        className="text-blue-700 text-center text-sm cursor-pointer font-bold leading-5 mt-6 max-md:max-w-full"
+      >
         Or Sign Up with SSO
       </div>
       <div className="text-blue-700 text-center text-xs font-medium leading-5 mt-6 max-md:max-w-full">
@@ -176,121 +187,10 @@ const Step1 = ({ setCurrentStep }: any) => {
         Privacy Policy.
       </div>
     </div>
-    // <div className="items-center flex max-w-[840px] flex-col px-20 py-12 max-md:px-5">
-    //   <header className="header text-neutral-900 text-center text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl">
-    //     Create your account
-    //   </header>
-    //   <div className="section justify-center items-stretch self-stretch flex flex-col ml-5 mr-4 mt-14 mb-9 px-8 py-6 max-md:max-w-full max-md:mr-2.5 max-md:mt-10 max-md:px-5">
-    //     <label
-    //       htmlFor="email"
-    //       className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
-    //     >
-    //       Work email*
-    //     </label>
-    //     <a
-    //       href="#"
-    //       className="email text-slate-700 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
-    //     >
-    //       johnsmith@pepsico.com
-    //     </a>
-    //     <label
-    //       htmlFor="password"
-    //       className="text-slate-700 text-base font-light leading-6 mt-10 max-md:max-w-full"
-    //     >
-    //       Create your password*
-    //     </label>
-    //     <div className="password items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 py-7 rounded-md max-md:max-w-full max-md:flex-wrap">
-    //       <label
-    //         htmlFor="password"
-    //         className="text-slate-500 text-xs font-light leading-4 grow max-md:max-w-full"
-    //       >
-    //         Password
-    //       </label>
-    //       <img
-    //         loading="lazy"
-    //         src="https://cdn.builder.io/api/v1/image/assets/TEMP/3c88747dcf5615a712b4cc1e6a424e2cf3539b97899f91f5fa4cbd83f347afdc?apiKey=011554aff43544e6af46800a427fd184&"
-    //         className="aspect-square object-contain object-center w-4 justify-center items-center overflow-hidden shrink-0 max-w-full"
-    //       />
-    //     </div>
-    //   </div>
-    //   <div className="requirements items-stretch flex justify-between gap-5 mt-10 max-md:max-w-full max-md:flex-wrap">
-    //     <div className="lowercase items-stretch flex grow basis-[0%] flex-col">
-    //       <span className="items-stretch flex justify-between gap-2">
-    //         <img
-    //           loading="lazy"
-    //           src="https://cdn.builder.io/api/v1/image/assets/TEMP/723e1fb67ec7c23294acc9e89ef0670888acb429ae6a096deca57fbc7ccc37a0?apiKey=011554aff43544e6af46800a427fd184&"
-    //           className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-    //         />
-    //         <div className="text-slate-700 text-sm grow whitespace-nowrap self-start">
-    //           One lowercase character
-    //         </div>
-    //       </span>
-    //       <span className="items-stretch flex justify-between gap-2 mt-2.5">
-    //         <img
-    //           loading="lazy"
-    //           src="https://cdn.builder.io/api/v1/image/assets/TEMP/723e1fb67ec7c23294acc9e89ef0670888acb429ae6a096deca57fbc7ccc37a0?apiKey=011554aff43544e6af46800a427fd184&"
-    //           className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-    //         />
-    //         <div className="text-slate-700 text-sm grow whitespace-nowrap self-start">
-    //           One uppercase character
-    //         </div>
-    //       </span>
-    //       <span className="items-stretch flex justify-between gap-2 mt-2.5">
-    //         <img
-    //           loading="lazy"
-    //           src="https://cdn.builder.io/api/v1/image/assets/TEMP/723e1fb67ec7c23294acc9e89ef0670888acb429ae6a096deca57fbc7ccc37a0?apiKey=011554aff43544e6af46800a427fd184&"
-    //           className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-    //         />
-    //         <div className="text-slate-700 text-sm">8 characters minimum</div>
-    //       </span>
-    //     </div>
-    //     <div className="number items-stretch flex grow basis-[0%] flex-col self-start">
-    //       <span className="items-stretch flex justify-between gap-2">
-    //         <img
-    //           loading="lazy"
-    //           src="https://cdn.builder.io/api/v1/image/assets/TEMP/723e1fb67ec7c23294acc9e89ef0670888acb429ae6a096deca57fbc7ccc37a0?apiKey=011554aff43544e6af46800a427fd184&"
-    //           className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-    //         />
-    //         <div className="text-slate-700 text-sm grow shrink basis-auto self-start">
-    //           One number
-    //         </div>
-    //       </span>
-    //       <span className="items-stretch flex justify-between gap-2 mt-2.5">
-    //         <img
-    //           loading="lazy"
-    //           src="https://cdn.builder.io/api/v1/image/assets/TEMP/723e1fb67ec7c23294acc9e89ef0670888acb429ae6a096deca57fbc7ccc37a0?apiKey=011554aff43544e6af46800a427fd184&"
-    //           className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-    //         />
-    //         <div className="text-slate-700 text-sm grow shrink basis-auto self-start">
-    //           One special character
-    //         </div>
-    //       </span>
-    //     </div>
-    //   </div>
-    //   <div className="submit justify-center flex flex-col mt-6 pl-16 pr-2.5 py-2.5 items-end max-md:max-w-full max-md:pl-5">
-    //     <button
-    //       className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 px-6 py-4 max-md:px-5"
-    //       type="submit"
-    //     >
-    //       Continue
-    //     </button>
-    //   </div>
-    //   <div className="sso text-blue-700 text-center text-sm font-bold leading-5 mt-6 max-md:max-w-full">
-    //     Or Sign Up with SSO
-    //   </div>
-    //   <div className="existing-account text-blue-700 text-center text-xs font-medium leading-5 mt-6 max-md:max-w-full">
-    //     Already have an account?{" "}
-    //     <span className="font-bold text-sm text-blue-700">Sign In</span>{" "}
-    //   </div>
-    //   <div className="terms text-slate-700 text-center text-xs font-light leading-4 mt-6 max-md:max-w-full">
-    //     By clicking ‘Continue’ above, you agree to our Terms of Service and
-    //     Privacy Policy.
-    //   </div>
-    // </div>
   );
 };
 
-const Step2 = ({ setCurrentStep }: any) => {
+const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
   return (
     <div className="items-center flex max-w-[840px] flex-1 flex-col px-20 py-12 max-md:px-5">
       <header
@@ -299,53 +199,90 @@ const Step2 = ({ setCurrentStep }: any) => {
       >
         What's your name?
       </header>
-      <div className="justify-center items-stretch self-stretch space-y-10 flex flex-col mt-14 mb-52 py-6 max-md:max-w-full max-md:mr-2.5 max-md:my-10 max-md:px-5">
-        <div>
-          <label
-            className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
-            htmlFor="firstNameInput"
-          >
-            First Name
-          </label>
-          <div className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full">
-            <Input
-              type="text"
-              id="firstNameInput"
-              placeholder="First Name"
-              aria-label="First Name"
-              className="bg-transparent"
-            />
+      {!ssoReg ? (
+        <div className="justify-center items-stretch self-stretch space-y-10 flex flex-col mt-14 mb-52 py-6 max-md:max-w-full max-md:mr-2.5 max-md:my-10 max-md:px-5">
+          <div>
+            <label
+              className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
+              htmlFor="firstNameInput"
+            >
+              First Name
+            </label>
+            <div className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full">
+              <Input
+                type="text"
+                id="firstNameInput"
+                placeholder="First Name"
+                aria-label="First Name"
+                className="bg-transparent"
+              />
+            </div>
           </div>
-        </div>
-        <div>
-          <label
-            className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
-            htmlFor="lastNameInput"
-          >
-            Last Name
-          </label>
-          <div className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full">
-            <Input
-              type="text"
-              id="lastNameInput"
-              className="bg-transparent"
-              aria-label="Last Name"
-              placeholder="Last Name"
-            />
+          <div>
+            <label
+              className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
+              htmlFor="lastNameInput"
+            >
+              Last Name
+            </label>
+            <div className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full">
+              <Input
+                type="text"
+                id="lastNameInput"
+                className="bg-transparent"
+                aria-label="Last Name"
+                placeholder="Last Name"
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="justify-center flex flex-col pl-16 pr-2.5 py-2.5 items-end max-md:max-w-full max-md:pl-5">
-          <button
-            className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 px-6 py-4 max-md:px-5"
-            role="button"
-            aria-label="Continue"
-            onClick={() => setCurrentStep(3)}
-          >
-            Continue
-          </button>
+          <div className="justify-center flex flex-col pl-16 pr-2.5 py-2.5 items-end max-md:max-w-full max-md:pl-5">
+            <button
+              className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 px-6 py-4 max-md:px-5"
+              role="button"
+              aria-label="Continue"
+              onClick={() => setCurrentStep(3)}
+            >
+              Continue
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="items-stretch bg-white flex max-w-[408px] flex-col px-16 py-12 rounded-lg">
+          <span className="justify-between items-stretch border-slate-200 flex gap-4 mt-3.5 px-14 py-4 rounded-full border-2 border-solid">
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/eadd558dbc7d09c4bec3f5674e44f92bc02c4b87986f6b7d500087b8fbc0f758?apiKey=011554aff43544e6af46800a427fd184&"
+              className="aspect-square object-contain object-center w-6 overflow-hidden shrink-0 max-w-full"
+            />
+            <div className="text-slate-800 text-base font-medium leading-6 tracking-tight grow whitespace-nowrap">
+              Sign in with Google
+            </div>
+          </span>
+          <span className="justify-between items-stretch border-slate-200 flex gap-4 mt-6 px-11 py-4 rounded-full border-2 border-solid">
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/1a6ba0c98461a7f1e18f4fe452b9c4e38719d6d0d2cee2008d4113ff8af910d8?apiKey=011554aff43544e6af46800a427fd184&"
+              className="aspect-square object-contain object-center w-6 justify-center items-center overflow-hidden shrink-0 max-w-full"
+            />
+            <div className="text-slate-800 text-base font-medium leading-6 tracking-tight grow whitespace-nowrap">
+              Sign in with Microsoft
+            </div>
+          </span>
+          <div
+            onClick={() => setSSOReg(false)}
+            className="text-blue-700 text-sm font-bold cursor-pointer leading-5 self-center whitespace-nowrap mt-6"
+          >
+            Sign in without SSO
+          </div>
+          <a
+            href="/login"
+            className="text-slate-700 text-sm leading-5 underline self-center whitespace-nowrap mt-6 mb-3.5"
+          >
+            Have an account? Sign in
+          </a>
+        </div>
+      )}
     </div>
   );
 };

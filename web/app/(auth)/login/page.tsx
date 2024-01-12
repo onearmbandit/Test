@@ -46,20 +46,29 @@ function page() {
               aria-label="Enter your email"
               aria-required="true"
             />
+
             <label
               className="self-stretch text-slate-700 text-base font-light leading-6 mt-6 max-md:max-w-full"
               htmlFor="passwordInput"
             >
               Password
             </label>
-            <Input
-              type="password"
-              id="passwordInput"
-              className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full"
-              placeholder="Enter your password"
-              aria-label="Enter your password"
-              aria-required="true"
-            />
+            <div className="bg-gray-50 flex rounded-md mt-3 w-full">
+              <Input
+                type="password"
+                id="passwordInput"
+                className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full"
+                placeholder="Enter your password"
+                aria-label="Enter your password"
+                aria-required="true"
+              />
+              <img
+                loading="lazy"
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/8cc6a76f5ee002a4ceaaf904b30d132424cc73e98f41fd0de093f596d88c473a?apiKey=011554aff43544e6af46800a427fd184&"
+                className="aspect-square object-contain object-center w-4 mr-2 cursor-pointer"
+                alt="Password Strength"
+              />
+            </div>
             <a
               href="#"
               className="text-blue-700 text-sm font-bold leading-5 self-stretch mt-3 max-md:max-w-full"
