@@ -35,7 +35,10 @@ export default class User extends BaseModel {
   public userStatus: number
 
   @column()
-  public remember_token: string
+  public rememberToken: string
+
+  @column.dateTime()
+  public rememberTokenExpires: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

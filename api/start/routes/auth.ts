@@ -7,6 +7,7 @@ Route.group(() => {
         Route.post('/verify-email', 'AuthController.verifyEmail')
 
         Route.post('/login', 'AuthController.login')
+        Route.post('/forgot-password', 'AuthController.forgotPassword')
         
     }).prefix('/v1')
 }).prefix('/api')

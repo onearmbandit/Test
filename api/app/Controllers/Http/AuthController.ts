@@ -4,12 +4,15 @@ import { apiResponse } from 'App/helpers/response'
 import { sendMail } from 'App/helpers/sendEmail'
 import SignupValidator from 'App/Validators/Auth/SignupValidator'
 import LoginValidator from 'App/Validators/Auth/LoginValidator'
+import ForgotPasswordValidator from 'App/Validators/Auth/ForgotPasswordValidator'
 import Config from '@ioc:Adonis/Core/Config';
 import Database from '@ioc:Adonis/Lucid/Database'
 import { DateTime } from 'luxon'
 import Encryption from '@ioc:Adonis/Core/Encryption'
 import Hash from '@ioc:Adonis/Core/Hash'
 import { activeStatus } from 'App/helpers/constants'
+import { string } from '@ioc:Adonis/Core/Helpers';
+import moment from 'moment';
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL;
 const APP_URL = process.env.APP_URL;
@@ -95,7 +98,7 @@ export default class AuthController {
                 if (user) {
                     user.emailVerifiedAt = DateTime.now();
                     user.emailVerifyToken = '';
-                    user.userStatus= activeStatus
+                    user.userStatus = activeStatus
                     user.save()
 
                     const emailData = {
@@ -163,6 +166,62 @@ export default class AuthController {
             else {
                 return apiResponse(response, false, 400, {}, error.messages ? error.messages : error.message)
             }
+        }
+    }
+
+
+    public async forgotPassword({ request, response }: HttpContextContract) {
+        try {
+            const payload = await request.validate(ForgotPasswordValidator)
+
+            //::Lookup user manually
+            const user = await User
+                .query()
+                .where('email', payload.email)
+                .where('userStatus', activeStatus)
+                .first();
+
+            //::Verify password
+            if (!user) {
+                return apiResponse(response, false, 422, { 'errors': { email: [Config.get('responsemessage.AUTH_RESPONSE.userNotExist')] } },
+                    Config.get('responsemessage.COMMON_RESPONSE.validationFailed'))
+            }
+
+            //::Generate unique token
+            const token = await this.createToken();
+            user.rememberToken = token
+            user.rememberTokenExpires = DateTime.now().plus({ hours: 1 })
+            user.save();
+
+            const emailData = {
+                user: user,
+                url: `${WEB_BASE_URL}/reset-password/${token}/${user.email}`,
+            }
+
+            await sendMail(user.email, 'Reset your password', 'emails/reset_password', emailData)
+
+            return apiResponse(response, true, 200, {}, Config.get('responsemessage.AUTH_RESPONSE.forgotPasswordSuccess'))
+        }
+
+        catch (error) {
+            if (error.status === 422) {
+                return apiResponse(response, false, error.status, error.messages, Config.get('responsemessage.COMMON_RESPONSE.validationFailed'))
+            }
+            else {
+                return apiResponse(response, false, 400, {}, error.messages ? error.messages : error.message)
+            }
+        }
+    }
+
+
+    //:: Used for create reset-token
+    private async createToken() {
+        let token = string.generateRandom(25);
+        const user = await User.findBy('remember_token', token);
+        if (user) {
+            return this.createToken()
+        } else {
+            return token;
         }
     }
 }
