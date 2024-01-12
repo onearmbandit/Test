@@ -7,9 +7,9 @@ interface PropsWithChildren {
   children: React.ReactNode;
 }
 
-export const AuthProvider = ({ children }: PropsWithChildren) => {
+const AuthProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter();
-  const token = localStorage.getItem("token");
+  const token = typeof window != "undefined" && localStorage.getItem("token");
   if (!token) {
     router.push("/login");
   }
@@ -20,3 +20,5 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     </>
   );
 };
+
+export default AuthProvider;
