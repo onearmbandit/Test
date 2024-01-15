@@ -10,13 +10,13 @@
 			"name": "Auth",
 			"item": [
 				{
-					"name": "signup",
+					"name": "signup step-1",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\":\"anjpawar+4@cxr.agency\",\n    \"password\":\"Anuja11@\",\n    \"first_name\":\"Anuja\",\n    \"last_name\":\"Pawar\",\n    \"company_name\":\"Biga\",\n    \"company_street_address\":\"Pune\",\n    \"invitedUser\":false   //if user invited by mail then true otherwise false\n}",
+							"raw": "{\n    \"email\":\"anjpawar+7@cxr.agency\",\n    \"password\":\"Anuja11@\",\n    \"registrationStep\":1,\n    \"invitedUser\":false   //if user invited by mail then true otherwise false\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -24,6 +24,53 @@
 							}
 						},
 						"url": "{{base_url}}/api/v1/register"
+					},
+					"response": []
+				},
+				{
+					"name": "update user (Register step-2)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstName",
+									"value": "Anuja",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "Pawar",
+									"type": "text"
+								},
+								{
+									"key": "registrationStep",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/api/v1/user/1"
+					},
+					"response": []
+				},
+				{
+					"name": "create organize (step-3)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userSlug\":\"anuja-pawar\",\n    \"companyName\":\"XYZ\",\n    \"addressLine1\":\"Pune\",\n    \"addressLine2\":\"floor1\",\n    \"city\":\"Pune\",\n    \"state\":\"MH\",\n    \"zipCode\":\"12345\",\n    \"registrationStep\":3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/organization"
 					},
 					"response": []
 				},
@@ -113,6 +160,54 @@
 							]
 						},
 						"url": "{{base_url}}/api/v1/login"
+					},
+					"response": []
+				},
+				{
+					"name": "forgot password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{base_url}}/api/v1/forgot-password"
+					},
+					"response": []
+				},
+				{
+					"name": "reset Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "token",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "new",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "newPassword",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "confirmPassword",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/api/v1/reset-password"
 					},
 					"response": []
 				}

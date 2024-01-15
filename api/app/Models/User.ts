@@ -7,17 +7,19 @@ import {
   column,
 } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
-import WorkDetail from './WorkDetail'
+import Organization from './Organization'
+import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
+
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public first_name: string
+  public firstName: string
 
   @column()
-  public last_name: string
+  public lastName: string
 
   @column()
   public email: string
@@ -25,9 +27,17 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public password: string
 
+  @column()
+  @slugify({
+    strategy: 'dbIncrement',
+    fields: ['firstName', 'lastName'],
+    allowUpdates: true,
+  })
+  public slug: string | null
+
   @column.dateTime()
   public emailVerifiedAt: DateTime
-  
+
   @column()
   public emailVerifyToken: string
 
@@ -35,10 +45,22 @@ export default class User extends BaseModel {
   public userStatus: number
 
   @column()
-  public rememberToken: string
+  public rememberToken: string |null
 
   @column.dateTime()
-  public rememberTokenExpires: DateTime
+  public rememberTokenExpires: DateTime | null
+
+  @column()
+  public loginType: string
+
+  @column()
+  public timezone: string
+
+  @column()
+  public registrationStep: string
+
+  @column.dateTime()
+  public deletedAt: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -56,8 +78,8 @@ export default class User extends BaseModel {
   }
 
   // Relationship
-  @hasOne(() => WorkDetail,{
+  @hasOne(() => Organization, {
     foreignKey: 'user_id',
   })
-  public workData: HasOne<typeof WorkDetail>
+  public organization: HasOne<typeof Organization>
 }

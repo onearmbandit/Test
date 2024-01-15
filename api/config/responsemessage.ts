@@ -17,15 +17,18 @@ export const AUTH_RESPONSE = {
   forgotPasswordSuccess: 'Reset password link sent successfully!',
   userNotFound: 'User details not found.',
   emailExists: 'An account already exists with this email address.',
-  signupSuccess: "Email send successfully. Please verify your mail id.",
+  signupSuccess: "Email send successfully. Please check your mail id.",
   loginSuccess: "User Login successfully.",
   emailVerifySccess: 'Email verified successfully.',
   emailTokenExpired: 'Token does not exist or expired.',
   emailUrlVerify: 'Please verify the url.',
   invalidEmail: 'Invalid Email',
-  incorrectEmail:'Incorrect email, please try again',
-  incorrectPassword:'Incorrect password, please try again',
-  userNotExist:'User with this email not exist.'
+  incorrectEmail: 'Incorrect email, please try again',
+  incorrectPassword: 'Incorrect password, please try again',
+  userNotExist: 'User with this email not exist.',
+  userCreated:"New user added successfully.",
+  userUpdated: 'User Data updated successfully.',
+  createOrganizationSuccess: "Organization created successfully,Please check mail",
 
 }
 

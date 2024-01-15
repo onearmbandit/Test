@@ -2,13 +2,12 @@ import { DateTime } from 'luxon'
 import {
   BaseModel,
   BelongsTo,
-  beforeSave,
   belongsTo,
   column,
 } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 
-export default class WorkDetail extends BaseModel {
+export default class Organization extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
@@ -16,13 +15,28 @@ export default class WorkDetail extends BaseModel {
   public user_id: number 
 
   @column()
-  public company_name: string
+  public companyName: string
 
   @column()
-  public company_street_address: string
+  public companyEmail: string
 
   @column()
-  public floor: string
+  public selfPointOfContact: string
+
+  @column()
+  public companySize: string
+
+  @column()
+  public naicsCode: string
+
+  @column()
+  public targets: JSON
+
+  @column()
+  public addressLine_1: string
+
+  @column()
+  public addressLine_2: string
 
   @column()
   public city: string
@@ -31,8 +45,13 @@ export default class WorkDetail extends BaseModel {
   public state: string
 
   @column()
-  public zip_code: string
+  public country: string
 
+  @column()
+  public zipCode: string
+
+  @column.dateTime()
+  public deletedAt: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
