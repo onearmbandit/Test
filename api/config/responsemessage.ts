@@ -28,7 +28,7 @@ export const AUTH_RESPONSE = {
   userNotExist: 'User with this email not exist.',
   userCreated:"New user added successfully.",
   userUpdated: 'User Data updated successfully.',
-  createOrganizationSuccess: "Organization created successfully,Please check mail"
+  createOrganizationSuccess: "Organization created successfully,Please check mail",
 
 }
 

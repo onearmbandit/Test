@@ -30,14 +30,14 @@ export default class User extends BaseModel {
   @column()
   @slugify({
     strategy: 'dbIncrement',
-    fields: ['firstName','lastName'],
+    fields: ['firstName', 'lastName'],
     allowUpdates: true,
   })
   public slug: string | null
 
   @column.dateTime()
   public emailVerifiedAt: DateTime
-  
+
   @column()
   public emailVerifyToken: string
 
@@ -45,17 +45,17 @@ export default class User extends BaseModel {
   public userStatus: number
 
   @column()
-  public rememberToken: string
+  public rememberToken: string |null
 
   @column.dateTime()
-  public rememberTokenExpires: DateTime
-  
+  public rememberTokenExpires: DateTime | null
+
   @column()
   public loginType: string
 
   @column()
   public timezone: string
-    
+
   @column()
   public registrationStep: string
 
@@ -78,7 +78,7 @@ export default class User extends BaseModel {
   }
 
   // Relationship
-  @hasOne(() => Organization,{
+  @hasOne(() => Organization, {
     foreignKey: 'user_id',
   })
   public organization: HasOne<typeof Organization>

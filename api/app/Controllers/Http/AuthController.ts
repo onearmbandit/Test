@@ -5,12 +5,14 @@ import { sendMail } from 'App/helpers/sendEmail'
 import SignupValidator from 'App/Validators/Auth/SignupValidator'
 import LoginValidator from 'App/Validators/Auth/LoginValidator'
 import ForgotPasswordValidator from 'App/Validators/Auth/ForgotPasswordValidator'
+import ResetPasswordValidator from 'App/Validators/Auth/ResetPasswordValidator'
 import Config from '@ioc:Adonis/Core/Config';
 import { DateTime } from 'luxon'
 import Encryption from '@ioc:Adonis/Core/Encryption'
 import Hash from '@ioc:Adonis/Core/Hash'
 import { activeStatus } from 'App/helpers/constants'
-import { string } from '@ioc:Adonis/Core/Helpers';
+import { string, safeEqual } from '@ioc:Adonis/Core/Helpers';
+import moment from 'moment'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL;
 
@@ -112,19 +114,21 @@ export default class AuthController {
 
             const userData = await User.query().where('slug', requestData.userSlug).firstOrFail();
 
+            userData.registrationStep = requestData.registrationStep ? requestData.registrationStep : 3;
+            userData.save();
             await userData.related('organization').create({
                 companyName: requestData.companyName,
                 addressLine_1: requestData.addressLine1,
                 addressLine_2: requestData.addressLine2,
                 city: requestData.city,
                 state: requestData.state,
-                zipCode: requestData.zipCode
+                zipCode: requestData.zipCode,
             });
 
 
             const user = await User.query().where('id', userData.id).preload('organization').firstOrFail();
 
-            console.log("user",user)
+            console.log("user", user)
             const emailData = {
                 user: user,
                 url: `${WEB_BASE_URL}`,
@@ -264,9 +268,53 @@ export default class AuthController {
     }
 
 
+    /**
+  * Admin reset password API.
+  */
     public async resetPassword({ request, response }: HttpContextContract) {
         try {
+            await request.validate(ResetPasswordValidator)
 
+            let requestData = request.all()
+
+            //::Lookup user manually
+            const user = await User
+                .query()
+                .where('email', requestData.email)
+                .firstOrFail();
+
+            //:: Check user's token and requestData token match or not
+            if (!user.rememberToken || !safeEqual(requestData.token, user.rememberToken)) {
+                return apiResponse(response, false, 422, {
+                    'errors': [{
+                        field: 'newPassword',
+                        message: Config.get('responsemessage.AUTH_RESPONSE.passwordTokenExpired')
+                    }]
+                }, Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
+            }
+
+            //::check is token expire
+            let currentDateTime = moment();
+            let expireDateTime = moment(`${user.rememberTokenExpires}`, 'YYYY-DD-MM HH:mm');
+            var isBeforeDateTime = expireDateTime.isBefore(currentDateTime);
+
+            if (isBeforeDateTime) {
+                return apiResponse(response, false, 422, {
+                    'errors': [{
+                        field: 'newPassword',
+                        message: Config.get('responsemessage.AUTH_RESPONSE.passwordTokenExpired')
+                    }]
+                },
+                    Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
+            }
+
+            user.password = requestData.newPassword;
+            user.rememberToken = null;
+            user.rememberTokenExpires = null;
+            await user.save();
+
+
+            return apiResponse(response, true, 200, {}, Config.get('responsemessage.AUTH_RESPONSE.resetPasswordSuccess'))
         }
         catch (error) {
             if (error.status === 422) {
@@ -277,6 +325,8 @@ export default class AuthController {
             }
         }
     }
+
+
 
     //:: Used for create reset-token
     private async createToken() {
