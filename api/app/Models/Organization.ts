@@ -12,7 +12,7 @@ export default class Organization extends BaseModel {
   public id: number
 
   @column()
-  public user_id: number 
+  public user_id: number
 
   @column()
   public companyName: string
@@ -30,7 +30,7 @@ export default class Organization extends BaseModel {
   public naicsCode: string
 
   @column()
-  public targets: JSON
+  public targets: string;
 
   @column()
   public addressLine_1: string
@@ -66,6 +66,14 @@ export default class Organization extends BaseModel {
   })
   public user: BelongsTo<typeof User>
 
+  public static async getTargets(target: string) {
+    let targetData= JSON.parse(target);
+    return targetData
+  }
 
+  public static async setTargets(target: Array<String>) {
+    let targetData= JSON.stringify(target);
+    return targetData
+  }
 
 }
