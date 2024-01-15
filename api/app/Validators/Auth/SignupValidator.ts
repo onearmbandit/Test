@@ -13,8 +13,8 @@ export default class SignupValidator {
     ]),
 
     
-    first_name: schema.string({ trim: true }),
-    last_name: schema.string({ trim: true }),
+    // first_name: schema.string({ trim: true }),
+    // last_name: schema.string({ trim: true }),
   })
 
 
