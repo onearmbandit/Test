@@ -10,7 +10,7 @@ const Page = () => {
   return (
     <div className="h-screen flex justify-center items-center">
       <form
-        onSubmit={() => {
+        action={() => {
           localStorage.setItem("token", "true");
           router.push("/");
         }}

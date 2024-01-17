@@ -1,10 +1,16 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const EditNaics = () => {
+  const router = useRouter();
   return (
-    <form className="items-start self-stretch grow bg-white flex rounded-e-lg space-y-6 flex-col pt-6 px-8 max-md:px-5">
+    <form
+      action={() => router.push("/edit-organisation")}
+      className="items-start self-stretch grow bg-white flex rounded-e-lg space-y-6 flex-col pt-6 px-8 max-md:px-5"
+    >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch mr-2.5 max-md:max-w-full">
         <span className="text-slate-500">
           {" "}
@@ -28,7 +34,7 @@ const EditNaics = () => {
 
       <Button
         className="text-sm font-bold whitespace-nowrap justify-center items-stretch rounded self-end"
-        // type="submit"
+        type="submit"
         aria-label="Save Changes"
       >
         Save Changes

@@ -1,6 +1,11 @@
+"use client";
+import { cn } from "@/lib/utils";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 const AccountsNav = () => {
+  const pathname = usePathname();
+  const basePath = pathname.split("/")[1];
   return (
     <div className="flex flex-col items-stretch w-[28%] max-md:w-full max-md:ml-0">
       <div className="items-stretch bg-gray-50 flex w-full grow rounded-s-lg flex-col mx-auto pt-6 pb-12 px-6 max-md:px-5">
@@ -19,7 +24,12 @@ const AccountsNav = () => {
             johnsmith@pepsico.com
           </div>
         </div>
-        <span className="items-center hover:bg-blue-50 hover:text-blue-700 cursor-default flex justify-between gap-3 mt-2.5 px-2.5 py-1.5 rounded-md">
+        <span
+          className={cn(
+            "items-center hover:bg-blue-50 hover:text-blue-700 cursor-default flex justify-between gap-3 mt-2.5 px-2.5 py-1.5 rounded-md",
+            basePath == "my-organisation" && "bg-blue-100"
+          )}
+        >
           <a
             href="#"
             className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto"
@@ -34,7 +44,12 @@ const AccountsNav = () => {
             My account
           </div>
         </span>
-        <span className="items-center hover:bg-blue-50 hover:text-blue-700 flex cursor-default justify-between gap-3 mt-2.5 mb-60 px-2 py-1.5 rounded-md max-md:mb-10 max-md:pr-5">
+        <span
+          className={cn(
+            "items-center hover:bg-blue-50 hover:text-blue-700 cursor-default flex justify-between gap-3 mt-2.5 px-2.5 py-1.5 rounded-md",
+            basePath == "edit-organisation" && "bg-blue-100"
+          )}
+        >
           <a
             href="#"
             className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto"

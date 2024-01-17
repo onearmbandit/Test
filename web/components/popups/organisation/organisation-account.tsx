@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const OrganisationAccount = () => {
@@ -36,13 +37,13 @@ const OrganisationAccount = () => {
           <br />
           New York, NY, 10001
         </div>
-        <a
-          href="#"
+        <Link
+          href="/edit-organisation/address"
           aria-label="Edit Address"
           className="text-blue-600 text-center text-xs font-bold leading-4 self-center my-auto"
         >
           Edit
-        </a>
+        </Link>
       </div>
       <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
         Number of Employees
@@ -51,26 +52,26 @@ const OrganisationAccount = () => {
         <div className="text-slate-700 text-xs font-light leading-4">
           201 - 500
         </div>
-        <a
-          href="#"
+        <Link
+          href="/edit-organisation/employees"
           aria-label="Edit Number of Employees"
           className="text-blue-600 text-center text-xs font-bold leading-4"
         >
           Edit
-        </a>
+        </Link>
       </div>
       <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
         NAICS Code
       </div>
       <div className="justify-between items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-md:max-w-full max-md:flex-wrap">
         <div className="text-slate-700 text-xs font-light leading-4">3241</div>
-        <a
-          href="#"
+        <Link
+          href="/edit-organisation/code"
           aria-label="Edit NAICS Code"
           className="text-blue-600 text-center text-xs font-bold leading-4"
         >
           Edit
-        </a>
+        </Link>
       </div>
       <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
         Climate Commitments
@@ -79,13 +80,13 @@ const OrganisationAccount = () => {
         <div className="text-slate-700 text-xs font-light leading-4">
           Net Zero by 2030
         </div>
-        <a
-          href="#"
+        <Link
+          href="/edit-organisation/climate-commitments"
           aria-label="Edit Climate Commitments"
           className="text-blue-600 text-center text-xs font-bold leading-4"
         >
           Edit
-        </a>
+        </Link>
       </div>
     </section>
   );
