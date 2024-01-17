@@ -5,7 +5,8 @@
     "@adonisjs/core/build/commands/index.js",
     "@adonisjs/repl/build/commands",
     "@adonisjs/lucid/build/commands",
-    "@adonisjs/mail/build/commands"
+    "@adonisjs/mail/build/commands",
+    "@adonisjs/bouncer/build/commands"
   ],
   "exceptionHandlerNamespace": "App/Exceptions/Handler",
   "aliases": {
@@ -22,7 +23,8 @@
       "environment": [
         "web"
       ]
-    }
+    },
+    "./start/bouncer"
   ],
   "providers": [
     "./providers/AppProvider",
@@ -31,7 +33,8 @@
     "@adonisjs/mail",
     "@adonisjs/view",
     "@adonisjs/auth",
-    "@adonisjs/lucid-slugify"
+    "@adonisjs/lucid-slugify",
+    "@adonisjs/bouncer"
   ],
   "aceProviders": [
     "@adonisjs/repl"
