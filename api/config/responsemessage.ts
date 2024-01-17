@@ -33,3 +33,9 @@ export const AUTH_RESPONSE = {
 }
 
 
+export const ORGANIZATION_RESPONSE = {
+  updateOrganizationSuccess:"Organization updated successfully.",
+  createOrganizationSuccess: "Organization created successfully",
+}
+
+
