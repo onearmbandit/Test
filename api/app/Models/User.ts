@@ -2,22 +2,23 @@ import { DateTime } from 'luxon'
 import {
   BaseModel,
   beforeSave,
-  HasOne,
-  hasOne,
   column,
+  manyToMany, ManyToMany
 } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
-import WorkDetail from './WorkDetail'
+import Organization from './Organization'
+import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
+import Role from './Role'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public first_name: string
+  public firstName: string
 
   @column()
-  public last_name: string
+  public lastName: string
 
   @column()
   public email: string
@@ -25,9 +26,17 @@ export default class User extends BaseModel {
   @column({ serializeAs: null })
   public password: string
 
+  @column()
+  @slugify({
+    strategy: 'dbIncrement',
+    fields: ['firstName', 'lastName'],
+    allowUpdates: true,
+  })
+  public slug: string | null
+
   @column.dateTime()
   public emailVerifiedAt: DateTime
-  
+
   @column()
   public emailVerifyToken: string
 
@@ -35,10 +44,22 @@ export default class User extends BaseModel {
   public userStatus: number
 
   @column()
-  public rememberToken: string
+  public rememberToken: string | null
 
   @column.dateTime()
-  public rememberTokenExpires: DateTime
+  public rememberTokenExpires: DateTime | null
+
+  @column()
+  public loginType: string
+
+  @column()
+  public timezone: string
+
+  @column()
+  public registrationStep: string
+
+  @column.dateTime()
+  public deletedAt: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -56,8 +77,70 @@ export default class User extends BaseModel {
   }
 
   // Relationship
-  @hasOne(() => WorkDetail,{
-    foreignKey: 'user_id',
+  // @hasOne(() => Organization, {
+  //   foreignKey: 'user_id',
+  // })
+  // public organization: HasOne<typeof Organization>
+
+  //::_____Relationships Start_____:://
+
+  @manyToMany(() => Role, {
+    localKey: 'id',
+    pivotForeignKey: 'user_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'role_id',
+    pivotTable: 'user_roles',
+    pivotTimestamps: true,
   })
-  public workData: HasOne<typeof WorkDetail>
+  public roles: ManyToMany<typeof Role>
+
+  //::_____Relationships End_____:://
+
+  @manyToMany(() => Organization, {
+    localKey: 'id',
+    pivotForeignKey: 'user_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'organization_id',
+    pivotTable: 'organization_users',
+    pivotTimestamps: true,
+  })
+  public organizations: ManyToMany<typeof Organization>
+
+
+  //:: Just with first() method
+  public static async getUserDetailsWithFirst(field, value) {
+    const user = await User.query().where(field, value)
+      .preload('roles')
+      .preload('organizations')
+      .first();
+    return user;
+  }
+
+  public static async getUserDetails(field, value) {
+    const userData = await User.query().where(field, value)
+      .preload('roles')
+      .preload('organizations')
+      .firstOrFail();
+
+    return userData
+  }
+
+  public static async getUserDetailsWithPreloads(id) {
+    const user = await User.query().where('id', id)
+      .preload('roles')
+      .preload('organizations').firstOrFail();
+
+    return user
+
+  }
+
+  public static async createUserWithRole(userData, roleData) {
+    const result = await User.create(userData)
+    //:: Assign admin role to new user
+    await result.related('roles').attach([roleData.id])
+
+    const user = await User.getUserDetails('id', result.id)
+    return user;
+  }
+
 }
