@@ -1,12 +1,13 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
+import { v4 as uuidv4 } from 'uuid';
 
 export default class extends BaseSchema {
   protected tableName = 'roles'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
-      table.string('name');
+      table.uuid('id').primary().defaultTo( uuidv4() )
+      table.string('name').comment('value must be either super-admin, admin, sub-admin and supplier')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

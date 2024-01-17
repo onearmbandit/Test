@@ -13,6 +13,10 @@ import Hash from '@ioc:Adonis/Core/Hash'
 import { activeStatus } from 'App/helpers/constants'
 import { string, safeEqual } from '@ioc:Adonis/Core/Helpers';
 import moment from 'moment'
+import { UserRoles } from 'App/helpers/constants'
+import { v4 as uuidv4 } from 'uuid';
+import Role from 'App/Models/Role'
+import Organization from 'App/Models/Organization'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL;
 
@@ -24,17 +28,18 @@ export default class AuthController {
             await request.validate(SignupValidator);
 
             let requestData = request.all();
-            const userExist = await User.query().where('email', requestData.email).first()
+            const userExist = await User.getUserDetailsWithFirst('email', requestData.email)
+            const role: any = await Role.getRoleByName(UserRoles.ADMIN)
+
             if (userExist) {
                 return apiResponse(response, false, 400, {}, Config.get('responsemessage.AUTH_RESPONSE.emailExists'))
             } else {
-                const result = await User.create({
+                const userData = await User.createUserWithRole({
+                    id: uuidv4(),
                     email: requestData.email,
                     password: requestData.password,
                     registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
-                })
-
-                const userData = await User.query().where('id', result.id).firstOrFail();
+                }, role)
 
                 //:: If user is invited then send another emails that's why added this flag
                 if (requestData.invitedUser) {
@@ -77,7 +82,7 @@ export default class AuthController {
         try {
             let requestData = request.all();
 
-            const userData = await User.query().where('id', params.id).firstOrFail();
+            const userData = await User.getUserDetails('id', params.id)
 
             await userData.merge({
                 firstName: requestData.firstName,
@@ -112,21 +117,22 @@ export default class AuthController {
         try {
             let requestData = request.all();
 
-            const userData = await User.query().where('slug', requestData.userSlug).firstOrFail();
-
+            const userData = await User.getUserDetails('slug', requestData.userSlug)
             userData.registrationStep = requestData.registrationStep ? requestData.registrationStep : 3;
-            userData.save();
-            await userData.related('organization').create({
-                companyName: requestData.companyName,
-                addressLine_1: requestData.addressLine1,
-                addressLine_2: requestData.addressLine2,
-                city: requestData.city,
-                state: requestData.state,
-                zipCode: requestData.zipCode,
-            });
+            await userData.save();
 
+            const organizationData = await Organization.createOrganization(requestData)
 
-            const user = await User.query().where('id', userData.id).preload('organization').firstOrFail();
+            //:: Add data in pivot table
+            await userData.related('organizations').attach({
+                [organizationData.id]: {
+                    id: uuidv4(),
+                    role_id: [userData.roles[0].id],
+                    user_id: [userData.id]
+                }
+            })
+
+            const user = await User.getUserDetails('id', userData.id)
 
             console.log("user", user)
             const emailData = {
@@ -155,7 +161,7 @@ export default class AuthController {
         try {
             const token = request.input('token')
             if (token) {
-                const user = await User.query().where('email_verify_token', token).preload('organization').first();
+                const user = await User.getUserDetailsWithFirst('email_verify_token', token)
                 if (user) {
                     user.emailVerifiedAt = DateTime.now();
                     user.emailVerifyToken = '';
@@ -184,7 +190,7 @@ export default class AuthController {
     public async login({ auth, request, response }: HttpContextContract) {
         try {
             const payload = await request.validate(LoginValidator)
-            const user = await User.query().where('email', payload.email).preload('organization').first()
+            const user = await User.getUserDetailsWithFirst('email', payload.email)
             if (user && user.userStatus == activeStatus) {
                 const checkPass = await Hash.verify(user.password, payload.password)
                 if (checkPass) {
@@ -278,10 +284,7 @@ export default class AuthController {
             let requestData = request.all()
 
             //::Lookup user manually
-            const user = await User
-                .query()
-                .where('email', requestData.email)
-                .firstOrFail();
+            const user = await User.getUserDetails('email', requestData.email)
 
             //:: Check user's token and requestData token match or not
             if (!user.rememberToken || !safeEqual(requestData.token, user.rememberToken)) {
