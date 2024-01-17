@@ -32,7 +32,7 @@ export default class Organization extends BaseModel {
   public naicsCode: string
 
   @column()
-  public targets: string;
+  public climateTargets: string;
 
   @column()
   public addressLine_1: string

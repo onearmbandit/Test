@@ -48,7 +48,6 @@ export default class AuthController {
                         url: `${WEB_BASE_URL}`,
                     }
 
-                    console.log("invitedUser")
                     await sendMail(userData.email, 'Welcome to C3insets.ai!', 'emails/user_welcome', emailData)
                     return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.signupSuccess'))
                 }
