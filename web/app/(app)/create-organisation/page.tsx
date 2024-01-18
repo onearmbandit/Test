@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const Page = () => {
@@ -34,6 +35,7 @@ const Page = () => {
 };
 
 const Step1 = ({ setStep }: any) => {
+  const router = useRouter();
   return (
     <div className="max-w-[50.875rem]">
       <h3 className="text-slate-700 text-2xl font-medium leading-8 self-center mt-6 max-md:max-w-full">
@@ -63,6 +65,7 @@ const Step1 = ({ setStep }: any) => {
       <div className="justify-between items-center self-center flex w-[814px] max-w-full gap-5 mt-6 mb-44 p-2.5 max-md:flex-wrap max-md:mb-10">
         <div
           role="button"
+          onClick={() => router.push("/")}
           className="text-blue-600 text-center text-sm font-bold leading-4 my-auto"
         >
           Back
@@ -193,6 +196,9 @@ const Step3 = ({ setStep }: any) => {
   );
 };
 
+/**
+ * TODO: the character limit here will be 20-30
+ */
 const Step4 = ({ setStep }: any) => {
   return (
     <div className="justify-center items-start flex max-w-[814px] w-full flex-col">

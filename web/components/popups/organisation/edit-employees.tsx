@@ -3,7 +3,11 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const EditEmployees = () => {
+const EditEmployees = ({
+  setSection,
+}: {
+  setSection: (val: string) => void;
+}) => {
   const router = useRouter();
   const sizes = [
     "1 to 10",
@@ -18,7 +22,7 @@ const EditEmployees = () => {
   ];
   return (
     <form
-      action={() => router.push("/edit-organisation")}
+      action={() => setSection("home")}
       className="items-start self-stretch grow bg-white flex rounded-e-lg space-y-6 flex-col pt-6 px-8 max-md:px-5"
     >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch mr-2.5 max-md:max-w-full">

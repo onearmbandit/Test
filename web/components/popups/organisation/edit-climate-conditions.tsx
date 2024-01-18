@@ -4,11 +4,15 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const EditClimateConditions = () => {
+const EditClimateConditions = ({
+  setSection,
+}: {
+  setSection: (val: string) => void;
+}) => {
   const router = useRouter();
   return (
     <form
-      action={() => router.push("/edit-organisation")}
+      action={() => setSection("home")}
       className="items-start self-stretch bg-white flex grow rounded-e-lg flex-col space-y-6  pt-6 px-8 max-md:px-5"
       aria-label="Climate Commitments form"
     >

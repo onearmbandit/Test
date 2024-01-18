@@ -4,11 +4,11 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const EditAddress = () => {
+const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
   const router = useRouter();
   return (
     <form
-      action={() => router.push("/edit-organisation")}
+      action={() => setSection("home")}
       className="items-start w-full bg-white flex grow rounded-e-lg flex-col pl-8 pr-11 pt-6 pb-12 max-md:px-5"
       aria-label="Address Editor"
     >

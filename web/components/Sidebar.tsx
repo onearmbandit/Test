@@ -5,7 +5,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./ui/accordion";
-import Link from "next/link";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import Accounts from "./popups/accounts/accounts";
 
 const Sidebar = () => {
   return (
@@ -111,32 +112,37 @@ const Sidebar = () => {
         </div>
       </nav>
       <footer>
-        <Link
-          href={"/edit-organisation"}
-          className="items-center hover:bg-blue-100 hover:text-blue-700 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="fill-gray-500 group-hover:fill-blue-600"
-          >
-            <g id="user-circle">
-              <path
-                id="Vector"
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M14.3996 8.00156C14.3996 9.69895 13.7253 11.3268 12.5251 12.527C11.3249 13.7273 9.69699 14.4016 7.99961 14.4016C6.30222 14.4016 4.67436 13.7273 3.47413 12.527C2.27389 11.3268 1.59961 9.69895 1.59961 8.00156C1.59961 6.30418 2.27389 4.67631 3.47413 3.47608C4.67436 2.27585 6.30222 1.60156 7.99961 1.60156C9.69699 1.60156 11.3249 2.27585 12.5251 3.47608C13.7253 4.67631 14.3996 6.30418 14.3996 8.00156ZM9.99961 6.00156C9.99961 6.532 9.7889 7.0407 9.41382 7.41578C9.03875 7.79085 8.53004 8.00156 7.99961 8.00156C7.46918 8.00156 6.96047 7.79085 6.5854 7.41578C6.21032 7.0407 5.99961 6.532 5.99961 6.00156C5.99961 5.47113 6.21032 4.96242 6.5854 4.58735C6.96047 4.21228 7.46918 4.00156 7.99961 4.00156C8.53004 4.00156 9.03875 4.21228 9.41382 4.58735C9.7889 4.96242 9.99961 5.47113 9.99961 6.00156ZM7.99961 9.60156C7.25595 9.60088 6.52233 9.77329 5.85681 10.1051C5.1913 10.437 4.61215 10.9192 4.16521 11.5136C4.6518 12.0461 5.24415 12.4713 5.90438 12.762C6.56462 13.0526 7.27823 13.2023 7.99961 13.2016C8.72099 13.2023 9.4346 13.0526 10.0948 12.762C10.7551 12.4713 11.3474 12.0461 11.834 11.5136C11.3871 10.9192 10.8079 10.437 10.1424 10.1051C9.47689 9.77329 8.74327 9.60088 7.99961 9.60156Z"
-              />
-            </g>
-          </svg>
+        <Dialog>
+          <DialogTrigger className="w-full">
+            <div className="items-center hover:bg-blue-100 hover:text-blue-700 group text-slate-800 flex gap-3 px-2 py-1.5 rounded-md">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="fill-gray-500 group-hover:fill-blue-600"
+              >
+                <g id="user-circle">
+                  <path
+                    id="Vector"
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M14.3996 8.00156C14.3996 9.69895 13.7253 11.3268 12.5251 12.527C11.3249 13.7273 9.69699 14.4016 7.99961 14.4016C6.30222 14.4016 4.67436 13.7273 3.47413 12.527C2.27389 11.3268 1.59961 9.69895 1.59961 8.00156C1.59961 6.30418 2.27389 4.67631 3.47413 3.47608C4.67436 2.27585 6.30222 1.60156 7.99961 1.60156C9.69699 1.60156 11.3249 2.27585 12.5251 3.47608C13.7253 4.67631 14.3996 6.30418 14.3996 8.00156ZM9.99961 6.00156C9.99961 6.532 9.7889 7.0407 9.41382 7.41578C9.03875 7.79085 8.53004 8.00156 7.99961 8.00156C7.46918 8.00156 6.96047 7.79085 6.5854 7.41578C6.21032 7.0407 5.99961 6.532 5.99961 6.00156C5.99961 5.47113 6.21032 4.96242 6.5854 4.58735C6.96047 4.21228 7.46918 4.00156 7.99961 4.00156C8.53004 4.00156 9.03875 4.21228 9.41382 4.58735C9.7889 4.96242 9.99961 5.47113 9.99961 6.00156ZM7.99961 9.60156C7.25595 9.60088 6.52233 9.77329 5.85681 10.1051C5.1913 10.437 4.61215 10.9192 4.16521 11.5136C4.6518 12.0461 5.24415 12.4713 5.90438 12.762C6.56462 13.0526 7.27823 13.2023 7.99961 13.2016C8.72099 13.2023 9.4346 13.0526 10.0948 12.762C10.7551 12.4713 11.3474 12.0461 11.834 11.5136C11.3871 10.9192 10.8079 10.437 10.1424 10.1051C9.47689 9.77329 8.74327 9.60088 7.99961 9.60156Z"
+                  />
+                </g>
+              </svg>
 
-          <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
-            Accounts
-          </h2>
-        </Link>
+              <h2 className="text-xs font-medium leading-5 self-stretch whitespace-nowrap">
+                Accounts
+              </h2>
+            </div>
+          </DialogTrigger>
+          <DialogContent className="shadow w-full max-w-[857px] rounded-lg h-full max-h-[551px] p-0">
+            <Accounts />
+          </DialogContent>
+        </Dialog>
+
         <div className="items-center hover:bg-blue-100 hover:text-blue-700 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md">
           <svg
             width="16"

@@ -1,9 +1,11 @@
 "use client";
+import { useAccountStore } from "@/lib/stores/organisation.store";
 import { cn } from "@/lib/utils";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 const AccountsNav = () => {
+  const { navItem: currentNav, setNav, setOrgSection } = useAccountStore();
   const pathname = usePathname();
   const basePath = pathname.split("/")[1];
   return (
@@ -25,41 +27,40 @@ const AccountsNav = () => {
           </div>
         </div>
         <span
+          onClick={() => setNav("myAccount")}
           className={cn(
             "items-center hover:bg-blue-50 hover:text-blue-700 cursor-default flex justify-between gap-3 mt-2.5 px-2.5 py-1.5 rounded-md",
-            basePath == "my-organisation" && "bg-blue-100"
+            currentNav == "myAccount" && "bg-blue-100"
           )}
         >
-          <a
-            href="#"
-            className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto"
-          >
+          <p className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto">
             <img
               loading="lazy"
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/1905b383fa92fd8617ddcdb4231b581c79dc55e495e9cb3e4c5d960c1347e2a7?apiKey=011554aff43544e6af46800a427fd184&"
               alt="Account icon"
             />
-          </a>
+          </p>
           <div className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
             My account
           </div>
         </span>
         <span
+          onClick={() => {
+            setNav("organisation");
+            setOrgSection("home");
+          }}
           className={cn(
             "items-center hover:bg-blue-50 hover:text-blue-700 cursor-default flex justify-between gap-3 mt-2.5 px-2.5 py-1.5 rounded-md",
-            basePath == "edit-organisation" && "bg-blue-100"
+            currentNav == "organisation" && "bg-blue-100"
           )}
         >
-          <a
-            href="#"
-            className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto"
-          >
+          <p className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto">
             <img
               loading="lazy"
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/6a8109a28d027733b2973f335a1a6505c2a85e896493267b51fd050ddb9dfb2b?apiKey=011554aff43544e6af46800a427fd184&"
               alt="Organization icon"
             />
-          </a>
+          </p>
           <div className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
             Organization account
           </div>

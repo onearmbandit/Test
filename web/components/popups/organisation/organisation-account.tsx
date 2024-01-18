@@ -1,7 +1,13 @@
 import Link from "next/link";
 import React from "react";
 
-const OrganisationAccount = () => {
+const OrganisationAccount = ({
+  section,
+  setSection,
+}: {
+  section: string;
+  setSection: (val: string) => void;
+}) => {
   return (
     <section className="justify-center items-start bg-white rounded-e-lg flex flex-col w-full px-8 py-8 max-md:max-w-full max-md:px-5">
       <h2 className="text-gray-700 text-lg font-bold leading-7 self-stretch max-md:max-w-full">
@@ -37,13 +43,12 @@ const OrganisationAccount = () => {
           <br />
           New York, NY, 10001
         </div>
-        <Link
-          href="/edit-organisation/address"
-          aria-label="Edit Address"
-          className="text-blue-600 text-center text-xs font-bold leading-4 self-center my-auto"
+        <p
+          onClick={() => setSection("address")}
+          className="text-blue-600 text-center text-xs font-bold leading-4 self-center my-auto cursor-pointer"
         >
           Edit
-        </Link>
+        </p>
       </div>
       <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
         Number of Employees
@@ -52,26 +57,24 @@ const OrganisationAccount = () => {
         <div className="text-slate-700 text-xs font-light leading-4">
           201 - 500
         </div>
-        <Link
-          href="/edit-organisation/employees"
-          aria-label="Edit Number of Employees"
-          className="text-blue-600 text-center text-xs font-bold leading-4"
+        <p
+          onClick={() => setSection("employees")}
+          className="text-blue-600 text-center text-xs font-bold leading-4 cursor-pointer"
         >
           Edit
-        </Link>
+        </p>
       </div>
       <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
         NAICS Code
       </div>
       <div className="justify-between items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-md:max-w-full max-md:flex-wrap">
         <div className="text-slate-700 text-xs font-light leading-4">3241</div>
-        <Link
-          href="/edit-organisation/code"
-          aria-label="Edit NAICS Code"
-          className="text-blue-600 text-center text-xs font-bold leading-4"
+        <p
+          onClick={() => setSection("naics")}
+          className="text-blue-600 text-center text-xs font-bold leading-4 cursor-pointer"
         >
           Edit
-        </Link>
+        </p>
       </div>
       <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
         Climate Commitments
@@ -80,13 +83,12 @@ const OrganisationAccount = () => {
         <div className="text-slate-700 text-xs font-light leading-4">
           Net Zero by 2030
         </div>
-        <Link
-          href="/edit-organisation/climate-commitments"
-          aria-label="Edit Climate Commitments"
-          className="text-blue-600 text-center text-xs font-bold leading-4"
+        <p
+          onClick={() => setSection("climate")}
+          className="text-blue-600 text-center text-xs font-bold leading-4 cursor-pointer"
         >
           Edit
-        </Link>
+        </p>
       </div>
     </section>
   );
