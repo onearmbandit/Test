@@ -23,28 +23,28 @@ export default class UpdateUserValidator {
     ]),
 
     // oldPassword: schema.string.optional({}, [
-    //   rules.minLength(8),
-    //   rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
-    //   async (value, { error }) => {
-    //     const user = this.ctx.auth.user;
-    //     if (user) {
-    //       const isPasswordValid = await user.verifyPassword(value);
-    //       if (!isPasswordValid) {
-    //         error('Old password does not match the current password');
-    //       }
-    //     }
-    //   },
+    //   // rules.minLength(8),
+    //   // rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
+    //   // async (value, { error }) => {
+    //   //   const user = this.ctx.auth.user;
+    //   //   if (user) {
+    //   //     const isPasswordValid = await user.verifyPassword(value);
+    //   //     if (!isPasswordValid) {
+    //   //       error('Old password does not match the current password');
+    //   //     }
+    //   //   }
+    //   // },
     // ]),
 
-    // newPassword: schema.string.optional({}, [
-		// 	rules.minLength(8),
-		// 	rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
-		// 	rules.confirmed('confirmPassword'), // This ensures that confirmPassword is equal to newPassword
-		// ]),
-		// confirmPassword: schema.string.optional({}, [
-		// 	rules.minLength(8),
-		// 	rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
-		// ]),
+    newPassword: schema.string.optional({}, [
+			rules.minLength(8),
+			rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
+			rules.confirmed('confirmPassword'), // This ensures that confirmPassword is equal to newPassword
+		]),
+		confirmPassword: schema.string.optional({}, [
+			rules.minLength(8),
+			rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
+		]),
 
     email: schema.string.optional({}, [
       rules.email(),
@@ -59,6 +59,6 @@ export default class UpdateUserValidator {
     'oldPassword.regex': 'Old password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
     'newPassword.regex': 'New password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
     'confirmPassword.regex': 'Confirm password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
-    'newPassword.confirmed': 'Passwords do not match',
+    'confirmPassword.confirmed': 'Confirm password mismatch.',
   };
 }

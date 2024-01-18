@@ -10,10 +10,10 @@ Route.group(() => {
     //:: Verify email
     Route.post('/verify-email', 'AuthController.verifyEmail')
 
-        Route.post('/login', 'AuthController.login')
-        Route.post('/forgot-password', 'AuthController.forgotPassword')
-        Route.post('/reset-password', 'AuthController.resetPassword')
-        Route.post('/logout', 'AuthController.logout').middleware('auth');
+    Route.post('/login', 'AuthController.login')
+    Route.post('/forgot-password', 'AuthController.forgotPassword')
+    Route.post('/reset-password', 'AuthController.resetPassword')
+    Route.post('/logout', 'AuthController.logout').middleware('auth');
 
 
 
@@ -22,7 +22,10 @@ Route.group(() => {
       //:: used for setup and update organization
       Route.resource('/organization', 'OrganizationsController').only(['update', 'store', 'show'])
 
-      Route.resource('/user', 'UsersController').only(['update', 'show'])
+      //:: Profile API
+      Route.get('/user', 'UsersController.show')
+      Route.patch('/user', 'UsersController.update')
+      Route.post('/user', 'UsersController.destroy')//for delete the user but need request data that's why used post method
 
       Route.resource('/facility', 'FacilityController').only(['store'])
     })

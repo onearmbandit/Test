@@ -3,13 +3,20 @@ import {
   BaseModel,
   beforeSave,
   column,
-  manyToMany, ManyToMany
+  manyToMany, ManyToMany,
+  hasMany,
+  HasMany
 } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Organization from './Organization'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import Role from './Role'
 import { v4 as uuidv4 } from 'uuid';
+import ApiToken from './ApiToken'
+
+// import { SoftDeletes } from '@ioc:Adonis/Addons/LucidSoftDeletes';
+// import { compose } from '@ioc:Adonis/Core/Helpers';
+
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -77,6 +84,11 @@ export default class User extends BaseModel {
     }
   }
 
+  @hasMany(() => ApiToken, {
+    onQuery: (query) => query.where('type', 'api'),
+  })
+  public api_token: HasMany<typeof ApiToken>
+
   // Relationship
   // @hasOne(() => Organization, {
   //   foreignKey: 'user_id',
@@ -111,6 +123,7 @@ export default class User extends BaseModel {
   //:: Just with first() method
   public static async getUserDetailsWithFirst(field, value) {
     const user = await User.query().where(field, value)
+      .andWhereNull('deletedAt')
       .preload('roles')
       .preload('organizations')
       .first();
@@ -119,6 +132,7 @@ export default class User extends BaseModel {
 
   public static async getUserDetails(field, value) {
     const userData = await User.query().where(field, value)
+      .andWhereNull('deletedAt')
       .preload('roles')
       .preload('organizations')
       .firstOrFail();
@@ -128,6 +142,7 @@ export default class User extends BaseModel {
 
   public static async getUserDetailsWithPreloads(id) {
     const user = await User.query().where('id', id)
+      .andWhereNull('deletedAt')
       .preload('roles')
       .preload('organizations').firstOrFail();
 
@@ -139,12 +154,33 @@ export default class User extends BaseModel {
     const result = await User.create(userData)
     //:: Assign admin role to new user
     await result.related('roles').attach({
-      [roleData.id]:{
-      id: uuidv4(),
-    }})
+      [roleData.id]: {
+        id: uuidv4(),
+      }
+    })
 
     const user = await User.getUserDetails('id', result.id)
     return user;
+  }
+
+
+
+  public static async getLoggedInUser(authUser) {
+    const user = await User.query()
+      .where('id', authUser.id)
+      .andWhereNull('deletedAt')
+      .preload('roles')
+      .preload('organizations')
+      .firstOrFail()
+    return user
+  }
+
+
+  public static async deleteUser(user) {
+    await ApiToken.expireApiToken(user)
+    const userEmail = DateTime.now() + '_' + user.email
+    await user.merge({ deletedAt: DateTime.now(), email: userEmail }).save()
+    return
   }
 
   public static async updateUser(user, requestData) {
