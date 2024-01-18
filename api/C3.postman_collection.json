@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "565b0f06-e34a-4487-a544-5f81e24b8bf5",
+		"_postman_id": "72c515d6-c297-4d3a-85c4-58fcd9b5212d",
 		"name": "C3",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "17650332"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -23,7 +22,17 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/register"
+						"url": {
+							"raw": "{{base_url}}/api/v1/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"register"
+							]
+						}
 					},
 					"response": []
 				},
@@ -52,7 +61,18 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/user/1"
+						"url": {
+							"raw": "{{base_url}}/api/v1/user/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
@@ -70,7 +90,17 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/organization"
+						"url": {
+							"raw": "{{base_url}}/api/v1/organization",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"organization"
+							]
+						}
 					},
 					"response": []
 				},
@@ -89,7 +119,17 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/verify-email"
+						"url": {
+							"raw": "{{base_url}}/api/v1/verify-email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"verify-email"
+							]
+						}
 					},
 					"response": [
 						{
@@ -107,7 +147,17 @@
 										}
 									]
 								},
-								"url": "{{base_url}}/api/v1/verify-email"
+								"url": {
+									"raw": "{{base_url}}/api/v1/verify-email",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"verify-email"
+									]
+								}
 							},
 							"status": "Bad Request",
 							"code": 400,
@@ -159,7 +209,17 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/login"
+						"url": {
+							"raw": "{{base_url}}/api/v1/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
 					},
 					"response": []
 				},
@@ -168,7 +228,17 @@
 					"request": {
 						"method": "POST",
 						"header": [],
-						"url": "{{base_url}}/api/v1/forgot-password"
+						"url": {
+							"raw": "{{base_url}}/api/v1/forgot-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forgot-password"
+							]
+						}
 					},
 					"response": []
 				},
@@ -207,7 +277,17 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/reset-password"
+						"url": {
+							"raw": "{{base_url}}/api/v1/reset-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reset-password"
+							]
+						}
 					},
 					"response": []
 				}
@@ -221,9 +301,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
@@ -236,7 +320,19 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/auth/organization/1"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/organization/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"organization",
+								"1"
+							]
+						}
 					},
 					"response": [
 						{
@@ -253,7 +349,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -297,7 +405,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -341,7 +461,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -385,7 +517,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -422,9 +566,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -437,7 +585,18 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/auth/organization"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/organization",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"organization"
+							]
+						}
 					},
 					"response": [
 						{
@@ -454,7 +613,18 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -491,7 +661,19 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{base_url}}/api/v1/auth/organization/1"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/organization/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"organization",
+								"1"
+							]
+						}
 					},
 					"response": [
 						{
@@ -499,7 +681,19 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -536,9 +730,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
@@ -551,7 +749,19 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/auth/organization/4ebb10ee-9100-4124-bcb9-9c5b6044dadf"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/organization/4ebb10ee-9100-4124-bcb9-9c5b6044dadf",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"organization",
+								"4ebb10ee-9100-4124-bcb9-9c5b6044dadf"
+							]
+						}
 					},
 					"response": [
 						{
@@ -568,7 +778,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -612,7 +834,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -656,7 +890,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -700,7 +946,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -731,6 +989,220 @@
 							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Organization updated successfully.\",\n    \"data\": {\n        \"id\": \"1bca512c-1ca4-445b-b641-7058e8f2ccaf\",\n        \"company_name\": \"ABC\",\n        \"company_email\": \"anjpawar+6@cxr.agency\",\n        \"self_point_of_contact\": \"1\",\n        \"company_size\": \"550\",\n        \"naics_code\": \"67678\",\n        \"climate_targets\": [\n            \"Clean Energy\",\n            \"Carbon negative by 2050\",\n            \"Carbon emission\"\n        ],\n        \"address_line_1\": \"123 man street\",\n        \"address_line_2\": \"9th floor\",\n        \"city\": \"pune\",\n        \"state\": \"MH\",\n        \"country\": \"India\",\n        \"zipcode\": \"12345\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-17T16:16:04.000+05:30\",\n        \"updated_at\": \"2024-01-17T16:41:56.000+05:30\",\n        \"users\": [\n            {\n                \"id\": \"0cccfdc6-fb4b-48eb-9928-258e42be29d8\",\n                \"first_name\": \"Anuja\",\n                \"last_name\": \"Pawar\",\n                \"slug\": \"anuja-pawar\",\n                \"email\": \"anjpawar+3@cxr.agency\",\n                \"email_verified_at\": \"2024-01-17T16:15:41.000+05:30\",\n                \"email_verify_token\": \"\",\n                \"user_status\": 1,\n                \"remember_token\": null,\n                \"remember_token_expires\": null,\n                \"timezone\": null,\n                \"login_type\": null,\n                \"registration_step\": \"3\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-17T16:13:50.000+05:30\",\n                \"updated_at\": \"2024-01-17T16:16:04.000+05:30\"\n            },\n            {\n                \"id\": \"8982944a-f708-4c08-b8d3-393e1856622c\",\n                \"first_name\": null,\n                \"last_name\": null,\n                \"slug\": null,\n                \"email\": \"anjpawar+5@cxr.agency\",\n                \"email_verified_at\": null,\n                \"email_verify_token\": null,\n                \"user_status\": 1,\n                \"remember_token\": null,\n                \"remember_token_expires\": null,\n                \"timezone\": null,\n                \"login_type\": null,\n                \"registration_step\": \"1\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-17T16:18:26.000+05:30\",\n                \"updated_at\": \"2024-01-17T16:18:26.000+05:30\"\n            },\n            {\n                \"id\": \"e9b40dfb-f641-472f-98a2-8aee511a38c6\",\n                \"first_name\": null,\n                \"last_name\": null,\n                \"slug\": null,\n                \"email\": \"anjpawar+6@cxr.agency\",\n                \"email_verified_at\": null,\n                \"email_verify_token\": null,\n                \"user_status\": 1,\n                \"remember_token\": null,\n                \"remember_token_expires\": null,\n                \"timezone\": null,\n                \"login_type\": null,\n                \"registration_step\": \"1\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-17T16:25:55.000+05:30\",\n                \"updated_at\": \"2024-01-17T16:25:55.000+05:30\"\n            }\n        ]\n    }\n}"
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get User Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"user",
+								"dce35841-ff3f-4f45-b6ea-753cefd889ca"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get User Details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"user",
+										"dce35841-ff3f-4f45-b6ea-753cefd889ca"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "433"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 18 Jan 2024 06:16:21 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetch Successfully\",\n    \"data\": {\n        \"id\": \"dce35841-ff3f-4f45-b6ea-753cefd889ca\",\n        \"first_name\": \"Mayuri\",\n        \"last_name\": null,\n        \"slug\": \"mayuri\",\n        \"email\": \"mchaudhari@cxr.agency\",\n        \"email_verified_at\": null,\n        \"email_verify_token\": null,\n        \"user_status\": 1,\n        \"remember_token\": null,\n        \"remember_token_expires\": null,\n        \"timezone\": null,\n        \"login_type\": null,\n        \"registration_step\": \"0\",\n        \"deleted_at\": null,\n        \"created_at\": null,\n        \"updated_at\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\":\"mayuri\",\n    \"lastName\":\"chaudhari\",\n    \"email\":\"mchaudhari+1@cxr.agency\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"user",
+								"dce35841-ff3f-4f45-b6ea-753cefd889ca"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update User Profile",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\":\"mayuri\",\n    \"lastName\":\"chaudhari\",\n    \"email\":\"mchaudhari+1@cxr.agency\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"user",
+										"dce35841-ff3f-4f45-b6ea-753cefd889ca"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "481"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 18 Jan 2024 06:23:33 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Updated Successfully\",\n    \"data\": {\n        \"id\": \"dce35841-ff3f-4f45-b6ea-753cefd889ca\",\n        \"first_name\": \"mayuri\",\n        \"last_name\": \"chaudhari\",\n        \"slug\": \"mayuri-chaudhari\",\n        \"email\": \"mchaudhari+1@cxr.agency\",\n        \"email_verified_at\": null,\n        \"email_verify_token\": null,\n        \"user_status\": 1,\n        \"remember_token\": null,\n        \"remember_token_expires\": null,\n        \"timezone\": null,\n        \"login_type\": null,\n        \"registration_step\": \"0\",\n        \"deleted_at\": null,\n        \"created_at\": null,\n        \"updated_at\": \"2024-01-18T11:53:33.987+05:30\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Organisation Facilities",
+			"item": [
+				{
+					"name": "Create new Facility",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"organization_id\": \"45827b85-b5d1-11ee-b247-f44ee3c0ff12\",\n    \"facilities\":[\n        {\n            \"name\":\"power plant 1\",\n            \"addressLine1\":\"Pune\",\n            \"addressLine2\":\"floor1\",\n            \"city\":\"Pune\",\n            \"state\":\"MH\",\n            \"zipCode\":\"12345\"\n        },\n        {\n            \"name\":\"power plant 2\",\n            \"addressLine1\":\"Mumbai\",\n            \"addressLine2\":\"floor2\",\n            \"city\":\"Mumbai\",\n            \"state\":\"MH\",\n            \"zipCode\":\"46787\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/facility",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"facility"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

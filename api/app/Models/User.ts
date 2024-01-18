@@ -143,4 +143,14 @@ export default class User extends BaseModel {
     return user;
   }
 
+  public static async updateUser(user, requestData) {
+    await user.merge(requestData).save();
+    const userDetails = await User.find(user.id);
+    return userDetails;
+  }
+
+  public async verifyPassword(plainPassword: string): Promise<boolean> {
+    return Hash.verify(plainPassword, this.password);
+  }
+
 }
