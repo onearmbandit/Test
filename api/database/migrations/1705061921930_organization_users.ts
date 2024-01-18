@@ -1,21 +1,24 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'facility_emissions'
+  protected tableName = 'organization_users'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').primary()
-      table.uuid('organization_facility_id')
+      table.uuid('user_id')
       .nullable()
-      .references('organization_facilities.id')
+      .references('users.id')
       .onDelete('CASCADE')
-      table.date('reporting_period_from')
-      table.date('reporting_period_to')
-      table.integer('scope_1_total_emission')
-      table.integer('scope_2_total_emission')
-      table.integer('scope_3_total_emission')
-      table.timestamp('deleted_at', { useTz: true })
+      table.uuid('organization_id')
+      .nullable()
+      .references('organizations.id')
+      .onDelete('CASCADE')
+      table.uuid('role_id')
+      .nullable()
+      .references('roles.id')
+      .onDelete('CASCADE')
+      .comment('Specify the type of the user in the organization, e.g., admin, super admin')
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

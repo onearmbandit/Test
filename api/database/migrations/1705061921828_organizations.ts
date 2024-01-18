@@ -5,24 +5,19 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
-      table.integer('user_id')
-      .nullable()
-      .unsigned()
-      .references('users.id')
-      .onDelete('CASCADE')
+      table.uuid('id').primary()
       table.string('company_name')
       table.string('company_email')
       table.string('self_point_of_contact')
       table.string('company_size')
       table.string('naics_code')
-      table.jsonb('targets')
-      table.string('address_line_1');
-      table.string('address_line_2');
-      table.string('city');
-      table.string('state');
-      table.string('country');
-      table.string('zip_code');
+      table.jsonb('climate_targets').comment('climate_targets is used to store the climate targets for the organization in json format')
+      table.string('address_line_1')
+      table.string('address_line_2').nullable().comment("optional address line 2")
+      table.string('city')
+      table.string('state')
+      table.string('country')
+      table.string('zipcode')
       table.timestamp('deleted_at', { useTz: true })
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })

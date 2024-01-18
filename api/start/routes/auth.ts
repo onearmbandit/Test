@@ -13,7 +13,14 @@ Route.group(() => {
         Route.post('/login', 'AuthController.login')
         Route.post('/forgot-password', 'AuthController.forgotPassword')
         Route.post('/reset-password', 'AuthController.resetPassword')
+        Route.post('/logout', 'AuthController.logout').middleware('auth');
 
-        
+
+
+        //Auth routes
+        Route.group(() => {
+            //:: used for setup and update organization
+            Route.resource('/organization', 'OrganizationsController').only(['update','store','show'])  
+        }).prefix('/auth').middleware('auth')
     }).prefix('/v1')
 }).prefix('/api')
