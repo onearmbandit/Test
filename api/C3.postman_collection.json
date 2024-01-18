@@ -210,6 +210,21 @@
 						"url": "{{base_url}}/api/v1/reset-password"
 					},
 					"response": []
+				},
+				{
+					"name": "Logout API",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"url": "{{base_url}}/api/v1/logout"
+					},
+					"response": []
 				}
 			]
 		},
