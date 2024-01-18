@@ -1,17 +1,23 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AccountsNav from "../organisation/sidebar";
 import OrganisationPage from "./organisation-page";
 import MyAccountPage from "./my-account";
 import { useAccountStore } from "@/lib/stores/organisation.store";
 
 const Accounts = () => {
-  const { navItem, setNav } = useAccountStore();
+  const { navItem, setNav, setMyAccSection, setOrgSection } = useAccountStore();
   const navItems: { [key: string]: () => JSX.Element } = {
     organisation: OrganisationPage,
     myAccount: MyAccountPage,
   };
   const AccountPage = navItems[navItem];
+
+  useEffect(() => {
+    setNav("myAccount");
+    setMyAccSection("home");
+    setOrgSection("home");
+  }, []);
   return (
     <div className="flex max-md:flex-col h-full">
       <AccountsNav />

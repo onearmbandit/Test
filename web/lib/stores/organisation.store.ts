@@ -10,7 +10,7 @@ type Store = {
 };
 
 export const useAccountStore = create<Store>()((set) => ({
-  navItem: "organisation",
+  navItem: "myAccount",
   setNav: (val: string) => set(() => ({ navItem: val })),
 
   orgSection: "home",

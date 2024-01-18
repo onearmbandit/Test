@@ -5,7 +5,12 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 const AccountsNav = () => {
-  const { navItem: currentNav, setNav, setOrgSection } = useAccountStore();
+  const {
+    navItem: currentNav,
+    setNav,
+    setOrgSection,
+    setMyAccSection,
+  } = useAccountStore();
   const pathname = usePathname();
   const basePath = pathname.split("/")[1];
   return (
@@ -27,10 +32,13 @@ const AccountsNav = () => {
           </div>
         </div>
         <span
-          onClick={() => setNav("myAccount")}
+          onClick={() => {
+            setNav("myAccount");
+            setMyAccSection("home");
+          }}
           className={cn(
             "items-center hover:bg-blue-50 hover:text-blue-700 cursor-default flex justify-between gap-3 mt-2.5 px-2.5 py-1.5 rounded-md",
-            currentNav == "myAccount" && "bg-blue-100"
+            currentNav == "myAccount" && "bg-blue-100 text-blue-700"
           )}
         >
           <p className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto">
@@ -51,7 +59,7 @@ const AccountsNav = () => {
           }}
           className={cn(
             "items-center hover:bg-blue-50 hover:text-blue-700 cursor-default flex justify-between gap-3 mt-2.5 px-2.5 py-1.5 rounded-md",
-            currentNav == "organisation" && "bg-blue-100"
+            currentNav == "organisation" && "bg-blue-100 text-blue-700"
           )}
         >
           <p className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto">
