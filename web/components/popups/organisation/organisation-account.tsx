@@ -9,7 +9,7 @@ const OrganisationAccount = ({
   setSection: (val: string) => void;
 }) => {
   return (
-    <section className="justify-center items-start bg-white rounded-e-lg flex flex-col w-full px-8 py-8 max-md:max-w-full max-md:px-5">
+    <section className="justify-center items-start bg-white rounded-e-lg flex flex-col w-full p-6 max-md:max-w-full max-md:px-5">
       <h2 className="text-gray-700 text-lg font-bold leading-7 self-stretch max-md:max-w-full">
         Organization Account
       </h2>

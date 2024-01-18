@@ -5,6 +5,8 @@ type Store = {
   setNav: (value: string) => void;
   orgSection: string;
   setOrgSection: (value: string) => void;
+  myAccSection: string;
+  setMyAccSection: (value: string) => void;
 };
 
 export const useAccountStore = create<Store>()((set) => ({
@@ -13,4 +15,7 @@ export const useAccountStore = create<Store>()((set) => ({
 
   orgSection: "home",
   setOrgSection: (val: string) => set(() => ({ orgSection: val })),
+
+  myAccSection: "home",
+  setMyAccSection: (val: string) => set(() => ({ myAccSection: val })),
 }));
