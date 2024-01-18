@@ -1,18 +1,20 @@
 import { DateTime } from 'luxon'
 import {
   BaseModel,
-  BelongsTo,
-  belongsTo,
   column,
+  manyToMany,
+  ManyToMany
 } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
+import { v4 as uuidv4 } from 'uuid';
+
 
 export default class Organization extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public user_id: number 
+  public user_id: number
 
   @column()
   public companyName: string
@@ -30,7 +32,7 @@ export default class Organization extends BaseModel {
   public naicsCode: string
 
   @column()
-  public targets: JSON
+  public climateTargets: string;
 
   @column()
   public addressLine_1: string
@@ -48,7 +50,7 @@ export default class Organization extends BaseModel {
   public country: string
 
   @column()
-  public zipCode: string
+  public zipcode: string
 
   @column.dateTime()
   public deletedAt: DateTime
@@ -61,11 +63,62 @@ export default class Organization extends BaseModel {
 
 
   // Relationship
-  @belongsTo(() => User, {
-    localKey: 'user_id',
+  // @belongsTo(() => User, {
+  //   localKey: 'user_id',
+  // })
+  // public user: BelongsTo<typeof User>
+
+
+  //::_____Relationships Start_____:://
+
+  @manyToMany(() => User, {
+    localKey: 'id',
+    pivotForeignKey: 'organization_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'user_id',
+    pivotTable: 'organization_users',
+    pivotTimestamps: true,
   })
-  public user: BelongsTo<typeof User>
+  public users: ManyToMany<typeof User>
 
 
+  //::_____Relationships End_____:://
 
+  public static async getTargets(target: string) {
+    let targetData = JSON.parse(target);
+    return targetData
+  }
+
+  public static async setTargets(target: Array<String>) {
+    let targetData = JSON.stringify(target);
+    return targetData
+  }
+
+  public static async getOrganizationDetails(field, value) {
+    const organizationData = await Organization.query()
+    .where(field, value)
+    .preload('users')
+    .firstOrFail();
+    return organizationData;
+  }
+
+  public static async createOrganization(requestData) {
+    const organizationData = await Organization.create({
+      id: uuidv4(),
+      companyName: requestData.companyName,
+      addressLine_1: requestData.addressLine1,
+      addressLine_2: requestData.addressLine2,
+      city: requestData.city,
+      state: requestData.state,
+      zipcode: requestData.zipcode,
+    })
+    return organizationData
+  }
+
+
+  public static async updateOrganization(organization, requestData) {
+    await organization.merge(requestData).save();
+    const organizationData = await Organization.getOrganizationDetails('id', organization.id)
+    return organizationData;
+  }
 }
