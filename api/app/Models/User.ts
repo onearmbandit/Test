@@ -9,6 +9,7 @@ import Hash from '@ioc:Adonis/Core/Hash'
 import Organization from './Organization'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import Role from './Role'
+import { v4 as uuidv4 } from 'uuid';
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -137,7 +138,10 @@ export default class User extends BaseModel {
   public static async createUserWithRole(userData, roleData) {
     const result = await User.create(userData)
     //:: Assign admin role to new user
-    await result.related('roles').attach([roleData.id])
+    await result.related('roles').attach({
+      [roleData.id]:{
+      id: uuidv4(),
+    }})
 
     const user = await User.getUserDetails('id', result.id)
     return user;

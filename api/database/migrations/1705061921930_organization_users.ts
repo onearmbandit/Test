@@ -19,9 +19,6 @@ export default class extends BaseSchema {
       .references('roles.id')
       .onDelete('CASCADE')
       .comment('Specify the type of the user in the organization, e.g., admin, super admin')
-      /**
-       * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
-       */
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

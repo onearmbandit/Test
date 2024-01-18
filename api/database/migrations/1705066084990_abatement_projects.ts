@@ -5,15 +5,13 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
-      table.integer('supplier_id')
+      table.uuid('id').primary()
+      table.uuid('supplier_id')
       .nullable()
-      .unsigned()
       .references('suppliers.id')
       .onDelete('CASCADE')
-      table.integer('organization_id')
+      table.uuid('organization_id')
       .nullable()
-      .unsigned()
       .references('organizations.id')
       .onDelete('CASCADE')
       table.string('name')

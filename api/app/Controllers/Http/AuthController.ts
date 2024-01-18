@@ -330,6 +330,20 @@ export default class AuthController {
 
 
 
+
+  /**
+  * Logout API.
+  */
+  public async logout({ auth, response }: HttpContextContract) {
+    await auth.logout()
+
+    //Revoke method delete access-token from DB
+    await auth.use('api').revoke()
+    return apiResponse(response, true, 200, {}, Config.get('responsemessage.AUTH_RESPONSE.logout_success'))
+  }
+
+
+
     //:: Used for create reset-token
     private async createToken() {
         let token = string.generateRandom(25);

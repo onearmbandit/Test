@@ -5,24 +5,19 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
-      table.integer('organization_id')
+      table.uuid('id').primary()
+      table.uuid('organization_id')
       .nullable()
-      .unsigned()
       .references('organizations.id')
       .onDelete('CASCADE')
-      table.string('name');
-      table.string('address_line_1');
-      table.string('address_line_2');
-      table.string('city');
-      table.string('state');
-      table.string('country');
-      table.string('zip_code');
+      table.string('name')
+      table.string('address_line_1')
+      table.string('address_line_2').nullable().comment("optional address line 2")
+      table.string('city')
+      table.string('state')
+      table.string('country')
+      table.string('zip_code')
       table.timestamp('deleted_at', { useTz: true })
-
-      /**
-       * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
-       */
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })
