@@ -10,9 +10,12 @@ Route.group(() => {
     //:: Verify email
     Route.post('/verify-email', 'AuthController.verifyEmail')
 
-    Route.post('/login', 'AuthController.login')
-    Route.post('/forgot-password', 'AuthController.forgotPassword')
-    Route.post('/reset-password', 'AuthController.resetPassword')
+        Route.post('/login', 'AuthController.login')
+        Route.post('/forgot-password', 'AuthController.forgotPassword')
+        Route.post('/reset-password', 'AuthController.resetPassword')
+        Route.post('/logout', 'AuthController.logout').middleware('auth');
+
+
 
     //Auth routes
     Route.group(() => {

@@ -32,7 +32,20 @@ export default class AuthController {
             const role: any = await Role.getRoleByName(UserRoles.ADMIN)
 
             if (userExist) {
-                return apiResponse(response, false, 400, {}, Config.get('responsemessage.AUTH_RESPONSE.emailExists'))
+                //:: If user is invited then send another emails that's why added this flag
+                if (requestData.invitedUser) {
+
+                    await userExist.merge({
+                        password: requestData.password,
+                        emailVerifyToken: Encryption.encrypt(requestData.email),
+                        registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
+                    }).save();
+
+                    return apiResponse(response, true, 201, userExist, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
+                }
+                else {
+                    return apiResponse(response, false, 400, {}, Config.get('responsemessage.AUTH_RESPONSE.emailExists'))
+                }
             } else {
                 const userData = await User.createUserWithRole({
                     id: uuidv4(),
@@ -41,25 +54,9 @@ export default class AuthController {
                     registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
                 }, role)
 
-                //:: If user is invited then send another emails that's why added this flag
-                if (requestData.invitedUser) {
-                    const emailData = {
-                        user: userData,
-                        url: `${WEB_BASE_URL}`,
-                    }
 
-                    await sendMail(userData.email, 'Welcome to C3insets.ai!', 'emails/user_welcome', emailData)
-                    return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.signupSuccess'))
-                }
-                else {
-                    //     const emailData = {
-                    //         user: userData,
-                    //         url: `${WEB_BASE_URL}/verify-email?token=${userData.emailVerifyToken}`,
-                    //     }
 
-                    //     await sendMail(userData.email, 'Verify Your Email for C3', 'emails/verify_email', emailData)
-                    return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
-                }
+                return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
 
 
             }
@@ -84,22 +81,33 @@ export default class AuthController {
             const userData = await User.getUserDetails('id', params.id)
 
             await userData.merge({
+                // password: requestData.password,
                 firstName: requestData.firstName,
                 lastName: requestData.lastName,
                 emailVerifyToken: Encryption.encrypt(requestData.email),
                 registrationStep: requestData.registrationStep ? requestData.registrationStep : 2,
             }).save();
 
+            //   :: If user is invited then send another emails that's why added this flag
+            if (requestData.invitedUser) {
+                const emailData = {
+                    user: userData,
+                    url: `${WEB_BASE_URL}`,
+                }
 
-            //:: Only uninvited user
-            const emailData = {
-                user: userData,
-                url: `${WEB_BASE_URL}/verify-email?token=${userData.emailVerifyToken}`,
+                await sendMail(userData.email, 'Welcome to C3insets.ai!', 'emails/user_welcome', emailData)
+                return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.signupSuccess'))
             }
+            else {
+                //:: Only uninvited user
+                const emailData = {
+                    user: userData,
+                    url: `${WEB_BASE_URL}/verify-email?token=${userData.emailVerifyToken}`,
+                }
 
-            await sendMail(userData.email, 'Verify Your Email for C3', 'emails/verify_email', emailData)
+                await sendMail(userData.email, 'Verify Your Email for C3', 'emails/verify_email', emailData)
+            }
             return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.signupSuccess'))
-
         }
         catch (error) {
             if (error.status === 422) {
