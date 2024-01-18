@@ -5,19 +5,16 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
-      table.integer('supplier_id')
+      table.uuid('id').primary()
+      table.uuid('supplier_id')
       .nullable()
-      .unsigned()
       .references('suppliers.id')
       .onDelete('CASCADE')
       table.string('type')
       table.string('name')
       table.integer('quantity')
       table.string('functional_unit')
-      table.integer('scope3_contribution')
-      table.date('reporting_period_from')
-      table.date('reporting_period_to')
+      table.integer('scope_3_contribution')
       table.timestamp('deleted_at', { useTz: true })
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })

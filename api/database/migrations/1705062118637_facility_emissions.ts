@@ -5,10 +5,9 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
-      table.integer('organization_facility_id')
+      table.uuid('id').primary()
+      table.uuid('organization_facility_id')
       .nullable()
-      .unsigned()
       .references('organization_facilities.id')
       .onDelete('CASCADE')
       table.date('reporting_period_from')
@@ -16,7 +15,6 @@ export default class extends BaseSchema {
       table.integer('scope_1_total_emission')
       table.integer('scope_2_total_emission')
       table.integer('scope_3_total_emission')
-      table.float('emission_total')
       table.timestamp('deleted_at', { useTz: true })
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
