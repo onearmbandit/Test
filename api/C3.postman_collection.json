@@ -748,6 +748,257 @@
 					]
 				}
 			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get My profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/v1/auth/user"
+					},
+					"response": [
+						{
+							"name": "Get User Details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "433"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 18 Jan 2024 06:16:21 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetch Successfully\",\n    \"data\": {\n        \"id\": \"dce35841-ff3f-4f45-b6ea-753cefd889ca\",\n        \"first_name\": \"Mayuri\",\n        \"last_name\": null,\n        \"slug\": \"mayuri\",\n        \"email\": \"mchaudhari@cxr.agency\",\n        \"email_verified_at\": null,\n        \"email_verify_token\": null,\n        \"user_status\": 1,\n        \"remember_token\": null,\n        \"remember_token_expires\": null,\n        \"timezone\": null,\n        \"login_type\": null,\n        \"registration_step\": \"0\",\n        \"deleted_at\": null,\n        \"created_at\": null,\n        \"updated_at\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\":\"mayuri\",\n    \"lastName\":\"chaudhari\"\n    // \"email\":\"mchaudhari+1@cxr.agency\"\n    // \"oldPassword\":\"Anuja11@\",\n    // \"newPassword\":\"Anuja12@\",\n    // \"confirmPassword\":\"Anuja12@\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/auth/user"
+					},
+					"response": [
+						{
+							"name": "Update User Profile",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\":\"mayuri\",\n    \"lastName\":\"chaudhari\",\n    \"email\":\"mchaudhari+1@cxr.agency\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "481"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 18 Jan 2024 06:23:33 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Updated Successfully\",\n    \"data\": {\n        \"id\": \"dce35841-ff3f-4f45-b6ea-753cefd889ca\",\n        \"first_name\": \"mayuri\",\n        \"last_name\": \"chaudhari\",\n        \"slug\": \"mayuri-chaudhari\",\n        \"email\": \"mchaudhari+1@cxr.agency\",\n        \"email_verified_at\": null,\n        \"email_verify_token\": null,\n        \"user_status\": 1,\n        \"remember_token\": null,\n        \"remember_token_expires\": null,\n        \"timezone\": null,\n        \"login_type\": null,\n        \"registration_step\": \"0\",\n        \"deleted_at\": null,\n        \"created_at\": null,\n        \"updated_at\": \"2024-01-18T11:53:33.987+05:30\"\n    }\n}"
+						},
+						{
+							"name": "update profile",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"firstName\":\"mayuri\",\n    \"lastName\":\"chaudhari\"\n    // \"email\":\"mchaudhari+1@cxr.agency\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/v1/auth/user"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "1153"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 18 Jan 2024 10:58:18 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Updated Successfully\",\n    \"data\": {\n        \"id\": \"d1fb7066-dc05-4e7a-a7ce-9ccc9f878fba\",\n        \"first_name\": \"mayuri\",\n        \"last_name\": \"chaudhari\",\n        \"slug\": \"mayuri-chaudhari\",\n        \"email_verified_at\": null,\n        \"email_verify_token\": \"QJ4cvL8k3s6UxNyhN9S6uA.bmdPTGYxa3d2QWhJNFVPdw.j0htVqbOYEiq3WdwkBni0_RiLjbn4ugvlZkZcAxQ0p8\",\n        \"user_status\": 1,\n        \"remember_token\": null,\n        \"remember_token_expires\": null,\n        \"timezone\": null,\n        \"login_type\": null,\n        \"registration_step\": \"3\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-18T11:56:43.000+05:30\",\n        \"updated_at\": \"2024-01-18T16:28:18.341+05:30\",\n        \"roles\": [\n            {\n                \"id\": \"760f8275-68b2-421c-af87-bc86ef16d579\",\n                \"name\": \"admin\",\n                \"created_at\": \"2024-01-18T11:50:26.000+05:30\",\n                \"updated_at\": \"2024-01-18T11:50:26.000+05:30\"\n            }\n        ],\n        \"organizations\": [\n            {\n                \"id\": \"aaae98b4-5be7-4227-84d3-17bb3dde26ee\",\n                \"company_name\": \"ABC\",\n                \"company_email\": \"anjpawar+6@cxr.agency\",\n                \"self_point_of_contact\": \"1\",\n                \"company_size\": null,\n                \"naics_code\": null,\n                \"climate_targets\": null,\n                \"address_line_1\": \"Mumbai\",\n                \"address_line_2\": \"floor1\",\n                \"city\": \"Pune\",\n                \"state\": \"MH\",\n                \"country\": null,\n                \"zipcode\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-18T13:56:10.000+05:30\",\n                \"updated_at\": \"2024-01-18T13:59:22.000+05:30\"\n            }\n        ]\n    }\n}"
+						},
+						{
+							"name": "update password",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    // \"firstName\":\"mayuri\",\n    // \"lastName\":\"chaudhari\"\n    // // \"email\":\"mchaudhari+1@cxr.agency\"\n    \"oldPassword\":\"Anuja11@\",\n    \"newPassword\":\"Anuja12@\",\n    \"confirmPassword\":\"Anuja12@\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/v1/auth/user"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "1107"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 18 Jan 2024 11:04:13 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Updated Successfully\",\n    \"data\": {\n        \"id\": \"d1fb7066-dc05-4e7a-a7ce-9ccc9f878fba\",\n        \"slug\": \"mayuri-chaudhari\",\n        \"email_verified_at\": null,\n        \"email_verify_token\": \"QJ4cvL8k3s6UxNyhN9S6uA.bmdPTGYxa3d2QWhJNFVPdw.j0htVqbOYEiq3WdwkBni0_RiLjbn4ugvlZkZcAxQ0p8\",\n        \"user_status\": 1,\n        \"remember_token\": null,\n        \"remember_token_expires\": null,\n        \"timezone\": null,\n        \"login_type\": null,\n        \"registration_step\": \"3\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-18T11:56:43.000+05:30\",\n        \"updated_at\": \"2024-01-18T16:34:13.969+05:30\",\n        \"roles\": [\n            {\n                \"id\": \"760f8275-68b2-421c-af87-bc86ef16d579\",\n                \"name\": \"admin\",\n                \"created_at\": \"2024-01-18T11:50:26.000+05:30\",\n                \"updated_at\": \"2024-01-18T11:50:26.000+05:30\"\n            }\n        ],\n        \"organizations\": [\n            {\n                \"id\": \"aaae98b4-5be7-4227-84d3-17bb3dde26ee\",\n                \"company_name\": \"ABC\",\n                \"company_email\": \"anjpawar+6@cxr.agency\",\n                \"self_point_of_contact\": \"1\",\n                \"company_size\": null,\n                \"naics_code\": null,\n                \"climate_targets\": null,\n                \"address_line_1\": \"Mumbai\",\n                \"address_line_2\": \"floor1\",\n                \"city\": \"Pune\",\n                \"state\": \"MH\",\n                \"country\": null,\n                \"zipcode\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-18T13:56:10.000+05:30\",\n                \"updated_at\": \"2024-01-18T13:59:22.000+05:30\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"url": "{{base_url}}/api/v1/auth/user"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Organisation Facilities",
+			"item": [
+				{
+					"name": "Create new Facility",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"organization_id\": \"45827b85-b5d1-11ee-b247-f44ee3c0ff12\",\n    \"facilities\":[\n        {\n            \"name\":\"power plant 1\",\n            \"addressLine1\":\"Pune\",\n            \"addressLine2\":\"floor1\",\n            \"city\":\"Pune\",\n            \"state\":\"MH\",\n            \"zipCode\":\"12345\"\n        },\n        {\n            \"name\":\"power plant 2\",\n            \"addressLine1\":\"Mumbai\",\n            \"addressLine2\":\"floor2\",\n            \"city\":\"Mumbai\",\n            \"state\":\"MH\",\n            \"zipCode\":\"46787\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/facility"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
