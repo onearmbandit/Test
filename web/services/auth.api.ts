@@ -66,3 +66,11 @@ export const registerStep2 = ({
 export const registerOrganisation = (orgBody: any) => {
   return fetchApi("/organization", { method: "POST", body: orgBody });
 };
+
+export const login = (body: any) => {
+  const formbody = new FormData();
+  formbody.append("email", body.email);
+  formbody.append("password", body.password);
+
+  return fetchApi("/login", { method: "POST", body: formbody });
+};
