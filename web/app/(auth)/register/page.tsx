@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useFormik } from "formik";
 import { useMutation } from "@tanstack/react-query";
-import { register } from "@/services/auth.api";
+import { register, registerStep2 } from "@/services/auth.api";
 import z from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { cn } from "@/lib/utils";
@@ -15,8 +15,11 @@ import { toast } from "sonner";
 
 export default function Page() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [userId, setUserId] = useState<string | null>(null);
   const [isSSOregistration, setiSSOregistration] = useState(false);
-  const steps: { [key: number]: ({ setCurrentStep }: any) => JSX.Element } = {
+  const steps: {
+    [key: number]: ({ setCurrentStep, setUserId, userId }: any) => JSX.Element;
+  } = {
     1: Step1,
     2: Step2,
     3: Step3,
@@ -36,6 +39,8 @@ export default function Page() {
             setCurrentStep={setCurrentStep}
             ssoReg={isSSOregistration}
             setSSOReg={setiSSOregistration}
+            setUserId={setUserId}
+            userId={userId}
           />
         </div>
 
@@ -60,17 +65,17 @@ export default function Page() {
   );
 }
 
-const Step1 = ({ setCurrentStep, setSSOReg }: any) => {
+const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const validation = z.object({
     email: z.string().email(),
     password: z.string().min(8),
   });
   const { mutate, isSuccess } = useMutation({
+    mutationKey: ["step1"],
     mutationFn: register,
     onSuccess: (user) => {
-      console.log("user", user);
-      localStorage.setItem("userId", user.data.id);
+      setUserId(user.data.id);
       setCurrentStep(2);
     },
     onError: (err) => {
@@ -256,9 +261,40 @@ const Step1 = ({ setCurrentStep, setSSOReg }: any) => {
   );
 };
 
-const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
+const Step2 = ({ setCurrentStep, ssoReg, setSSOReg, userId }: any) => {
+  const validation = z.object({
+    firstName: z.string().refine((val) => /^[a-zA-Z ]*$/.test(val), {
+      message: "Name should contain only alphabets",
+    }),
+    lastName: z.string().refine((val) => /^[a-zA-Z ]*$/.test(val), {
+      message: "Name should contain only alphabets",
+    }),
+  });
+  const { mutate, isSuccess } = useMutation({
+    mutationKey: ["step2"],
+    mutationFn: registerStep2,
+    onSuccess: (data) => {
+      setCurrentStep(3);
+    },
+  });
+  const step2Form = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      registrationStep: 2,
+    },
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: (data) => {
+      console.log("user details", userId);
+
+      mutate({ id: userId, formdata: data });
+    },
+  });
   return (
-    <div className="items-center flex max-w-[840px] flex-1 flex-col px-20 py-12 max-md:px-5">
+    <form
+      onSubmit={step2Form.handleSubmit}
+      className="items-center flex max-w-[840px] flex-1 flex-col px-20 py-12 max-md:px-5"
+    >
       <header
         className="justify-center text-neutral-900 text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl"
         aria-label="Name Question"
@@ -279,7 +315,8 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
                 type="text"
                 id="firstNameInput"
                 placeholder="First Name"
-                aria-label="First Name"
+                name="firstName"
+                onChange={step2Form.handleChange}
                 className="bg-transparent"
               />
             </div>
@@ -296,7 +333,8 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
                 type="text"
                 id="lastNameInput"
                 className="bg-transparent"
-                aria-label="Last Name"
+                name="lastName"
+                onChange={step2Form.handleChange}
                 placeholder="Last Name"
               />
             </div>
@@ -305,9 +343,7 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
           <div className="justify-center flex flex-col pl-16 pr-2.5 py-2.5 items-end max-md:max-w-full max-md:pl-5">
             <button
               className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 px-6 py-4 max-md:px-5"
-              role="button"
-              aria-label="Continue"
-              onClick={() => setCurrentStep(3)}
+              type="submit"
             >
               Continue
             </button>
@@ -349,7 +385,7 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
           </a>
         </div>
       )}
-    </div>
+    </form>
   );
 };
 
