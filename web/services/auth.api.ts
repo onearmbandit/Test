@@ -13,9 +13,9 @@ type CreateAPIMethod = <TInput extends Record<string, string>, TOutput>(opts: {
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 type Options = {
-  method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
-  body: any;
-  headers: AxiosHeaders;
+  method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
+  body?: any;
+  headers?: AxiosHeaders;
 };
 
 const fetchApi = async (
@@ -52,12 +52,7 @@ export const registerStep2 = ({
   id: number;
   formdata: any;
 }) => {
-  const formD = new FormData();
   const formbody = new URLSearchParams(formdata).toString();
-  // for (let key of Object.keys(formdata)) {
-  //   formbody.append(key, formdata[key]);
-  // }
-  console.log(id);
 
   return fetchApi(`/user/${id}`, {
     method: "PATCH",
@@ -66,4 +61,8 @@ export const registerStep2 = ({
       "Content-Type": "application/x-www-form-urlencoded",
     } as RawAxiosRequestHeaders,
   } as Options);
+};
+
+export const registerOrganisation = (orgBody: any) => {
+  return fetchApi("/organization", { method: "POST", body: orgBody });
 };

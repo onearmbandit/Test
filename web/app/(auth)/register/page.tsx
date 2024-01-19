@@ -5,17 +5,23 @@ import Link from "next/link";
 import { useState } from "react";
 import { useFormik } from "formik";
 import { useMutation } from "@tanstack/react-query";
-import { register, registerStep2 } from "@/services/auth.api";
+import {
+  register,
+  registerOrganisation,
+  registerStep2,
+} from "@/services/auth.api";
 import z from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { cn } from "@/lib/utils";
 import Tick from "@/components/icons/Tick";
-import { Eye } from "lucide-react";
+import { Eye, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Page() {
   const [currentStep, setCurrentStep] = useState(1);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userSlug, setUserSlug] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isSSOregistration, setiSSOregistration] = useState(false);
   const steps: {
     [key: number]: ({ setCurrentStep, setUserId, userId }: any) => JSX.Element;
@@ -41,6 +47,10 @@ export default function Page() {
             setSSOReg={setiSSOregistration}
             setUserId={setUserId}
             userId={userId}
+            setUserSlug={setUserSlug}
+            userSlug={userSlug}
+            setUserEmail={setUserEmail}
+            userEmail={userEmail}
           />
         </div>
 
@@ -71,7 +81,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     email: z.string().email(),
     password: z.string().min(8),
   });
-  const { mutate, isSuccess } = useMutation({
+  const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: register,
     onSuccess: (user) => {
@@ -229,11 +239,15 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
           </div>
         </div>
       </div>
-      <div className="button-wrapper justify-end flex flex-col w-full py-2.5 items-end max-md:max-w-full max-md:pl-5">
+      <div className="button-wrapper justify-end flex items-center w-full space-x-2 py-2.5 max-md:max-w-full max-md:pl-5">
+        {isPending && (
+          <Loader2 size={30} className="text-slate-400 animate-spin" />
+        )}
         <Button
           size={"lg"}
+          disabled={isPending}
           type="submit"
-          className="button text-base font-semibold leading-6 whitespace-nowrap rounded bg-blue-600 px-6 py-4 max-md:px-5"
+          className="button text-base font-semibold leading-6 whitespace-nowrap px-6 py-4 max-md:px-5"
         >
           Continue
         </Button>
@@ -261,7 +275,13 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   );
 };
 
-const Step2 = ({ setCurrentStep, ssoReg, setSSOReg, userId }: any) => {
+const Step2 = ({
+  setCurrentStep,
+  ssoReg,
+  setSSOReg,
+  userId,
+  setUserSlug,
+}: any) => {
   const validation = z.object({
     firstName: z.string().refine((val) => /^[a-zA-Z ]*$/.test(val), {
       message: "Name should contain only alphabets",
@@ -270,11 +290,15 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg, userId }: any) => {
       message: "Name should contain only alphabets",
     }),
   });
-  const { mutate, isSuccess } = useMutation({
+  const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step2"],
     mutationFn: registerStep2,
     onSuccess: (data) => {
+      setUserSlug(data.data.slug);
       setCurrentStep(3);
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
     },
   });
   const step2Form = useFormik({
@@ -340,13 +364,17 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg, userId }: any) => {
             </div>
           </div>
 
-          <div className="justify-center flex flex-col pl-16 pr-2.5 py-2.5 items-end max-md:max-w-full max-md:pl-5">
-            <button
-              className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 px-6 py-4 max-md:px-5"
+          <div className="justify-end flex pl-16 pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
+            {isPending && (
+              <Loader2 size={30} className="text-slate-400 animate-spin" />
+            )}
+            <Button
+              disabled={isPending}
+              className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center px-6 py-4 max-md:px-5"
               type="submit"
             >
               Continue
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -389,9 +417,53 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg, userId }: any) => {
   );
 };
 
-const Step3 = ({ setCurrentStep }: any) => {
+const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
+  const validation = z.object({
+    companyName: z.string(),
+    addressLine1: z.string(),
+    addressLine2: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zipCode: z
+      .string()
+      .min(5)
+      .refine((val) => /^-?\d*\.?\d+$/.test(val), {
+        message: "Enter a valid zipcode.",
+      }),
+  });
+
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationFn: registerOrganisation,
+    onSuccess: (data) => {
+      console.log("success", data.data.email);
+      setUserEmail(data.data.email);
+      setCurrentStep(4);
+    },
+  });
+
+  const step3Form = useFormik({
+    initialValues: {
+      userSlug,
+      companyName: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      state: "MH",
+      zipCode: "",
+      registrationStep: 3,
+    },
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: (data) => {
+      console.log(data);
+      mutate(data);
+    },
+  });
+
   return (
-    <div className="items-center flex max-w-[840px] flex-col justify-center px-16 py-12 max-md:px-5">
+    <form
+      onSubmit={step3Form.handleSubmit}
+      className="items-center flex max-w-[840px] flex-col justify-center px-16 py-12 max-md:px-5"
+    >
       <header className="flex w-full max-w-[581px] flex-col mt-5 max-md:max-w-full max-md:mb-10">
         <h1 className="justify-center text-neutral-900 text-center whitespace-nowrap text-6xl font-semibold self-stretch max-md:max-w-full max-md:text-4xl">
           Where do you work?
@@ -409,6 +481,8 @@ const Step3 = ({ setCurrentStep }: any) => {
           <Input
             type="text"
             id="companyName"
+            name="companyName"
+            onChange={step3Form.handleChange}
             placeholder="Company"
             className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
           />
@@ -424,13 +498,17 @@ const Step3 = ({ setCurrentStep }: any) => {
           <Input
             type="text"
             id="companyAdress"
-            placeholder="Company"
+            name="addressLine1"
+            onChange={step3Form.handleChange}
+            placeholder="Street Address"
             className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
           />
         </div>
         <div>
           <Input
             type="text"
+            name="addressLine2"
+            onChange={step3Form.handleChange}
             placeholder="Apt, suite, floor, unit, etc"
             className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
           />
@@ -440,6 +518,8 @@ const Step3 = ({ setCurrentStep }: any) => {
           <Input
             type="text"
             placeholder="City"
+            name="city"
+            onChange={step3Form.handleChange}
             className="text-slate-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-6 rounded-md max-md:max-w-full"
           />
 
@@ -462,6 +542,8 @@ const Step3 = ({ setCurrentStep }: any) => {
         <Input
           type="text"
           placeholder="Zipcode"
+          name="zipCode"
+          onChange={step3Form.handleChange}
           className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
         />
 
@@ -471,28 +553,31 @@ const Step3 = ({ setCurrentStep }: any) => {
               variant={"ghost"}
               className="font-semibold px-0 hover:bg-transparent"
               type="button"
-              aria-label="Back"
               onClick={() => setCurrentStep(2)}
             >
               Back
             </Button>
           </div>
-          <Button
-            size={"lg"}
-            type="submit"
-            className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap items-stretch rounded self-stretch justify-center px-6 py-4 max-md:px-5"
-            aria-label="Continue"
-            onClick={() => setCurrentStep(4)}
-          >
-            Continue
-          </Button>
+          <div className="flex space-x-2 items-center">
+            {isPending && (
+              <Loader2 size={30} className="text-slate-400 animate-spin" />
+            )}
+            <Button
+              size={"lg"}
+              type="submit"
+              disabled={isPending}
+              className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap items-stretch rounded self-stretch justify-center px-6 py-4 max-md:px-5"
+            >
+              Continue
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
-const RegistrationComplete = () => {
+const RegistrationComplete = ({ userEmail }: any) => {
   return (
     <div className="items-center flex max-w-[840px] flex-col justify-center px-16 py-12 max-md:px-5">
       <header className="flex w-full max-w-[581px] flex-col mt-5 max-md:max-w-full max-md:mb-10">
@@ -501,8 +586,8 @@ const RegistrationComplete = () => {
         </h1>
       </header>
       <p className="mt-6 py-8 max-w-[581px]">
-        We sent an email to <strong>johnsmith@pespico.com</strong>. Check your
-        inbox to activate your account.
+        We sent an email to <strong>{userEmail}</strong>. Check your inbox to
+        activate your account.
       </p>
       <Link
         href={"/login"}
