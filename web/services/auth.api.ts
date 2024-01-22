@@ -23,7 +23,6 @@ const fetchApi = async (
   options = { method: "GET" } as Options
 ) => {
   const { headers, method, body } = options;
-  console.log(options.body);
 
   const response = await axios({
     url: `${BASE_URL}/api/v1${url}`,
@@ -33,7 +32,7 @@ const fetchApi = async (
   })
     .then((res) => res.data)
     .catch((err) => {
-      console.log(err.response.data);
+      // console.log(err.response.data);
       throw new Error(err.response.data.message);
     });
 

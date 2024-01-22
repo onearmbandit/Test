@@ -45,6 +45,7 @@ const EditEmployees = ({
         {sizes.map((item, i) => (
           <button
             type="button"
+            key={i}
             // onClick={() => setSelected(i)}
             className={`company-size-option  text-lg font-bold leading-7 whitespace-nowrap active:bg-blue-300 hover:bg-blue-200 justify-center items-center grow px-7 py-4 rounded-2xl border-solid max-md:px-5 ${
               //   selected == i
