@@ -5,7 +5,7 @@ import {
   BelongsTo,
   hasMany,HasMany
 } from '@ioc:Adonis/Lucid/Orm'
-import SupplierChainReportingPeriod from './SupplierChainReportingPeriod'
+import SupplyChainReportingPeriod from './SupplyChainReportingPeriod'
 import SupplierProduct from './SupplierProduct'
 
 export default class Supplier extends BaseModel {
@@ -13,7 +13,7 @@ export default class Supplier extends BaseModel {
   public id: number
 
   @column()
-  public supplierChainReportingPeriodId: string
+  public supplyChainReportingPeriodId: string
 
   @column()
   public name: string
@@ -54,10 +54,10 @@ export default class Supplier extends BaseModel {
 
   //::_____Relationships Start_____:://
 
-  @belongsTo(() => SupplierChainReportingPeriod, {
-    localKey: 'supplierChainReportingPeriodId',
+  @belongsTo(() => SupplyChainReportingPeriod, {
+    localKey: 'supplyChainReportingPeriodId',
   })
-  public supplierChainReportingPeriod: BelongsTo<typeof SupplierChainReportingPeriod>
+  public SupplyChainReportingPeriod: BelongsTo<typeof SupplyChainReportingPeriod>
 
 
 

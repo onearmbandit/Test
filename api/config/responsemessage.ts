@@ -43,3 +43,13 @@ export const ORGANIZATION_RESPONSE = {
 }
 
 
+
+
+
+export const SUPPLIER_RESPONSE = {
+  updateSupplierReportPeriodSuccess: "Supplier chain reporting period  updated successfully.",
+  createSupplierReportPeriodSuccess: "Supplier chain reporting period created successfully",
+  supplierReportPeriodDeleteSuccess: "Supplier chain reporting period delete successfully."
+
+}
+

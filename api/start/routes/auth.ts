@@ -17,6 +17,9 @@ Route.group(() => {
 
 
 
+    //:: Api for download supplier csv template
+    Route.get('/download-supplier-csv', 'FilesController.download')
+
     //Auth routes
     Route.group(() => {
       //:: used for setup and update organization
@@ -28,6 +31,13 @@ Route.group(() => {
       Route.post('/user', 'UsersController.destroy')//for delete the user but need request data that's why used post method
 
       Route.resource('/facility', 'FacilityController').only(['store'])
+
+      //:: Supplier APIs
+      Route.post('/suppliers/csv-upload', 'SuppliersController.bulkCreationOfSupplier');
+
+      Route.resource('/supplier-period', 'SupplyChainReportingPeriodsController')
+
+
     })
       .prefix('/auth')
       .middleware('auth')
