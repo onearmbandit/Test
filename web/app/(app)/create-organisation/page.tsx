@@ -112,6 +112,7 @@ const Step2 = ({ setStep }: any) => {
       <div className="company-size-container grid grid-cols-3 w-5/6 gap-4 mt-6 max-md:max-w-full max-md:flex-wrap">
         {sizes.map((item, i) => (
           <button
+            key={i}
             type="button"
             onClick={() => setSelected(i)}
             className={`company-size-option  text-lg font-bold leading-7 whitespace-nowrap justify-center items-center grow px-7 py-4 rounded-2xl border-solid max-md:px-5 ${
@@ -152,8 +153,8 @@ const Step3 = ({ setStep }: any) => {
       </header>
       <div className="self-stretch text-[#64748B] text-base font-light leading-6 w-full mt-6 max-md:max-w-full">
         The North American Industry Classification System (NAICS) helps us
-        compare your business to industry benchmarks. If you're not sure what
-        your NAICS number is, you can find your category here:{" "}
+        compare your business to industry benchmarks. If you&apos;re not sure
+        what your NAICS number is, you can find your category here:{" "}
         <a
           href="https://www.census.gov/naics/"
           target="_blank"
