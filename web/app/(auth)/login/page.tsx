@@ -1,19 +1,52 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import { useFormik } from "formik";
+import { useMutation } from "@tanstack/react-query";
+import { login } from "@/services/auth.api";
+import { toast } from "sonner";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const Page = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const validation = z.object({
+    email: z.string().email(),
+    password: z.string(),
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      console.log("success", data);
+      localStorage.setItem("token", data.data.token.token);
+      router.push("/");
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const loginForm = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: (data) => {
+      console.log("login data", data);
+      mutate(data);
+    },
+  });
   return (
     <div className="h-screen flex justify-center items-center">
       <form
-        onSubmit={() => {
-          localStorage.setItem("token", "true");
-          router.push("/");
-        }}
+        onSubmit={loginForm.handleSubmit}
         className="justify-center items-center border border-[color:var(--Color-Gray-50,#F9FAFB)] shadow-sm flex w-full max-w-[828px] flex-col py-12 rounded-lg border-solid"
       >
         <div className="items-stretch self-center flex w-[367px] max-w-full gap-3 mt-1 px-5 py-9">
@@ -39,12 +72,11 @@ const Page = () => {
               Work email*
             </label>
             <Input
-              type="email"
               id="emailInput"
+              name={"email"}
+              onChange={loginForm.handleChange}
               className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full"
               placeholder="Enter your email"
-              aria-label="Enter your email"
-              aria-required="true"
             />
 
             <label
@@ -55,19 +87,23 @@ const Page = () => {
             </label>
             <div className="bg-gray-50 flex rounded-md mt-3 w-full">
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="passwordInput"
                 className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full"
                 placeholder="Enter your password"
-                aria-label="Enter your password"
-                aria-required="true"
+                name={"password"}
+                onChange={loginForm.handleChange}
               />
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/8cc6a76f5ee002a4ceaaf904b30d132424cc73e98f41fd0de093f596d88c473a?apiKey=011554aff43544e6af46800a427fd184&"
-                className="aspect-square object-contain object-center w-4 mr-2 cursor-pointer"
-                alt="Password Strength"
-              />
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                className="flex items-center cursor-pointer pr-2"
+              >
+                {showPassword ? (
+                  <EyeOff size={16} color="#64748B" />
+                ) : (
+                  <Eye size={16} color="#64748B" />
+                )}
+              </div>
             </div>
             <a
               href="#"
@@ -75,14 +111,19 @@ const Page = () => {
             >
               Forgot Password?
             </a>
-            <Button type="submit" className="w-fit mx-auto">
-              Login
-            </Button>
+            <div className="w-fit mx-auto flex items-center space-x-2">
+              {isPending && (
+                <Loader2 size={30} className="text-slate-400 animate-spin" />
+              )}
+              <Button type="submit" disabled={isPending}>
+                Login
+              </Button>
+            </div>
             <div className="text-blue-700 text-sm font-bold leading-5 self-center whitespace-nowrap mt-9">
               or login with SSO
             </div>
             <div className="text-blue-700 text-center text-xs font-medium leading-5 self-stretch mt-6 max-md:max-w-full">
-              Don’t have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href={"/register"}
                 className="font-bold text-sm text-blue-700"
