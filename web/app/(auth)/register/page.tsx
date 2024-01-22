@@ -14,7 +14,7 @@ import z from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { cn } from "@/lib/utils";
 import Tick from "@/components/icons/Tick";
-import { Eye, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Page() {
@@ -79,8 +79,15 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const validation = z.object({
     email: z.string().email(),
-    password: z.string().min(8),
+    password: z
+      .string()
+      .min(8)
+      .regex(/[a-z]/, "One lowercase character")
+      .regex(/[A-Z]/, "One uppercase character")
+      .regex(/[0-9]/, "One number")
+      .regex(/[^a-zA-Z0-9]/, "One special character"),
   });
+
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: register,
@@ -159,7 +166,11 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
             onClick={() => setShowPassword(!showPassword)}
             className="flex items-center cursor-pointer"
           >
-            <Eye size={16} color="#64748B" />
+            {showPassword ? (
+              <EyeOff size={16} color="#64748B" />
+            ) : (
+              <Eye size={16} color="#64748B" />
+            )}
           </div>
         </div>
         <div className="input-group items-stretch flex justify-between gap-5 mt-10 max-md:max-w-full max-md:flex-wrap">
@@ -168,7 +179,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Tick
                 variant={
                   registerForm.values.password != ""
-                    ? registerForm.errors.password
+                    ? registerForm.errors.password?.includes("lowercase")
                       ? "red"
                       : "green"
                     : "gray"
@@ -182,7 +193,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Tick
                 variant={
                   registerForm.values.password != ""
-                    ? registerForm.errors.password
+                    ? registerForm.errors.password?.includes("uppercase")
                       ? "red"
                       : "green"
                     : "gray"
@@ -212,7 +223,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Tick
                 variant={
                   registerForm.values.password != ""
-                    ? registerForm.errors.password
+                    ? registerForm.errors.password?.includes("number")
                       ? "red"
                       : "green"
                     : "gray"
@@ -226,7 +237,9 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Tick
                 variant={
                   registerForm.values.password != ""
-                    ? registerForm.errors.password
+                    ? registerForm.errors.password?.includes(
+                        "special character"
+                      )
                       ? "red"
                       : "green"
                     : "gray"

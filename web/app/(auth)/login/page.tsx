@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -8,11 +8,12 @@ import { useFormik } from "formik";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "@/services/auth.api";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const Page = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const validation = z.object({
     email: z.string().email(),
@@ -23,6 +24,8 @@ const Page = () => {
     mutationFn: login,
     onSuccess: (data) => {
       console.log("success", data);
+      localStorage.setItem("token", data.data.token.token);
+      router.push("/");
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -84,19 +87,23 @@ const Page = () => {
             </label>
             <div className="bg-gray-50 flex rounded-md mt-3 w-full">
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="passwordInput"
                 className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full"
                 placeholder="Enter your password"
                 name={"password"}
                 onChange={loginForm.handleChange}
               />
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/8cc6a76f5ee002a4ceaaf904b30d132424cc73e98f41fd0de093f596d88c473a?apiKey=011554aff43544e6af46800a427fd184&"
-                className="aspect-square object-contain object-center w-4 mr-2 cursor-pointer"
-                alt="Password Strength"
-              />
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                className="flex items-center cursor-pointer pr-2"
+              >
+                {showPassword ? (
+                  <EyeOff size={16} color="#64748B" />
+                ) : (
+                  <Eye size={16} color="#64748B" />
+                )}
+              </div>
             </div>
             <a
               href="#"
