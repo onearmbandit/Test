@@ -165,7 +165,6 @@ const Step3 = ({ setStep }: any) => {
       </div>
       <Input
         className="text-slate-500 text-xs font-light leading-4 whitespace-nowrap items-stretch bg-gray-50 justify-center mt-6 px-2 py-7 rounded-md self-start"
-        aria-label="Add NAICS code"
         placeholder="Add NAICS code"
       />
 
@@ -214,7 +213,6 @@ const Step4 = ({ setStep }: any) => {
         </p>
         <input
           type="text"
-          aria-label="Example target goal"
           className="text-slate-500 text-xs font-light leading-4 bg-gray-50 self-stretch mt-2 px-2 py-1 rounded-md"
           placeholder="ex: Carbon neutral by 2030"
         />

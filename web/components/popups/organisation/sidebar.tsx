@@ -18,16 +18,10 @@ const AccountsNav = () => {
       <div className="items-stretch bg-gray-50 flex w-full grow rounded-s-lg flex-col mx-auto pt-6 pb-12 px-6 max-md:px-5">
         <h2 className="text-gray-500 text-xs font-bold leading-4">Accounts</h2>
         <div className="items-stretch bg-gray-100 bg-opacity-0 flex flex-col mt-2.5 py-3.5">
-          <div
-            aria-label="User full name"
-            className="overflow-hidden text-slate-800 text-ellipsis text-sm font-bold leading-5 whitespace-nowrap"
-          >
+          <div className="overflow-hidden text-slate-800 text-ellipsis text-sm font-bold leading-5 whitespace-nowrap">
             John Smith
           </div>
-          <div
-            aria-label="User email"
-            className="overflow-hidden text-gray-500 text-ellipsis text-xs leading-4"
-          >
+          <div className="overflow-hidden text-gray-500 text-ellipsis text-xs leading-4">
             johnsmith@pepsico.com
           </div>
         </div>

@@ -332,11 +332,8 @@ const Step2 = ({
       onSubmit={step2Form.handleSubmit}
       className="items-center flex max-w-[840px] flex-1 flex-col px-20 py-12 max-md:px-5"
     >
-      <header
-        className="justify-center text-neutral-900 text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl"
-        aria-label="Name Question"
-      >
-        Whats your name?
+      <header className="justify-center text-neutral-900 text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl">
+        What&apos;s your name?
       </header>
       {!ssoReg ? (
         <div className="justify-center items-stretch self-stretch space-y-10 flex flex-col mt-14 mb-52 py-6 max-md:max-w-full max-md:mr-2.5 max-md:my-10 max-md:px-5">
@@ -537,10 +534,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
           />
 
           <div className="items-stretch bg-gray-50 flex justify-between gap-2 w-[35%] px-2 py-6 rounded-md">
-            <div
-              className="text-slate-500 text-sm font-light leading-5 grow whitespace-nowrap"
-              aria-label="State"
-            >
+            <div className="text-slate-500 text-sm font-light leading-5 grow whitespace-nowrap">
               State
             </div>
             <img
@@ -548,7 +542,6 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/e2291a7397fc864d89d99afc7f9d8722720b9685dfa12431141c0d34998ec61f?apiKey=011554aff43544e6af46800a427fd184&"
               className="aspect-square object-contain object-center w-4 overflow-hidden self-center shrink-0 max-w-full my-auto"
               alt="State"
-              aria-label="State"
             />
           </div>
         </div>

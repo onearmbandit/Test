@@ -123,7 +123,7 @@ const Page = () => {
               or login with SSO
             </div>
             <div className="text-blue-700 text-center text-xs font-medium leading-5 self-stretch mt-6 max-md:max-w-full">
-              Don’t have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href={"/register"}
                 className="font-bold text-sm text-blue-700"

@@ -29,7 +29,6 @@ const Page = () => {
                 type="password"
                 id="new-password"
                 className="form-control-text text-slate-700 text-xs font-light leading-4 py-7 bg-gray-50 grow max-md:max-w-full"
-                aria-label="New password"
               />
               <img
                 loading="lazy"
@@ -51,7 +50,6 @@ const Page = () => {
                 type="password"
                 id="confirm-password"
                 className="form-control-text text-slate-700 text-xs font-light leading-4 py-7 bg-gray-50 grow max-md:max-w-full"
-                aria-label="Confirm password"
               />
               <img
                 loading="lazy"

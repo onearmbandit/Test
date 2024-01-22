@@ -61,7 +61,6 @@ const EditEmployees = ({
       <Button
         className="text-sm font-bold whitespace-nowrap justify-center items-stretch rounded self-end"
         type="submit"
-        aria-label="Save Changes"
       >
         Save Changes
       </Button>

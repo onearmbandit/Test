@@ -10,7 +10,6 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
     <form
       action={() => setSection("home")}
       className="items-start w-full bg-white flex grow rounded-e-lg flex-col pl-8 pr-11 pt-6 pb-12 max-md:px-5"
-      aria-label="Address Editor"
     >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch max-md:max-w-full">
         <span className="text-slate-500">
@@ -39,16 +38,12 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
           <a
             href="#"
             className="text-slate-700 text-xs font-light leading-4 whitespace-nowrap items-stretch bg-gray-50 grow justify-center px-2 py-3.5 rounded-md"
-            aria-label="Link"
-            aria-role="link"
           >
             New York
           </a>
           <a
             href="#"
             className="items-stretch bg-gray-50 flex justify-between gap-2 px-2 py-3.5 rounded-md"
-            aria-label="Link"
-            aria-role="link"
           >
             <div className="text-slate-700 text-xs font-light leading-4 grow whitespace-nowrap">
               New York
@@ -62,8 +57,6 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
           <a
             href="#"
             className="text-slate-700 text-xs font-light leading-4 whitespace-nowrap items-stretch bg-gray-50 grow justify-center px-2 py-3.5 rounded-md"
-            aria-label="Link"
-            aria-role="link"
           >
             10001-5748
           </a>
@@ -71,7 +64,6 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
         <div className="flex justify-end">
           <Button
             className="text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
-            aria-label="Save Changes"
             type="submit"
           >
             Save Changes

@@ -10,7 +10,6 @@ const ChangePassword = () => {
     <form
       action={() => setMyAccSection("home")}
       className="items-start w-full bg-white flex grow rounded-e-lg flex-col p-6 max-md:px-5"
-      aria-label="Address Editor"
     >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch max-md:max-w-full">
         <span className="text-slate-500">Account &gt; My Account &gt; </span>
@@ -62,7 +61,6 @@ const ChangePassword = () => {
         <div className="flex justify-end">
           <Button
             className="text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
-            aria-label="Save Changes"
             type="submit"
           >
             Save Changes

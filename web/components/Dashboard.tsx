@@ -17,7 +17,6 @@ const Dashboard = () => {
       <Link
         href={"/create-organisation"}
         className="text-white text-center text-base font-bold leading-6 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 px-6 py-4 max-md:px-5"
-        aria-label="Set up company profile"
         role="button"
       >
         Set up company profile

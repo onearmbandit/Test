@@ -14,7 +14,6 @@ const EditClimateConditions = ({
     <form
       action={() => setSection("home")}
       className="items-start self-stretch bg-white flex grow rounded-e-lg flex-col space-y-6  pt-6 px-8 max-md:px-5"
-      aria-label="Climate Commitments form"
     >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch max-md:max-w-full">
         <span className="text-slate-500">
@@ -34,7 +33,6 @@ const EditClimateConditions = ({
         <a
           href="#"
           className="justify-between items-stretch border border-green-100 bg-green-50 flex gap-0.5 px-2.5 py-2 rounded-md border-solid"
-          aria-label="Carbon Neutral by 2030"
         >
           <div className="text-green-800 text-xs font-medium leading-4 grow whitespace-nowrap">
             Carbon Neutral by 2030
@@ -49,7 +47,6 @@ const EditClimateConditions = ({
         <a
           href="#"
           className="justify-between items-stretch border border-green-100 bg-green-50 flex gap-0.5 px-2.5 py-2 rounded-md border-solid"
-          aria-label="Carbon Neutral by 2030"
         >
           <div className="text-green-800 text-xs font-medium leading-4 grow whitespace-nowrap">
             Carbon Neutral by 2030
@@ -68,10 +65,7 @@ const EditClimateConditions = ({
         placeholder="ex: Carbon neutral by 2030"
       />
 
-      <div
-        className="flex w-[153px] max-w-full flex-col items-end mt-8 mb-7 self-end"
-        aria-label="Add Target and Save Changes"
-      >
+      <div className="flex w-[153px] max-w-full flex-col items-end mt-8 mb-7 self-end">
         <div className="text-blue-600 text-center text-sm font-bold leading-4 whitespace-nowrap">
           + Add another target
         </div>
