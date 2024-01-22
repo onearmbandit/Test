@@ -11,7 +11,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const token = typeof window != "undefined" && localStorage.getItem("token");
   if (!token) {
     router.push("/login");
-    return;
+    return null;
   }
   return <>{children}</>;
 };
