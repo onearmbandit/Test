@@ -322,8 +322,6 @@ const Step2 = ({
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      console.log("user details", userId);
-
       mutate({ id: userId, formdata: data });
     },
   });
@@ -445,7 +443,6 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const { mutate, isSuccess, isPending } = useMutation({
     mutationFn: registerOrganisation,
     onSuccess: (data) => {
-      console.log("success", data.data.email);
       setUserEmail(data.data.email);
       setCurrentStep(4);
     },
@@ -464,7 +461,6 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      console.log(data);
       mutate(data);
     },
   });

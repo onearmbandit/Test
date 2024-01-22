@@ -23,7 +23,7 @@ const Page = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      console.log("success", data);
+      // console.log("success", data);
       localStorage.setItem("token", data.data.token.token);
       router.push("/");
     },
@@ -39,7 +39,6 @@ const Page = () => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      console.log("login data", data);
       mutate(data);
     },
   });
