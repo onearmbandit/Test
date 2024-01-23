@@ -43,7 +43,7 @@ export default class Facility extends BaseModel {
   public organization: BelongsTo<typeof Organization>
 
   public static async createFacility(facilityDataArray) {
-    const createdFacilities = [];
+    const createdFacilities:any = [];
 
     for (const facilityData of facilityDataArray) {
       const result = await Facility.create(facilityData);
