@@ -16,7 +16,8 @@ Route.group(() => {
     Route.post('/logout', 'AuthController.logout').middleware('auth');
 
     // social login or signup API
-    Route.post('/social-login', 'AuthController.socialSignupOrLogin') 
+    Route.post('/social-signup', 'AuthController.socialSignupAndLogin') 
+    Route.post('/social-login', 'AuthController.socialLogin') 
 
 
     //Auth routes

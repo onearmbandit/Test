@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\":\"anjpawar+7@cxr.agency\",\n    \"password\":\"Anuja11@\",\n    \"registrationStep\":1,\n    \"invitedUser\":false   //if user invited by mail then true otherwise false\n}",
+							"raw": "{\n    \"email\":\"anjpawar+5@cxr.agency\",\n    \"password\":\"Anuja11@\",\n    \"registrationStep\":1,\n    \"invitedUser\":false   /*if user invited by mail then true otherwise false */\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -33,26 +33,15 @@
 						"method": "PATCH",
 						"header": [],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "firstName",
-									"value": "Anuja",
-									"type": "text"
-								},
-								{
-									"key": "lastName",
-									"value": "Pawar",
-									"type": "text"
-								},
-								{
-									"key": "registrationStep",
-									"value": "2",
-									"type": "text"
+							"mode": "raw",
+							"raw": "{\n    \"firstName\":\"tanuja\",\n    \"lastName\":\"Pawar\",\n    \"registrationStep\":2,\n    \"invitedUser\":false, /* if user invited by mail then true otherwise false */\n    \"throughSSO\":false    /*if through SSO then true otherwise false */\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
 								}
-							]
+							}
 						},
-						"url": "{{base_url}}/api/v1/user/1"
+						"url": "{{base_url}}/api/v1/user/bade1dd9-3244-478c-9a2f-01691ef69d7c"
 					},
 					"response": []
 				},
@@ -225,6 +214,55 @@
 						"url": "{{base_url}}/api/v1/logout"
 					},
 					"response": []
+				},
+				{
+					"name": "Social Signup and Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"anjpawar+6@cxr.agency\",\n    \"socialLoginToken\":\"116647864315358495463\",  \n    \"loginType\":\"google\", /*google or microsoft */\n    \"firstName\":\"Anuja\",\n    \"lastName\":\"Pawar\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/social-signup"
+					},
+					"response": []
+				},
+				{
+					"name": "social login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "anjpawar+6@cxr.agency",
+									"type": "text"
+								},
+								{
+									"key": "socialLoginToken",
+									"value": "116647864315358495463",
+									"description": "social login id",
+									"type": "text"
+								},
+								{
+									"key": "loginType",
+									"value": "google",
+									"description": "google or microsoft",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/api/v1/social-login"
+					},
+					"response": []
 				}
 			]
 		},
@@ -261,14 +299,14 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"companyEmail\":\"anjpawar+6@cxr.agency\",\n    \"selfPointOfContact\":1,\n    \"profileStep\":1\n}",
+									"raw": "{\n    \"companyEmail\":\"anjpawar+6@cxr.agency\",\n    \"profileStep\":1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": "{{base_url}}/api/v1/auth/organization/36829e5b-add4-4a74-ba57-e7b0aa9685cd"
 							},
 							"status": "OK",
 							"code": 200,
@@ -971,6 +1009,21 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "anjpawar+3@cxr.agency",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Anuja11@",
+									"type": "text"
+								}
+							]
+						},
 						"url": "{{base_url}}/api/v1/auth/user"
 					},
 					"response": []
@@ -995,6 +1048,126 @@
 							}
 						},
 						"url": "{{base_url}}/api/v1/facility"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "files",
+			"item": [
+				{
+					"name": "download supplier csv template",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/v1/download-supplier-csv"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Supplier chain Report period",
+			"item": [
+				{
+					"name": "Create supplier period",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"organizationId\": \"\",\n    \"reportingPeriodFrom\":\"\",\n    \"reportingPeriodTo\":\"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/auth/supplier-period"
+					},
+					"response": []
+				},
+				{
+					"name": "show details",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update period",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"organizationId\": \"0b37a38d-32b5-4dbf-bbac-df6d0b51f9f8\",\n    \"reportingPeriodFrom\":\"2024-01\",\n    \"reportingPeriodTo\":\"2024-02\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/auth/supplier-period/ebb6669d-7e6f-473e-adfe-0496b83e4a52"
+					},
+					"response": []
+				},
+				{
+					"name": "delete Period",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{base_url}}/api/v1/auth/supplier-period/ebb6669d-7e6f-473e-adfe-0496b83e4a52"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Supplier",
+			"item": [
+				{
+					"name": "supllier csv file upload",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "supplierCSV",
+									"type": "file",
+									"src": "/home/cemtrex/projects/C3Insets/api/public/downloads/Supplier CSV Template.csv"
+								}
+							]
+						},
+						"url": "{{base_url}}/api/v1/auth/suppliers/csv-upload"
 					},
 					"response": []
 				}

@@ -7,14 +7,14 @@ export default class SocialSignupOrLoginValidator {
 
 	public schema = schema.create({
 		email: schema.string({ trim: true }, [rules.email()]),
-		socialLogintoken: schema.string(),
+		socialLoginToken: schema.string(),
 		loginType: schema.string()
 	})
 
 
 	public messages = {
 		'email.required': 'Please enter the e-mail address.',
-		'socialLogintoken.required': 'Social login token field required.',
+		'socialLoginToken.required': 'Social login token field required.',
 		'loginType.required': 'Login type field required.',
 		'email.email': 'Please enter the valid e-mail address.',
 	}
