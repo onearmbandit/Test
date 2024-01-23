@@ -39,7 +39,6 @@ function Page() {
               type="email"
               className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full"
               placeholder="Enter your email"
-              aria-label="Email"
             />
 
             <Button

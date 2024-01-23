@@ -3,11 +3,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useState } from "react";
+import { useFormik } from "formik";
+import { useMutation } from "@tanstack/react-query";
+import {
+  register,
+  registerOrganisation,
+  registerStep2,
+} from "@/services/auth.api";
+import z from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
+import { cn } from "@/lib/utils";
+import Tick from "@/components/icons/Tick";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Page() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userSlug, setUserSlug] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isSSOregistration, setiSSOregistration] = useState(false);
-  const steps: { [key: number]: ({ setCurrentStep }: any) => JSX.Element } = {
+  const steps: {
+    [key: number]: ({ setCurrentStep, setUserId, userId }: any) => JSX.Element;
+  } = {
     1: Step1,
     2: Step2,
     3: Step3,
@@ -22,13 +40,19 @@ export default function Page() {
         style={{ width: `${(currentStep / 4) * 100}vw` }}
       />
       <div className="flex container justify-between h-screen w-full">
-        <form>
+        <div>
           <RegistraionSteps
             setCurrentStep={setCurrentStep}
             ssoReg={isSSOregistration}
             setSSOReg={setiSSOregistration}
+            setUserId={setUserId}
+            userId={userId}
+            setUserSlug={setUserSlug}
+            userSlug={userSlug}
+            setUserEmail={setUserEmail}
+            userEmail={userEmail}
           />
-        </form>
+        </div>
 
         <div className="flex-1 mt-9 max-w flex flex-col items-end">
           <header className="header flex justify-end mb-[6px]">
@@ -51,9 +75,49 @@ export default function Page() {
   );
 }
 
-const Step1 = ({ setCurrentStep, setSSOReg }: any) => {
+const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const validation = z.object({
+    email: z.string().email(),
+    password: z
+      .string()
+      .min(8)
+      .regex(/[a-z]/, "One lowercase character")
+      .regex(/[A-Z]/, "One uppercase character")
+      .regex(/[0-9]/, "One number")
+      .regex(/[^a-zA-Z0-9]/, "One special character"),
+  });
+
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationKey: ["step1"],
+    mutationFn: register,
+    onSuccess: (user) => {
+      setUserId(user.data.id);
+      setCurrentStep(2);
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const registerForm = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      registrationStep: 1,
+      invitedUser: false,
+    },
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: (data) => {
+      mutate(data);
+    },
+  });
+
   return (
-    <div className="items-center flex flex-1 max-w-[840px] w-full flex-col px-20 py-12 max-md:px-5">
+    <form
+      onSubmit={registerForm.handleSubmit}
+      className="items-center flex flex-1 max-w-[840px] w-full flex-col px-20 py-12 max-md:px-5"
+    >
       <header className="header justify-center text-neutral-900 text-center text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl">
         Create your account
       </header>
@@ -64,12 +128,17 @@ const Step1 = ({ setCurrentStep, setSSOReg }: any) => {
         >
           Work email*
         </label>
-        <div className="input text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full">
+        <div
+          className={cn(
+            "input text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
+            registerForm.errors.email && "border border-red-500"
+          )}
+        >
           <Input
-            type="email"
-            className="w-full bg-transparent"
+            className={"w-full bg-transparent"}
             id="email"
-            aria-label="Email"
+            name="email"
+            onChange={registerForm.handleChange}
             placeholder="Email"
           />
         </div>
@@ -79,53 +148,70 @@ const Step1 = ({ setCurrentStep, setSSOReg }: any) => {
         >
           Create your password*
         </label>
-        <div className="input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 py-7 rounded-md max-md:max-w-full max-md:flex-wrap">
+        <div
+          className={cn(
+            "input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 py-7 rounded-md max-md:max-w-full max-md:flex-wrap",
+            registerForm.errors.password && "border border-red-500"
+          )}
+        >
           <Input
-            type="password"
+            type={showPassword ? "text" : "password"}
             id="password"
             className="w-full bg-transparent"
-            aria-label="Password"
+            name="password"
+            onChange={registerForm.handleChange}
             placeholder="Password"
           />
-          <div className="flex items-center cursor-pointer">
-            <img
-              loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/8cc6a76f5ee002a4ceaaf904b30d132424cc73e98f41fd0de093f596d88c473a?apiKey=011554aff43544e6af46800a427fd184&"
-              className="aspect-square object-contain object-center w-4 justify-center items-center overflow-hidden shrink-0 max-w-full"
-              alt="Password Strength"
-            />
+          <div
+            onClick={() => setShowPassword(!showPassword)}
+            className="flex items-center cursor-pointer"
+          >
+            {showPassword ? (
+              <EyeOff size={16} color="#64748B" />
+            ) : (
+              <Eye size={16} color="#64748B" />
+            )}
           </div>
         </div>
         <div className="input-group items-stretch flex justify-between gap-5 mt-10 max-md:max-w-full max-md:flex-wrap">
           <div className="input-help items-stretch flex grow basis-[0%] flex-col">
             <div className="input-help-item items-stretch flex justify-between gap-2">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/4d9131262a739251a2689313c69c8686a6f9e8288b4553304816b70c87f5b0e6?apiKey=011554aff43544e6af46800a427fd184&"
-                className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                alt="Lowercase Character"
+              <Tick
+                variant={
+                  registerForm.values.password != ""
+                    ? registerForm.errors.password?.includes("lowercase")
+                      ? "red"
+                      : "green"
+                    : "gray"
+                }
               />
               <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
                 One lowercase character
               </div>
             </div>
             <div className="input-help-item items-stretch flex justify-between gap-2 mt-2.5">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/4d9131262a739251a2689313c69c8686a6f9e8288b4553304816b70c87f5b0e6?apiKey=011554aff43544e6af46800a427fd184&"
-                className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                alt="Uppercase Character"
+              <Tick
+                variant={
+                  registerForm.values.password != ""
+                    ? registerForm.errors.password?.includes("uppercase")
+                      ? "red"
+                      : "green"
+                    : "gray"
+                }
               />
               <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
                 One uppercase character
               </div>
             </div>
             <div className="input-help-item items-stretch flex gap-2 mt-2.5">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/4d9131262a739251a2689313c69c8686a6f9e8288b4553304816b70c87f5b0e6?apiKey=011554aff43544e6af46800a427fd184&"
-                className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                alt="Minimum Characters"
+              <Tick
+                variant={
+                  registerForm.values.password != ""
+                    ? registerForm.errors.password
+                      ? "red"
+                      : "green"
+                    : "gray"
+                }
               />
               <div className="input-help-text text-zinc-950 text-opacity-30 text-sm">
                 8 characters minimum
@@ -134,22 +220,30 @@ const Step1 = ({ setCurrentStep, setSSOReg }: any) => {
           </div>
           <div className="input-help items-stretch flex grow basis-[0%] flex-col self-start">
             <div className="input-help-item items-stretch flex justify-between gap-2">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/4d9131262a739251a2689313c69c8686a6f9e8288b4553304816b70c87f5b0e6?apiKey=011554aff43544e6af46800a427fd184&"
-                className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                alt="Number"
+              <Tick
+                variant={
+                  registerForm.values.password != ""
+                    ? registerForm.errors.password?.includes("number")
+                      ? "red"
+                      : "green"
+                    : "gray"
+                }
               />
               <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
                 One number
               </div>
             </div>
             <div className="input-help-item items-stretch flex justify-between gap-2 mt-2.5">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/4d9131262a739251a2689313c69c8686a6f9e8288b4553304816b70c87f5b0e6?apiKey=011554aff43544e6af46800a427fd184&"
-                className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                alt="Special Character"
+              <Tick
+                variant={
+                  registerForm.values.password != ""
+                    ? registerForm.errors.password?.includes(
+                        "special character"
+                      )
+                      ? "red"
+                      : "green"
+                    : "gray"
+                }
               />
               <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
                 One special character
@@ -158,11 +252,15 @@ const Step1 = ({ setCurrentStep, setSSOReg }: any) => {
           </div>
         </div>
       </div>
-      <div className="button-wrapper justify-end flex flex-col w-full py-2.5 items-end max-md:max-w-full max-md:pl-5">
+      <div className="button-wrapper justify-end flex items-center w-full space-x-2 py-2.5 max-md:max-w-full max-md:pl-5">
+        {isPending && (
+          <Loader2 size={30} className="text-slate-400 animate-spin" />
+        )}
         <Button
           size={"lg"}
-          onClick={() => setCurrentStep(2)}
-          className="button text-base font-semibold leading-6 whitespace-nowrap rounded bg-blue-600 px-6 py-4 max-md:px-5"
+          disabled={isPending}
+          type="submit"
+          className="button text-base font-semibold leading-6 whitespace-nowrap px-6 py-4 max-md:px-5"
         >
           Continue
         </Button>
@@ -183,21 +281,57 @@ const Step1 = ({ setCurrentStep, setSSOReg }: any) => {
         </Link>
       </div>
       <div className="text-slate-700 text-center text-xs font-light leading-4 mt-6 max-md:max-w-full">
-        By clicking ‘Continue’ above, you agree to our Terms of Service and
-        Privacy Policy.
+        By clicking &apos;Continue&apos; above, you agree to our Terms of
+        Service and Privacy Policy.
       </div>
-    </div>
+    </form>
   );
 };
 
-const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
+const Step2 = ({
+  setCurrentStep,
+  ssoReg,
+  setSSOReg,
+  userId,
+  setUserSlug,
+}: any) => {
+  const validation = z.object({
+    firstName: z.string().refine((val) => /^[a-zA-Z ]*$/.test(val), {
+      message: "Name should contain only alphabets",
+    }),
+    lastName: z.string().refine((val) => /^[a-zA-Z ]*$/.test(val), {
+      message: "Name should contain only alphabets",
+    }),
+  });
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationKey: ["step2"],
+    mutationFn: registerStep2,
+    onSuccess: (data) => {
+      setUserSlug(data.data.slug);
+      setCurrentStep(3);
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+  const step2Form = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      registrationStep: 2,
+    },
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: (data) => {
+      mutate({ id: userId, formdata: data });
+    },
+  });
   return (
-    <div className="items-center flex max-w-[840px] flex-1 flex-col px-20 py-12 max-md:px-5">
-      <header
-        className="justify-center text-neutral-900 text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl"
-        aria-label="Name Question"
-      >
-        Whats your name?
+    <form
+      onSubmit={step2Form.handleSubmit}
+      className="items-center flex max-w-[840px] flex-1 flex-col px-20 py-12 max-md:px-5"
+    >
+      <header className="justify-center text-neutral-900 text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl">
+        What&apos;s your name?
       </header>
       {!ssoReg ? (
         <div className="justify-center items-stretch self-stretch space-y-10 flex flex-col mt-14 mb-52 py-6 max-md:max-w-full max-md:mr-2.5 max-md:my-10 max-md:px-5">
@@ -213,7 +347,8 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
                 type="text"
                 id="firstNameInput"
                 placeholder="First Name"
-                aria-label="First Name"
+                name="firstName"
+                onChange={step2Form.handleChange}
                 className="bg-transparent"
               />
             </div>
@@ -230,21 +365,24 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
                 type="text"
                 id="lastNameInput"
                 className="bg-transparent"
-                aria-label="Last Name"
+                name="lastName"
+                onChange={step2Form.handleChange}
                 placeholder="Last Name"
               />
             </div>
           </div>
 
-          <div className="justify-center flex flex-col pl-16 pr-2.5 py-2.5 items-end max-md:max-w-full max-md:pl-5">
-            <button
-              className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 px-6 py-4 max-md:px-5"
-              role="button"
-              aria-label="Continue"
-              onClick={() => setCurrentStep(3)}
+          <div className="justify-end flex pl-16 pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
+            {isPending && (
+              <Loader2 size={30} className="text-slate-400 animate-spin" />
+            )}
+            <Button
+              disabled={isPending}
+              className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center px-6 py-4 max-md:px-5"
+              type="submit"
             >
               Continue
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -283,13 +421,55 @@ const Step2 = ({ setCurrentStep, ssoReg, setSSOReg }: any) => {
           </a>
         </div>
       )}
-    </div>
+    </form>
   );
 };
 
-const Step3 = ({ setCurrentStep }: any) => {
+const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
+  const validation = z.object({
+    companyName: z.string(),
+    addressLine1: z.string(),
+    addressLine2: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zipCode: z
+      .string()
+      .min(5)
+      .refine((val) => /^-?\d*\.?\d+$/.test(val), {
+        message: "Enter a valid zipcode.",
+      }),
+  });
+
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationFn: registerOrganisation,
+    onSuccess: (data) => {
+      setUserEmail(data.data.email);
+      setCurrentStep(4);
+    },
+  });
+
+  const step3Form = useFormik({
+    initialValues: {
+      userSlug,
+      companyName: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      state: "MH",
+      zipCode: "",
+      registrationStep: 3,
+    },
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: (data) => {
+      mutate(data);
+    },
+  });
+
   return (
-    <div className="items-center flex max-w-[840px] flex-col justify-center px-16 py-12 max-md:px-5">
+    <form
+      onSubmit={step3Form.handleSubmit}
+      className="items-center flex max-w-[840px] flex-col justify-center px-16 py-12 max-md:px-5"
+    >
       <header className="flex w-full max-w-[581px] flex-col mt-5 max-md:max-w-full max-md:mb-10">
         <h1 className="justify-center text-neutral-900 text-center whitespace-nowrap text-6xl font-semibold self-stretch max-md:max-w-full max-md:text-4xl">
           Where do you work?
@@ -307,6 +487,8 @@ const Step3 = ({ setCurrentStep }: any) => {
           <Input
             type="text"
             id="companyName"
+            name="companyName"
+            onChange={step3Form.handleChange}
             placeholder="Company"
             className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
           />
@@ -322,13 +504,17 @@ const Step3 = ({ setCurrentStep }: any) => {
           <Input
             type="text"
             id="companyAdress"
-            placeholder="Company"
+            name="addressLine1"
+            onChange={step3Form.handleChange}
+            placeholder="Street Address"
             className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
           />
         </div>
         <div>
           <Input
             type="text"
+            name="addressLine2"
+            onChange={step3Form.handleChange}
             placeholder="Apt, suite, floor, unit, etc"
             className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
           />
@@ -338,14 +524,13 @@ const Step3 = ({ setCurrentStep }: any) => {
           <Input
             type="text"
             placeholder="City"
+            name="city"
+            onChange={step3Form.handleChange}
             className="text-slate-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-6 rounded-md max-md:max-w-full"
           />
 
           <div className="items-stretch bg-gray-50 flex justify-between gap-2 w-[35%] px-2 py-6 rounded-md">
-            <div
-              className="text-slate-500 text-sm font-light leading-5 grow whitespace-nowrap"
-              aria-label="State"
-            >
+            <div className="text-slate-500 text-sm font-light leading-5 grow whitespace-nowrap">
               State
             </div>
             <img
@@ -353,13 +538,14 @@ const Step3 = ({ setCurrentStep }: any) => {
               src="https://cdn.builder.io/api/v1/image/assets/TEMP/e2291a7397fc864d89d99afc7f9d8722720b9685dfa12431141c0d34998ec61f?apiKey=011554aff43544e6af46800a427fd184&"
               className="aspect-square object-contain object-center w-4 overflow-hidden self-center shrink-0 max-w-full my-auto"
               alt="State"
-              aria-label="State"
             />
           </div>
         </div>
         <Input
           type="text"
           placeholder="Zipcode"
+          name="zipCode"
+          onChange={step3Form.handleChange}
           className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
         />
 
@@ -369,28 +555,31 @@ const Step3 = ({ setCurrentStep }: any) => {
               variant={"ghost"}
               className="font-semibold px-0 hover:bg-transparent"
               type="button"
-              aria-label="Back"
               onClick={() => setCurrentStep(2)}
             >
               Back
             </Button>
           </div>
-          <Button
-            size={"lg"}
-            type="submit"
-            className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap items-stretch rounded self-stretch justify-center px-6 py-4 max-md:px-5"
-            aria-label="Continue"
-            onClick={() => setCurrentStep(4)}
-          >
-            Continue
-          </Button>
+          <div className="flex space-x-2 items-center">
+            {isPending && (
+              <Loader2 size={30} className="text-slate-400 animate-spin" />
+            )}
+            <Button
+              size={"lg"}
+              type="submit"
+              disabled={isPending}
+              className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap items-stretch rounded self-stretch justify-center px-6 py-4 max-md:px-5"
+            >
+              Continue
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
-const RegistrationComplete = () => {
+const RegistrationComplete = ({ userEmail }: any) => {
   return (
     <div className="items-center flex max-w-[840px] flex-col justify-center px-16 py-12 max-md:px-5">
       <header className="flex w-full max-w-[581px] flex-col mt-5 max-md:max-w-full max-md:mb-10">
@@ -399,8 +588,8 @@ const RegistrationComplete = () => {
         </h1>
       </header>
       <p className="mt-6 py-8 max-w-[581px]">
-        We sent an email to <strong>johnsmith@pespico.com</strong>. Check your
-        inbox to activate your account.
+        We sent an email to <strong>{userEmail}</strong>. Check your inbox to
+        activate your account.
       </p>
       <Link
         href={"/login"}
