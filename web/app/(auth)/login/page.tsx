@@ -11,13 +11,16 @@ import { toast } from "sonner";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { signIn, useSession } from "next-auth/react";
+import { cn } from "@/lib/utils";
 
 const Page = () => {
+  const { data: session } = useSession();
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const validation = z.object({
     email: z.string().email(),
-    password: z.string(),
+    password: z.string().min(8),
   });
 
   const { mutate, isPending } = useMutation({
@@ -39,9 +42,15 @@ const Page = () => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      mutate(data);
+      // mutate(data);
+      signIn("credentials", { ...data, callbackUrl: "/" });
     },
   });
+
+  if (session) {
+    router.push("/");
+  }
+
   return (
     <div className="h-screen flex justify-center items-center">
       <form
@@ -64,45 +73,63 @@ const Page = () => {
         <header className="bg-gray-200 self-center w-[425px] shrink-0 max-w-full h-px mt-6" />
         <div className="justify-center items-center self-stretch flex w-full flex-col mt-6 mb-1 px-16 py-6 max-md:max-w-full max-md:px-5">
           <div className="flex w-full max-w-[589px] flex-col max-md:max-w-full">
-            <label
-              className="self-stretch text-slate-700 text-base font-light leading-6 max-md:max-w-full"
-              htmlFor="emailInput"
-            >
-              Work email*
-            </label>
-            <Input
-              id="emailInput"
-              name={"email"}
-              onChange={loginForm.handleChange}
-              className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full"
-              placeholder="Enter your email"
-            />
-
-            <label
-              className="self-stretch text-slate-700 text-base font-light leading-6 mt-6 max-md:max-w-full"
-              htmlFor="passwordInput"
-            >
-              Password
-            </label>
-            <div className="bg-gray-50 flex rounded-md mt-3 w-full">
-              <Input
-                type={showPassword ? "text" : "password"}
-                id="passwordInput"
-                className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full"
-                placeholder="Enter your password"
-                name={"password"}
-                onChange={loginForm.handleChange}
-              />
-              <div
-                onClick={() => setShowPassword(!showPassword)}
-                className="flex items-center cursor-pointer pr-2"
+            <div>
+              <label
+                className="self-stretch text-slate-700 text-base font-light leading-6 max-md:max-w-full"
+                htmlFor="emailInput"
               >
-                {showPassword ? (
-                  <EyeOff size={16} color="#64748B" />
-                ) : (
-                  <Eye size={16} color="#64748B" />
+                Work email*
+              </label>
+              <Input
+                id="emailInput"
+                name={"email"}
+                onChange={loginForm.handleChange}
+                className={cn(
+                  "text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
+                  loginForm.errors.email && "border border-red-500"
                 )}
+                placeholder="Enter your email"
+              />
+              <p className="text-red-500 text-xs mt-[0.63rem]">
+                {loginForm.errors.email}
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <label
+                className="self-stretch text-slate-700 text-base font-light leading-6 max-md:max-w-full"
+                htmlFor="passwordInput"
+              >
+                Password
+              </label>
+              <div
+                className={cn(
+                  "bg-gray-50 flex rounded-md mt-3 w-full",
+                  loginForm.errors.password && "border border-red-500"
+                )}
+              >
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  id="passwordInput"
+                  className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full"
+                  placeholder="Enter your password"
+                  name={"password"}
+                  onChange={loginForm.handleChange}
+                />
+                <div
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="flex items-center cursor-pointer pr-2"
+                >
+                  {showPassword ? (
+                    <EyeOff size={16} color="#64748B" />
+                  ) : (
+                    <Eye size={16} color="#64748B" />
+                  )}
+                </div>
               </div>
+              <p className="text-red-500 text-xs mt-[0.63rem]">
+                {loginForm.errors.email}
+              </p>
             </div>
             <a
               href="#"

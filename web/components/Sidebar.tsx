@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Accordion,
@@ -7,6 +8,7 @@ import {
 } from "./ui/accordion";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import Accounts from "./popups/accounts/accounts";
+import { signOut } from "next-auth/react";
 
 const Sidebar = () => {
   return (
@@ -166,7 +168,11 @@ const Sidebar = () => {
             Help
           </h2>
         </div>
-        <div className="items-center hover:bg-blue-100 hover:text-red-600 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md">
+        <div
+          role="button"
+          onClick={() => signOut()}
+          className="items-center hover:bg-blue-100 hover:text-red-600 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md"
+        >
           <svg
             width="14"
             height="14"
