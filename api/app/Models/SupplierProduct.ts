@@ -25,7 +25,7 @@ export default class SupplierProduct extends BaseModel {
   public functionalUnit: string
 
   @column()
-  public scope3Contribution: number
+  public scope_3Contribution: number
 
   @column.dateTime()
   public deletedAt: DateTime

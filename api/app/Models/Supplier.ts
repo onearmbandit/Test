@@ -3,7 +3,7 @@ import {
   BaseModel, column,
   belongsTo,
   BelongsTo,
-  hasMany,HasMany
+  hasMany, HasMany
 } from '@ioc:Adonis/Lucid/Orm'
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod'
 import SupplierProduct from './SupplierProduct'
@@ -40,7 +40,7 @@ export default class Supplier extends BaseModel {
   public country: string
 
   @column()
-  public zipcode: string
+  public zipCode: string
 
   @column.dateTime()
   public deletedAt: DateTime
@@ -62,10 +62,29 @@ export default class Supplier extends BaseModel {
 
 
   @hasMany(() => SupplierProduct, {
-    foreignKey: 'supplierId', 
+    foreignKey: 'supplierId',
   })
   public supplierProducts: HasMany<typeof SupplierProduct>
 
   //::_____Relationships End_____:://
+
+
+
+  public static async createSupplier(reportPeriodData, requestData,trx) {
+
+    const supplierData = await reportPeriodData.related('supplier').create({
+      'id': requestData.id,
+      'name': requestData.name,
+      'email': requestData.email,
+      'organizationRelationship': requestData.organizationRelationship,
+      'addressLine_1': requestData.addressLine_1,
+      'addressLine_2': requestData.addressLine_2 ? requestData.addressLine_2 : null,
+      'city': requestData.city ? requestData.city : null,
+      'state': requestData.state ? requestData.state : null,
+      'country': requestData.country ? requestData.country : null,
+      'zipCode': requestData.zipCode ? requestData.zipCode : null,
+    },{ client: trx })
+    return supplierData
+  }
 
 }

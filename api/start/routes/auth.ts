@@ -37,6 +37,7 @@ Route.group(() => {
 
       Route.resource('/supplier-period', 'SupplyChainReportingPeriodsController')
 
+      Route.resource('/suppliers', 'SuppliersController')
 
     })
       .prefix('/auth')

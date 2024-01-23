@@ -49,7 +49,8 @@ export const ORGANIZATION_RESPONSE = {
 export const SUPPLIER_RESPONSE = {
   updateSupplierReportPeriodSuccess: "Supplier chain reporting period  updated successfully.",
   createSupplierReportPeriodSuccess: "Supplier chain reporting period created successfully",
-  supplierReportPeriodDeleteSuccess: "Supplier chain reporting period delete successfully."
-
+  supplierReportPeriodDeleteSuccess: "Supplier chain reporting period delete successfully.",
+  supplierCSVNotMatch: "The columns in your CSV are not formatted correctly.Download the template to ensure the fields match.",
+  bulkCreationSuccess: "Suppliers created successfully."
 }
 
