@@ -26,15 +26,19 @@ export const AUTH_RESPONSE = {
   incorrectEmail: 'Incorrect email, please try again',
   incorrectPassword: 'Incorrect password, please try again',
   userNotExist: 'User with this email not exist.',
-  userCreated:"New user added successfully.",
+  userCreated: "New user added successfully.",
   userUpdated: 'User Data updated successfully.',
   createOrganizationSuccess: "Organization created successfully,Please check mail",
+  invalidOldPassword: 'Please enter the correct old password.',
+  wrongUserEmail: "Wrong email, try again",
+  wrongUserPassword: "Wrong password, try again",
+  authUserDeleteSuccess: "User delete successfully."
 
 }
 
 
 export const ORGANIZATION_RESPONSE = {
-  updateOrganizationSuccess:"Organization updated successfully.",
+  updateOrganizationSuccess: "Organization updated successfully.",
   createOrganizationSuccess: "Organization created successfully",
 }
 
