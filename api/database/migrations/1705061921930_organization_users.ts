@@ -19,6 +19,13 @@ export default class extends BaseSchema {
       .references('roles.id')
       .onDelete('CASCADE')
       .comment('Specify the type of the user in the organization, e.g., admin, super admin')
+
+      table.uuid('invited_by')
+      .nullable()
+      .references('users.id')
+      .onDelete('CASCADE')
+      .comment('Specify the who is invited to users for the organization')
+
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
     })

@@ -17,6 +17,7 @@ import { UserRoles } from 'App/helpers/constants'
 import { v4 as uuidv4 } from 'uuid';
 import Role from 'App/Models/Role'
 import Organization from 'App/Models/Organization'
+import SocialSignupOrLoginValidator from 'App/Validators/Auth/SocialSignupOrLoginValidator'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL;
 
@@ -54,11 +55,7 @@ export default class AuthController {
                     registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
                 }, role)
 
-
-
                 return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
-
-
             }
         } catch (error) {
 
@@ -73,7 +70,7 @@ export default class AuthController {
 
 
     // update user data in second step
-    public async updateNewUser({ request, response, params }: HttpContextContract) {
+    public async updateNewUser({ request, response, params, auth }: HttpContextContract) {
 
         try {
             let requestData = request.all();
@@ -89,14 +86,25 @@ export default class AuthController {
             }).save();
 
             //   :: If user is invited then send another emails that's why added this flag
-            if (requestData.invitedUser) {
+            if (requestData.invitedUser || requestData.throughSSO) {
+
                 const emailData = {
                     user: userData,
                     url: `${WEB_BASE_URL}`,
                 }
 
                 await sendMail(userData.email, 'Welcome to C3insets.ai!', 'emails/user_welcome', emailData)
-                return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.signupSuccess'))
+                if (requestData.invitedUser) {
+                    const token = await auth.use('api').generate(userData, {
+                        expiresIn: '1day'
+                    })
+                    return apiResponse(response, true, 200, { token, userData },
+                        Config.get('responsemessage.AUTH_RESPONSE.loginSuccess'))
+                }
+                else {
+                    return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.signupSuccess'))
+
+                }
             }
             else {
                 //:: Only uninvited user
@@ -336,8 +344,6 @@ export default class AuthController {
         }
     }
 
-
-
     //:: Used for create reset-token
     private async createToken() {
         let token = string.generateRandom(25);
@@ -348,4 +354,107 @@ export default class AuthController {
             return token;
         }
     }
+
+
+    //:: Social signup and login
+    public async socialSignupAndLogin({ request, response }: HttpContextContract) {
+        try {
+            await request.validate(SocialSignupOrLoginValidator);
+
+            let requestData = request.all();
+            const userExist = await User.getUserDetailsWithSocialToken('email', requestData.email, requestData.socialLoginToken)
+            const role: any = await Role.getRoleByName(UserRoles.ADMIN)
+
+            if (!userExist) {
+                const userData = await User.createUserWithRole({
+                    id: uuidv4(),
+                    email: requestData.email,
+                    socialLoginToken: requestData.socialLoginToken,
+                    loginType: requestData.loginType,
+                    firstName: requestData.firstName ? requestData.firstName : null,
+                    lastName: requestData.lastName ? requestData.lastName : null
+                }, role)
+
+                return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
+
+
+                //:: If user not in our DB that means thier organization also not exist so after this need to handle 
+                // Organization creation step from frontend 
+            }
+            else {
+                userExist.merge({
+                    firstName: requestData.firstName ? requestData.firstName : null,
+                    lastName: requestData.lastName ? requestData.lastName : null,
+                    socialLoginToken: requestData.socialLoginToken,
+                    loginType: requestData.loginType,
+                }).save();
+
+                return apiResponse(response, true, 201, userExist, "")
+
+                // const userData = await User.getUserDetails('email', requestData.email)
+                // const emailData = {
+                //     user: userData,
+                //     url: `${WEB_BASE_URL}`,
+                // }
+
+                // await sendMail(userData.email, 'Welcome to C3insets.ai!', 'emails/user_welcome', emailData)
+                // const token = await auth.use('api').generate(userData, {
+                //     expiresIn: '1day'
+                // })
+                // return apiResponse(response, true, 200, { token, userData },
+                //     Config.get('responsemessage.AUTH_RESPONSE.loginSuccess'))
+            }
+
+        }
+        catch (error) {
+            if (error.status === 422) {
+                return apiResponse(response, false, error.status, error.messages, Config.get('responsemessage.COMMON_RESPONSE.validationFailed'))
+            }
+            else {
+                return apiResponse(response, false, 400, {}, error.messages ? error.messages : error.message)
+            }
+        }
+    }
+
+    public async socialLogin({ request, response, auth }: HttpContextContract) {
+        try {
+            await request.validate(SocialSignupOrLoginValidator);
+
+            let requestData = request.all();
+            const userExist = await User.getUserDetailsWithSocialToken('email', requestData.email, requestData.socialLoginToken)
+
+            if (userExist) {
+
+                userExist.merge({
+                    socialLoginToken: requestData.socialLoginToken,
+                    loginType: requestData.loginType,
+                }).save();
+
+                //:: method lookup the user from the database and verifies their password.
+                const token = await auth.use('api').generate(userExist, {
+                    expiresIn: '1day'
+                })
+                return apiResponse(response, true, 200, { token, userExist },
+                    Config.get('responsemessage.AUTH_RESPONSE.loginSuccess'))
+
+            }
+            else {
+                return apiResponse(response, false, 422, {
+                    'errors': {
+                        "field": "email",
+                        "message": Config.get('responsemessage.AUTH_RESPONSE.incorrectEmail')
+                    }
+                }, Config.get('responsemessage.COMMON_RESPONSE.validationFailed'))
+            }
+        }
+        catch (error) {
+            if (error.status === 422) {
+                return apiResponse(response, false, error.status, error.messages, Config.get('responsemessage.COMMON_RESPONSE.validationFailed'))
+            }
+            else {
+                return apiResponse(response, false, 400, {}, error.messages ? error.messages : error.message)
+            }
+        }
+    }
+
 }
