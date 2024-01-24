@@ -125,7 +125,8 @@ export default class OrganizationsController {
             [organizationData.id]: {
               id: uuidv4(),
               role_id: [userData.roles[0].id],
-              user_id: [userData.id]
+              user_id: [userData.id],
+              invited_by:[auth.user?.id]
             }
           })
         }
