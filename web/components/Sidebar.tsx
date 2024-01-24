@@ -9,6 +9,7 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import Accounts from "./popups/accounts/accounts";
 import { signOut } from "next-auth/react";
+import { ChevronDown } from "lucide-react";
 
 const Sidebar = () => {
   return (
@@ -74,6 +75,7 @@ const Sidebar = () => {
                   Abatement Projects
                 </h2>
               </div>
+              <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200" />
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col items-stretch mt-2 pl-11 space-y-2">
