@@ -1,10 +1,12 @@
 "use server";
 
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import axios, {
   AxiosHeaders,
   AxiosRequestConfig,
   RawAxiosRequestHeaders,
 } from "axios";
+import { getServerSession } from "next-auth";
 type CreateAPIMethod = <TInput extends Record<string, string>, TOutput>(opts: {
   url: string;
   method: "GET" | "POST" | "PATCH" | "PUT";
@@ -23,6 +25,12 @@ const fetchApi = async (
   options = { method: "GET" } as Options
 ) => {
   const { headers, method, body } = options;
+
+  // const session = await getServerSession(authOptions);
+  // const token = session?.user;
+  // const authHeader = {
+  //   Authorization: `bearer ${token}`,
+  // };
 
   const response = await axios({
     url: `${BASE_URL}/api/v1${url}`,

@@ -14,7 +14,7 @@ const Dashboard = () => {
         <span className="text-base leading-6">Organization</span>
       </header>
 
-      {/* <div className="h-full flex justify-center items-center">
+      <div className="h-full flex justify-center items-center">
         <div className="text-center space-y-6">
           <h3 className="text-slate-700 text-center text-3xl font-semibold leading-9 self-center max-md:max-w-full max-md:mt-10">
             Lets set up your organization profile
@@ -25,7 +25,7 @@ const Dashboard = () => {
           </h4>
           <div className="flex flex-col space-y-3">
             <Link
-              as={"p"}
+              // as={"p"}
               href={"/create-organisation"}
               className="text-white text-center text-base font-bold mt-3 leading-6 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center px-6 py-4 max-md:px-5"
               role="button"
@@ -58,10 +58,10 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
 
-      <ClimateCommitments />
-      <NeedHelp />
+      {/* <ClimateCommitments />
+      <NeedHelp /> */}
     </div>
   );
 };

@@ -9,13 +9,13 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       profile(profile, tokens) {
-        console.log("profiles", profile, tokens);
         return {
           id: profile.sub,
           email: profile.email,
           firstName: profile.given_name,
           lastName: profile.family_name,
           image: profile.picture,
+          socialLoginToken: tokens.id_token,
         };
       },
     }),
@@ -57,8 +57,32 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, session }) {
-      return token;
+    async jwt({ token, user, session, account }) {
+      console.log({ token, user, session });
+      if (user) {
+        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
+        if (account?.provider != "credentials") {
+          console.log("tttokenk =====> ", user);
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              ...user,
+              loginType:
+                account?.provider == "azure-ad"
+                  ? "microsoft"
+                  : account?.provider,
+            }),
+          });
+
+          const userD = await res.json();
+          console.log(userD);
+        }
+      }
+
+      return { ...token, ...user };
     },
   },
   session: {

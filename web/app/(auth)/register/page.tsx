@@ -16,13 +16,17 @@ import { cn } from "@/lib/utils";
 import Tick from "@/components/icons/Tick";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function Page() {
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [userId, setUserId] = useState<string | null>(null);
   const [userSlug, setUserSlug] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isSSOregistration, setiSSOregistration] = useState(false);
+
   const steps: {
     [key: number]: ({ setCurrentStep, setUserId, userId }: any) => JSX.Element;
   } = {
@@ -107,6 +111,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
       registrationStep: 1,
       invitedUser: false,
     },
+    validateOnChange: false,
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
       mutate(data);
@@ -138,6 +143,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
             className={"w-full bg-transparent"}
             id="email"
             name="email"
+            onBlur={() => registerForm.validateField("email")}
             onChange={registerForm.handleChange}
             placeholder="Email"
           />
@@ -159,7 +165,10 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
             id="password"
             className="w-full bg-transparent"
             name="password"
-            onChange={registerForm.handleChange}
+            onChange={(e) => {
+              registerForm.handleChange(e);
+              // registerForm.validateField("password");
+            }}
             placeholder="Password"
           />
           <div
@@ -387,38 +396,46 @@ const Step2 = ({
         </div>
       ) : (
         <div className="items-stretch bg-white flex max-w-[408px] flex-col px-16 py-12 rounded-lg">
-          <span className="justify-between items-stretch border-slate-200 flex gap-4 mt-3.5 px-14 py-4 rounded-full border-2 border-solid">
+          <div
+            role="button"
+            onClick={() => signIn("google", { callbackUrl: "/" })}
+            className="justify-start items-stretch border-slate-200 flex gap-4 mt-3.5 py-4 px-11 rounded-full border-2 border-solid"
+          >
             <img
               loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/eadd558dbc7d09c4bec3f5674e44f92bc02c4b87986f6b7d500087b8fbc0f758?apiKey=011554aff43544e6af46800a427fd184&"
+              src="/assets/images/google-logo.svg"
               className="aspect-square object-contain object-center w-6 overflow-hidden shrink-0 max-w-full"
             />
             <div className="text-slate-800 text-base font-medium leading-6 tracking-tight grow whitespace-nowrap">
               Sign in with Google
             </div>
-          </span>
-          <span className="justify-between items-stretch border-slate-200 flex gap-4 mt-6 px-11 py-4 rounded-full border-2 border-solid">
+          </div>
+          <div
+            // role="button"
+            // onClick={() => signIn("microsoft")}
+            className="justify-start items-stretch border-slate-200 flex gap-4 mt-6 py-4 px-11  rounded-full border-2 border-solid"
+          >
             <img
               loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/1a6ba0c98461a7f1e18f4fe452b9c4e38719d6d0d2cee2008d4113ff8af910d8?apiKey=011554aff43544e6af46800a427fd184&"
+              src="/assets/images/microsoft-logo.svg"
               className="aspect-square object-contain object-center w-6 justify-center items-center overflow-hidden shrink-0 max-w-full"
             />
             <div className="text-slate-800 text-base font-medium leading-6 tracking-tight grow whitespace-nowrap">
               Sign in with Microsoft
             </div>
-          </span>
-          <div
-            onClick={() => setSSOReg(false)}
+          </div>
+          <Link
+            href={"/login"}
             className="text-blue-700 text-sm font-bold cursor-pointer leading-5 self-center whitespace-nowrap mt-6"
           >
             Sign in without SSO
-          </div>
-          <a
+          </Link>
+          <Link
             href="/login"
             className="text-slate-700 text-sm leading-5 underline self-center whitespace-nowrap mt-6 mb-3.5"
           >
             Have an account? Sign in
-          </a>
+          </Link>
         </div>
       )}
     </form>

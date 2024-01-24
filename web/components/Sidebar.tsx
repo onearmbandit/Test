@@ -8,10 +8,11 @@ import {
 } from "./ui/accordion";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import Accounts from "./popups/accounts/accounts";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { ChevronDown } from "lucide-react";
 
 const Sidebar = () => {
+  const session = useSession();
   return (
     <div className="flex flex-col justify-between w-full h-screen max-w-[240px] px-4 py-5">
       <nav>
@@ -21,7 +22,7 @@ const Sidebar = () => {
           </div>
           <div className="justify-center items-stretch self-stretch flex grow basis-[0%] flex-col">
             <h1 className="overflow-hidden text-slate-800 text-ellipsis text-sm font-semibold leading-5 whitespace-nowrap">
-              John Smith
+              {session.data?.user?.name}
             </h1>
             <div className="overflow-hidden text-slate-500 text-ellipsis text-xs leading-4 whitespace-nowrap">
               Pepsi Co
