@@ -25,22 +25,7 @@ export default class Supplier extends BaseModel {
   public organizationRelationship: string
 
   @column()
-  public addressLine_1: string     //if used addressLine1 then error "the address_line1 is not a column" so used addressLine_1
-
-  @column()
-  public addressLine_2: string
-
-  @column()
-  public city: string
-
-  @column()
-  public state: string
-
-  @column()
-  public country: string
-
-  @column()
-  public zipCode: string
+  public address: string
 
   @column.dateTime()
   public deletedAt: DateTime
@@ -55,9 +40,9 @@ export default class Supplier extends BaseModel {
   //::_____Relationships Start_____:://
 
   @belongsTo(() => SupplyChainReportingPeriod, {
-    localKey: 'supplyChainReportingPeriodId',
+    foreignKey: 'supplyChainReportingPeriodId',
   })
-  public SupplyChainReportingPeriod: BelongsTo<typeof SupplyChainReportingPeriod>
+  public supplyChainReportingPeriod: BelongsTo<typeof SupplyChainReportingPeriod>
 
 
 
@@ -70,21 +55,39 @@ export default class Supplier extends BaseModel {
 
 
 
-  public static async createSupplier(reportPeriodData, requestData,trx) {
+  public static async createSupplier(reportPeriodData, requestData, trx: any = undefined) {
 
     const supplierData = await reportPeriodData.related('supplier').create({
       'id': requestData.id,
       'name': requestData.name,
       'email': requestData.email,
       'organizationRelationship': requestData.organizationRelationship,
-      'addressLine_1': requestData.addressLine_1,
-      'addressLine_2': requestData.addressLine_2 ? requestData.addressLine_2 : null,
-      'city': requestData.city ? requestData.city : null,
-      'state': requestData.state ? requestData.state : null,
-      'country': requestData.country ? requestData.country : null,
-      'zipCode': requestData.zipCode ? requestData.zipCode : null,
-    },{ client: trx })
+      'address': requestData.address,
+    }, { client: trx })
     return supplierData
   }
+
+
+  public static async getSupplierDetails(field, value) {
+    const supplierData = await Supplier.query()
+      .where(field, value)
+      .andWhereNull('deletedAt')
+      // .preload('supplyChainReportingPeriod')
+      .preload('supplierProducts')
+      .firstOrFail();
+    return supplierData
+  }
+
+  public static async updateSupplier(supplierData, requestData) {
+    supplierData.merge({
+      'name': requestData.name,
+      'email': requestData.email,
+      'organizationRelationship': requestData.organizationRelationship,
+      'address': requestData.address,
+    }).save();
+
+    return supplierData;
+  }
+
 
 }

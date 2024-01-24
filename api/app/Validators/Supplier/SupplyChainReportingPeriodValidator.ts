@@ -3,9 +3,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { DateTime } from 'luxon'
 
 export default class SupplyChainReportingPeriodValidator {
-  constructor(protected ctx: HttpContextContract) {
-    console.log("ctx",DateTime.fromJSDate(new Date(this.ctx.request.body().reportingPeriodFrom)))
-    
+  constructor(protected ctx: HttpContextContract) {    
   }
 
   public refs = schema.refs({
@@ -14,6 +12,10 @@ export default class SupplyChainReportingPeriodValidator {
   
 
   public schema = schema.create({
+    organizationId: schema.string({ trim: true }, [
+      rules.uuid(),
+      rules.exists({ table: 'organizations', column: 'id' }),
+    ]),
     reportingPeriodFrom: schema.date({ format: 'yyyy-MM' }),
     reportingPeriodTo: schema.date({ format: 'yyyy-MM' },[
       rules.after(this.refs.allowedDate)
@@ -22,6 +24,7 @@ export default class SupplyChainReportingPeriodValidator {
 
 
   public messages: CustomMessages = {
+    'organizationId.exists': 'Organization with this ID does not exist.',
     'reportingPeriodFrom.required': 'Reporting period from is required.',
     'reportingPeriodTo.required': 'Reporting period to is required.',
     'reportingPeriodFrom.date': 'Invalid date format for reporting period from. Use YYYY-MM.',

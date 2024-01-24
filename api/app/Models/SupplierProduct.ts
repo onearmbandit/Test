@@ -4,6 +4,8 @@ import {
   belongsTo, BelongsTo
 } from '@ioc:Adonis/Lucid/Orm'
 import Supplier from './Supplier'
+import { v4 as uuidv4 } from 'uuid';
+
 
 export default class SupplierProduct extends BaseModel {
   @column({ isPrimary: true })
@@ -46,5 +48,18 @@ export default class SupplierProduct extends BaseModel {
   public supplier: BelongsTo<typeof Supplier>
 
   //::_____Relationships End_____:://
+
+  public static async createSupplierProducts(supplierData, requestData) {
+    let products: any = []
+    requestData.supplierProducts.forEach(element => {
+      let singleData = {
+        id: uuidv4(),
+        ...element
+      }
+      products.push(singleData)
+    });
+    let result = await supplierData.related('supplierProducts').createMany(products);
+    return result;
+  }
 
 }

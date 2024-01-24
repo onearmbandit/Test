@@ -36,11 +36,14 @@ Route.group(() => {
       Route.resource('/facility', 'FacilityController').only(['store'])
 
       //:: Supplier APIs
-      Route.post('/suppliers/csv-upload', 'SuppliersController.bulkCreationOfSupplier');
+      Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier');
 
       Route.resource('/supplier-period', 'SupplyChainReportingPeriodsController')
 
       Route.resource('/suppliers', 'SuppliersController')
+
+      Route.resource('/supplier-products', 'SupplierProductsController')
+
 
     })
       .prefix('/auth')
