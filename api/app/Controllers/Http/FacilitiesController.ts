@@ -1,8 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { apiResponse } from 'App/helpers/response'
-import User from 'App/Models/User'
 import Config from '@ioc:Adonis/Core/Config'
-import UpdateUserValidator from 'App/Validators/User/UpdateUserValidator'
 import CreateFacilityValidator from 'App/Validators/Facility/CreateFacilityValidator'
 import Facility from 'App/Models/Facility'
 
