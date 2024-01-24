@@ -32,7 +32,8 @@ export const AUTH_RESPONSE = {
   invalidOldPassword: 'Please enter the correct old password.',
   wrongUserEmail: "Wrong email, try again",
   wrongUserPassword: "Wrong password, try again",
-  authUserDeleteSuccess: "User delete successfully."
+  authUserDeleteSuccess: "User delete successfully.",
+  notMatchInvitedData:"Entered email is not match with invited email.Please check."
 
 }
 
@@ -51,6 +52,9 @@ export const SUPPLIER_RESPONSE = {
   createSupplierReportPeriodSuccess: "Supplier chain reporting period created successfully",
   supplierReportPeriodDeleteSuccess: "Supplier chain reporting period delete successfully.",
   supplierCSVNotMatch: "The columns in your CSV are not formatted correctly.Download the template to ensure the fields match.",
-  bulkCreationSuccess: "Suppliers created successfully."
+  bulkCreationSuccess: "Suppliers created successfully.",
+  supplyChainReportingPeriodIdExist: "Supply chain reporting period with this ID does not exist.",
+  supplierCreateSuccess: "New supplier added successfully.",
+  supplierUpdateSuccess: "Supplier details updated successfully."
 }
 

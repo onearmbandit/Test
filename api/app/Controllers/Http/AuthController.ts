@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Role from 'App/Models/Role'
 import Organization from 'App/Models/Organization'
 import SocialSignupOrLoginValidator from 'App/Validators/Auth/SocialSignupOrLoginValidator'
+import OrganizationUser from 'App/Models/OrganizationUser'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL;
 
@@ -33,20 +34,25 @@ export default class AuthController {
             const role: any = await Role.getRoleByName(UserRoles.ADMIN)
 
             if (userExist) {
-                //:: If user is invited then send another emails that's why added this flag
-                if (requestData.invitedUser) {
+                // if (requestData.invitedUser) {
 
-                    await userExist.merge({
-                        password: requestData.password,
-                        emailVerifyToken: Encryption.encrypt(requestData.email),
-                        registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
-                    }).save();
+                //     await userExist.merge({
+                //         password: requestData.password,
+                //         emailVerifyToken: Encryption.encrypt(requestData.email),
+                //         registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
+                //     }).save();
 
-                    return apiResponse(response, true, 201, userExist, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
-                }
-                else {
-                    return apiResponse(response, false, 400, {}, Config.get('responsemessage.AUTH_RESPONSE.emailExists'))
-                }
+                //     return apiResponse(response, true, 201, userExist, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
+                // }
+                // else {
+                return apiResponse(response, false, 422, {
+                    'errors': [{
+                        field: 'email',
+                        message: Config.get('responsemessage.AUTH_RESPONSE.emailExists')
+                    }]
+                },
+                    Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
+                // }
             } else {
                 const userData = await User.createUserWithRole({
                     id: uuidv4(),
@@ -143,13 +149,14 @@ export default class AuthController {
                 [organizationData.id]: {
                     id: uuidv4(),
                     role_id: [userData.roles[0].id],
-                    user_id: [userData.id]
+                    user_id: [userData.id],
+                    invited_by:[userData.id],
+                    email:organizationData.companyEmail
                 }
             })
 
             const user = await User.getUserDetails('id', userData.id)
 
-            console.log("user", user)
             const emailData = {
                 user: user,
                 url: `${WEB_BASE_URL}`,
@@ -362,6 +369,17 @@ export default class AuthController {
             await request.validate(SocialSignupOrLoginValidator);
 
             let requestData = request.all();
+            let invitedUserExist = await OrganizationUser.query().where('email', requestData.email).first();
+            if (!invitedUserExist) {
+                return apiResponse(response, false, 422, {
+                    'errors': [{
+                        field: 'email',
+                        message: Config.get('responsemessage.AUTH_RESPONSE.notMatchInvitedData')
+                    }]
+                },
+                    Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
+            }
+
             const userExist = await User.getUserDetailsWithSocialToken('email', requestData.email, requestData.socialLoginToken)
             const role: any = await Role.getRoleByName(UserRoles.ADMIN)
 
@@ -377,32 +395,25 @@ export default class AuthController {
 
                 return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
 
-
-                //:: If user not in our DB that means thier organization also not exist so after this need to handle 
-                // Organization creation step from frontend 
             }
             else {
-                userExist.merge({
-                    firstName: requestData.firstName ? requestData.firstName : null,
-                    lastName: requestData.lastName ? requestData.lastName : null,
-                    socialLoginToken: requestData.socialLoginToken,
-                    loginType: requestData.loginType,
-                }).save();
+                // userExist.merge({
+                //     firstName: requestData.firstName ? requestData.firstName : null,
+                //     lastName: requestData.lastName ? requestData.lastName : null,
+                //     socialLoginToken: requestData.socialLoginToken,
+                //     loginType: requestData.loginType,
+                // }).save();
 
-                return apiResponse(response, true, 201, userExist, "")
+                // return apiResponse(response, true, 201, userExist, "")
 
-                // const userData = await User.getUserDetails('email', requestData.email)
-                // const emailData = {
-                //     user: userData,
-                //     url: `${WEB_BASE_URL}`,
-                // }
+                return apiResponse(response, false, 422, {
+                    'errors': [{
+                        field: 'email',
+                        message: Config.get('responsemessage.AUTH_RESPONSE.emailExists')
+                    }]
+                },
+                    Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
 
-                // await sendMail(userData.email, 'Welcome to C3insets.ai!', 'emails/user_welcome', emailData)
-                // const token = await auth.use('api').generate(userData, {
-                //     expiresIn: '1day'
-                // })
-                // return apiResponse(response, true, 200, { token, userData },
-                //     Config.get('responsemessage.AUTH_RESPONSE.loginSuccess'))
             }
 
         }
