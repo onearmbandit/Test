@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
 import dynamic from "next/dynamic";
+import Provider from "@/components/provider/query-provider";
+import { Toaster } from "sonner";
 
 const AuthProvider = dynamic(() => import("../../components/AuthProvider"), {
   ssr: false,
@@ -22,7 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className + " flex"}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <Provider>{children}</Provider>
+        </AuthProvider>
+        <Toaster position="bottom-center" />
       </body>
     </html>
   );
