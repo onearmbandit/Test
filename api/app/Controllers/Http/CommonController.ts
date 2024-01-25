@@ -1,5 +1,5 @@
 import { apiResponse } from 'App/helpers/response'
-import { MailChimpService } from 'App/Services/M';
+import MailchimpService from 'App/Services/MailchimpService';
 
 
 export default class UsersController {
@@ -10,7 +10,7 @@ export default class UsersController {
 
       console.log("recipients >>",recipients)
 
-      const mailChimpService = new MailChimpService();
+      const mailChimpService = new MailchimpService();
       console.log("mailChimpService >>",mailChimpService)
       const templatePath = "emails/user_welcome.edge";
 
