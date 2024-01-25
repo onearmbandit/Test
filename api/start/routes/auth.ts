@@ -35,7 +35,7 @@ Route.group(() => {
       Route.patch('/user', 'UsersController.update')
       Route.post('/user', 'UsersController.destroy')//for delete the user but need request data that's why used post method
 
-      Route.resource('/facility', 'FacilityController').only(['store'])
+      Route.resource('/facility', 'FacilitiesController').only(['index', 'store', 'show', 'update', 'destroy'])
 
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier');
