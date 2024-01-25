@@ -10,6 +10,7 @@ export default class extends BaseSchema {
       .nullable()
       .references('users.id')
       .onDelete('CASCADE')
+      
       table.uuid('organization_id')
       .nullable()
       .references('organizations.id')
@@ -25,6 +26,10 @@ export default class extends BaseSchema {
       .references('users.id')
       .onDelete('CASCADE')
       .comment('Specify the who is invited to users for the organization')
+
+      table.string('email')
+      .nullable()
+      .comment('Specify the invited mail')
 
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })

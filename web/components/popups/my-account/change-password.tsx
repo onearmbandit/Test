@@ -21,7 +21,7 @@ const ChangePassword = () => {
       <hr className="bg-gray-300 self-stretch shrink-0 h-px mt-2 max-md:max-w-full" />
 
       <div className="w-full space-y-6">
-        <div className="space-y-3">
+        <div className="space-y-3 mt-4">
           <label className="text-slate-700 text-base font-semibold leading-6 self-stretch max-md:max-w-full">
             Enter your old password
           </label>
