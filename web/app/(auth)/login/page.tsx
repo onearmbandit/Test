@@ -44,9 +44,12 @@ const Page = () => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: toFormikValidationSchema(validation),
-    onSubmit: (data) => {
-      // mutate(data);
-      signIn("credentials", { ...data, callbackUrl: "/" });
+    onSubmit: async (data) => {
+      // console.log(data);
+      const res = await signIn("credentials", { ...data, redirect: false });
+      if (res?.error) {
+        toast.error(res.error, { style: { color: "red" } });
+      }
     },
   });
 

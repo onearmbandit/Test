@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import Tick from "@/components/icons/Tick";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 export default function Page() {
@@ -35,7 +35,21 @@ export default function Page() {
     3: Step3,
     4: RegistrationComplete,
   };
-  const RegistraionSteps = steps[currentStep];
+
+  let RegistrationSteps = Step1;
+  switch (searchParams.get("step")) {
+    case "2":
+      RegistrationSteps = Step2;
+      break;
+    case "3":
+      RegistrationSteps = Step3;
+      break;
+    case "complete":
+      RegistrationSteps = RegistrationComplete;
+      break;
+    default:
+      RegistrationSteps = Step1;
+  }
 
   return (
     <>
@@ -45,7 +59,7 @@ export default function Page() {
       />
       <div className="flex container justify-between h-screen w-full">
         <div>
-          <RegistraionSteps
+          <RegistrationSteps
             setCurrentStep={setCurrentStep}
             ssoReg={isSSOregistration}
             setSSOReg={setiSSOregistration}
@@ -80,16 +94,20 @@ export default function Page() {
 }
 
 const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
   const validation = z.object({
     email: z.string().email(),
+  });
+  const passwordValidation = z.object({
     password: z
       .string()
-      .min(8)
-      .regex(/[a-z]/, "One lowercase character")
-      .regex(/[A-Z]/, "One uppercase character")
-      .regex(/[0-9]/, "One number")
-      .regex(/[^a-zA-Z0-9]/, "One special character"),
+      .min(8, { message: "length" })
+      .regex(/[A-Z]/, { message: "uppercase" })
+      .regex(/[a-z]/, { message: "lowercase" })
+      .regex(/[0-9]/, { message: "number" })
+      .regex(/[^A-Za-z0-9]/, { message: "special" }),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
@@ -97,7 +115,8 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     mutationFn: register,
     onSuccess: (user) => {
       setUserId(user.data.id);
-      setCurrentStep(2);
+      router.push("/register?step=2");
+      // setCurrentStep(2);
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -113,7 +132,19 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     },
     validateOnChange: false,
     validationSchema: toFormikValidationSchema(validation),
+    // validate: (values: any) => {
+    //   try {
+    //     console.log(values);
+    //     validation.parse(values);
+    //   } catch (error: any) {
+    //     // Convert Zod error format to Formik error format
+    //     return error.errors.map((err: any) => err.message);
+    //   }
+    // },
     onSubmit: (data) => {
+      if (errors.length <= 1 && !errors.includes("length")) {
+        return;
+      }
       mutate(data);
     },
   });
@@ -148,6 +179,9 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
             placeholder="Email"
           />
         </div>
+        <p className="text-red-500 text-xs mt-[10px]">
+          {registerForm.errors.email}
+        </p>
         <label
           htmlFor="password"
           className="label text-slate-700 text-base font-light leading-6 mt-10 max-md:max-w-full"
@@ -156,8 +190,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
         </label>
         <div
           className={cn(
-            "input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 py-7 rounded-md max-md:max-w-full max-md:flex-wrap",
-            registerForm.errors.password && "border border-red-500"
+            "input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 py-7 rounded-md max-md:max-w-full max-md:flex-wrap"
           )}
         >
           <Input
@@ -167,6 +200,15 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
             name="password"
             onChange={(e) => {
               registerForm.handleChange(e);
+              const value = e.target.value;
+              const values = { password: value };
+
+              try {
+                passwordValidation.parse(values);
+              } catch (error: any) {
+                // Convert Zod error format to Formik error format
+                setErrors(error.errors.map((err: any) => err.message));
+              }
               // registerForm.validateField("password");
             }}
             placeholder="Password"
@@ -188,7 +230,8 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Tick
                 variant={
                   registerForm.values.password != ""
-                    ? registerForm.errors.password?.includes("lowercase")
+                    ? // ? registerForm.errors.password?.includes("lowercase")
+                      errors.includes("lowercase")
                       ? "red"
                       : "green"
                     : "gray"
@@ -202,7 +245,8 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Tick
                 variant={
                   registerForm.values.password != ""
-                    ? registerForm.errors.password?.includes("uppercase")
+                    ? // ? registerForm.errors.password?.includes("uppercase")
+                      errors.includes("uppercase")
                       ? "red"
                       : "green"
                     : "gray"
@@ -216,7 +260,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Tick
                 variant={
                   registerForm.values.password != ""
-                    ? registerForm.errors.password
+                    ? registerForm.values.password.length < 8
                       ? "red"
                       : "green"
                     : "gray"
@@ -232,7 +276,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Tick
                 variant={
                   registerForm.values.password != ""
-                    ? registerForm.errors.password?.includes("number")
+                    ? errors.includes("number")
                       ? "red"
                       : "green"
                     : "gray"
@@ -246,9 +290,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Tick
                 variant={
                   registerForm.values.password != ""
-                    ? registerForm.errors.password?.includes(
-                        "special character"
-                      )
+                    ? errors.includes("special")
                       ? "red"
                       : "green"
                     : "gray"
@@ -304,6 +346,8 @@ const Step2 = ({
   userId,
   setUserSlug,
 }: any) => {
+  const router = useRouter();
+
   const validation = z.object({
     firstName: z.string().refine((val) => /^[a-zA-Z ]*$/.test(val), {
       message: "Name should contain only alphabets",
@@ -317,7 +361,8 @@ const Step2 = ({
     mutationFn: registerStep2,
     onSuccess: (data) => {
       setUserSlug(data.data.slug);
-      setCurrentStep(3);
+      // setCurrentStep(3);
+      router.push("/register?step=3");
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -443,6 +488,7 @@ const Step2 = ({
 };
 
 const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
+  const router = useRouter();
   const validation = z.object({
     companyName: z.string(),
     addressLine1: z.string(),
@@ -461,7 +507,8 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     mutationFn: registerOrganisation,
     onSuccess: (data) => {
       setUserEmail(data.data.email);
-      setCurrentStep(4);
+      // setCurrentStep(4);
+      router.push("/register?step=complete");
     },
   });
 
@@ -568,14 +615,14 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
 
         <div className="justify-between items-center self-stretch flex gap-5 mt-3 pl-1 pr-2.5 py-2.5 max-md:max-w-full max-md:flex-wrap">
           <div className="text-blue-600 text-center text-sm font-semibold leading-4 my-auto">
-            <Button
+            {/* <Button
               variant={"ghost"}
               className="font-semibold px-0 hover:bg-transparent"
               type="button"
               onClick={() => setCurrentStep(2)}
             >
               Back
-            </Button>
+            </Button> */}
           </div>
           <div className="flex space-x-2 items-center">
             {isPending && (

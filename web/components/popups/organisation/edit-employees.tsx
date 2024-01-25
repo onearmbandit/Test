@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 const EditEmployees = ({
   setSection,
@@ -9,6 +9,7 @@ const EditEmployees = ({
   setSection: (val: string) => void;
 }) => {
   const router = useRouter();
+  const [size, setSize] = useState<string | null>(null);
   const sizes = [
     "1 to 10",
     "10 to 25",
@@ -20,6 +21,10 @@ const EditEmployees = ({
     "1001 to 10,000",
     "10,000+",
   ];
+  const handleSubmit = (e: SubmitEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <form
       action={() => setSection("home")}
@@ -28,7 +33,11 @@ const EditEmployees = ({
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch mr-2.5 max-md:max-w-full">
         <span className="text-slate-500">
           {" "}
-          Account &gt; Organization Account &gt;{" "}
+          Account &gt;{" "}
+          <span role="button" onClick={() => setSection("home")}>
+            Organization Account
+          </span>{" "}
+          &gt;{" "}
         </span>{" "}
         <span className="text-blue-600">Edit Number of Employees</span>
       </header>

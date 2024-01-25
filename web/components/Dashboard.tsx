@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem } from "./ui/accordion";
 import { AccordionTrigger } from "@radix-ui/react-accordion";
 import ClimateCommitments from "./ClimateCommitments";
 import NeedHelp from "./NeedHelp";
+import AutocompleteInput from "./Autocomplete";
 
 const Dashboard = () => {
   return (
@@ -59,6 +60,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* <AutocompleteInput /> */}
 
       {/* <ClimateCommitments />
       <NeedHelp /> */}
