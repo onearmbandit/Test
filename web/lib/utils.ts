@@ -89,6 +89,9 @@ export const authOptions: NextAuthOptions = {
 
       return { ...token, ...user };
     },
+    async session({ session, token, trigger, user }) {
+      return { ...session, ...token };
+    },
   },
   session: {
     strategy: "jwt",
