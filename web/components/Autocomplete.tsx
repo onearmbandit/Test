@@ -28,7 +28,8 @@ const AutocompleteInput = () => {
     if (autoCompleteLoaded == null) {
       console.log("autocomplete yet to load");
     } else {
-      console.log(autoCompleteLoaded.getPlace());
+      // const place = autoCompleteLoaded.getPlace()
+      // console.log(place);
     }
   };
   return (

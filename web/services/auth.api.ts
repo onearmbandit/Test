@@ -1,6 +1,6 @@
 "use server";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/utils";
 import axios, {
   AxiosHeaders,
   AxiosRequestConfig,
