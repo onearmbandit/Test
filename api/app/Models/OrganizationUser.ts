@@ -14,6 +14,12 @@ export default class OrganizationUser extends BaseModel {
   @column()
   public role_id: number
 
+  @column()
+  public invited_by: number
+
+  @column()
+  public email: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

@@ -61,6 +61,10 @@ export default class User extends BaseModel {
   public loginType: string
 
   @column()
+  public socialLoginToken: string
+
+
+  @column()
   public timezone: string
 
   @column()
@@ -149,6 +153,17 @@ export default class User extends BaseModel {
     return user
 
   }
+
+  public static async getUserDetailsWithSocialToken(field, value,token) {
+    const user = await User.query().where(field, value)
+      .orWhere('socialLoginToken', token)
+      .andWhereNull('deletedAt')
+      .preload('roles')
+      .preload('organizations')
+      .first();
+    return user;
+  }
+
 
   public static async createUserWithRole(userData, roleData) {
     const result = await User.create(userData)

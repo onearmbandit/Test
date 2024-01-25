@@ -17,7 +17,13 @@ Route.group(() => {
 
     Route.post('/send-email', 'CommonController.sendEmail');
 
+    // social login or signup API
+    Route.post('/social-signup', 'AuthController.socialSignupAndLogin')
+    Route.post('/social-login', 'AuthController.socialLogin')
 
+
+    //:: Api for download supplier csv template
+    Route.get('/download-supplier-csv', 'FilesController.download')
 
     //Auth routes
     Route.group(() => {
@@ -30,6 +36,17 @@ Route.group(() => {
       Route.post('/user', 'UsersController.destroy')//for delete the user but need request data that's why used post method
 
       Route.resource('/facility', 'FacilityController').only(['store'])
+
+      //:: Supplier APIs
+      Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier');
+
+      Route.resource('/supplier-period', 'SupplyChainReportingPeriodsController')
+
+      Route.resource('/suppliers', 'SuppliersController')
+
+      Route.resource('/supplier-products', 'SupplierProductsController')
+
+
     })
       .prefix('/auth')
       .middleware('auth')

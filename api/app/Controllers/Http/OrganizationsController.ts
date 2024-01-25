@@ -4,11 +4,7 @@ import { sendMail } from 'App/helpers/sendEmail'
 import Config from '@ioc:Adonis/Core/Config';
 import Organization from 'App/Models/Organization';
 import UpdateOrganizationValidator from 'App/Validators/Organization/UpdateOrganizationValidator';
-import User from 'App/Models/User';
 import { v4 as uuidv4 } from 'uuid';
-import Role from 'App/Models/Role'
-import { UserRoles } from 'App/helpers/constants'
-import { string } from '@ioc:Adonis/Core/Helpers';
 
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL;
@@ -19,45 +15,6 @@ export default class OrganizationsController {
   }
 
   public async store({ }: HttpContextContract) {
-    // try {
-    //   await request.validate(UpdateOrganizationValidator);
-    //   let requestData = request.all();
-
-    //   const authenticatedUser = auth.user;
-
-    //   const organizationData = new Organization();
-    //   // need of profileStep flag send invite mail for new user
-    //   if (requestData.profileStep == 1) {
-    //     //:: Check mail is updated or not then send email to user
-    //     if (requestData.selfPointOfContact == 1) {
-    //       //send mail for new user
-    //       console.log("mail send??")
-    //     }
-
-    //     organizationData.companyEmail = requestData.companyEmail
-    //     organizationData.selfPointOfContact == requestData.selfPointOfContact
-    //   }
-
-    //   organizationData.companyName = requestData.companyName
-    //   organizationData.companySize = requestData.companySize
-    //   organizationData.selfPointOfContact = requestData.selfPointOfContact
-    //   organizationData.naicsCode = requestData.naicsCode
-
-    //   // / Associate the organization with the authenticated user
-    //   await authenticatedUser?.related('organization').save(organizationData);
-    //   return apiResponse(response, true, 200, organizationData,
-    //     Config.get('responsemessage.ORGANIZATION_RESPONSE.createOrganizationSuccess'))
-    // }
-    // catch (error) {
-
-    //   if (error.status === 422) {
-    //     return apiResponse(response, false, error.status, error.messages, Config.get('responsemessage.COMMON_RESPONSE.validationFailed'))
-    //   }
-    //   else {
-    //     return apiResponse(response, false, 400, {}, error.messages ? error.messages : error.message)
-    //   }
-    // }
-
   }
 
 
@@ -97,12 +54,10 @@ export default class OrganizationsController {
       if (requestData.profileStep == 1) {
         //:: Check mail is updated or not then send email to user
         if (organizationData.companyEmail !== requestData.companyEmail) {
-          //send mail for new user
-          console.log("mail send??")
           //:: Only uninvited user
           const emailData = {
             user: auth.user,
-            url: `${WEB_BASE_URL}`,
+            url: `${WEB_BASE_URL}?email=${requestData.companyEmail}`,
           }
 
           let userEmail = auth.user ? auth.user.email : ''
@@ -112,20 +67,22 @@ export default class OrganizationsController {
 
 
           //:: If email different then only new user added in user table
-          const role = await Role.getRoleByName(UserRoles.SUB_ADMIN)  //sub admin
-          const userData = await User.createUserWithRole({
-            id: uuidv4(),
-            email: requestData.companyEmail,
-            password: string.generateRandom(8),
-            registrationStep: 1,
-          }, role)
+          // const role = await Role.getRoleByName(UserRoles.SUB_ADMIN)  //sub admin
+          // const userData = await User.createUserWithRole({
+          //   id: uuidv4(),
+          //   email: requestData.companyEmail,
+          //   password: string.generateRandom(8),
+          //   registrationStep: 1,
+          // }, role)
 
           //:: Add data in pivot table organization_users
-          await userData.related('organizations').attach({
+          await auth.user?.related('organizations').attach({
             [organizationData.id]: {
               id: uuidv4(),
-              role_id: [userData.roles[0].id],
-              user_id: [userData.id]
+              // role_id: [userData.roles[0].id],
+              // user_id: null,  // keep null as of now
+              invited_by:[auth.user?.id],
+              email:requestData.companyEmail
             }
           })
         }

@@ -3,6 +3,7 @@ import { BaseModel, column, manyToMany, ManyToMany, HasMany, hasMany } from '@io
 import User from './User'
 import { v4 as uuidv4 } from 'uuid';
 import Facility from './Facility';
+import SupplyChainReportingPeriod from './SupplyChainReportingPeriod';
 
 
 export default class Organization extends BaseModel {
@@ -81,6 +82,14 @@ export default class Organization extends BaseModel {
     foreignKey: 'organizations_id', // defaults to userId
   })
   public facilities: HasMany<typeof Facility>
+
+
+
+  @hasMany(() => SupplyChainReportingPeriod, {
+    foreignKey: 'organizationId', 
+  })
+  public supplyChainReportingPeriod: HasMany<typeof SupplyChainReportingPeriod>
+  
 
 
   //::_____Relationships End_____:://
