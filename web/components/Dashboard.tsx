@@ -14,7 +14,7 @@ const Dashboard = () => {
       <header className="overflow-hidden text-slate-800 text-ellipsis text-lg font-bold leading-7 self-start max-md:max-w-full py-9">
         <span className="text-base leading-6">Organization</span>
       </header>
-
+      <AutocompleteInput />
       <div className="h-full flex justify-center items-center">
         <div className="text-center space-y-6">
           <h3 className="text-slate-700 text-center text-3xl font-semibold leading-9 self-center max-md:max-w-full max-md:mt-10">
@@ -60,8 +60,6 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
-      {/* <AutocompleteInput /> */}
 
       {/* <ClimateCommitments />
       <NeedHelp /> */}

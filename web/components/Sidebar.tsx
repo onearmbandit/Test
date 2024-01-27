@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import Accounts from "./popups/accounts/accounts";
 import { signOut, useSession } from "next-auth/react";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 const Sidebar = () => {
   const session = useSession();
@@ -94,7 +95,10 @@ const Sidebar = () => {
           </AccordionItem>
         </Accordion>
 
-        <div className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md">
+        <Link
+          href={"/supply-chain"}
+          className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
+        >
           <svg
             width="16"
             height="16"
@@ -114,7 +118,7 @@ const Sidebar = () => {
           <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
             Supply Chain
           </h2>
-        </div>
+        </Link>
       </nav>
       <footer>
         <Dialog>
