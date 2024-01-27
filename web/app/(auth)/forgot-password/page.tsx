@@ -1,11 +1,58 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { forgotPassword } from "@/services/auth.api";
+import { useMutation } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import { useSession } from "next-auth/react";
+import { useSearchParams, useRouter } from "next/navigation";
 import * as React from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 function Page() {
+  const { data: session } = useSession();
+  const params = useSearchParams();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const router = useRouter();
+  const validation = z.object({
+    email: z.string().email(),
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: forgotPassword,
+    onSuccess: (data) => {
+      toast.success(data.message, { style: { color: "red" } });
+      router.push("/");
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const forgotPasswordForm = useFormik({
+    initialValues: {
+      email: "",
+    },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: async (data) => {
+      console.log(data);
+      mutate({ email: data.email });
+    },
+  });
+
+  console.log(forgotPasswordForm.errors);
+
   return (
     <div className="h-screen grid place-items-center">
-      <form className="justify-center items-center border border-[#E5E7EB] w-full shadow-sm flex max-w-[828px] flex-col py-12 rounded-lg border-solid">
+      <form
+        onSubmit={forgotPasswordForm.handleSubmit}
+        className="justify-center items-center border border-[#E5E7EB] w-full shadow-sm flex max-w-[828px] flex-col py-12 rounded-lg border-solid"
+      >
         <img
           loading="lazy"
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/9c31c226fc0c71362158bd2a54e4d2b381d4680c739e010c167fd3d08f46c8af?apiKey=011554aff43544e6af46800a427fd184&"
@@ -37,11 +84,24 @@ function Page() {
             <Input
               id="email"
               type="email"
-              className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full"
+              name="email"
+              onChange={forgotPasswordForm.handleChange}
+              // className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full"
+              className={cn(
+                "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
+                forgotPasswordForm.touched.email &&
+                  forgotPasswordForm.errors.email &&
+                  "border border-red-500"
+              )}
               placeholder="Enter your email"
             />
 
+            <p className="text-red-500 text-xs mt-[10px]">
+              {forgotPasswordForm.errors.email as React.ReactNode}
+            </p>
+
             <Button
+              disabled={isPending}
               className="text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch mt-9 px-4 py-3"
               type="submit"
             >

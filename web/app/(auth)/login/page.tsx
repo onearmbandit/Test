@@ -141,12 +141,12 @@ const Page = () => {
                   {loginForm.errors.password}
                 </p>
               </div>
-              <a
-                href="#"
+              <Link
+                href={"/forgot-password"}
                 className="text-blue-700 text-sm font-bold leading-5 self-stretch mt-3 max-md:max-w-full"
               >
                 Forgot Password?
-              </a>
+              </Link>
               <div className="w-fit mx-auto flex items-center space-x-2">
                 {isPending && (
                   <Loader2 size={30} className="text-slate-400 animate-spin" />

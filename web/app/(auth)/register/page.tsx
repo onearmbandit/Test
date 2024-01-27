@@ -142,12 +142,15 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     //   }
     // },
     onSubmit: (data) => {
-      if (errors.length <= 1 && !errors.includes("length")) {
-        return;
-      }
+      console.log("mutate" , data);
+      // if (errors.length > 0 && !errors.includes("length")) {
+      //   return;
+      // }
       mutate(data);
     },
   });
+
+  console.log(registerForm.errors, errors);
 
   return (
     <form

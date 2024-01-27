@@ -6,6 +6,7 @@ import {
   setupOrganizationStep1,
   setupOrganizationStep2,
   setupOrganizationStep3,
+  setupOrganizationStep4,
 } from "@/services/organizations.api";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -16,8 +17,11 @@ import { useMutation } from "@tanstack/react-query";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 const Page = () => {
+  const session = useSession();
+
   const [step, setStep] = useState(1);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -53,6 +57,7 @@ const Page = () => {
 
 const Step1 = ({ setStep, setCurrentStep }: any) => {
   const router = useRouter();
+  const session = useSession();
 
   const validation = z.object({
     companyEmail: z.string().email(),
@@ -81,8 +86,11 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data: any) => {
-      console.log(data);
-      mutate({ id: "7a8f7cd0-e3ec-47c6-97c5-e4c0d09190c4", formdata: data });
+      const organizationId: string | undefined =
+        session.data?.user?.organizations[0]?.id;
+      if (organizationId) {
+        mutate({ id: organizationId, formdata: data });
+      }
     },
   });
 
@@ -163,6 +171,7 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
 };
 
 const Step2 = ({ setStep }: any) => {
+  const session = useSession();
   const [selected, setSelected] = useState<number | null>(null);
   const sizes = [
     "1 to 10",
@@ -202,14 +211,13 @@ const Step2 = ({ setStep }: any) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data: any) => {
-      console.log("on submit: ", data);
-
-      mutate({ id: "7a8f7cd0-e3ec-47c6-97c5-e4c0d09190c4", formdata: data });
-      console.log("on success", data);
+      const organizationId: string | undefined =
+        session.data?.user?.organizations[0]?.id;
+      if (organizationId) {
+        mutate({ id: organizationId, formdata: data });
+      }
     },
   });
-
-  console.log(setupOrganizationStep2Form.errors);
 
   return (
     <form onSubmit={setupOrganizationStep2Form.handleSubmit}>
@@ -273,8 +281,11 @@ const Step2 = ({ setStep }: any) => {
 };
 
 const Step3 = ({ setStep }: any) => {
+  const session = useSession();
   const validation = z.object({
-    naicsCode: z.string(),
+    naicsCode: z
+      .string()
+      .regex(/^[0-9]{4,5}$/, "Please enter a valid NAICS code"),
     profileStep: z.number().int().min(1).max(3),
   });
 
@@ -299,14 +310,13 @@ const Step3 = ({ setStep }: any) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data: any) => {
-      console.log("on submit: ", data);
-
-      mutate({ id: "7a8f7cd0-e3ec-47c6-97c5-e4c0d09190c4", formdata: data });
-      console.log("on success", data);
+      const organizationId: string | undefined =
+        session.data?.user?.organizations[0]?.id;
+      if (organizationId) {
+        mutate({ id: organizationId, formdata: data });
+      }
     },
   });
-
-  console.log(setupOrganizationStep3Form.errors);
 
   return (
     <form onSubmit={setupOrganizationStep3Form.handleSubmit}>
@@ -329,10 +339,19 @@ const Step3 = ({ setStep }: any) => {
         <Input
           name="naicsCode"
           id="naicsCode"
-          className="text-slate-500 text-xs font-light leading-4 whitespace-nowrap items-stretch bg-gray-50 justify-center mt-6 px-2 py-7 rounded-md self-start"
           placeholder="Add NAICS code"
           onChange={setupOrganizationStep3Form.handleChange}
+          className={cn(
+            "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
+            setupOrganizationStep3Form.touched.naicsCode &&
+              setupOrganizationStep3Form.errors.naicsCode &&
+              "border border-red-500"
+          )}
         />
+
+        <p className="text-red-500 text-xs mt-[10px]">
+          {setupOrganizationStep3Form.errors.naicsCode as React.ReactNode}
+        </p>
 
         <div className="justify-between items-center self-stretch flex w-full gap-5 mt-6 p-2.5 max-md:max-w-full max-md:flex-wrap">
           <div
@@ -365,22 +384,6 @@ const Step3 = ({ setStep }: any) => {
               </Button>
             </div>
           </div>
-
-          {/* <div className="justify-between items-center self-stretch flex gap-3.5 pl-20 py-2 max-md:max-w-full max-md:flex-wrap max-md:pl-5">
-            <div
-              onClick={() => setStep(4)}
-              className="text-blue-600 text-center text-sm font-bold leading-4 grow whitespace-nowrap my-auto"
-              role="button"
-            >
-              Skip
-            </div>
-            <Button
-              className="text-sm font-bold leading-4 whitespace-nowrap"
-              type="button"
-            >
-              Save and continue
-            </Button>
-          </div> */}
         </div>
       </div>
     </form>
@@ -391,6 +394,48 @@ const Step3 = ({ setStep }: any) => {
  * TODO: the character limit here will be 20-30
  */
 const Step4 = ({ setStep }: any) => {
+  const router = useRouter();
+  const session = useSession();
+  const [targets, setTargets] = useState<string[]>([]);
+  const [currentTarget, setCurrentTarget] = useState<string>("");
+  const validation = z.object({
+    climateTargets: z
+      .array(z.string())
+      .min(1, "Atleast one climate target is required"),
+    profileStep: z.number().int().min(1).max(3),
+  });
+
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationKey: ["step1"],
+    mutationFn: setupOrganizationStep4,
+    onSuccess: (organization) => {
+      toast.success("Your organization profile has been updated", {
+        style: { color: "green" },
+      });
+      setStep(4);
+    },
+    onError: (err: any) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const setupOrganizationStep4Form = useFormik({
+    initialValues: {
+      climateTargets: [],
+      profileStep: 3,
+    },
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: (data: any) => {
+      // const organizationId: string | undefined =
+      //   session.data?.user?.organizations[0]?.id;
+      // if (organizationId) {
+      //   mutate({ id: organizationId, formdata: data });
+      // }
+
+      router.push("/");
+    },
+  });
+
   return (
     <div className="justify-center items-start flex max-w-[814px] w-full flex-col">
       <div role="group" className="mt-6">
@@ -402,32 +447,60 @@ const Step4 = ({ setStep }: any) => {
           For example, Science Based Target initiatives or commitments that are
           climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
         </p>
-        <input
+        <Input
           type="text"
-          className="text-slate-500 text-xs font-light leading-4 bg-gray-50 self-stretch mt-2 px-2 py-1 rounded-md"
+          name="targets"
+          value={currentTarget}
+          onChange={(e) => {
+            setCurrentTarget(e.target.value);
+          }}
+          className="text-slate-500 text-xs font-light leading-4 bg-gray-50 self-stretch mt-2 px-2 py-6 rounded-md"
           placeholder="ex: Carbon neutral by 2030"
         />
-        <div className="text-blue-200 text-center text-sm font-bold leading-4 whitespace-nowrap mt-4">
+        <div
+          onClick={() => {
+            const targetCopy = currentTarget;
+            if (currentTarget) {
+              setTargets([...targets, targetCopy]);
+            }
+            setCurrentTarget("");
+            console.log(targets);
+          }}
+          className="text-blue-200 text-center text-sm font-bold leading-4 whitespace-nowrap mt-4"
+        >
           + Add another target
         </div>
       </div>
-      <div className="justify-between items-center self-stretch flex w-full gap-5 mt-8 p-2.5 max-md:max-w-full max-md:flex-wrap">
-        <a
-          href="#"
+      <div className="justify-between items-center self-stretch flex w-full gap-5 mt-6 p-2.5 max-md:max-w-full max-md:flex-wrap">
+        <div
+          onClick={() => setStep(3)}
+          role="button"
           className="text-blue-600 text-center text-sm font-bold leading-4 my-auto"
         >
           Back
-        </a>
+        </div>
+
         <div className="justify-between items-center self-stretch flex gap-3.5 pl-20 py-2 max-md:max-w-full max-md:flex-wrap max-md:pl-5">
-          <a
-            href="#"
+          <div
+            onClick={() => setStep(4)}
+            role="button"
             className="text-blue-600 text-center text-sm font-bold leading-4 grow whitespace-nowrap my-auto"
           >
             Skip
-          </a>
-          <button className="text-white text-center text-sm font-bold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-stretch grow px-4 py-3">
-            Save and continue
-          </button>
+          </div>
+
+          <div className="justify-end flex pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
+            {isPending && (
+              <Loader2 size={30} className="text-slate-400 animate-spin" />
+            )}
+            <Button
+              disabled={isPending}
+              className="save-button text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
+              type="submit"
+            >
+              Save and continue
+            </Button>
+          </div>
         </div>
       </div>
     </div>

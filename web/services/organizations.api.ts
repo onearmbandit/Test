@@ -1,10 +1,12 @@
 "use server";
 
+import { authOptions } from "@/lib/utils";
 import axios, {
   AxiosHeaders,
   AxiosRequestConfig,
   RawAxiosRequestHeaders,
 } from "axios";
+import { getServerSession } from "next-auth";
 // import { getServerSession } from "next-auth/next";
 // import { authOptions } from "../auth";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -21,11 +23,9 @@ const fetchApi = async (
 ) => {
   const { headers, method, body } = options;
 
-  // const session = await getServerSession(authOptions);
-  // const token = session?.user;
+  const session = await getServerSession(authOptions);
 
-  const token =
-    "MQ.-PGntsVnmoJ9aSfLxCbKxcQlJSStDUJj-91Poz4_CmjqmHE9nv911EFRVINj";
+  const token : any = session?.token.token;
   const authHeader = {
     Authorization: `bearer ${token}`,
   };
@@ -38,8 +38,8 @@ const fetchApi = async (
   })
     .then((res) => res.data)
     .catch((err) => {
-      // console.log(err.response.data);
-      throw new Error(err.response.data.message);
+      console.log(err);
+      throw new Error(err);
     });
 
   return response;
@@ -52,14 +52,10 @@ export const setupOrganizationStep1 = ({
   id: string;
   formdata: any;
 }): any => {
-  console.log("api call", formdata);
 
   return fetchApi(`/auth/organization/${id}`, {
     method: "PATCH",
     body: formdata,
-    headers: {
-      "Content-Type": "application/json",
-    } as RawAxiosRequestHeaders,
   } as Options);
 };
 
@@ -70,14 +66,10 @@ export const setupOrganizationStep2 = ({
   id: string;
   formdata: any;
 }): any => {
-  console.log("api call", formdata);
 
   return fetchApi(`/auth/organization/${id}`, {
     method: "PATCH",
     body: formdata,
-    headers: {
-      "Content-Type": "application/json",
-    } as RawAxiosRequestHeaders,
   } as Options);
 };
 
@@ -88,14 +80,9 @@ export const setupOrganizationStep3 = ({
   id: string;
   formdata: any;
 }) => {
-  console.log("api call", formdata);
-
   return fetchApi(`/auth/organization/${id}`, {
     method: "PATCH",
     body: formdata,
-    headers: {
-      "Content-Type": "application/json",
-    } as RawAxiosRequestHeaders,
   } as Options);
 };
 
