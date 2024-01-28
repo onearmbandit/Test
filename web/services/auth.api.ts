@@ -87,3 +87,7 @@ export const forgotPassword = (body: any) => {
   formBody.append("email", body.email);
   return fetchApi("/forgot-password", { method: "POST", body: formBody });
 };
+
+export const resetPassword = (body: any) => {
+  return fetchApi("/reset-password", { method: "POST", body });
+};

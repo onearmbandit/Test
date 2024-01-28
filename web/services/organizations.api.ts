@@ -94,13 +94,9 @@ export const setupOrganizationStep4 = ({
   id: string;
   formdata: any;
 }) => {
-  const formbody = new URLSearchParams(formdata).toString();
-
+  
   return fetchApi(`/auth/organization/${id}`, {
     method: "PATCH",
-    body: formbody,
-    headers: {
-      "Content-Type": "application/json",
-    } as RawAxiosRequestHeaders,
+    body: formdata,
   } as Options);
 };

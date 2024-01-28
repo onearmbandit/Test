@@ -1,11 +1,51 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useFormik } from "formik";
+import { ParsedUrlQuery } from "querystring";
 import React from "react";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
-const Page = () => {
+const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
+  let token: any = "";
+  let email: any = "";
+  if (params) {
+    token = params.token;
+    email = params.email;
+  }
+
+  const validation = z.object({
+    newPassword: z
+      .string()
+      .min(8, { message: "length" })
+      .regex(/[A-Z]/, { message: "uppercase" })
+      .regex(/[a-z]/, { message: "lowercase" })
+      .regex(/[0-9]/, { message: "number" })
+      .regex(/[^A-Za-z0-9]/, { message: "special" }),
+    confirmPassword: z.string().min(8, { message: "length" }),
+  });
+
+  const resetPasswordForm = useFormik({
+    initialValues: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: async (data) => {
+      console.log(data);
+    },
+  });
+
+  console.log(resetPasswordForm.errors);
+
   return (
     <div className="h-screen grid place-items-center">
-      <form className="justify-center items-center border w-full border-[#E5E7EB] shadow-sm flex max-w-[828px] flex-col py-12 rounded-lg border-solid">
+      <form
+        onSubmit={resetPasswordForm.handleSubmit}
+        className="justify-center items-center border w-full border-[#E5E7EB] shadow-sm flex max-w-[828px] flex-col py-12 rounded-lg border-solid"
+      >
         <img
           loading="lazy"
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/2ba7f0ebe157a835760ab4b6847ec52dfedca1e1a17dd5d36073b60a9f580c48?apiKey=011554aff43544e6af46800a427fd184&"
@@ -19,7 +59,7 @@ const Page = () => {
         <div className="form-body justify-center items-center self-stretch flex w-full flex-col mt-6 mb-7 px-16 py-7 max-md:max-w-full max-md:px-5">
           <div className="form-group flex w-full max-w-[589px] flex-col max-md:max-w-full">
             <label
-              htmlFor="new-password"
+              htmlFor="newPassword"
               className="form-label self-stretch text-slate-700 text-base font-light leading-6 max-md:max-w-full"
             >
               New password
@@ -27,7 +67,9 @@ const Page = () => {
             <div className="form-control-group items-stretch bg-gray-50 self-stretch flex justify-between gap-2 mt-3 px-2  rounded-md max-md:max-w-full max-md:flex-wrap">
               <Input
                 type="password"
-                id="new-password"
+                id="newPassword"
+                name={"newPassword"}
+                onChange={resetPasswordForm.handleChange}
                 className="form-control-text text-slate-700 text-xs font-light leading-4 py-7 bg-gray-50 grow max-md:max-w-full"
               />
               <img
@@ -40,7 +82,7 @@ const Page = () => {
           </div>
           <div className="form-group flex w-full max-w-[589px] flex-col max-md:max-w-full">
             <label
-              htmlFor="confirm-password"
+              htmlFor="confirmPassword"
               className="form-label self-stretch text-slate-700 text-base font-light leading-6 mt-6 max-md:max-w-full"
             >
               Confirm password
@@ -48,7 +90,9 @@ const Page = () => {
             <div className="form-control-group items-stretch bg-gray-50 self-stretch flex justify-between gap-2 mt-3 px-2 rounded-md max-md:max-w-full max-md:flex-wrap">
               <Input
                 type="password"
-                id="confirm-password"
+                id="confirmPassword"
+                name={"confirmPassword"}
+                onChange={resetPasswordForm.handleChange}
                 className="form-control-text text-slate-700 text-xs font-light leading-4 py-7 bg-gray-50 grow max-md:max-w-full"
               />
               <img
@@ -131,7 +175,10 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <Button className="btn-reset-password text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-9 px-4 py-3">
+          <Button
+            type="submit"
+            className="btn-reset-password text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-9 px-4 py-3"
+          >
             Reset password
           </Button>
         </div>

@@ -426,17 +426,23 @@ const Step4 = ({ setStep }: any) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data: any) => {
+      console.log("step 4 data", data);
       // const organizationId: string | undefined =
       //   session.data?.user?.organizations[0]?.id;
       // if (organizationId) {
       //   mutate({ id: organizationId, formdata: data });
       // }
 
-      router.push("/");
+      // router.push("/");
     },
   });
 
+  const removeTarget = (index: any) => {
+    setTargets((prevTargets) => prevTargets.filter((_, i) => i !== index));
+  };
+
   return (
+    <form onSubmit={setupOrganizationStep4Form.handleSubmit}>
     <div className="justify-center items-start flex max-w-[814px] w-full flex-col">
       <div role="group" className="mt-6">
         <label className="text-slate-700 text-base font-medium leading-6">
@@ -447,6 +453,28 @@ const Step4 = ({ setStep }: any) => {
           For example, Science Based Target initiatives or commitments that are
           climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
         </p>
+
+        <div className="items-stretch self-stretch rounded bg-gray-50 flex max-w-[814px] justify-between gap-5 w-full mx-auto pt-2.5 px-2.5 max-md:flex-wrap">
+          <header className="header">
+            {targets.map((target, index) => (
+              <div
+                key={index}
+                className="justify-between items-stretch border border-green-100 bg-green-50 flex gap-0.5 px-2.5 py-2 rounded-md border-solid"
+              >
+                <div className="text-green-800 text-xs font-medium leading-4 grow whitespace-nowrap">
+                  {target}
+                </div>
+                <a
+                  href="https://cdn.builder.io/api/v1/image/assets/TEMP/1f19cd4d9aace8ee59507a47771c6fb1f0b4cc66d68c65c53ab0c915af98cd78?apiKey=2750205a01ca49b7852bf44337ca437a&"
+                  className="aspect-square object-contain object-center w-3 shrink-0 my-auto"
+                />
+                <button onClick={() => removeTarget(index)}>X</button>
+                {/* Add the cross button */}
+              </div>
+            ))}
+          </header>
+        </div>
+
         <Input
           type="text"
           name="targets"
@@ -494,16 +522,19 @@ const Step4 = ({ setStep }: any) => {
               <Loader2 size={30} className="text-slate-400 animate-spin" />
             )}
             <Button
-              disabled={isPending}
+              // disabled={isPending}
               className="save-button text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
               type="submit"
             >
               Save and continue
             </Button>
           </div>
+            
         </div>
+
       </div>
     </div>
+    </form>
   );
 };
 
