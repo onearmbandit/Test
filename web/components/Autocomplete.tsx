@@ -31,7 +31,7 @@ const AutocompleteInput = () => {
   });
 
   return (
-    <input
+    <Input
       ref={ref}
       className="text-slate-500 text-xs font-light mt-3 leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full"
     />
