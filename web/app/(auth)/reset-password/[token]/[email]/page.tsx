@@ -1,12 +1,18 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { resetPassword } from "@/services/auth.api";
+import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
+import { useRouter } from "next/navigation";
 import { ParsedUrlQuery } from "querystring";
 import React from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
+  const router = useRouter();
   let token: any = "";
   let email: any = "";
   if (params) {
@@ -25,20 +31,39 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
     confirmPassword: z.string().min(8, { message: "length" }),
   });
 
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationKey: ["reset-password", email, token],
+    mutationFn: resetPassword,
+    onSuccess: (res) => {
+      toast.success("Password reset successfully", {
+        style: { color: "green" },
+      });
+      router.push("/");
+      // setCurrentStep(2);
+    },
+    onError: (err) => {
+      console.log(err.message);
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
   const resetPasswordForm = useFormik({
     initialValues: {
       newPassword: "",
       confirmPassword: "",
+      email: email,
+      token: token,
     },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: async (data) => {
-      console.log(data);
+      data.email = decodeURIComponent(email);
+      data.token = token;
+
+      mutate(data);
     },
   });
-
-  console.log(resetPasswordForm.errors);
 
   return (
     <div className="h-screen grid place-items-center">

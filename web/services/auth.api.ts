@@ -40,7 +40,7 @@ const fetchApi = async (
   })
     .then((res) => res.data)
     .catch((err) => {
-      // console.log(err.response.data);
+      console.log("error : ", err.response.data);
       throw new Error(err.response.data.message);
     });
 
@@ -89,5 +89,10 @@ export const forgotPassword = (body: any) => {
 };
 
 export const resetPassword = (body: any) => {
-  return fetchApi("/reset-password", { method: "POST", body });
+  const formbody = new FormData();
+  formbody.append("newPassword", body.newPassword);
+  formbody.append("confirmPassword", body.confirmPassword);
+  formbody.append("email", body.email);
+  formbody.append("token", body.token);
+  return fetchApi("/reset-password", { method: "POST", body: formbody });
 };
