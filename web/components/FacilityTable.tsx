@@ -11,21 +11,22 @@ import {
   TableRow,
 } from "./ui/table";
 import { ArrowUpRight, Plus } from "lucide-react";
+import Link from "next/link";
 
 const FacilityTable = () => {
   return (
     <div className="bg-white rounded-lg w-full">
       <div className="bg-gray-100 px-4 py-3 flex justify-between items-center rounded-t-lg">
         <h3 className="text-slate-800 text-xs font-bold">Facilities</h3>
-        <Button
-          type="button"
+        <Link
+          href={"/"}
           className="justify-between items-center text-black rounded border border-gray-200 hover:bg-black/10 bg-white flex gap-1.5 px-3.5 py-1.5 border-solid"
         >
           <Plus size={16} className="" />
           <span className="text-gray-800 text-sm font-semibold leading-5 grow whitespace-nowrap">
             Add Facility
           </span>
-        </Button>
+        </Link>
       </div>
       <Table>
         <TableHeader className="">
