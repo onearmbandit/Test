@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, manyToMany, ManyToMany, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import { v4 as uuidv4 } from 'uuid';
-import Facility from './OrganizationFacility';
+// import Facility from './OrganizationFacility';
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod';
 import OrganizationFacility from './OrganizationFacility';
 
