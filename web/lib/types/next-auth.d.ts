@@ -43,7 +43,21 @@ declare module "next-auth" {
       /** User's organizations. */
       organizations: {
         id: string;
-        name: string;
+        company_name: string;
+        company_email: string;
+        self_point_of_contact: null | string;
+        company_size: string;
+        naics_code: string;
+        climate_targets: string[];
+        address_line_1: string;
+        address_line_2: string;
+        city: string;
+        state: string;
+        country: string | null;
+        zipcode: string | null;
+        deleted_at: string | null;
+        created_at: string;
+        updated_at: string;
       }[];
     };
     token: {

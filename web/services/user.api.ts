@@ -45,58 +45,19 @@ const fetchApi = async (
   return response;
 };
 
-export const setupOrganizationStep1 = ({
-  id,
-  formdata,
-}: {
-  id: string;
-  formdata: any;
-}): any => {
-  return fetchApi(`/auth/organization/${id}`, {
-    method: "PATCH",
-    body: formdata,
-  } as Options);
-};
-
-export const setupOrganizationStep2 = ({
-  id,
-  formdata,
-}: {
-  id: string;
-  formdata: any;
-}): any => {
-  return fetchApi(`/auth/organization/${id}`, {
-    method: "PATCH",
-    body: formdata,
-  } as Options);
-};
-
-export const setupOrganizationStep3 = ({
-  id,
-  formdata,
-}: {
-  id: string;
-  formdata: any;
-}) => {
-  return fetchApi(`/auth/organization/${id}`, {
-    method: "PATCH",
-    body: formdata,
-  } as Options);
-};
-
-export const setupOrganizationStep4 = ({
-  id,
-  formdata,
-}: {
-  id: string;
-  formdata: any;
-}) => {
-  return fetchApi(`/auth/organization/${id}`, {
-    method: "PATCH",
-    body: formdata,
-  } as Options);
-};
-
 export const getUser = () => {
   return fetchApi("/auth/user");
 };
+
+// export const setupOrganizationStep4 = ({
+//   id,
+//   formdata,
+// }: {
+//   id: string;
+//   formdata: any;
+// }) => {
+//   return fetchApi(`/auth/organization/${id}`, {
+//     method: "PATCH",
+//     body: formdata,
+//   } as Options);
+// };

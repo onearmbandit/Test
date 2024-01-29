@@ -8,8 +8,16 @@ import {
 } from "./ui/accordion";
 import Globe from "./icons/Globe";
 import { ChevronDown } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
+import { getUser } from "@/services/organizations.api";
 
-const ClimateCommitments = () => {
+const ClimateCommitments = ({ climateTargets }: { climateTargets: any }) => {
+  // const { data, isLoading } = useQuery({
+  //   queryKey: ["climate-commitments"],
+  //   queryFn: () => getUser(),
+  // });
+
   return (
     <div className="items-stretch bg-[#14532D0D] w-full flex flex-col rounded-lg">
       <Accordion type="single" collapsible>
@@ -25,18 +33,16 @@ const ClimateCommitments = () => {
           </AccordionTrigger>
           <AccordionContent className="pb-0">
             <div className="backdrop-blur-[2px] flex gap-5 mt-2 mb-1.5 px-8 py-3 rounded-lg max-md:max-w-full max-md:flex-wrap max-md:px-5">
-              <div
-                className="text-white text-xs font-bold leading-4 whitespace-nowrap items-stretch shadow bg-teal-950  justify-center px-4 py-3 rounded-md"
-                role="button"
-              >
-                Carbon Neutral by 2030
-              </div>
-              <div
-                className="text-white text-xs font-bold leading-4 whitespace-nowrap items-stretch shadow bg-teal-950  justify-center px-4 py-3 rounded-md"
-                role="button"
-              >
-                Carbon Neutral by 2030
-              </div>
+              {climateTargets?.length > 0 &&
+                climateTargets?.map((target: any, targetIndex: number) => (
+                  <div
+                    key={targetIndex}
+                    className="text-white text-xs font-bold leading-4 whitespace-nowrap items-stretch shadow bg-teal-950  justify-center px-4 py-3 rounded-md"
+                    role="button"
+                  >
+                    {target}
+                  </div>
+                ))}
             </div>
           </AccordionContent>
         </AccordionItem>

@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import Globe from "./icons/Globe";
@@ -8,15 +9,31 @@ import ClimateCommitments from "./ClimateCommitments";
 import NeedHelp from "./NeedHelp";
 import AutocompleteInput from "./Autocomplete";
 import FacilityTable from "./FacilityTable";
+import { getUser } from "@/services/user.api";
+import { useQuery } from "@tanstack/react-query";
 
 const Dashboard = () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ["climate-commitments"],
+    queryFn: () => getUser(),
+  });
+
   return (
     <div className="items-center w-full min-h-screen shadow bg-gray-50 flex flex-col px-8 pb-8 max-md:px-5">
-      <header className="overflow-hidden text-slate-800 text-ellipsis text-lg font-bold leading-7 self-start max-md:max-w-full py-9">
-        <span className="text-base leading-6">Organization</span>
-      </header>
+      <div className="justify-between self-stretch gap-5 flex flex-row w-full px-8 py-2 max-md:px-5">
+        <header className="text-slate-800 text-ellipsis text-base font-semibold leading-6 my-auto">
+          {data?.data?.organizations[0]?.company_name}
+        </header>
+        <div className="justify-center flex flex-col pl-16 py-6 items-end max-md:max-w-full max-md:pl-5">
+          <div className="text-gray-900 text-xs font-medium leading-4 whitespace-nowrap justify-center items-stretch bg-gray-50 p-2 rounded-md">
+            NAICS: {data?.data?.organizations[0]?.naics_code}
+          </div>
+        </div>
+      </div>
 
-      <ClimateCommitments />
+      <ClimateCommitments
+        climateTargets={data?.data?.organizations[0]?.climate_targets}
+      />
 
       <div className="h-full flex justify-center items-center">
         <div className="text-center space-y-6">
