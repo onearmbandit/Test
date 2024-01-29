@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getFacilities } from "@/services/facility.service";
+import { getFacilities } from "@/services/facility.api";
 import { ChevronDown, ChevronLeft, Plus } from "lucide-react";
 import Link from "next/link";
 import { ReadonlyURLSearchParams } from "next/navigation";

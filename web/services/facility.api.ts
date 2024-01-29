@@ -38,7 +38,7 @@ const fetchApi = async (
 };
 
 export const createFacility = (obj: any) => {
-  return fetchApi("/", { method: "POST", body: obj });
+  return fetchApi("/auth/facility", { method: "POST", body: obj });
 };
 
 export const getFacilities = async () => {

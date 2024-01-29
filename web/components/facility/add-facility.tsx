@@ -6,19 +6,36 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useFormik } from "formik";
 import { useMutation } from "@tanstack/react-query";
-import { createFacility } from "@/services/facility.service";
+import { createFacility } from "@/services/facility.api";
+import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 const AddFacility = () => {
-  const { mutate } = useMutation({ mutationFn: createFacility });
+  const { data: session } = useSession();
+  const { mutate } = useMutation({
+    mutationFn: createFacility,
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
   const {
     values: facility,
     handleSubmit,
     handleChange,
     errors,
+    setFieldValue,
   } = useFormik({
-    initialValues: {},
+    initialValues: {
+      organization_id: session?.user?.organizations[0].id,
+      name: "",
+      address: "",
+    },
     onSubmit: (data) => {
       console.log(data);
+      mutate(data);
     },
   });
   return (
@@ -50,6 +67,7 @@ const AddFacility = () => {
           <Input
             id="facility-name"
             type="text"
+            name="name"
             onChange={handleChange}
             className="text-slate-500 text-xs font-light leading-4 whitespace-nowrap max-w-[18.5rem] bg-gray-50  justify-center pl-2 pr-8 py-3.5 rounded-md max-md:pr-5"
             placeholder="Add facility name"
@@ -74,7 +92,8 @@ const AddFacility = () => {
         <div>
           <AutocompleteInput
             setAddress={(e: any) => {
-              console.log(e);
+              // console.log(e);
+              setFieldValue("address", e);
             }}
             // id="facility-location"
             // type="text"
