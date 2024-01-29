@@ -25,4 +25,8 @@ export default class OrganizationUser extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  public static findByUserId(userId: number) {
+    return this.query().where('user_id', userId).first();
+  }
 }
