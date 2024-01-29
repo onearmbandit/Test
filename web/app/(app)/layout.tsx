@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/utils";
 import Sidebar from "@/components/Sidebar";
 import Provider from "@/components/provider/query-provider";
 import { redirect } from "next/navigation";
+import { Toaster } from "sonner";
 
 const AuthProvider = dynamic(() => import("../../components/AuthProvider"), {
   ssr: false,
@@ -35,6 +36,7 @@ export default async function RootLayout({
           {session && <Sidebar />}
           <Provider>{children}</Provider>
         </AuthProvider>
+        <Toaster position="bottom-center" />
         <script
           type="text/javascript"
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places`}
