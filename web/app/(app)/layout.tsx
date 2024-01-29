@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/utils";
 import Sidebar from "@/components/Sidebar";
 import Provider from "@/components/provider/query-provider";
+import { redirect } from "next/navigation";
 
 const AuthProvider = dynamic(() => import("../../components/AuthProvider"), {
   ssr: false,
@@ -24,6 +25,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect("/login");
+  }
   return (
     <html lang="en">
       <body className={inter.className + " flex"}>

@@ -43,7 +43,7 @@ export const createFacility = (obj: any) => {
 
 export const getFacilities = async () => {
   const session = await getServerSession(authOptions);
-  console.log("ses", session.user);
+  // console.log("ses", session.user);
   // return await session;
   return fetchApi(`/auth/facility?organization_id=`);
 };
