@@ -1,20 +1,41 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
   const router = useRouter();
+  // const { mutate } = useMutation({
+  //   mutationFn: () => {
+  //     return "string";
+  //   },
+  //   onSuccess: () => {},
+  // });
+  const naicsForm = useFormik({
+    initialValues: {
+      address: "",
+    },
+    onSubmit: (data) => {
+      console.log(data);
+      setSection("home");
+    },
+  });
   return (
     <form
-      action={() => setSection("home")}
+      onSubmit={naicsForm.handleSubmit}
       className="items-start self-stretch grow bg-white flex rounded-e-lg space-y-6 flex-col pt-6 px-8 max-md:px-5"
     >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch mr-2.5 max-md:max-w-full">
         <span className="text-slate-500">
           {" "}
-          Account &gt; Organization Account &gt;{" "}
+          Account &gt;{" "}
+          <span onClick={() => setSection("home")} role="button">
+            Organization Account
+          </span>{" "}
+          &gt;
         </span>{" "}
         <span className="text-blue-600">Edit NAICS Code</span>
       </header>

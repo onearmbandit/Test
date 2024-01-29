@@ -1163,11 +1163,132 @@
 								{
 									"key": "supplierCSV",
 									"type": "file",
-									"src": "/home/cemtrex/projects/C3Insets/api/public/downloads/Supplier CSV Template.csv"
+									"src": "/home/cemtrex/Documents/C3/Supplier CSV2.csv"
+								},
+								{
+									"key": "supplyChainReportingPeriodId",
+									"value": "13f89160-7f18-4106-aefa-2b87eb1e0417",
+									"type": "text"
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/auth/suppliers/csv-upload"
+						"url": "{{base_url}}/api/v1/auth/supplier-csv-upload"
+					},
+					"response": []
+				},
+				{
+					"name": "New supplier",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "supplyChainReportingPeriodId",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "name",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "organizationRelationship",
+									"value": "",
+									"description": "CONTRACTUAL,OWNED",
+									"type": "text"
+								},
+								{
+									"key": "addressLine_1",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "addressLine_2",
+									"value": "",
+									"description": "optional",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "state",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "zipCode",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{base_url}}/api/v1/auth/suppliers"
+					},
+					"response": []
+				},
+				{
+					"name": "Update supplier",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": "{{base_url}}/api/v1/auth/suppliers/3d770ec8-a96e-4c6f-bd89-441630e4c50e"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Supplier Product",
+			"item": [
+				{
+					"name": "create supplier product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"supplierId\": \"3d770ec8-a96e-4c6f-bd89-441630e4c50e\",\n    \"supplierProducts\": [\n        {\n            \"name\":\"\",\n            \"type\":\"\",\n            \"quantity\":1000,\n            \"functionalUnit\":\"\",\n            \"scope_3Contribution\":\"\"\n        },\n        {\n            \"name\":\"\",\n            \"type\":\"\",\n            \"quantity\":1000,\n            \"functionalUnit\":\"\",\n            \"scope_3Contribution\":\"\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/auth/supplier-products"
 					},
 					"response": []
 				}

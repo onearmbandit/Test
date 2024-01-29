@@ -13,12 +13,7 @@ export default class extends BaseSchema {
       table.string('name')
       table.string('email')
       table.string('organization_relationship').comment('value must be either owned or contractor')
-      table.string('address_line_1');
-      table.string('address_line_2');
-      table.string('city');
-      table.string('state');
-      table.string('country');
-      table.string('zip_code');
+      table.string('address');
       table.timestamp('deleted_at', { useTz: true })
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
