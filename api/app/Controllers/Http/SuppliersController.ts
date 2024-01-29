@@ -12,7 +12,34 @@ import AddSupplierDatumValidator from 'App/Validators/Supplier/AddSupplierDatumV
 import UpdateSupplierDatumValidator from 'App/Validators/Supplier/UpdateSupplierDatumValidator';
 
 export default class SuppliersController {
-  public async index({ }: HttpContextContract) { }
+  public async index({ request, response }: HttpContextContract) {
+    try {
+  
+
+
+
+
+    } catch (error) {
+      console.log("error", error)
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
+  }
 
   public async store({ request, response }: HttpContextContract) {
     try {

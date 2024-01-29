@@ -90,4 +90,17 @@ export default class Supplier extends BaseModel {
   }
 
 
+  public static async getAllSuppliersForSpecificPeriod(request) {
+    let page: number = request.qs().page ? request.qs().page : 1;
+    let perPage: number | null = request.qs().per_page ? request.qs().per_page : null;
+    let isPaginated: boolean = perPage ? true : false;
+    let supplyChainReportingPeriodId = request.qs().supplyChainReportingPeriodId
+
+    const allSuppliersData = await Supplier.query()
+    .andWhereNull('deletedAt')
+
+
+  }
+
+
 }
