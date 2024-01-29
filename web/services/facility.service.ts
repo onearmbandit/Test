@@ -35,6 +35,6 @@ const fetchApi = async (
   return response;
 };
 
-export const createFacility = () => {
-  return "yes";
+export const createFacility = (obj: any) => {
+  return fetchApi("/", { method: "POST", body: obj });
 };

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/utils";
 import Sidebar from "@/components/Sidebar";
+import Provider from "@/components/provider/query-provider";
 
 const AuthProvider = dynamic(() => import("../../components/AuthProvider"), {
   ssr: false,
@@ -28,7 +29,7 @@ export default async function RootLayout({
       <body className={inter.className + " flex"}>
         <AuthProvider>
           {session && <Sidebar />}
-          {children}
+          <Provider>{children}</Provider>
         </AuthProvider>
         <script
           type="text/javascript"
