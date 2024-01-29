@@ -364,7 +364,7 @@ export default class AuthController {
 
 
     //:: Social signup and login
-    public async socialSignupAndLogin({ request, response }: HttpContextContract) {
+    public async socialSignupAndLogin({ request, response,auth }: HttpContextContract) {
         try {
             await request.validate(SocialSignupOrLoginValidator);
 
@@ -397,22 +397,34 @@ export default class AuthController {
 
             }
             else {
-                // userExist.merge({
-                //     firstName: requestData.firstName ? requestData.firstName : null,
-                //     lastName: requestData.lastName ? requestData.lastName : null,
-                //     socialLoginToken: requestData.socialLoginToken,
-                //     loginType: requestData.loginType,
-                // }).save();
+                userExist.merge({
+                    firstName: requestData.firstName ? requestData.firstName : null,
+                    lastName: requestData.lastName ? requestData.lastName : null,
+                    socialLoginToken: requestData.socialLoginToken,
+                    loginType: requestData.loginType,
+                }).save();
 
-                // return apiResponse(response, true, 201, userExist, "")
+                // const emailData = {
+                //     user: userExist,
+                //     url: `${WEB_BASE_URL}`,
+                // }
 
-                return apiResponse(response, false, 422, {
-                    'errors': [{
-                        field: 'email',
-                        message: Config.get('responsemessage.AUTH_RESPONSE.emailExists')
-                    }]
-                },
-                    Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
+                // await sendMail(userExist.email, 'Welcome to C3insets.ai!', 'emails/user_welcome', emailData)
+
+                const token = await auth.use('api').generate(userExist, {
+                    expiresIn: '1day'
+                })
+                return apiResponse(response, true, 200, { token, userExist },
+                    Config.get('responsemessage.AUTH_RESPONSE.loginSuccess'))
+
+
+                // return apiResponse(response, false, 422, {
+                //     'errors': [{
+                //         field: 'email',
+                //         message: Config.get('responsemessage.AUTH_RESPONSE.emailExists')
+                //     }]
+                // },
+                //     Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
 
             }
 
