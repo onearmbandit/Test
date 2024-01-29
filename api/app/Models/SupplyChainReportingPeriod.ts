@@ -50,7 +50,7 @@ export default class SupplyChainReportingPeriod extends BaseModel {
 
 
   public static async getAllReportingPeriod(queryParams: ParsedQs) {
-    const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8;
+    const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 10;
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
     const order = queryParams.order ? queryParams.order.toString() : 'desc';
     const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at';
@@ -64,7 +64,21 @@ export default class SupplyChainReportingPeriod extends BaseModel {
 
     query = query.orderBy(sort, order);
 
-    const organizationReportingPeriods = await query.paginate(page, perPage);
+    const organizationReportingPeriods = await query.preload('supplier')
+    .paginate(page, perPage);
+
+
+       // Format reportingPeriodFrom and reportingPeriodTo
+      //  const formattedReportingPeriods = organizationReportingPeriods.map((period) => {
+      //   return {
+      //     ...period,
+      //     reportingPeriodFrom: period.reportingPeriodFrom.toFormat("LLL yyyy"),
+      //     reportingPeriodTo: period.reportingPeriodTo.toFormat("LLL yyyy"),
+      //   };
+      // });
+      // console.log("formattedReportingPeriods",formattedReportingPeriods)
+  
+      // return formattedReportingPeriods;
 
     return organizationReportingPeriods
   }

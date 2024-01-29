@@ -8,10 +8,16 @@ import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 export default class SupplyChainReportingPeriodsController {
   public async index({ request, response }: HttpContextContract) {
     try {
-      const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)
+
+      const queryParams = request.qs();
+
+      const reportingPeriods = await SupplyChainReportingPeriod.getAllReportingPeriod(queryParams);
+
+      const isPaginated = !request.input('per_page') || request.input('per_page') !== 'all';
+
+      return apiResponse(response, true, 200, reportingPeriods, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'), isPaginated);
 
 
-      return apiResponse(response, true, 200, reportPeriodData, 'Data Fetch Successfully')
     } catch (error) {
       console.log("error", error)
       if (error.status === 422) {
