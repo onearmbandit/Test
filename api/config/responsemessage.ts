@@ -1,6 +1,6 @@
 
 export const COMMON_RESPONSE = {
-  getRequestSuccess: 'Data Fetch Successfully',
+  getRequestSuccess: 'Data Fetched Successfully',
   permissionError: 'You don\'t have permission for this action',
   unauthorizedAccess: 'Unauthorized access',
   validationFailed: 'Validation failed for given inputs.',
@@ -33,8 +33,7 @@ export const AUTH_RESPONSE = {
   wrongUserEmail: "Wrong email, try again",
   wrongUserPassword: "Wrong password, try again",
   authUserDeleteSuccess: "User delete successfully.",
-  notMatchInvitedData:"Entered email is not match with invited email.Please check."
-
+  notMatchInvitedData:"Entered email is not match with invited email.Please check.",
 }
 
 
@@ -58,3 +57,9 @@ export const SUPPLIER_RESPONSE = {
   supplierUpdateSuccess: "Supplier details updated successfully."
 }
 
+export const ORGANIZATION_FACILITY_RESPONSE = {
+  dataFetchSuccess: "Organization facilities fetched successfully.",
+  updateFacilitySuccess: "Organization facility updated successfully.",
+  deleteFacilitySuccess: "Organization facility deleted successfully.",
+  facilityNotFound: "Organization facility didn't found.",
+}
