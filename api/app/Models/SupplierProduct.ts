@@ -5,6 +5,7 @@ import {
 } from '@ioc:Adonis/Lucid/Orm'
 import Supplier from './Supplier'
 import { v4 as uuidv4 } from 'uuid';
+import { ParsedQs } from 'qs';
 
 
 export default class SupplierProduct extends BaseModel {
@@ -43,7 +44,7 @@ export default class SupplierProduct extends BaseModel {
   //::_____Relationships Start_____:://
 
   @belongsTo(() => Supplier, {
-    localKey: 'supplierId',
+    foreignKey: 'supplierId',
   })
   public supplier: BelongsTo<typeof Supplier>
 
@@ -60,6 +61,30 @@ export default class SupplierProduct extends BaseModel {
     });
     let result = await supplierData.related('supplierProducts').createMany(products);
     return result;
+  }
+
+
+  public static async getAllSupplierProductsForSpecificPeriod(queryParams: ParsedQs) {
+    const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20;
+    const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
+    const order = queryParams.order ? queryParams.order.toString() : 'desc';
+    const sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at';
+    const supplyChainReportingPeriodId = queryParams.supplyChainReportingPeriodId ? queryParams.supplyChainReportingPeriodId.toString() : '';
+
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+
+    if (supplyChainReportingPeriodId) {
+      query.whereHas('supplier', (query) => {
+        query.where('supplyChainReportingPeriodId', supplyChainReportingPeriodId)
+      })
+    }
+
+    query = query.orderBy(sort, order);
+
+    const allSupplierProductsData = await query.preload('supplier')
+    .paginate(page, perPage);
+
+    return allSupplierProductsData
   }
 
 }

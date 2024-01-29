@@ -7,6 +7,8 @@ import {
 } from '@ioc:Adonis/Lucid/Orm'
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod'
 import SupplierProduct from './SupplierProduct'
+import { ParsedQs } from 'qs';
+
 
 export default class Supplier extends BaseModel {
   @column({ isPrimary: true })
@@ -90,17 +92,26 @@ export default class Supplier extends BaseModel {
   }
 
 
-  public static async getAllSuppliersForSpecificPeriod(request) {
-    let page: number = request.qs().page ? request.qs().page : 1;
-    let perPage: number | null = request.qs().per_page ? request.qs().per_page : null;
-    let isPaginated: boolean = perPage ? true : false;
-    let supplyChainReportingPeriodId = request.qs().supplyChainReportingPeriodId
+//:: Need to check 
+  public static async getAllSuppliersForSpecificPeriod(queryParams: ParsedQs) {
+    const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20;
+    const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
+    const order = queryParams.order ? queryParams.order.toString() : 'desc';
+    const sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at';
+    const supplyChainReportingPeriodId = queryParams.supplyChainReportingPeriodId ? queryParams.supplyChainReportingPeriodId.toString() : '';
 
-    const allSuppliersData = await Supplier.query()
-    .andWhereNull('deletedAt')
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
 
+    if (supplyChainReportingPeriodId) {
+      query = query.where('supplyChainReportingPeriodId', supplyChainReportingPeriodId);
+    }
 
+    query = query.orderBy(sort, order);
+
+    const allSuppliersData = await query.preload('supplierProducts')
+    .paginate(page, perPage);
+
+    return allSuppliersData
   }
-
 
 }
