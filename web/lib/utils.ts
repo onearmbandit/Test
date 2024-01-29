@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
+import AzureADProvider from "next-auth/providers/azure-ad";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -22,6 +23,15 @@ export const authOptions: NextAuthOptions = {
           image: profile.picture,
           socialLoginToken: tokens.id_token,
         };
+      },
+    }),
+    AzureADProvider({
+      clientId: process.env.AZURE_AD_CLIENT_ID!,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+      tenantId: process.env.AZURE_AD_TENANT_ID,
+      profile(profile, tokens) {
+        console.log({ tokens });
+        return { ...profile, id: profile.sub };
       },
     }),
     Credentials({
@@ -100,4 +110,20 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
+};
+
+export const formatAddress = (address: any) => {
+  // Split the address into components
+  let addressComponents = address.split(",");
+
+  // Extract components
+  let streetAddress = addressComponents[0].trim();
+  let floor = addressComponents[1]?.trim();
+  let cityStateZip = addressComponents[2]?.trim();
+  let country = addressComponents[addressComponents.length - 1].trim();
+
+  // Construct formatted address
+  let formattedAddress = `${streetAddress},\n${floor},\n${cityStateZip},\n${country}`;
+
+  return formattedAddress;
 };

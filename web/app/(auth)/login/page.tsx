@@ -189,8 +189,8 @@ const Page = () => {
               </div>
             </div>
             <div
-              // role="button"
-              // onClick={() => signIn("microsoft")}
+              role="button"
+              onClick={() => signIn("azure-ad", { callbackUrl: "/" })}
               className="justify-start items-stretch border-slate-200 flex gap-4 mt-6 py-4 px-11  rounded-full border-2 border-solid"
             >
               <img

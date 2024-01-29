@@ -559,14 +559,26 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
           />
         </div>
         <div className="mt-6">
-          <label
-            className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
-            htmlFor="companyAdress"
-          >
-            Company Address
-          </label>
+          <div className="flex justify-between items-end mb-3 py-2">
+            <label
+              className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
+              htmlFor="companyAdress"
+            >
+              Company Address
+            </label>
+            <p
+              role="button"
+              className="text-sm font-semibold leading-4 text-blue-600"
+            >
+              Edit
+            </p>
+          </div>
 
-          <AutocompleteInput />
+          <AutocompleteInput
+            setAddress={(e: any) => {
+              console.log("ed", e);
+            }}
+          />
         </div>
 
         <div className="justify-between items-center self-stretch flex gap-5 mt-3 pl-1 pr-2.5 py-2.5 max-md:max-w-full max-md:flex-wrap">
