@@ -6,6 +6,7 @@ import {
 import Organization from './Organization'
 import Supplier from './Supplier'
 import { v4 as uuidv4 } from 'uuid';
+import { ParsedQs } from 'qs';
 
 
 export default class SupplyChainReportingPeriod extends BaseModel {
@@ -48,6 +49,26 @@ export default class SupplyChainReportingPeriod extends BaseModel {
   //::_____Relationships End_____:://
 
 
+  public static async getAllReportingPeriod(queryParams: ParsedQs) {
+    const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8;
+    const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
+    const order = queryParams.order ? queryParams.order.toString() : 'desc';
+    const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at';
+    const organizationId = queryParams.organizationId ? queryParams.organizationId.toString() : '';
+
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+
+    if (organizationId) {
+      query = query.where('organization_id', organizationId);
+    }
+
+    query = query.orderBy(sort, order);
+
+    const organizationReportingPeriods = await query.paginate(page, perPage);
+
+    return organizationReportingPeriods
+  }
+  
 
 
   public static async createReportPeriod(requestData, auth) {
