@@ -5,6 +5,9 @@ import Config from '@ioc:Adonis/Core/Config';
 import AddSupplierProductValidator from 'App/Validators/Supplier/AddSupplierProductValidator';
 import SupplierProduct from 'App/Models/SupplierProduct';
 import Supplier from 'App/Models/Supplier';
+import { ResponseObject } from 'Contracts/interfaces/types';
+import { ResponseContract } from '@ioc:Adonis/Core/Response'
+
 
 export default class SupplierProductsController {
   public async index({ request, response }: HttpContextContract) {
@@ -39,7 +42,7 @@ export default class SupplierProductsController {
     }
   }
 
-  public async store ({ request, response}: HttpContextContract) {
+  public async store({ request, response }: HttpContextContract) {
     try {
       let requestData = request.all()
 
@@ -47,7 +50,7 @@ export default class SupplierProductsController {
 
       var supplierData = await Supplier.getSupplierDetails('id', requestData.supplierId);
 
-      var creationResult= await SupplierProduct.createSupplierProducts(supplierData,requestData)
+      var creationResult = await SupplierProduct.createSupplierProducts(supplierData, requestData)
 
       return apiResponse(response, true, 201, creationResult,
         Config.get('responsemessage.SUPPLIER_RESPONSE.productCreateSuccess'))
@@ -74,12 +77,72 @@ export default class SupplierProductsController {
     }
   }
 
-  public async show ({}: HttpContextContract) {
+  public async show({ }: HttpContextContract) {
   }
 
-  public async update ({}: HttpContextContract) {
+  public async update({ }: HttpContextContract) {
   }
 
-  public async destroy ({}: HttpContextContract) {
+  public async destroy({ }: HttpContextContract) {
+  }
+
+  public async calculateProductEmissionData({ response, request }: HttpContextContract) {
+    try {
+      const queryParams = request.qs();
+
+      const emissionData = await SupplierProduct.getProductsEmissionDataForSpecificPeriod(queryParams);
+      let totalProductLevelEmission = 0;
+      let productWise: any = [];
+      let scopeEmissionNAProducts: any = []
+      emissionData.forEach((ele) => {
+        let productData = {
+          name: ele.name,
+          scope_3_contribution: ele.scope_3_contribution,
+          functional_unit: ele.functional_unit,
+          quantity: ele.quantity,
+          type: ele.type
+        }
+
+        //:: Findout NA element count
+        if (ele.scope_3_contribution == null || ele.scope_3_contribution == '' || ele.scope_3_contribution == 'NA') {
+          scopeEmissionNAProducts.push(ele)
+        }
+        else{
+          totalProductLevelEmission = totalProductLevelEmission + parseFloat(ele.scope_3_contribution)
+        }
+        productWise.push(productData)
+      })
+
+      //:: Calculated NA foot print product percentage
+      let missingCarbonFootPrint = (scopeEmissionNAProducts.length / emissionData.length) * 100
+
+      let resData = {
+        totalProductLevelEmission: totalProductLevelEmission,
+        productWise: productWise,
+        missingCarbonFootPrint: missingCarbonFootPrint
+      }
+
+      return apiResponse(response, true, 200, resData, 'Data Fetch Successfully')
+    }
+    catch (error) {
+      console.log("error", error)
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
   }
 }

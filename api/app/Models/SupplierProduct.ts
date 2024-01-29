@@ -74,17 +74,40 @@ export default class SupplierProduct extends BaseModel {
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
 
     if (supplyChainReportingPeriodId) {
+      query = query.whereHas('supplier', (data) => {
+        data.where('supplyChainReportingPeriodId', supplyChainReportingPeriodId)
+      })
+    }
+
+    if (sort == 'supplierName') {
+      query = query.whereHas('supplier', (data) => {
+        data.orderBy('name', order)
+      })
+    }
+    else {
+      query = query.orderBy(sort, order);
+    }
+
+    const allSupplierProductsData = await query
+      .preload('supplier')
+      .paginate(page, perPage);
+
+    return allSupplierProductsData
+  }
+
+
+  public static async getProductsEmissionDataForSpecificPeriod(queryParams: ParsedQs) {
+    const supplyChainReportingPeriodId = queryParams.supplyChainReportingPeriodId ? queryParams.supplyChainReportingPeriodId.toString() : '';
+
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+    if (supplyChainReportingPeriodId) {
       query.whereHas('supplier', (query) => {
         query.where('supplyChainReportingPeriodId', supplyChainReportingPeriodId)
       })
     }
 
-    query = query.orderBy(sort, order);
+    const allSupplierProductsData = await query.preload('supplier');
 
-    const allSupplierProductsData = await query.preload('supplier')
-    .paginate(page, perPage);
-
-    return allSupplierProductsData
+    return JSON.parse(JSON.stringify(allSupplierProductsData));
   }
-
 }
