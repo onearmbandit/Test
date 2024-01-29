@@ -1,6 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -10,9 +12,19 @@ const EditClimateConditions = ({
   setSection: (val: string) => void;
 }) => {
   const router = useRouter();
+  // const{mutate} = useMutation({mutationFn: () => {}, })
+  const climateForm = useFormik({
+    initialValues: {
+      climateConditions: "",
+    },
+    onSubmit: (data) => {
+      console.log(data);
+      setSection("home");
+    },
+  });
   return (
     <form
-      action={() => setSection("home")}
+      onSubmit={climateForm.handleSubmit}
       className="items-start self-stretch bg-white flex grow rounded-e-lg flex-col space-y-6  pt-6 px-8 max-md:px-5"
     >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch max-md:max-w-full">

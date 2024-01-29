@@ -1,14 +1,26 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
   const router = useRouter();
+
+  const addressForm = useFormik({
+    initialValues: {
+      address: "",
+    },
+    onSubmit: (data) => {
+      console.log(data);
+      setSection("home");
+    },
+  });
+
   return (
     <form
-      action={() => setSection("home")}
+      onSubmit={addressForm.handleSubmit}
       className="items-start w-full bg-white flex grow rounded-e-lg flex-col pl-8 pr-11 pt-6 pb-12 max-md:px-5"
     >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch max-md:max-w-full">
