@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { useFormik } from "formik";
 import { useMutation } from "@tanstack/react-query";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 
@@ -399,9 +399,20 @@ const Step4 = ({ setStep }: any) => {
   const [targets, setTargets] = useState<string[]>([]);
   const [currentTarget, setCurrentTarget] = useState<string>("");
   const validation = z.object({
-    climateTargets: z
-      .array(z.string())
-      .min(1, "Atleast one climate target is required"),
+    climateTargets: z.array(z.string()).refine(
+      (arr) => {
+        return (
+          arr.length >= 1 &&
+          arr.every(
+            (target) => typeof target === "string" && target.length <= 50
+          )
+        );
+      },
+      {
+        message:
+          "Climate targets should be an array with at least one string element, each string should be at most 50 characters long",
+      }
+    ),
     profileStep: z.number().int().min(1).max(3),
   });
 
@@ -422,40 +433,42 @@ const Step4 = ({ setStep }: any) => {
   const setupOrganizationStep4Form = useFormik({
     initialValues: {
       climateTargets: [],
-      profileStep: 3,
+      profileStep: 4,
     },
-    validationSchema: toFormikValidationSchema(validation),
+    // validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data: any) => {
-      console.log("step 4 data", data);
-      // const organizationId: string | undefined =
-      //   session.data?.user?.organizations[0]?.id;
-      // if (organizationId) {
-      //   mutate({ id: organizationId, formdata: data });
-      // }
+      const organizationId: string | undefined =
+        session.data?.user?.organizations[0]?.id;
+      if (organizationId) {
+        mutate({
+          id: organizationId,
+          formdata: { ...data, climateTargets: targets },
+        });
+      }
 
-      // router.push("/");
+      router.push("/");
     },
   });
 
   const removeTarget = (index: any) => {
     setTargets((prevTargets) => prevTargets.filter((_, i) => i !== index));
   };
+  console.log("Form Errors : ", setupOrganizationStep4Form.errors);
 
   return (
     <form onSubmit={setupOrganizationStep4Form.handleSubmit}>
-    <div className="justify-center items-start flex max-w-[814px] w-full flex-col">
-      <div role="group" className="mt-6">
-        <label className="text-slate-700 text-base font-medium leading-6">
-          Do you have goals or targets to reduce greenhouse gas emissions and/or
-          energy?
-        </label>
-        <p className="text-slate-500 text-sm font-light leading-5 mt-1">
-          For example, Science Based Target initiatives or commitments that are
-          climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
-        </p>
+      <div className="justify-center items-start flex max-w-[814px] w-full flex-col">
+        <div role="group" className="mt-6">
+          <label className="text-slate-700 text-base font-medium leading-6">
+            Do you have goals or targets to reduce greenhouse gas emissions
+            and/or energy?
+          </label>
+          <p className="text-slate-500 text-sm font-light leading-5 mt-1">
+            For example, Science Based Target initiatives or commitments that
+            are climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
+          </p>
 
-        <div className="items-stretch self-stretch rounded bg-gray-50 flex max-w-[814px] justify-between gap-5 w-full mx-auto pt-2.5 px-2.5 max-md:flex-wrap">
-          <header className="header">
+          <div className="items-stretch self-stretch rounded bg-gray-50 flex max-w-[814px] gap-x-4 gap-y-2.5 w-full mx-auto p-2.5 flex-wrap max-h-[128px] overflow-auto">
             {targets.map((target, index) => (
               <div
                 key={index}
@@ -464,76 +477,85 @@ const Step4 = ({ setStep }: any) => {
                 <div className="text-green-800 text-xs font-medium leading-4 grow whitespace-nowrap">
                   {target}
                 </div>
-                <a
-                  href="https://cdn.builder.io/api/v1/image/assets/TEMP/1f19cd4d9aace8ee59507a47771c6fb1f0b4cc66d68c65c53ab0c915af98cd78?apiKey=2750205a01ca49b7852bf44337ca437a&"
-                  className="aspect-square object-contain object-center w-3 shrink-0 my-auto"
-                />
-                <button onClick={() => removeTarget(index)}>X</button>
+
+                <button onClick={() => removeTarget(index)}>
+                  {" "}
+                  <X size={12} className="text-green-800" />{" "}
+                </button>
                 {/* Add the cross button */}
               </div>
             ))}
-          </header>
-        </div>
-
-        <Input
-          type="text"
-          name="targets"
-          value={currentTarget}
-          onChange={(e) => {
-            setCurrentTarget(e.target.value);
-          }}
-          className="text-slate-500 text-xs font-light leading-4 bg-gray-50 self-stretch mt-2 px-2 py-6 rounded-md"
-          placeholder="ex: Carbon neutral by 2030"
-        />
-        <div
-          onClick={() => {
-            const targetCopy = currentTarget;
-            if (currentTarget) {
-              setTargets([...targets, targetCopy]);
-            }
-            setCurrentTarget("");
-            console.log(targets);
-          }}
-          className="text-blue-200 text-center text-sm font-bold leading-4 whitespace-nowrap mt-4"
-        >
-          + Add another target
-        </div>
-      </div>
-      <div className="justify-between items-center self-stretch flex w-full gap-5 mt-6 p-2.5 max-md:max-w-full max-md:flex-wrap">
-        <div
-          onClick={() => setStep(3)}
-          role="button"
-          className="text-blue-600 text-center text-sm font-bold leading-4 my-auto"
-        >
-          Back
-        </div>
-
-        <div className="justify-between items-center self-stretch flex gap-3.5 pl-20 py-2 max-md:max-w-full max-md:flex-wrap max-md:pl-5">
-          <div
-            onClick={() => setStep(4)}
-            role="button"
-            className="text-blue-600 text-center text-sm font-bold leading-4 grow whitespace-nowrap my-auto"
-          >
-            Skip
           </div>
 
-          <div className="justify-end flex pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
-            {isPending && (
-              <Loader2 size={30} className="text-slate-400 animate-spin" />
-            )}
-            <Button
-              // disabled={isPending}
-              className="save-button text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
-              type="submit"
+          <div>
+            <Input
+              type="text"
+              name="targets"
+              value={currentTarget}
+              onChange={(e) => {
+                setCurrentTarget(e.target.value);
+              }}
+              className="text-slate-500 text-xs font-light leading-4 bg-gray-50 self-stretch mt-2 px-2 py-6 rounded-md"
+              placeholder="ex: Carbon neutral by 2030"
+            />
+
+            <p
+              className={cn(
+                "text-slate-500 text-xs font-light",
+                currentTarget.length > 50 && "text-red-500"
+              )}
             >
-              Save and continue
-            </Button>
+              {currentTarget.length}/50 Characters
+            </p>
           </div>
-            
+          <button
+            onClick={() => {
+              const targetCopy = currentTarget;
+              if (currentTarget) {
+                setTargets([...targets, targetCopy]);
+              }
+              setCurrentTarget("");
+            }}
+            className="text-blue-600 text-end text-sm font-bold leading-4 whitespace-nowrap mt-4 disabled:cursor-not-allowed "
+            type="button"
+            disabled={currentTarget.length > 50}
+          >
+            + Add another target
+          </button>
         </div>
+        <div className="justify-between items-center self-stretch flex w-full gap-5 mt-6 p-2.5 max-md:max-w-full max-md:flex-wrap">
+          <div
+            onClick={() => setStep(3)}
+            role="button"
+            className="text-blue-600 text-center text-sm font-bold leading-4 my-auto"
+          >
+            Back
+          </div>
 
+          <div className="justify-between items-center self-stretch flex gap-3.5 pl-20 py-2 max-md:max-w-full max-md:flex-wrap max-md:pl-5">
+            <div
+              onClick={() => setStep(4)}
+              role="button"
+              className="text-blue-600 text-center text-sm font-bold leading-4 grow whitespace-nowrap my-auto"
+            >
+              Skip
+            </div>
+
+            <div className="justify-end flex pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
+              {isPending && (
+                <Loader2 size={30} className="text-slate-400 animate-spin" />
+              )}
+              <Button
+                disabled={isPending}
+                className="save-button text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
+                type="submit"
+              >
+                Save and continue
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
     </form>
   );
 };

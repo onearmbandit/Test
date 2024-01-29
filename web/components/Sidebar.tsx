@@ -13,19 +13,27 @@ import { ChevronDown } from "lucide-react";
 
 const Sidebar = () => {
   const session = useSession();
+
+  const firstName = session?.data?.user?.first_name || "";
+  const lastName = session?.data?.user?.last_name || "";
+
+  const firstLetterOfFirstName = firstName.charAt(0);
+  const firstLetterOfLastName = lastName.charAt(0);
+
   return (
     <div className="flex flex-col justify-between w-full h-screen max-w-[240px] px-4 py-5">
       <nav>
         <header className="items-center border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-2 pl-4 pr-10 py-3.5 border-b border-solid">
           <div className="text-blue-700 text-xs font-semibold leading-4 whitespace-nowrap flex justify-center items-center bg-blue-100 aspect-square h-8 my-auto px-2.5 rounded-md">
-            JS
+            {firstLetterOfFirstName}
+            {firstLetterOfLastName}
           </div>
           <div className="justify-center items-stretch self-stretch flex grow basis-[0%] flex-col">
             <h1 className="overflow-hidden text-slate-800 text-ellipsis text-sm font-semibold leading-5 whitespace-nowrap">
-              {session.data?.user?.name}
+              {session.data?.user?.first_name} {session.data?.user?.last_name}
             </h1>
             <div className="overflow-hidden text-slate-500 text-ellipsis text-xs leading-4 whitespace-nowrap">
-              Pepsi Co
+              {session.data?.user?.organizations[0]?.company_name}
             </div>
           </div>
         </header>

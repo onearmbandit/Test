@@ -11,6 +11,8 @@ export default async function Home() {
     redirect("/login");
   }
 
+  console.log("session from home page : ", session);
+
   return (
     <>
       <Sidebar />
