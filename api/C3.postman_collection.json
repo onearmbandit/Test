@@ -1031,29 +1031,6 @@
 			]
 		},
 		{
-			"name": "Organisation Facilities",
-			"item": [
-				{
-					"name": "Create new Facility",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "\n{\n    \"organization_id\": \"45827b85-b5d1-11ee-b247-f44ee3c0ff12\",\n    \"facilities\":[\n        {\n            \"name\":\"power plant 1\",\n            \"addressLine1\":\"Pune\",\n            \"addressLine2\":\"floor1\",\n            \"city\":\"Pune\",\n            \"state\":\"MH\",\n            \"zipCode\":\"12345\"\n        },\n        {\n            \"name\":\"power plant 2\",\n            \"addressLine1\":\"Mumbai\",\n            \"addressLine2\":\"floor2\",\n            \"city\":\"Mumbai\",\n            \"state\":\"MH\",\n            \"zipCode\":\"46787\"\n        }\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{base_url}}/api/v1/facility"
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "files",
 			"item": [
 				{
@@ -1140,6 +1117,137 @@
 						"url": "{{base_url}}/api/v1/auth/supplier-period/ebb6669d-7e6f-473e-adfe-0496b83e4a52"
 					},
 					"response": []
+				},
+				{
+					"name": "Get All Reporting periods",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/supplier-period?page=1&per_page=10&organizationId=027fe30c-2f7a-4d41-a35e-62960b080dc3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"supplier-period"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "page number value, default value 1"
+								},
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "default value is 10"
+								},
+								{
+									"key": "order",
+									"value": "desc",
+									"description": "asc,desc  (default=desc)",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "created_at",
+									"description": "sort by value  (default=created_at)",
+									"disabled": true
+								},
+								{
+									"key": "organizationId",
+									"value": "027fe30c-2f7a-4d41-a35e-62960b080dc3",
+									"description": "required to fetch specific organization reporting periods"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All Reporting periods",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-period?page=1&per_page=10&organizationId=027fe30c-2f7a-4d41-a35e-62960b080dc3",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-period"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "page number value, default value 1"
+										},
+										{
+											"key": "per_page",
+											"value": "10",
+											"description": "default value is 10"
+										},
+										{
+											"key": "order",
+											"value": "desc",
+											"description": "asc,desc  (default=desc)",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "created_at",
+											"description": "sort by value  (default=created_at)",
+											"disabled": true
+										},
+										{
+											"key": "organizationId",
+											"value": "027fe30c-2f7a-4d41-a35e-62960b080dc3",
+											"description": "required to fetch specific organization reporting periods"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "2496"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 29 Jan 2024 10:27:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"meta\": {\n        \"total\": 2,\n        \"per_page\": 10,\n        \"current_page\": 1,\n        \"last_page\": 1,\n        \"first_page\": 1,\n        \"first_page_url\": \"/?page=1\",\n        \"last_page_url\": \"/?page=1\",\n        \"next_page_url\": null,\n        \"previous_page_url\": null\n    },\n    \"data\": [\n        {\n            \"id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n            \"organization_id\": \"027fe30c-2f7a-4d41-a35e-62960b080dc3\",\n            \"reporting_period_from\": \"2024-02-01\",\n            \"reporting_period_to\": \"2024-04-01\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:43:01.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:43:01.000+05:30\",\n            \"supplier\": [\n                {\n                    \"id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n                    \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                    \"name\": \"PT KAHATEX\",\n                    \"email\": \"someoneelse@ptkhatex.com\",\n                    \"organization_relationship\": \"OWNED\",\n                    \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                    \"deleted_at\": null,\n                    \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                    \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n                },\n                {\n                    \"id\": \"f09c38aa-e227-4fc8-8020-3e201b5d200f\",\n                    \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                    \"name\": \"KANIZ GARMENTS LIMITED\",\n                    \"email\": \"someone@kaniz.com\",\n                    \"organization_relationship\": \"OWNED\",\n                    \"address\": \"228A, Tejgaon Industrial Area, 1208 Dhaka, Bangladesh\",\n                    \"deleted_at\": null,\n                    \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                    \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n                }\n            ]\n        },\n        {\n            \"id\": \"d37e3f6c-3e69-4f2f-9fdd-f0513c000f7a\",\n            \"organization_id\": \"027fe30c-2f7a-4d41-a35e-62960b080dc3\",\n            \"reporting_period_from\": \"2024-01-01\",\n            \"reporting_period_to\": \"2024-02-01\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T13:32:18.000+05:30\",\n            \"updated_at\": \"2024-01-29T13:32:18.000+05:30\",\n            \"supplier\": [\n                {\n                    \"id\": \"968a2471-7ff2-4579-9e59-caedfe20abfd\",\n                    \"supply_chain_reporting_period_id\": \"d37e3f6c-3e69-4f2f-9fdd-f0513c000f7a\",\n                    \"name\": \"COMFIT COMPOSITE KNIT LTD.\",\n                    \"email\": \"someone@comfitcomposite.net\",\n                    \"organization_relationship\": \"CONTRACTUAL\",\n                    \"address\": \"SARDAGONJ ROAD, SARDAGONJ, KASHIMPUR, 1349 Gazipur, Bangladesh\",\n                    \"deleted_at\": null,\n                    \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                    \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n                },\n                {\n                    \"id\": \"9fefbac8-fc83-4afe-981e-a170859119df\",\n                    \"supply_chain_reporting_period_id\": \"d37e3f6c-3e69-4f2f-9fdd-f0513c000f7a\",\n                    \"name\": \"PT KAHATEX\",\n                    \"email\": \"someone@ptkhatex.com\",\n                    \"organization_relationship\": \"OWNED\",\n                    \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                    \"deleted_at\": null,\n                    \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                    \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n                }\n            ]\n        }\n    ]\n}"
+						}
+					]
 				}
 			]
 		},
@@ -1289,6 +1397,523 @@
 							}
 						},
 						"url": "{{base_url}}/api/v1/auth/supplier-products"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All products",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/supplier-products?page=1&perPage=20&supplyChainReportingPeriodId=91330b2a-7f11-4f70-963a-d1cb4db2eca7&order=desc&sort=updated_at",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"supplier-products"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "perPage",
+									"value": "20",
+									"description": "Default=20"
+								},
+								{
+									"key": "supplyChainReportingPeriodId",
+									"value": "91330b2a-7f11-4f70-963a-d1cb4db2eca7",
+									"description": "required to fetch list of products "
+								},
+								{
+									"key": "order",
+									"value": "desc",
+									"description": "asc,desc (default=desc)"
+								},
+								{
+									"key": "sort",
+									"value": "updated_at",
+									"description": "sortBy field value  (default=updated_at)"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get All products",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-products?page=1&perPage=20&supplyChainReportingPeriodId=91330b2a-7f11-4f70-963a-d1cb4db2eca7&order=desc&sort=updated_at",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-products"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "perPage",
+											"value": "20",
+											"description": "Default=20"
+										},
+										{
+											"key": "supplyChainReportingPeriodId",
+											"value": "91330b2a-7f11-4f70-963a-d1cb4db2eca7",
+											"description": "required to fetch list of products "
+										},
+										{
+											"key": "order",
+											"value": "desc",
+											"description": "asc,desc (default=desc)"
+										},
+										{
+											"key": "sort",
+											"value": "updated_at",
+											"description": "sortBy field value  (default=updated_at)"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "2549"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Mon, 29 Jan 2024 10:27:16 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"meta\": {\n        \"total\": 3,\n        \"per_page\": 20,\n        \"current_page\": 1,\n        \"last_page\": 1,\n        \"first_page\": 1,\n        \"first_page_url\": \"/?page=1\",\n        \"last_page_url\": \"/?page=1\",\n        \"next_page_url\": null,\n        \"previous_page_url\": null\n    },\n    \"data\": [\n        {\n            \"id\": \"9ba61c2e-89c1-4075-a74a-1403883f350d\",\n            \"supplier_id\": \"f09c38aa-e227-4fc8-8020-3e201b5d200f\",\n            \"type\": \"Woven, Home (textile), Night-, swim- and underwear\",\n            \"name\": \"Men's Swimsuits\",\n            \"quantity\": 10000,\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": 0.5,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"supplier\": {\n                \"id\": \"f09c38aa-e227-4fc8-8020-3e201b5d200f\",\n                \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                \"name\": \"KANIZ GARMENTS LIMITED\",\n                \"email\": \"someone@kaniz.com\",\n                \"organization_relationship\": \"OWNED\",\n                \"address\": \"228A, Tejgaon Industrial Area, 1208 Dhaka, Bangladesh\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n            }\n        },\n        {\n            \"id\": \"a2db8725-3ab6-458d-b3ce-db14f5132b17\",\n            \"supplier_id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n            \"type\": \"Accessories\",\n            \"name\": \"Micro-tights\",\n            \"quantity\": 10003,\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": 0.5,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"supplier\": {\n                \"id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n                \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                \"name\": \"PT KAHATEX\",\n                \"email\": \"someoneelse@ptkhatex.com\",\n                \"organization_relationship\": \"OWNED\",\n                \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n            }\n        },\n        {\n            \"id\": \"dfaacd69-8428-476f-84b4-4f53d70847f9\",\n            \"supplier_id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n            \"type\": \"Jersey\",\n            \"name\": \"Jersey\",\n            \"quantity\": 10003,\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": 0.5,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"supplier\": {\n                \"id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n                \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                \"name\": \"PT KAHATEX\",\n                \"email\": \"someoneelse@ptkhatex.com\",\n                \"organization_relationship\": \"OWNED\",\n                \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n            }\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Organisation Facilities",
+			"item": [
+				{
+					"name": "Create new facility",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n    \"name\":\"power plant 34\",\n    \"address\":\"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/auth/facility"
+					},
+					"response": [
+						{
+							"name": "Create new facility",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n    \"name\":\"power plant 34\",\n    \"address\":\"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/v1/auth/facility"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "361"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 25 Jan 2024 12:02:59 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data saved successfully\",\n    \"data\": {\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"power plant 34\",\n        \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\",\n        \"id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n        \"created_at\": \"2024-01-25T17:32:59.832+05:30\",\n        \"updated_at\": \"2024-01-25T17:32:59.832+05:30\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get organisation all facilities",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/facility?per_page=10&page=1&organization_id=ad293672-f5c4-4ed3-8a49-7f98b0be147e",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"facility"
+							],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "organization_id",
+									"value": "ad293672-f5c4-4ed3-8a49-7f98b0be147e"
+								},
+								{
+									"key": "order",
+									"value": "desc",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "created_at",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get organisation all facilities",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility?per_page=10&page=1&organization_id=ad293672-f5c4-4ed3-8a49-7f98b0be147e",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility"
+									],
+									"query": [
+										{
+											"key": "per_page",
+											"value": "10"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "organization_id",
+											"value": "ad293672-f5c4-4ed3-8a49-7f98b0be147e"
+										},
+										{
+											"key": "order",
+											"value": "desc",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "created_at",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "869"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 25 Jan 2024 18:30:17 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetch Successfully\",\n    \"meta\": {\n        \"total\": 2,\n        \"per_page\": 8,\n        \"current_page\": 1,\n        \"last_page\": 1,\n        \"first_page\": 1,\n        \"first_page_url\": \"/?page=1\",\n        \"last_page_url\": \"/?page=1\",\n        \"next_page_url\": null,\n        \"previous_page_url\": null\n    },\n    \"data\": [\n        {\n            \"id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n            \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n            \"name\": \"power plant 34\",\n            \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-25T17:32:59.000+05:30\",\n            \"updated_at\": \"2024-01-25T17:32:59.000+05:30\"\n        },\n        {\n            \"id\": \"7bf894c7-4363-499d-8be7-47e092de4a05\",\n            \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n            \"name\": \"power plant 3\",\n            \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-25T16:50:43.000+05:30\",\n            \"updated_at\": \"2024-01-25T16:50:43.000+05:30\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get organisation single facility details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05"
+					},
+					"response": [
+						{
+							"name": "Get organisation single facility details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "380"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 25 Jan 2024 18:44:37 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"7bf894c7-4363-499d-8be7-47e092de4a05\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"power plant 3\",\n        \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-25T16:50:43.000+05:30\",\n        \"updated_at\": \"2024-01-25T16:50:43.000+05:30\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update organisation facility",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"pepsico\",\n    \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, 10018\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05"
+					},
+					"response": [
+						{
+							"name": "Update organisation facility",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\":\"pepsico1\",\n    \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, 10018\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "383"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 25 Jan 2024 19:01:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Organization facility updated successfully.\",\n    \"data\": {\n        \"id\": \"7bf894c7-4363-499d-8be7-47e092de4a05\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"pepsico1\",\n        \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, 10018\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-25T16:50:43.000+05:30\",\n        \"updated_at\": \"2024-01-26T00:31:11.215+05:30\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "delete organisation facility",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92"
+					},
+					"response": [
+						{
+							"name": "delete organisation facility",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "92"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 25 Jan 2024 19:07:36 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Organization facility deleted successfully.\",\n    \"data\": {}\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Common/test APIs",
+			"item": [
+				{
+					"name": "Test send email via mailchimp",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"recipients\":[\n         \"mchaudhari@cxr.agency\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/v1/send-email"
 					},
 					"response": []
 				}

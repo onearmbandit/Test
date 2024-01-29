@@ -2,8 +2,9 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, manyToMany, ManyToMany, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import User from './User'
 import { v4 as uuidv4 } from 'uuid';
-import Facility from './Facility';
+// import Facility from './OrganizationFacility';
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod';
+import OrganizationFacility from './OrganizationFacility';
 
 
 export default class Organization extends BaseModel {
@@ -78,18 +79,18 @@ export default class Organization extends BaseModel {
   })
   public users: ManyToMany<typeof User>
 
-  @hasMany(() => Facility, {
+  @hasMany(() => OrganizationFacility, {
     foreignKey: 'organizations_id', // defaults to userId
   })
-  public facilities: HasMany<typeof Facility>
+  public facilities: HasMany<typeof OrganizationFacility>
 
 
 
   @hasMany(() => SupplyChainReportingPeriod, {
-    foreignKey: 'organizationId', 
+    foreignKey: 'organizationId',
   })
   public supplyChainReportingPeriod: HasMany<typeof SupplyChainReportingPeriod>
-  
+
 
 
   //::_____Relationships End_____:://
