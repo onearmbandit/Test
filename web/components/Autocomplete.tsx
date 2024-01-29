@@ -12,8 +12,10 @@ import { formatAddress } from "@/lib/utils";
 
 const AutocompleteInput = ({
   setAddress,
+  isDisabled = false,
 }: {
   setAddress: React.Dispatch<React.SetStateAction<string>> | ((e: any) => void);
+  isDisabled?: boolean;
 }) => {
   const [val, setVal] = useState("");
 
@@ -97,8 +99,9 @@ const AutocompleteInput = ({
         />
       ) : (
         <textarea
-          className="min-h-20 h-full resize-none w-full text-sm focus:outline-none font-light rounded-lg px-2 py-1 bg-gray-50 text-slate-500"
+          className="min-h-20 h-full resize-none w-full text-sm focus:outline-none disabled:cursor-not-allowed font-light rounded-lg px-2 py-1 bg-gray-50 text-slate-500"
           value={val}
+          disabled={isDisabled}
           onChange={(e) => setVal(e.target.value)}
         />
       )}

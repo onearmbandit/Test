@@ -11,9 +11,13 @@ import Accounts from "./popups/accounts/accounts";
 import { signOut, useSession } from "next-auth/react";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 const Sidebar = () => {
+  const pathname = usePathname();
   const session = useSession();
+
   return (
     <div className="flex flex-col bg-gray-50 justify-between w-full h-screen max-w-[240px] px-4 py-5">
       <nav>
@@ -31,7 +35,13 @@ const Sidebar = () => {
           </div>
         </header>
 
-        <div className="items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md">
+        <div
+          className={cn(
+            "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
+            pathname == "/" && "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
+          )}
+          // data-selected={pathname == "/"}
+        >
           <svg
             width="16"
             height="16"

@@ -73,11 +73,14 @@ const AddFacility = () => {
         </div>
         <div>
           <AutocompleteInput
-          // id="facility-location"
-          // type="text"
-          // className="text-slate-700 text-sm font-light leading-5 items-stretch self-center rounded-3xl shadow-sm bg-gray-50 w-full max-w-[972px] justify-center mt-6 px-2 py-3 max-md:max-w-full"
-          // placeholder="East"
-          // aria-label="facility-location"
+            setAddress={(e: any) => {
+              console.log(e);
+            }}
+            // id="facility-location"
+            // type="text"
+            // className="text-slate-700 text-sm font-light leading-5 items-stretch self-center rounded-3xl shadow-sm bg-gray-50 w-full max-w-[972px] justify-center mt-6 px-2 py-3 max-md:max-w-full"
+            // placeholder="East"
+            // aria-label="facility-location"
           />
         </div>
         <div className="flex justify-end">

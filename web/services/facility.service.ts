@@ -1,4 +1,6 @@
+import { authOptions } from "@/lib/utils";
 import axios, { AxiosHeaders } from "axios";
+import { getServerSession } from "next-auth";
 
 type Options = {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -14,16 +16,16 @@ const fetchApi = async (
 ) => {
   const { headers, method, body } = options;
 
-  // const session = await getServerSession(authOptions);
-  // const token = session?.user;
-  // const authHeader = {
-  //   Authorization: `bearer ${token}`,
-  // };
+  const session = await getServerSession(authOptions);
+  const token = session?.token.token;
+  const authHeader = {
+    Authorization: `bearer ${token}`,
+  };
 
   const response = await axios({
     url: `${BASE_URL}/api/v1${url}`,
     method: method,
-    headers: headers,
+    headers: { ...headers, ...authHeader },
     data: body,
   })
     .then((res) => res.data)
@@ -37,4 +39,11 @@ const fetchApi = async (
 
 export const createFacility = (obj: any) => {
   return fetchApi("/", { method: "POST", body: obj });
+};
+
+export const getFacilities = async () => {
+  const session = await getServerSession(authOptions);
+  console.log("ses", session.user);
+  // return await session;
+  return fetchApi(`/auth/facility?organization_id=`);
 };

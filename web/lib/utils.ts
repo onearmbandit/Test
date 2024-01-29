@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
 
           const res = await response.json();
 
-          console.log("ress => ", res);
+          // console.log("ress => ", res);
           if (!res?.status) {
             console.log("err", res.message);
             throw new Error(res.message);
@@ -73,11 +73,11 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, session, account }) {
-      console.log({ token, user, session });
+      // console.log({ token, user, session });
       if (user) {
         const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
         if (account?.provider != "credentials") {
-          console.log("tttokenk =====> ", user);
+          // console.log("tttokenk =====> ", user);
           const res = await fetch(url, {
             method: "POST",
             headers: {
@@ -93,7 +93,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           const userD = await res.json();
-          console.log(userD);
+          // console.log(userD);
         }
       }
 

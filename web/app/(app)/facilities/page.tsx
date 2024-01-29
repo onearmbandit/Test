@@ -10,10 +10,15 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, ChevronLeft } from "lucide-react";
+import { getFacilities } from "@/services/facility.service";
+import { ChevronDown, ChevronLeft, Plus } from "lucide-react";
+import Link from "next/link";
+import { ReadonlyURLSearchParams } from "next/navigation";
 import React, { useState } from "react";
 
-const Page = () => {
+const Page = async ({ searchParams }: { searchParams: any }) => {
+  const { data: facilities } = await getFacilities();
+
   return (
     <div className="p-6 bg-white w-full">
       {/* Nav */}
@@ -39,7 +44,7 @@ const Page = () => {
         </nav>
       </div>
 
-      <div className="mt-3 ">
+      <div className="mt-3 space-y-3">
         <h2 className="text-slate-800 text-ellipsis whitespace-nowrap text-lg font-bold leading-7 max-w-[73px]">
           Facility 1
         </h2>
@@ -79,8 +84,15 @@ const Page = () => {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+        {searchParams["add-new"] == "true" && <AddFacility />}
 
-        <AddFacility />
+        <Link
+          href={"/facilities?add-new=true"}
+          className="gap-1.5 text-sm font-semibold text-blue-600 rounded border-2 flex w-fit items-center ml-auto border-blue-600 px-4 py-1"
+        >
+          <Plus size={16} className="text-blue-600" />
+          Add New Facility
+        </Link>
       </div>
     </div>
   );

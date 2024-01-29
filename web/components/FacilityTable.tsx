@@ -23,9 +23,12 @@ const FacilityTable = () => {
           className="justify-between items-center text-black rounded border border-gray-200 hover:bg-black/10 bg-white flex gap-1.5 px-3.5 py-1.5 border-solid"
         >
           <Plus size={16} className="" />
-          <span className="text-gray-800 text-sm font-semibold leading-5 grow whitespace-nowrap">
+          <Link
+            href={"/facilities?add-new=true"}
+            className="text-gray-800 text-sm font-semibold leading-5 grow whitespace-nowrap"
+          >
             Add Facility
-          </span>
+          </Link>
         </Link>
       </div>
       <Table>
