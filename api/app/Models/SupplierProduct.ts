@@ -22,7 +22,7 @@ export default class SupplierProduct extends BaseModel {
   public name: string
 
   @column()
-  public quantity: number
+  public quantity: string
 
   @column()
   public functionalUnit: string
