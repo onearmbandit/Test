@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Accordion,
@@ -7,8 +8,11 @@ import {
 } from "./ui/accordion";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import Accounts from "./popups/accounts/accounts";
+import { signOut, useSession } from "next-auth/react";
+import { ChevronDown } from "lucide-react";
 
 const Sidebar = () => {
+  const session = useSession();
   return (
     <div className="flex flex-col justify-between w-full h-screen max-w-[240px] px-4 py-5">
       <nav>
@@ -18,7 +22,7 @@ const Sidebar = () => {
           </div>
           <div className="justify-center items-stretch self-stretch flex grow basis-[0%] flex-col">
             <h1 className="overflow-hidden text-slate-800 text-ellipsis text-sm font-semibold leading-5 whitespace-nowrap">
-              John Smith
+              {session.data?.user?.name}
             </h1>
             <div className="overflow-hidden text-slate-500 text-ellipsis text-xs leading-4 whitespace-nowrap">
               Pepsi Co
@@ -72,6 +76,7 @@ const Sidebar = () => {
                   Abatement Projects
                 </h2>
               </div>
+              <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200" />
             </AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col items-stretch mt-2 pl-11 space-y-2">
@@ -166,7 +171,11 @@ const Sidebar = () => {
             Help
           </h2>
         </div>
-        <div className="items-center hover:bg-blue-100 hover:text-red-600 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md">
+        <div
+          role="button"
+          onClick={() => signOut()}
+          className="items-center hover:bg-blue-100 hover:text-red-600 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md"
+        >
           <svg
             width="14"
             height="14"

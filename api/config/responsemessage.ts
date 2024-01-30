@@ -1,6 +1,6 @@
 
 export const COMMON_RESPONSE = {
-  getRequestSuccess: 'Data Fetch Successfully',
+  getRequestSuccess: 'Data Fetched Successfully',
   permissionError: 'You don\'t have permission for this action',
   unauthorizedAccess: 'Unauthorized access',
   validationFailed: 'Validation failed for given inputs.',
@@ -32,8 +32,8 @@ export const AUTH_RESPONSE = {
   invalidOldPassword: 'Please enter the correct old password.',
   wrongUserEmail: "Wrong email, try again",
   wrongUserPassword: "Wrong password, try again",
-  authUserDeleteSuccess: "User delete successfully."
-
+  authUserDeleteSuccess: "User delete successfully.",
+  notMatchInvitedData:"Entered email is not match with invited email.Please check.",
 }
 
 
@@ -43,3 +43,23 @@ export const ORGANIZATION_RESPONSE = {
 }
 
 
+
+
+
+export const SUPPLIER_RESPONSE = {
+  updateSupplierReportPeriodSuccess: "Supplier chain reporting period  updated successfully.",
+  createSupplierReportPeriodSuccess: "Supplier chain reporting period created successfully",
+  supplierReportPeriodDeleteSuccess: "Supplier chain reporting period delete successfully.",
+  supplierCSVNotMatch: "The columns in your CSV are not formatted correctly.Download the template to ensure the fields match.",
+  bulkCreationSuccess: "Suppliers created successfully.",
+  supplyChainReportingPeriodIdExist: "Supply chain reporting period with this ID does not exist.",
+  supplierCreateSuccess: "New supplier added successfully.",
+  supplierUpdateSuccess: "Supplier details updated successfully."
+}
+
+export const ORGANIZATION_FACILITY_RESPONSE = {
+  dataFetchSuccess: "Organization facilities fetched successfully.",
+  updateFacilitySuccess: "Organization facility updated successfully.",
+  deleteFacilitySuccess: "Organization facility deleted successfully.",
+  facilityNotFound: "Organization facility didn't found.",
+}

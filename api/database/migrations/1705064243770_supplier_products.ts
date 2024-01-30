@@ -14,7 +14,7 @@ export default class extends BaseSchema {
       table.string('name')
       table.integer('quantity')
       table.string('functional_unit')
-      table.integer('scope_3_contribution')
+      table.float('scope_3_contribution')
       table.timestamp('deleted_at', { useTz: true })
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })

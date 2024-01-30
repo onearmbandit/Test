@@ -63,6 +63,7 @@
     "@adonisjs/view": "^6.2.0",
     "@japa/preset-adonis": "^1.2.0",
     "@japa/runner": "^2.5.1",
+    "exceljs": "^4.4.0",
     "luxon": "^3.4.4",
     "moment": "^2.30.1",
     "mysql2": "^3.7.0",
