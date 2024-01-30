@@ -1412,7 +1412,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/auth/supplier-products?page=1&perPage=20&supplyChainReportingPeriodId=91330b2a-7f11-4f70-963a-d1cb4db2eca7&order=desc&sort=updated_at",
+							"raw": "{{base_url}}/api/v1/auth/supplier-products?page=1&perPage=20&supplyChainReportingPeriodId=91330b2a-7f11-4f70-963a-d1cb4db2eca7&order=desc&sort=supplierName",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1444,7 +1444,7 @@
 								},
 								{
 									"key": "sort",
-									"value": "updated_at",
+									"value": "supplierName",
 									"description": "sortBy field value  (default=updated_at)"
 								}
 							]
@@ -1524,6 +1524,38 @@
 							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"meta\": {\n        \"total\": 3,\n        \"per_page\": 20,\n        \"current_page\": 1,\n        \"last_page\": 1,\n        \"first_page\": 1,\n        \"first_page_url\": \"/?page=1\",\n        \"last_page_url\": \"/?page=1\",\n        \"next_page_url\": null,\n        \"previous_page_url\": null\n    },\n    \"data\": [\n        {\n            \"id\": \"9ba61c2e-89c1-4075-a74a-1403883f350d\",\n            \"supplier_id\": \"f09c38aa-e227-4fc8-8020-3e201b5d200f\",\n            \"type\": \"Woven, Home (textile), Night-, swim- and underwear\",\n            \"name\": \"Men's Swimsuits\",\n            \"quantity\": 10000,\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": 0.5,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"supplier\": {\n                \"id\": \"f09c38aa-e227-4fc8-8020-3e201b5d200f\",\n                \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                \"name\": \"KANIZ GARMENTS LIMITED\",\n                \"email\": \"someone@kaniz.com\",\n                \"organization_relationship\": \"OWNED\",\n                \"address\": \"228A, Tejgaon Industrial Area, 1208 Dhaka, Bangladesh\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n            }\n        },\n        {\n            \"id\": \"a2db8725-3ab6-458d-b3ce-db14f5132b17\",\n            \"supplier_id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n            \"type\": \"Accessories\",\n            \"name\": \"Micro-tights\",\n            \"quantity\": 10003,\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": 0.5,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"supplier\": {\n                \"id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n                \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                \"name\": \"PT KAHATEX\",\n                \"email\": \"someoneelse@ptkhatex.com\",\n                \"organization_relationship\": \"OWNED\",\n                \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n            }\n        },\n        {\n            \"id\": \"dfaacd69-8428-476f-84b4-4f53d70847f9\",\n            \"supplier_id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n            \"type\": \"Jersey\",\n            \"name\": \"Jersey\",\n            \"quantity\": 10003,\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": 0.5,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"supplier\": {\n                \"id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n                \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                \"name\": \"PT KAHATEX\",\n                \"email\": \"someoneelse@ptkhatex.com\",\n                \"organization_relationship\": \"OWNED\",\n                \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n            }\n        }\n    ]\n}"
 						}
 					]
+				},
+				{
+					"name": "get all emission data for specific period",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/supplier-period-emission?supplyChainReportingPeriodId=91330b2a-7f11-4f70-963a-d1cb4db2eca7",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"supplier-period-emission"
+							],
+							"query": [
+								{
+									"key": "supplyChainReportingPeriodId",
+									"value": "91330b2a-7f11-4f70-963a-d1cb4db2eca7"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
