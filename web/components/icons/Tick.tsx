@@ -19,6 +19,7 @@ const Tick = ({
       break;
     case "red":
       colorFill = "#EF4444";
+      break;
     case "blue":
       colorFill = "#2C75D3";
       break;

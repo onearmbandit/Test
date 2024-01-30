@@ -14,7 +14,13 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
-const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
+const EditFacility = ({
+  serialNo = 1,
+  facility,
+}: {
+  serialNo?: number;
+  facility: any;
+}) => {
   const { data: session } = useSession();
   const router = useRouter();
   const orgId = session?.user?.organizations[0].id;
@@ -36,24 +42,19 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
     },
   });
 
-  const {
-    values: facility,
-    handleSubmit,
-    handleChange,
-    errors,
-    setFieldValue,
-  } = useFormik({
-    initialValues: {
-      name: "",
-      address: "",
-    },
-    validateOnBlur: true,
-    validateOnChange: false,
-    validationSchema: toFormikValidationSchema(validation),
-    onSubmit: (data) => {
-      mutate({ ...data, organization_id: orgId });
-    },
-  });
+  const { values, handleSubmit, handleChange, errors, setFieldValue } =
+    useFormik({
+      initialValues: {
+        name: facility.name,
+        address: facility.address,
+      },
+      validateOnBlur: true,
+      validateOnChange: false,
+      validationSchema: toFormikValidationSchema(validation),
+      onSubmit: (data) => {
+        mutate({ ...data, organization_id: orgId });
+      },
+    });
 
   return (
     <section className="justify-center items-stretch self-stretch border border-[color:var(--Slate-200,#E2E8F0)] bg-white flex flex-col p-6 rounded-lg border-solid max-md:px-5">
@@ -66,7 +67,7 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
           aria-label="Add new facility"
           role="heading"
         >
-          Add new facility
+          {facility.name}
         </h1>
       </header>
 
@@ -86,6 +87,7 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
               id="facility-name"
               type="text"
               name="name"
+              value={values.name}
               onChange={handleChange}
               className={cn(
                 "text-slate-500 text-xs font-light leading-4 whitespace-nowrap max-w-[18.5rem] bg-gray-50  justify-center pl-2 pr-8 py-3.5 rounded-md max-md:pr-5",
@@ -93,7 +95,7 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
               )}
               placeholder="Add facility name"
             />
-            <p className="text-xs text-red-500">{errors.name}</p>
+            <p className="text-xs text-red-500">{errors.name as string}</p>
           </div>
         </div>
         <div className="flex justify-between items-end">
@@ -125,7 +127,7 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
             // placeholder="East"
             // aria-label="facility-location"
           />
-          <p className="text-xs text-red-500">{errors.address}</p>
+          <p className="text-xs text-red-500">{errors.address as string}</p>
         </div>
         <div className="flex justify-end">
           <Button
@@ -133,7 +135,7 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
             size={"sm"}
             className="text-center text-sm font-semibold leading-4 whitespace-nowrap mt-8 px-4 py-2 self-end"
           >
-            Add Facility
+            Update Facility
           </Button>
         </div>
       </form>
@@ -141,4 +143,4 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
   );
 };
 
-export default AddFacility;
+export default EditFacility;

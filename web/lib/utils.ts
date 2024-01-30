@@ -57,7 +57,7 @@ export const authOptions: NextAuthOptions = {
 
           const res = await response.json();
 
-          console.log("ress => ", res);
+          // console.log("ress => ", res);
           if (!res?.status) {
             console.log("err", res.message);
             throw new Error(res.message);
@@ -73,32 +73,40 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, session, account }) {
-      console.log({ token, user, session });
-      if (user) {
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
-        if (account?.provider != "credentials") {
-          console.log("tttokenk =====> ", user);
-          const res = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              ...user,
-              loginType:
-                account?.provider == "azure-ad"
-                  ? "microsoft"
-                  : account?.provider,
-            }),
-          });
-
-          const userD = await res.json();
-          console.log(userD);
-        }
-      }
-
       return { ...token, ...user };
     },
+    // async signIn({ user, account, email, credentials, profile }) {
+    //   // console.log({ user, account, email, credentials, profile });
+    //   const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
+    //   const token = localStorage.getItem("isInvited");
+    //   console.log("isinvited ===> ", token);
+    //   if (account?.provider != "credentials") {
+    //     // console.log("tttokenk =====> ", user);
+    //     try {
+    //       const res = await fetch(url, {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-type": "application/json",
+    //         },
+    //         body: JSON.stringify({
+    //           ...user,
+    //           loginType:
+    //             account?.provider == "azure-ad"
+    //               ? "microsoft"
+    //               : account?.provider,
+    //         }),
+    //       });
+
+    //       const userD = await res.json();
+    //       console.log(userD);
+    //       return false;
+    //     } catch (err) {
+    //       console.log({ err });
+    //       throw new Error(err.errors[0].message);
+    //     }
+    //   }
+    //   return true;
+    // },
     async session({ session, token, trigger, user }) {
       return { ...session, ...token };
     },

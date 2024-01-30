@@ -2,14 +2,14 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { forgotPassword } from "@/services/auth.api";
 import { useMutation } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { toast } from "sonner";
 import { useFormik } from "formik";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useSearchParams, useRouter } from "next/navigation";
 import * as React from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import email from "next-auth/providers/email";
@@ -47,22 +47,10 @@ function Page() {
     },
   });
 
-  const { values, errors, handleSubmit, handleChange } = useFormik({
-    initialValues: {
-      email: "",
-    },
-    validationSchema: toFormikValidationSchema(validation),
-    validateOnChange: false,
-    onSubmit: (data) => {
-      console.log(data);
-      router.push(`/forgot-password?email=${data.email}`);
-    },
-  });
-
   const email = params.get("email");
   function maskEmail(email: string) {
     // Split the email address into local and domain parts
-    const [localPart, domain] = email.split("@");
+    const [localPart, domain] = email?.split("@");
 
     // Replace characters in the local part with asterisks
     const maskedLocalPart =
@@ -76,11 +64,13 @@ function Page() {
     return maskedEmail;
   }
 
+  console.log(forgotPasswordForm.errors);
+
   return (
     <div className="h-screen grid place-items-center">
-      {!email ? (
+      {email ? (
         <form
-          onSubmit={handleSubmit}
+          onSubmit={forgotPasswordForm.handleSubmit}
           className="justify-center items-center border border-[#E5E7EB] w-full shadow-sm flex max-w-[828px] flex-col py-12 rounded-lg border-solid"
         >
           <img
@@ -155,15 +145,15 @@ function Page() {
                   <Input
                     id="email"
                     name="email"
-                    onChange={handleChange}
+                    onChange={forgotPasswordForm.handleChange}
                     className={cn(
                       "text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
-                      errors.email && "border border-red-500"
+                      forgotPasswordForm.errors.email && "border border-red-500"
                     )}
                     placeholder="Enter your email"
                   />
                   <p className="text-xs text-red-500 mt-[10px]">
-                    {errors.email}
+                    {forgotPasswordForm.errors.email}
                   </p>
                 </div>
 
@@ -203,7 +193,7 @@ function Page() {
           <p className="self-center text-slate-700 text-base leading-6 mt-6 max-md:max-w-full">
             {" "}
             We sent a password reset link to:{" "}
-            <span className="font-bold">{maskEmail(email)}</span>{" "}
+            <span className="font-bold">{maskEmail(email as string)}</span>{" "}
           </p>
 
           <hr className="bg-gray-200 self-center w-[425px] shrink-0 max-w-full h-px mt-6" />

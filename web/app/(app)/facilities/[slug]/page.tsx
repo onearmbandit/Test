@@ -1,9 +1,13 @@
 import FacilityEmissionsSummary from "@/components/FacilityEmissionsSummary";
 import FacilityDetails from "@/components/facility/facility-detail";
+import { authOptions } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
+import { getServerSession } from "next-auth/next";
 import React from "react";
 
-const Page = () => {
+const Page = async () => {
+  const session = await getServerSession(authOptions);
+
   return (
     <div className="p-6 bg-white w-full">
       {/* Nav */}
@@ -14,8 +18,8 @@ const Page = () => {
             Organization Profile
           </a>{" "}
           &gt;{" "}
-          <a href="?pepsiCoFacilities" className="text-slate-500">
-            Pepsi Co&apos;s Facilities
+          <a href="/facilities" className="text-slate-500">
+            {session?.user?.organizations[0].company_name}&apos;s Facilities
           </a>{" "}
           &gt;{" "}
           <a

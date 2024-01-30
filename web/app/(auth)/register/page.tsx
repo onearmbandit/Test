@@ -143,7 +143,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     //   }
     // },
     onSubmit: (data) => {
-      console.log("mutate" , data);
+      console.log("mutate", data);
       // if (errors.length > 0 && !errors.includes("length")) {
       //   return;
       // }
@@ -493,18 +493,19 @@ const Step2 = ({
 
 const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const router = useRouter();
+  const [addressDisabled, setAddressDisabled] = useState(true);
   const validation = z.object({
     companyName: z.string(),
-    addressLine1: z.string(),
-    addressLine2: z.string(),
-    city: z.string(),
-    state: z.string(),
-    zipCode: z
-      .string()
-      .min(5)
-      .refine((val) => /^-?\d*\.?\d+$/.test(val), {
-        message: "Enter a valid zipcode.",
-      }),
+    // addressLine1: z.string(),
+    // addressLine2: z.string(),
+    // city: z.string(),
+    // state: z.string(),
+    // zipCode: z
+    //   .string()
+    //   .min(5)
+    //   .refine((val) => /^-?\d*\.?\d+$/.test(val), {
+    //     message: "Enter a valid zipcode.",
+    //   }),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
@@ -520,15 +521,12 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     initialValues: {
       userSlug,
       companyName: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "MH",
-      zipCode: "",
+      address: "",
       registrationStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
+      console.log(data);
       mutate(data);
     },
   });
@@ -552,14 +550,22 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             Company Name
           </label>
 
-          <Input
-            type="text"
-            id="companyName"
-            name="companyName"
-            onChange={step3Form.handleChange}
-            placeholder="Company"
-            className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
-          />
+          <div>
+            <Input
+              type="text"
+              id="companyName"
+              name="companyName"
+              onChange={step3Form.handleChange}
+              placeholder="Company"
+              className={cn(
+                "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+                step3Form.errors.companyName && "border border-red-500"
+              )}
+            />
+            <p className="text-xs text-red-500 mt-0.5">
+              {step3Form.errors.companyName}
+            </p>
+          </div>
         </div>
         <div className="mt-6">
           <div className="flex justify-between items-end mb-3 py-2">
@@ -569,17 +575,21 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             >
               Company Address
             </label>
-            <p
-              role="button"
-              className="text-sm font-semibold leading-4 text-blue-600"
-            >
-              Edit
-            </p>
+            {step3Form.values.address != "" && (
+              <p
+                role="button"
+                onClick={() => setAddressDisabled(false)}
+                className="text-sm font-semibold leading-4 text-blue-600"
+              >
+                Edit
+              </p>
+            )}
           </div>
 
           <AutocompleteInput
+            isDisabled={addressDisabled}
             setAddress={(e: any) => {
-              console.log("ed", e);
+              step3Form.setFieldValue("addressLine1", e);
             }}
           />
         </div>
