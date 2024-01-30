@@ -9,10 +9,10 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import Accounts from "./popups/accounts/accounts";
 import { signOut, useSession } from "next-auth/react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MailPlus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { cn, isSuperAdmin } from "@/lib/utils";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -23,6 +23,11 @@ const Sidebar = () => {
 
   const firstLetterOfFirstName = firstName.charAt(0);
   const firstLetterOfLastName = lastName.charAt(0);
+
+  const superAdmin: Boolean = isSuperAdmin(
+    session?.data?.user?.roles,
+    "super-admin"
+  );
 
   return (
     <div className="flex flex-col bg-gray-50 justify-between w-full h-screen max-w-[240px] px-4 py-5">
@@ -136,6 +141,33 @@ const Sidebar = () => {
             Supply Chain
           </h2>
         </Link>
+        {superAdmin && (
+          <Link
+            href={"/invite-organization"}
+            className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
+          >
+            {/* <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="fill-gray-500 group-hover:fill-blue-600"
+            >
+              <g id="chart-bar">
+                <path
+                  id="Vector"
+                  d="M12.3996 1.59961C12.0813 1.59961 11.7761 1.72604 11.5511 1.95108C11.326 2.17612 11.1996 2.48135 11.1996 2.79961V13.1996C11.1996 13.5179 11.326 13.8231 11.5511 14.0481C11.7761 14.2732 12.0813 14.3996 12.3996 14.3996H13.1996C13.5179 14.3996 13.8231 14.2732 14.0481 14.0481C14.2732 13.8231 14.3996 13.5179 14.3996 13.1996V2.79961C14.3996 2.48135 14.2732 2.17612 14.0481 1.95108C13.8231 1.72604 13.5179 1.59961 13.1996 1.59961H12.3996ZM7.59961 4.79961C7.28135 4.79961 6.97612 4.92604 6.75108 5.15108C6.52604 5.37612 6.39961 5.68135 6.39961 5.99961V13.1996C6.39961 13.5179 6.52604 13.8231 6.75108 14.0481C6.97612 14.2732 7.28135 14.3996 7.59961 14.3996H8.39961C8.71787 14.3996 9.02309 14.2732 9.24814 14.0481C9.47318 13.8231 9.59961 13.5179 9.59961 13.1996V5.99961C9.59961 5.68135 9.47318 5.37612 9.24814 5.15108C9.02309 4.92604 8.71787 4.79961 8.39961 4.79961H7.59961ZM2.79961 7.99961C2.48135 7.99961 2.17612 8.12604 1.95108 8.35108C1.72604 8.57612 1.59961 8.88135 1.59961 9.19961V13.1996C1.59961 13.5179 1.72604 13.8231 1.95108 14.0481C2.17612 14.2732 2.48135 14.3996 2.79961 14.3996H3.59961C3.91787 14.3996 4.22309 14.2732 4.44814 14.0481C4.67318 13.8231 4.79961 13.5179 4.79961 13.1996V9.19961C4.79961 8.88135 4.67318 8.57612 4.44814 8.35108C4.22309 8.12604 3.91787 7.99961 3.59961 7.99961H2.79961Z"
+                />
+              </g>
+            </svg> */}
+            <MailPlus />
+
+            <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
+              Invite Organization (For test)
+            </h2>
+          </Link>
+        )}
       </nav>
       <footer>
         <Dialog>

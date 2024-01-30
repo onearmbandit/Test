@@ -97,6 +97,6 @@ export const setupOrganizationStep4 = ({
   } as Options);
 };
 
-export const getUser = () => {
-  return fetchApi("/auth/user");
+export const getAllOrganizations = async () => {
+  return fetchApi(`/auth/organization`);
 };

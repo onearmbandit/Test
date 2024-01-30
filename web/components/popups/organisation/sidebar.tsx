@@ -1,7 +1,7 @@
 "use client";
 import { useAccountStore } from "@/lib/stores/organisation.store";
 import { cn } from "@/lib/utils";
-import { getUser } from "@/services/organizations.api";
+import { getUser } from "@/services/user.api";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React from "react";

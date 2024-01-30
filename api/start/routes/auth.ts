@@ -13,14 +13,13 @@ Route.group(() => {
     Route.post('/login', 'AuthController.login')
     Route.post('/forgot-password', 'AuthController.forgotPassword')
     Route.post('/reset-password', 'AuthController.resetPassword')
-    Route.post('/logout', 'AuthController.logout').middleware('auth');
+    Route.post('/logout', 'AuthController.logout').middleware('auth')
 
-    Route.post('/send-email', 'CommonController.sendEmail');
+    Route.post('/send-email', 'CommonController.sendEmail')
 
     // social login or signup API
     Route.post('/social-signup', 'AuthController.socialSignupAndLogin')
     Route.post('/social-login', 'AuthController.socialLogin')
-
 
     //:: Api for download supplier csv template
     Route.get('/download-supplier-csv', 'FilesController.download')
@@ -28,17 +27,28 @@ Route.group(() => {
     //Auth routes
     Route.group(() => {
       //:: used for setup and update organization
-      Route.resource('/organization', 'OrganizationsController').only(['update', 'store', 'show'])
+      Route.resource('/organization', 'OrganizationsController').only([
+        'update',
+        'store',
+        'show',
+        'index',
+      ])
 
       //:: Profile API
       Route.get('/user', 'UsersController.show')
       Route.patch('/user', 'UsersController.update')
-      Route.post('/user', 'UsersController.destroy')//for delete the user but need request data that's why used post method
+      Route.post('/user', 'UsersController.destroy') //for delete the user but need request data that's why used post method
 
-      Route.resource('/facility', 'FacilitiesController').only(['index', 'store', 'show', 'update', 'destroy'])
+      Route.resource('/facility', 'FacilitiesController').only([
+        'index',
+        'store',
+        'show',
+        'update',
+        'destroy',
+      ])
 
       //:: Supplier APIs
-      Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier');
+      Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier')
 
       Route.resource('/supplier-period', 'SupplyChainReportingPeriodsController')
 
@@ -46,7 +56,8 @@ Route.group(() => {
 
       Route.resource('/supplier-products', 'SupplierProductsController')
 
-
+      //Invite organization api
+      Route.post('/invite-organization', 'OrganizationUsersController.inviteOrganization')
     })
       .prefix('/auth')
       .middleware('auth')

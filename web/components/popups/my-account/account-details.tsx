@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useAccountStore } from "@/lib/stores/organisation.store";
-import { getUser } from "@/services/organizations.api";
+import { getUser } from "@/services/user.api";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import React from "react";

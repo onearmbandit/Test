@@ -33,8 +33,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className + " flex"}>
         <AuthProvider>
-          {session && <Sidebar />}
-          <Provider>{children}</Provider>
+          <Provider>
+            {session && <Sidebar />}
+            {children}
+          </Provider>
         </AuthProvider>
         <Toaster position="bottom-center" />
         <script
