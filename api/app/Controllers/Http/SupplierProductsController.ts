@@ -105,7 +105,7 @@ export default class SupplierProductsController {
         if (ele.scope_3_contribution == null || ele.scope_3_contribution == '' || ele.scope_3_contribution == 'NA') {
           scopeEmissionNAProducts.push(ele)
         }
-        else{
+        else {
           totalProductLevelEmission = totalProductLevelEmission + parseFloat(ele.scope_3_contribution)
         }
         productWise.push(productData)
@@ -142,5 +142,64 @@ export default class SupplierProductsController {
         )
       }
     }
+  }
+
+
+  public async getAllProductTypes({ response, request }: HttpContextContract) {
+    try {
+      const queryParams = request.qs();
+      const allProductTypesOfSupplier =  await SupplierProduct.getAllProductTypesOfSuppliers(queryParams)
+      return apiResponse(response, true, 200, allProductTypesOfSupplier, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'),false);
+
+    }
+    catch (error) {
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
+
+  }
+
+  public async getAllProductNames({ response, request }: HttpContextContract) {
+    try {
+      const queryParams = request.qs();
+      const allProductNamesOfSupplier =  await SupplierProduct.getAllProductNamesOfSuppliers(queryParams)
+      return apiResponse(response, true, 200, allProductNamesOfSupplier, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'),false);
+
+    }
+    catch (error) {
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
+
   }
 }

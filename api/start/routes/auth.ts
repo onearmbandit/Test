@@ -46,6 +46,8 @@ Route.group(() => {
 
       Route.resource('/supplier-products', 'SupplierProductsController')
       Route.get('/supplier-period-emission', 'SupplierProductsController.calculateProductEmissionData')
+      Route.get('/supplier-product-type', 'SupplierProductsController.getAllProductTypes')
+      Route.get('/supplier-product-name', 'SupplierProductsController.getAllProductNames')
 
 
     })
