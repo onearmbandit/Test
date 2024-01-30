@@ -12,7 +12,37 @@ import AddSupplierDatumValidator from 'App/Validators/Supplier/AddSupplierDatumV
 import UpdateSupplierDatumValidator from 'App/Validators/Supplier/UpdateSupplierDatumValidator';
 
 export default class SuppliersController {
-  public async index({ }: HttpContextContract) { }
+  public async index({ request, response }: HttpContextContract) {
+    try {
+      const queryParams = request.qs();
+
+      const allSuppliersData = await Supplier.getAllSuppliersForSpecificPeriod(queryParams);
+
+      const isPaginated = !request.input('perPage') || request.input('perPage') !== 'all';
+
+      return apiResponse(response, true, 200, allSuppliersData, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'), isPaginated);
+
+    } catch (error) {
+      console.log("error", error)
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
+  }
 
   public async store({ request, response }: HttpContextContract) {
     try {
@@ -178,11 +208,31 @@ export default class SuppliersController {
         }
       });
 
-      // console.log("suppliers", suppliers)
+
+      //:: Find unique entries because if supplier name same then not need to create two times.
+      let uniqueSuppliers: any = []
+
+      suppliers.forEach((currentSupplier) => {
+        const existingSupplier = uniqueSuppliers.find(
+          (s) => (s.name === currentSupplier.name && s.email === currentSupplier.email)
+        );
+
+        if (existingSupplier) {
+          // Supplier with the same name already exists, merge supplierProducts
+          existingSupplier.supplierProducts = [
+            ...existingSupplier.supplierProducts,
+            ...currentSupplier.supplierProducts,
+          ];
+        } else {
+          // Supplier with this name doesn't exist, add as a new entry
+          uniqueSuppliers.push({ ...currentSupplier });
+        }
+      });
+
       const uploadResult: any[] = [];
 
       await Promise.all(
-        await suppliers.map(async (elementData) => {
+        await uniqueSuppliers.map(async (elementData) => {
           let data = { ...elementData };
 
           var supplierData = await Supplier.createSupplier(reportPeriodData, elementData, trx);
@@ -201,8 +251,6 @@ export default class SuppliersController {
 
           return supplierData
         }))
-
-      // var getResult = await SupplyChainReportingPeriod.getReportPeriodDetails('id', requestData.supplyChainReportingPeriodId)
 
       //::commit database transaction
       await trx.commit();

@@ -6,7 +6,39 @@ import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 
 
 export default class SupplyChainReportingPeriodsController {
-  public async index({ }: HttpContextContract) { }
+  public async index({ request, response }: HttpContextContract) {
+    try {
+
+      const queryParams = request.qs();
+
+      const reportingPeriods = await SupplyChainReportingPeriod.getAllReportingPeriod(queryParams);
+
+      const isPaginated = !request.input('per_page') || request.input('per_page') !== 'all';
+
+      return apiResponse(response, true, 200, reportingPeriods, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'), isPaginated);
+
+
+    } catch (error) {
+      console.log("error", error)
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
+  }
 
   public async store({ request, response, auth }: HttpContextContract) {
     try {
@@ -93,7 +125,7 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
-  public async destroy({  response, params }: HttpContextContract) {
+  public async destroy({ response, params }: HttpContextContract) {
     try {
       await SupplyChainReportingPeriod.deleteReportPeriod(params);
 
