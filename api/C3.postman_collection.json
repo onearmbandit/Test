@@ -52,7 +52,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userSlug\":\"anuja-pawar\",\n    \"companyName\":\"XYZ\",\n    \"addressLine1\":\"Pune\",\n    \"addressLine2\":\"floor1\",\n    \"city\":\"Pune\",\n    \"state\":\"MH\",\n    \"zipCode\":\"12345\",\n    \"registrationStep\":3\n}",
+							"raw": "{\n    \"userSlug\":\"soniya-mehta\",\n    \"companyName\":\"soniya XYZ\",\n    \"companyAddress\":\"Giga space IT park,Viman nagar,pune,MH,12345\",\n    \"registrationStep\":3\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -293,7 +293,7 @@
 					},
 					"response": [
 						{
-							"name": "first step",
+							"name": "First step",
 							"originalRequest": {
 								"method": "PATCH",
 								"header": [],
@@ -306,7 +306,7 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/36829e5b-add4-4a74-ba57-e7b0aa9685cd"
+								"url": "{{base_url}}/api/v1/auth/organization/e0b0a68c-9835-45f9-acbc-24bd42edafd7"
 							},
 							"status": "OK",
 							"code": 200,
@@ -314,7 +314,7 @@
 							"header": [
 								{
 									"key": "content-length",
-									"value": "1170"
+									"value": "1547"
 								},
 								{
 									"key": "content-type",
@@ -322,7 +322,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Wed, 17 Jan 2024 10:55:55 GMT"
+									"value": "Tue, 30 Jan 2024 07:04:54 GMT"
 								},
 								{
 									"key": "Connection",
@@ -334,7 +334,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Organization updated successfully.\",\n    \"data\": {\n        \"id\": \"1bca512c-1ca4-445b-b641-7058e8f2ccaf\",\n        \"company_email\": \"anjpawar+6@cxr.agency\",\n        \"self_point_of_contact\": 1,\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-17T16:16:04.000+05:30\",\n        \"updated_at\": \"2024-01-17T16:25:55.318+05:30\",\n        \"users\": [\n            {\n                \"id\": \"0cccfdc6-fb4b-48eb-9928-258e42be29d8\",\n                \"first_name\": \"Anuja\",\n                \"last_name\": \"Pawar\",\n                \"slug\": \"anuja-pawar\",\n                \"email\": \"anjpawar+3@cxr.agency\",\n                \"email_verified_at\": \"2024-01-17T16:15:41.000+05:30\",\n                \"email_verify_token\": \"\",\n                \"user_status\": 1,\n                \"remember_token\": null,\n                \"remember_token_expires\": null,\n                \"timezone\": null,\n                \"login_type\": null,\n                \"registration_step\": \"3\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-17T16:13:50.000+05:30\",\n                \"updated_at\": \"2024-01-17T16:16:04.000+05:30\"\n            },\n            {\n                \"id\": \"8982944a-f708-4c08-b8d3-393e1856622c\",\n                \"first_name\": null,\n                \"last_name\": null,\n                \"slug\": null,\n                \"email\": \"anjpawar+5@cxr.agency\",\n                \"email_verified_at\": null,\n                \"email_verify_token\": null,\n                \"user_status\": 1,\n                \"remember_token\": null,\n                \"remember_token_expires\": null,\n                \"timezone\": null,\n                \"login_type\": null,\n                \"registration_step\": \"1\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-17T16:18:26.000+05:30\",\n                \"updated_at\": \"2024-01-17T16:18:26.000+05:30\"\n            }\n        ]\n    }\n}"
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Organization updated successfully.\",\n    \"data\": {\n        \"id\": \"e0b0a68c-9835-45f9-acbc-24bd42edafd7\",\n        \"company_name\": \"soniya XYZ\",\n        \"company_email\": \"anjpawar+6@cxr.agency\",\n        \"self_point_of_contact\": null,\n        \"company_size\": null,\n        \"naics_code\": null,\n        \"climate_targets\": null,\n        \"company_address\": \"Giga space IT park,Viman nagar,pune,MH,12345\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-30T12:32:43.000+05:30\",\n        \"updated_at\": \"2024-01-30T12:34:54.000+05:30\",\n        \"users\": [\n            {\n                \"id\": \"0eb52777-2800-48c0-b3ad-c4f72b115be8\",\n                \"first_name\": \"Soniya\",\n                \"last_name\": \"Mehta\",\n                \"slug\": \"soniya-mehta\",\n                \"email\": \"anjpawar+2@cxr.agency\",\n                \"email_verified_at\": null,\n                \"email_verify_token\": \"F6a67l_uBo4TzwB_jg_W_Q.Q1prRDRoUm8tNGk1Qnl1Xw.8jMg9AfVomlY94C_z5PU_vVOvOOiUHbnMf5FCsacbuE\",\n                \"user_status\": 1,\n                \"remember_token\": null,\n                \"remember_token_expires\": null,\n                \"timezone\": null,\n                \"login_type\": null,\n                \"social_login_token\": null,\n                \"registration_step\": \"3\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:30:49.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:32:43.000+05:30\"\n            },\n            {\n                \"id\": \"0eb52777-2800-48c0-b3ad-c4f72b115be8\",\n                \"first_name\": \"Soniya\",\n                \"last_name\": \"Mehta\",\n                \"slug\": \"soniya-mehta\",\n                \"email\": \"anjpawar+2@cxr.agency\",\n                \"email_verified_at\": null,\n                \"email_verify_token\": \"F6a67l_uBo4TzwB_jg_W_Q.Q1prRDRoUm8tNGk1Qnl1Xw.8jMg9AfVomlY94C_z5PU_vVOvOOiUHbnMf5FCsacbuE\",\n                \"user_status\": 1,\n                \"remember_token\": null,\n                \"remember_token_expires\": null,\n                \"timezone\": null,\n                \"login_type\": null,\n                \"social_login_token\": null,\n                \"registration_step\": \"3\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:30:49.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:32:43.000+05:30\"\n            }\n        ]\n    }\n}"
 						},
 						{
 							"name": "2nd step",
@@ -702,7 +702,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"addressLine1\": \"123 man street\",\n    \"addressLine2\": \"9th floor\",\n    \"city\": \"pune\",\n    \"state\": \"MH\",\n    \"country\": \"India\",\n    \"zipCode\": \"12345\"\n}",
+									"raw": "{\n    \"companyAddress\":\"Sai green house, pune,MH, 12345\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1370,6 +1370,50 @@
 						"url": "{{base_url}}/api/v1/auth/suppliers/3d770ec8-a96e-4c6f-bd89-441630e4c50e"
 					},
 					"response": []
+				},
+				{
+					"name": "supplier details API",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": [
+						{
+							"name": "New Request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}/api/v1/auth/suppliers/61422caa-8f4e-496e-9943-bf29ca8b35b3"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "2395"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 30 Jan 2024 11:18:32 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n        \"supply_chain_reporting_period_id\": \"eeb631bc-fb61-4d2c-b899-23093c8771c1\",\n        \"name\": \"PT KAHATEX\",\n        \"email\": \"someoneelse@ptkhatex.com\",\n        \"organization_relationship\": \"OWNED\",\n        \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n        \"updated_at\": \"2024-01-30T16:30:36.000+05:30\",\n        \"supplyChainReportingPeriod\": {\n            \"id\": \"eeb631bc-fb61-4d2c-b899-23093c8771c1\",\n            \"reporting_period_from\": \"2024-02-01\",\n            \"reporting_period_to\": \"2024-04-01\"\n        },\n        \"supplierProducts\": [\n            {\n                \"id\": \"68cf2d73-84c3-46b0-98ab-12e728477c66\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"Accessories\",\n                \"name\": \"Micro-tights\",\n                \"quantity\": \"10003\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 0.5,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            },\n            {\n                \"id\": \"7565c39b-b30c-41af-89de-dc4bf211ccc3\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"Accessories, Jersey, Knitted, Woven, Home (textile), Night-, swim- and underwear\",\n                \"name\": \"Jersey\",\n                \"quantity\": \"10000\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 0.5,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            },\n            {\n                \"id\": \"d6b754fa-8f57-4769-9f69-7422cb791b00\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"Jersey\",\n                \"name\": \"Jersey\",\n                \"quantity\": \"10003\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 450,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            },\n            {\n                \"id\": \"ghb754fa-8f57-4769-9f69-7422cb791b00\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"Jersey\",\n                \"name\": \"Jersey\",\n                \"quantity\": \"10003\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 300,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            },\n            {\n                \"id\": \"khb754fa-8f57-4769-9f69-7422cb791b00\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"JerseyXY\",\n                \"name\": \"Jersey\",\n                \"quantity\": \"10003\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 233,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            }\n        ],\n        \"totalOfScopeContribution\": 984\n    }\n}"
+						}
+					]
 				}
 			]
 		},
@@ -1389,7 +1433,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"supplierId\": \"3d770ec8-a96e-4c6f-bd89-441630e4c50e\",\n    \"supplierProducts\": [\n        {\n            \"name\":\"\",\n            \"type\":\"\",\n            \"quantity\":1000,\n            \"functionalUnit\":\"\",\n            \"scope_3Contribution\":\"\"\n        },\n        {\n            \"name\":\"\",\n            \"type\":\"\",\n            \"quantity\":1000,\n            \"functionalUnit\":\"\",\n            \"scope_3Contribution\":\"\"\n        }\n    ]\n}",
+							"raw": "{\n    \"supplierId\": \"7f4f9602-6c5a-4ac5-96e2-d78d25fe3a3e\",\n    \"supplierProducts\": [\n        {\n            \"name\":\"Shirts\",\n            \"type\":\"Textile,Professional wear\",\n            \"quantity\":\"10,000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"450\"\n        },\n        {\n            \"name\":\"Jackets\",\n            \"type\":\"Textile,Professional wear, XYZ\",\n            \"quantity\":\"1000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"345.78\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1398,7 +1442,96 @@
 						},
 						"url": "{{base_url}}/api/v1/auth/supplier-products"
 					},
-					"response": []
+					"response": [
+						{
+							"name": "error example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"supplierId\": \"c77d6bab-a88b-479a-8f7e-30b57bbce808\",\n    \"supplierProducts\": [\n        {\n            \"name\":\"Shirts\",\n            \"type\":\"Textile,Professional wear\",\n            \"quantity\":\"10,000j\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"0.4k\"\n        },\n        {\n            \"name\":\"Jackets\",\n            \"type\":\"Textile,Professional wear, XYZ\",\n            \"quantity\":\"1000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"0.3\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/v1/auth/supplier-products"
+							},
+							"status": "Unprocessable Entity",
+							"code": 422,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "373"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 30 Jan 2024 06:49:24 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": false,\n    \"code\": 422,\n    \"message\": \"Validation failed for given inputs.\",\n    \"errors\": [\n        {\n            \"rule\": \"exists\",\n            \"field\": \"supplierId\",\n            \"message\": \"Supplier with this ID does not exist.\"\n        },\n        {\n            \"rule\": \"regex\",\n            \"field\": \"supplierProducts.0.quantity\",\n            \"message\": \"Please enter valid number\"\n        },\n        {\n            \"rule\": \"number\",\n            \"field\": \"supplierProducts.0.scope_3Contribution\",\n            \"message\": \"Please enter valid number\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "create supplier product",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"supplierId\": \"7f4f9602-6c5a-4ac5-96e2-d78d25fe3a3e\",\n    \"supplierProducts\": [\n        {\n            \"name\":\"Shirts\",\n            \"type\":\"Textile,Professional wear\",\n            \"quantity\":\"10,000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"450\"\n        },\n        {\n            \"name\":\"Jackets\",\n            \"type\":\"Textile,Professional wear, XYZ\",\n            \"quantity\":\"1000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"345.78\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/v1/auth/supplier-products"
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "709"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 30 Jan 2024 07:10:14 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 201,\n    \"message\": \"\",\n    \"data\": [\n        {\n            \"id\": \"366d7e0b-2ca4-49b6-bcbe-c7edc12fb80e\",\n            \"name\": \"Shirts\",\n            \"type\": \"Textile,Professional wear\",\n            \"quantity\": \"10,000\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": \"450\",\n            \"supplier_id\": \"7f4f9602-6c5a-4ac5-96e2-d78d25fe3a3e\",\n            \"created_at\": \"2024-01-30T12:40:13.993+05:30\",\n            \"updated_at\": \"2024-01-30T12:40:13.994+05:30\"\n        },\n        {\n            \"id\": \"5500773d-fa28-480d-b9f5-e099f9949614\",\n            \"name\": \"Jackets\",\n            \"type\": \"Textile,Professional wear, XYZ\",\n            \"quantity\": \"1000\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": \"345.78\",\n            \"supplier_id\": \"7f4f9602-6c5a-4ac5-96e2-d78d25fe3a3e\",\n            \"created_at\": \"2024-01-30T12:40:13.995+05:30\",\n            \"updated_at\": \"2024-01-30T12:40:13.995+05:30\"\n        }\n    ]\n}"
+						}
+					]
 				},
 				{
 					"name": "Get All products",
@@ -1554,6 +1687,84 @@
 								}
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all product types only",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{base_url}}/api/v1/auth/supplier-product-type"
+					},
+					"response": [
+						{
+							"name": "New Request",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-product-type?supplierId=61422caa-8f4e-496e-9943-bf29ca8b35b3",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-product-type"
+									],
+									"query": [
+										{
+											"key": "supplierId",
+											"value": "61422caa-8f4e-496e-9943-bf29ca8b35b3"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "438"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 30 Jan 2024 09:23:46 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": [\n        {\n            \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n            \"type\": \"Accessories\"\n        },\n        {\n            \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n            \"type\": \"Accessories, Jersey, Knitted, Woven, Home (textile), Night-, swim- and underwear\"\n        },\n        {\n            \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n            \"type\": \"Jersey\"\n        },\n        {\n            \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n            \"type\": \"JerseyXY\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "get all product names only",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "single product delete",
+					"request": {
+						"method": "DELETE",
+						"header": []
 					},
 					"response": []
 				}
