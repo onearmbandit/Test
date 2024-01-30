@@ -8,11 +8,19 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useAccountStore } from "@/lib/stores/organisation.store";
+import { getUser } from "@/services/organizations.api";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronRight } from "lucide-react";
 import React from "react";
 
 const AccountDetails = () => {
   const { setMyAccSection } = useAccountStore();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["account-details"],
+    queryFn: () => getUser(),
+  });
+
   return (
     <form className="justify-center items-start bg-white grow rounded-e-lg flex flex-col p-6 max-md:px-5">
       <header className="text-gray-700 border-b border-gray-300 pb-3 text-lg font-bold leading-7 self-stretch max-md:max-w-full">
@@ -25,7 +33,7 @@ const AccountDetails = () => {
           disabled={true}
           className="text-slate-700 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-100 
     justify-center p-2 rounded-md self-start"
-          value="John Smith"
+          value={` ${data?.data?.first_name} ${data?.data?.last_name}`}
         />
       </section>
       <header className="text-gray-700 text-base font-semibold leading-6 self-stretch mt-9 max-md:max-w-full max-md:mt-10 pb-3 border-b border-gray-300">
@@ -35,7 +43,8 @@ const AccountDetails = () => {
       <section className="text-black text-sm leading-5 self-stretch space-y-2.5 mt-2.5 max-md:max-w-full">
         <label>Email</label>
         <Input
-          value={"johnsmith@pepsico.com"}
+          disabled
+          value={`${data?.data?.email}`}
           className="text-gray-500 text-xs leading-4 self-stretch px-0 max-md:max-w-full"
         />
       </section>

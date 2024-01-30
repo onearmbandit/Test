@@ -1,6 +1,8 @@
 "use client";
 import { useAccountStore } from "@/lib/stores/organisation.store";
 import { cn } from "@/lib/utils";
+import { getUser } from "@/services/organizations.api";
+import { useQuery } from "@tanstack/react-query";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import React from "react";
 
@@ -13,16 +15,22 @@ const AccountsNav = () => {
   } = useAccountStore();
   const pathname = usePathname();
   const basePath = pathname.split("/")[1];
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["account-details"],
+    queryFn: () => getUser(),
+  });
+
   return (
     <div className="flex flex-col items-stretch w-[28%] max-md:w-full max-md:ml-0">
       <div className="items-stretch bg-gray-50 flex w-full grow rounded-s-lg flex-col mx-auto pt-6 pb-12 px-6 max-md:px-5">
         <h2 className="text-gray-500 text-xs font-bold leading-4">Accounts</h2>
         <div className="items-stretch bg-gray-100 bg-opacity-0 flex flex-col mt-2.5 py-3.5">
           <div className="overflow-hidden text-slate-800 text-ellipsis text-sm font-bold leading-5 whitespace-nowrap">
-            John Smith
+            {data?.data?.first_name} {data?.data?.last_name}
           </div>
           <div className="overflow-hidden text-gray-500 text-ellipsis text-xs leading-4">
-            johnsmith@pepsico.com
+            {data?.data?.email}
           </div>
         </div>
         <span

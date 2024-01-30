@@ -49,6 +49,13 @@ export const getUser = () => {
   return fetchApi("/auth/user");
 };
 
+export const updatePassword = ({ formBody }: { formBody: any }) => {
+  return fetchApi(`/auth/user`, {
+    method: "PATCH",
+    body: formBody,
+  } as Options);
+};
+
 // export const setupOrganizationStep4 = ({
 //   id,
 //   formdata,
