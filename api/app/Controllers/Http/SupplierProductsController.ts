@@ -5,8 +5,6 @@ import Config from '@ioc:Adonis/Core/Config';
 import AddSupplierProductValidator from 'App/Validators/Supplier/AddSupplierProductValidator';
 import SupplierProduct from 'App/Models/SupplierProduct';
 import Supplier from 'App/Models/Supplier';
-import { ResponseObject } from 'Contracts/interfaces/types';
-import { ResponseContract } from '@ioc:Adonis/Core/Response'
 
 
 export default class SupplierProductsController {
