@@ -49,7 +49,7 @@ function Page() {
   const email = params.get("email");
   function maskEmail(email: string) {
     // Split the email address into local and domain parts
-    const [localPart, domain] = email.split("@");
+    const [localPart, domain] = email?.split("@");
 
     // Replace characters in the local part with asterisks
     const maskedLocalPart =

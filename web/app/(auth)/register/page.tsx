@@ -143,7 +143,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     //   }
     // },
     onSubmit: (data) => {
-      console.log("mutate" , data);
+      console.log("mutate", data);
       // if (errors.length > 0 && !errors.includes("length")) {
       //   return;
       // }
@@ -589,7 +589,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
           <AutocompleteInput
             isDisabled={addressDisabled}
             setAddress={(e: any) => {
-              step3Form.setFieldValue("address", e);
+              step3Form.setFieldValue("addressLine1", e);
             }}
           />
         </div>

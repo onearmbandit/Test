@@ -221,11 +221,11 @@ const Step2 = ({ setStep }: any) => {
 
   return (
     <form onSubmit={setupOrganizationStep2Form.handleSubmit}>
-      <div className="max-w-[50.875rem] w-full">
+      <div className="max-w-[50.875rem] w-full pt-6">
         <header className="header text-slate-700 text-2xl font-medium leading-8 w-full max-md:max-w-full">
           What is the size of your company?*
         </header>
-        <div className="company-size-container grid grid-cols-3 w-5/6 gap-4 mt-6 max-md:max-w-full max-md:flex-wrap">
+        <div className="company-size-container grid grid-cols-3 gap-4 mt-6 max-md:max-w-full max-md:flex-wrap">
           {sizes.map((item, i) => (
             <button
               key={i}
@@ -355,7 +355,7 @@ const Step3 = ({ setStep }: any) => {
 
         <div className="justify-between items-center self-stretch flex w-full gap-5 mt-6 p-2.5 max-md:max-w-full max-md:flex-wrap">
           <div
-            onClick={() => setStep(4)}
+            onClick={() => setStep(2)}
             role="button"
             className="text-blue-600 text-center text-sm font-bold leading-4 my-auto"
           >
@@ -534,7 +534,7 @@ const Step4 = ({ setStep }: any) => {
 
           <div className="justify-between items-center self-stretch flex gap-3.5 pl-20 py-2 max-md:max-w-full max-md:flex-wrap max-md:pl-5">
             <div
-              onClick={() => setStep(4)}
+              onClick={() => router.push("/")}
               role="button"
               className="text-blue-600 text-center text-sm font-bold leading-4 grow whitespace-nowrap my-auto"
             >

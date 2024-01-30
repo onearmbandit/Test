@@ -1,3 +1,5 @@
+"use server";
+
 import { authOptions } from "@/lib/utils";
 import axios, { AxiosHeaders } from "axios";
 import { getServerSession } from "next-auth";
@@ -30,7 +32,7 @@ const fetchApi = async (
   })
     .then((res) => res.data)
     .catch((err) => {
-      // console.log(err.response.data);
+      console.log(err.response.data);
       throw new Error(err.response?.data.message);
     });
 
@@ -43,7 +45,6 @@ export const createFacility = (obj: any) => {
 
 export const getFacilities = async () => {
   const session = await getServerSession(authOptions);
-  // console.log("ses", session.user);
-  // return await session;
-  return fetchApi(`/auth/facility?organization_id=`);
+  const orgId = session?.user?.organizations[0].id;
+  return fetchApi(`/auth/facility?organization_id=${orgId}`);
 };
