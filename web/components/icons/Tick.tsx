@@ -1,6 +1,14 @@
 import React from "react";
 
-const Tick = ({ variant = "gray" }: { variant?: "gray" | "green" | "red" }) => {
+export type BtnSize = { width: string; height: string; vBox: string };
+
+const Tick = ({
+  variant = "gray",
+  size,
+}: {
+  variant?: "gray" | "green" | "red" | "blue";
+  size?: string;
+}) => {
   let colorFill = "";
   switch (variant) {
     case "gray":
@@ -11,14 +19,25 @@ const Tick = ({ variant = "gray" }: { variant?: "gray" | "green" | "red" }) => {
       break;
     case "red":
       colorFill = "#EF4444";
+    case "blue":
+      colorFill = "#2C75D3";
       break;
+  }
+  let btnSize: BtnSize = {} as BtnSize;
+  switch (size) {
+    case "lg":
+      btnSize = { width: "24", height: "24", vBox: "0 0 24 24" };
+      break;
+
+    default:
+      btnSize = { width: "19", height: "18", vBox: "0 0 19 18" };
   }
   //   console.log(variant);
   return (
     <svg
-      width="19"
-      height="18"
-      viewBox="0 0 19 18"
+      width={btnSize.width}
+      height={btnSize.height}
+      viewBox={btnSize.vBox}
       fill={colorFill}
       xmlns="http://www.w3.org/2000/svg"
     >

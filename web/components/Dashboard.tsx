@@ -10,6 +10,7 @@ import NeedHelp from "./NeedHelp";
 import AutocompleteInput from "./Autocomplete";
 import { getUser } from "@/services/user.api";
 import { useQuery } from "@tanstack/react-query";
+import FacilityTable from "./FacilityTable";
 
 const Dashboard = () => {
   const { data, isLoading } = useQuery({
@@ -79,8 +80,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
-      {/* <AutocompleteInput /> */}
+      <FacilityTable />
 
       {/* <NeedHelp /> */}
     </div>

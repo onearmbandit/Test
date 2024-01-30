@@ -7,10 +7,6 @@ import axios, {
   RawAxiosRequestHeaders,
 } from "axios";
 import { getServerSession } from "next-auth";
-type CreateAPIMethod = <TInput extends Record<string, string>, TOutput>(opts: {
-  url: string;
-  method: "GET" | "POST" | "PATCH" | "PUT";
-}) => (input: TInput) => Promise<TOutput>;
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 

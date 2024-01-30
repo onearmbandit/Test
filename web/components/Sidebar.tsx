@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import Accounts from "./popups/accounts/accounts";
 import { signOut, useSession } from "next-auth/react";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 const Sidebar = () => {
   const session = useSession();
@@ -21,7 +22,7 @@ const Sidebar = () => {
   const firstLetterOfLastName = lastName.charAt(0);
 
   return (
-    <div className="flex flex-col justify-between w-full h-screen max-w-[240px] px-4 py-5">
+    <div className="flex flex-col bg-gray-50 justify-between w-full h-screen max-w-[240px] px-4 py-5">
       <nav>
         <header className="items-center border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-2 pl-4 pr-10 py-3.5 border-b border-solid">
           <div className="text-blue-700 text-xs font-semibold leading-4 whitespace-nowrap flex justify-center items-center bg-blue-100 aspect-square h-8 my-auto px-2.5 rounded-md">
@@ -102,7 +103,10 @@ const Sidebar = () => {
           </AccordionItem>
         </Accordion>
 
-        <div className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md">
+        <Link
+          href={"/supply-chain"}
+          className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
+        >
           <svg
             width="16"
             height="16"
@@ -122,7 +126,7 @@ const Sidebar = () => {
           <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
             Supply Chain
           </h2>
-        </div>
+        </Link>
       </nav>
       <footer>
         <Dialog>
