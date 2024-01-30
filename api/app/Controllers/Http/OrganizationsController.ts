@@ -5,6 +5,7 @@ import Config from '@ioc:Adonis/Core/Config'
 import Organization from 'App/Models/Organization'
 import UpdateOrganizationValidator from 'App/Validators/Organization/UpdateOrganizationValidator'
 import { v4 as uuidv4 } from 'uuid'
+import CreateOrganizationValidator from 'App/Validators/Organization/CreateOrganizationValidator'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
@@ -31,7 +32,41 @@ export default class OrganizationsController {
     }
   }
 
-  public async store({}: HttpContextContract) {}
+  public async store({ request, response, bouncer }: HttpContextContract) {
+    try {
+      //:: Authorization (every user can access their organization only)
+      await bouncer.with('OrganizationPolicy').authorize('create')
+
+      let requestData = request.all()
+
+      // // validate facility details
+      await request.validate(CreateOrganizationValidator)
+
+      // create organization user
+      const result = await Organization.createOrganization(requestData)
+
+      return apiResponse(response, true, 200, result, 'Organization created successfully')
+    } catch (error) {
+      console.log('error : ', error)
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
+  }
 
   //:: GEt data of organization
   public async show({ response, params, bouncer }: HttpContextContract) {

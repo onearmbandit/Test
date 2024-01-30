@@ -40,6 +40,7 @@ export default class InviteOrganizationValidator {
 
     email: schema.string({ trim: true }, [
       rules.required(),
+      rules.email(),
       rules.minLength(3),
       rules.maxLength(255),
       rules.unique({ table: 'organization_users', column: 'email' }),
