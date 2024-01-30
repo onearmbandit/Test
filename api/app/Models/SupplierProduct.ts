@@ -143,4 +143,15 @@ export default class SupplierProduct extends BaseModel {
 
     return JSON.parse(JSON.stringify(allProductNamesOfSupplier));
   }
+
+
+  public static async getProductDetailsData(field, value) {
+
+    const productDetails = await SupplierProduct.query()
+    .where(field, value)
+    .whereNull('deleted_at') // Exclude soft-deleted records
+    .firstOrFail();
+    return productDetails;
+  }
+
 }

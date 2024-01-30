@@ -5,6 +5,7 @@ import Config from '@ioc:Adonis/Core/Config';
 import AddSupplierProductValidator from 'App/Validators/Supplier/AddSupplierProductValidator';
 import SupplierProduct from 'App/Models/SupplierProduct';
 import Supplier from 'App/Models/Supplier';
+import { DateTime } from 'luxon'
 
 
 export default class SupplierProductsController {
@@ -81,7 +82,40 @@ export default class SupplierProductsController {
   public async update({ }: HttpContextContract) {
   }
 
-  public async destroy({ }: HttpContextContract) {
+  public async destroy({ response, request }: HttpContextContract) {
+    try {
+      const productDetailsData = await SupplierProduct.getProductDetailsData('id', request.param('id'))
+
+      if (productDetailsData) {
+        productDetailsData.deletedAt = DateTime.local()
+        await productDetailsData.save()
+
+        return apiResponse(response, true, 200, {}, Config.get('responsemessage.SUPPLIER_RESPONSE.productDeleteSuccess'))
+      } else {
+        return apiResponse(response, false, 401, {}, Config.get('responsemessage.SUPPLIER_RESPONSE.productNotFount'))
+      }
+
+    }
+    catch (error) {
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
+
   }
 
   public async calculateProductEmissionData({ response, request }: HttpContextContract) {
@@ -148,8 +182,8 @@ export default class SupplierProductsController {
   public async getAllProductTypes({ response, request }: HttpContextContract) {
     try {
       const queryParams = request.qs();
-      const allProductTypesOfSupplier =  await SupplierProduct.getAllProductTypesOfSuppliers(queryParams)
-      return apiResponse(response, true, 200, allProductTypesOfSupplier, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'),false);
+      const allProductTypesOfSupplier = await SupplierProduct.getAllProductTypesOfSuppliers(queryParams)
+      return apiResponse(response, true, 200, allProductTypesOfSupplier, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'), false);
 
     }
     catch (error) {
@@ -177,8 +211,8 @@ export default class SupplierProductsController {
   public async getAllProductNames({ response, request }: HttpContextContract) {
     try {
       const queryParams = request.qs();
-      const allProductNamesOfSupplier =  await SupplierProduct.getAllProductNamesOfSuppliers(queryParams)
-      return apiResponse(response, true, 200, allProductNamesOfSupplier, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'),false);
+      const allProductNamesOfSupplier = await SupplierProduct.getAllProductNamesOfSuppliers(queryParams)
+      return apiResponse(response, true, 200, allProductNamesOfSupplier, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'), false);
 
     }
     catch (error) {
