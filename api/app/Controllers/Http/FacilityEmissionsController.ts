@@ -4,12 +4,11 @@ import Config from '@ioc:Adonis/Core/Config';
 import ReportingPeriodValidator from 'App/Validators/FacilityEmission/ReportingPeriodValidator';
 import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateFacilityEmissionValidator from 'App/Validators/FacilityEmission/UpdateFacilityEmissionValidator';
-import FacilityEmission from 'App/Models/FacilityEmission';
 import { DateTime } from 'luxon';
 
 export default class FacilityEmissionsController {
 
-  public async index ({response, request}: HttpContextContract) {
+  public async index({ response, request }: HttpContextContract) {
     try {
       const queryParams = request.qs();
 
@@ -30,7 +29,7 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async store ({request, response}: HttpContextContract) {
+  public async store({ request, response }: HttpContextContract) {
     try {
       let requestData = request.all()
 
@@ -68,7 +67,7 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async show ({response, params}: HttpContextContract) {
+  public async show({ response, params }: HttpContextContract) {
     try {
       const FacilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', params.id)
 
@@ -81,7 +80,7 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async update ({request, response}: HttpContextContract) {
+  public async update({ request, response }: HttpContextContract) {
     try {
 
       const FacilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', request.param('id'))
@@ -103,7 +102,7 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async destroy ({request, response}: HttpContextContract) {
+  public async destroy({ request, response }: HttpContextContract) {
     try {
       const FacilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', request.param('id'))
 
