@@ -14,8 +14,11 @@ export default class AddSupplierProductValidator {
 		supplierProducts: schema.array().members(
 			schema.object().members({
 				name: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(255)]),
-				type: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(255)]),
-				quantity: schema.number(),
+				type: schema.string({ trim: true }, [rules.minLength(3)]),
+				quantity: schema.string([
+					rules.regex(/^[0-9,]+$/),
+				]),
+
 				// functionalUnit: schema.string({ trim: true }, [rules.maxLength(255)]),
 				scope_3Contribution: schema.number(),
 			})
@@ -28,8 +31,7 @@ export default class AddSupplierProductValidator {
 		'supplierProducts.*.name.minLength': 'Product name must be at least 3 characters.',
 		'supplierProducts.*.name.maxLength': 'Product name cannot exceed 255 characters.',
 		'supplierProducts.*.type.minLength': 'Product type must be at least 3 characters.',
-		'supplierProducts.*.type.maxLength': 'Product type cannot exceed 255 characters.',
-		'supplierProducts.*.quantity.number': 'Please enter valid number',
+		'supplierProducts.*.quantity.regex': 'Please enter valid number',
 		'supplierProducts.*.functionalUnit.maxLength': 'Product functional unit cannot exceed 255 characters.',
 		'supplierProducts.*.scope_3Contribution.number': 'Please enter valid number',
 	}

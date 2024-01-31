@@ -33,22 +33,7 @@ export default class Organization extends BaseModel {
   public climateTargets: string
 
   @column()
-  public addressLine_1: string
-
-  @column()
-  public addressLine_2: string
-
-  @column()
-  public city: string
-
-  @column()
-  public state: string
-
-  @column()
-  public country: string
-
-  @column()
-  public zipcode: string
+  public companyAddress: string
 
   @column.dateTime()
   public deletedAt: DateTime
@@ -111,11 +96,7 @@ export default class Organization extends BaseModel {
     const organizationData = await Organization.create({
       id: uuidv4(),
       companyName: requestData.companyName,
-      addressLine_1: requestData.addressLine1,
-      addressLine_2: requestData.addressLine2,
-      city: requestData.city,
-      state: requestData.state,
-      zipcode: requestData.zipcode,
+      companyAddress: requestData.companyAddress,
     })
     return organizationData
   }
