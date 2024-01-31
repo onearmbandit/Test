@@ -80,12 +80,12 @@ export default class SupplierProduct extends BaseModel {
     }
 
     if (sort == 'supplierName') {
-      query = query.preload('supplier', (query) => {
-        query.groupOrderBy('supplier.name', order)
-      })
-      // query = query.whereHas('supplier', (data) => {
-      //   data.orderBy('name', order)
+      // query = query.preload('supplier', (query) => {
+      //   query.groupOrderBy('supplier.name', order)
       // })
+      query = query.whereHas('supplier', async (data) => {
+         data.orderBy('name', order)
+      })
     }
     else {
       query = query.orderBy(sort, order);

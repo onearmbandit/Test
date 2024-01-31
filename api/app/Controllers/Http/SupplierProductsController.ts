@@ -130,13 +130,31 @@ export default class SupplierProductsController {
         let totalProductLevelEmission = 0;
         let productWise: any = [];
         let scopeEmissionNAProducts: any = []
-        emissionData.forEach((ele) => {
+
+        //:: Find unique entries because if product name same then need to give their total contribution
+        let uniqueProducts: any = []
+        emissionData.forEach((currentProduct) => {
+          const existingProduct = uniqueProducts.find(
+            (s) => (s.name === currentProduct.name)
+          );
+
+          if (existingProduct) {
+            // Supplier with the same name already exists, calculate total
+            existingProduct.scope_3_contribution =
+              existingProduct.scope_3_contribution + currentProduct.scope_3_contribution;
+          } else {
+            uniqueProducts.push({ ...currentProduct });
+          }
+        });
+
+
+        uniqueProducts.forEach((ele) => {
           let productData = {
             name: ele.name,
             scope_3_contribution: ele.scope_3_contribution,
-            functional_unit: ele.functional_unit,
-            quantity: ele.quantity,
-            type: ele.type
+            // functional_unit: ele.functional_unit,
+            // quantity: ele.quantity,
+            // type: ele.type
           }
 
           //:: Findout NA element count

@@ -80,7 +80,7 @@ export default class SuppliersController {
     }
   }
 
-  public async show({ response, params }: HttpContextContract) {
+  public async show({ response, params, auth }: HttpContextContract) {
     try {
       var supplierData = await Supplier.getSupplierDetails('id', params.id);
 
@@ -92,6 +92,7 @@ export default class SuppliersController {
       })
 
       jsonFormat['totalOfScopeContribution'] = totalOfScopeContribution
+      jsonFormat['updatedBy'] = `${auth.user?.firstName} ${auth.user?.lastName}`
 
       return apiResponse(response, true, 200, jsonFormat, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'));
 
