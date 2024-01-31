@@ -47,6 +47,7 @@ export default class AuthController {
                     email: requestData.email,
                     password: requestData.password,
                     registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
+                    loginType: 'web',
                 }, role)
 
                 return apiResponse(response, true, 201, userData, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
