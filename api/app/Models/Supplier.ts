@@ -29,6 +29,9 @@ export default class Supplier extends BaseModel {
   @column()
   public address: string
 
+  @column()
+  public updatedBy: string
+
   @column.dateTime()
   public deletedAt: DateTime
 

@@ -14,6 +14,7 @@ export default class extends BaseSchema {
       table.string('email')
       table.string('organization_relationship').comment('value must be either owned or contractor')
       table.text('address');
+      table.string('updated_by');
       table.timestamp('deleted_at', { useTz: true })
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
