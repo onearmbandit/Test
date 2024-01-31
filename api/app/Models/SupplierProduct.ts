@@ -22,7 +22,7 @@ export default class SupplierProduct extends BaseModel {
   public name: string
 
   @column()
-  public quantity: number
+  public quantity: string
 
   @column()
   public functionalUnit: string
@@ -71,20 +71,87 @@ export default class SupplierProduct extends BaseModel {
     const sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at';
     const supplyChainReportingPeriodId = queryParams.supplyChainReportingPeriodId ? queryParams.supplyChainReportingPeriodId.toString() : '';
 
-    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+    let query: any = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
 
+    if (supplyChainReportingPeriodId) {
+      query = query.whereHas('supplier', (data) => {
+        data.where('supplyChainReportingPeriodId', supplyChainReportingPeriodId)
+      })
+    }
+
+    if (sort == 'supplierName') {
+      query = query.preload('supplier', (query) => {
+        query.groupOrderBy('supplier.name', order)
+      })
+      // query = query.whereHas('supplier', (data) => {
+      //   data.orderBy('name', order)
+      // })
+    }
+    else {
+      query = query.orderBy(sort, order);
+    }
+
+    const allSupplierProductsData = await query
+      .preload('supplier')
+      .paginate(page, perPage);
+
+    return allSupplierProductsData
+  }
+
+
+  public static async getProductsEmissionDataForSpecificPeriod(queryParams: ParsedQs) {
+    const supplyChainReportingPeriodId = queryParams.supplyChainReportingPeriodId ? queryParams.supplyChainReportingPeriodId.toString() : '';
+
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
     if (supplyChainReportingPeriodId) {
       query.whereHas('supplier', (query) => {
         query.where('supplyChainReportingPeriodId', supplyChainReportingPeriodId)
       })
     }
 
-    query = query.orderBy(sort, order);
+    const allSupplierProductsData = await query.preload('supplier');
 
-    const allSupplierProductsData = await query.preload('supplier')
-    .paginate(page, perPage);
+    return JSON.parse(JSON.stringify(allSupplierProductsData));
+  }
 
-    return allSupplierProductsData
+
+  public static async getAllProductTypesOfSuppliers(queryParams: ParsedQs) {
+    const supplierId = queryParams.supplierId ? queryParams.supplierId.toString() : '';
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+    if (supplierId) {
+      query.where('supplierId', supplierId)
+    }
+
+    const allProductTypesOfSupplier = await query
+      .distinct('supplier_id', 'type') // Specify all relevant columns or unique columns
+      .groupBy('supplier_id', 'type')
+
+    return JSON.parse(JSON.stringify(allProductTypesOfSupplier));
+  }
+
+
+  public static async getAllProductNamesOfSuppliers(queryParams: ParsedQs) {
+    const supplierId = queryParams.supplierId ? queryParams.supplierId.toString() : '';
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+    if (supplierId) {
+      query.where('supplierId', supplierId)
+    }
+
+    const allProductNamesOfSupplier = await query
+      .distinct('supplier_id', 'name') // Specify all relevant columns or unique columns
+      .groupBy('supplier_id', 'name')
+
+    return JSON.parse(JSON.stringify(allProductNamesOfSupplier));
+  }
+
+
+  public static async getProductDetailsData(field, value) {
+
+    const productDetails = await SupplierProduct.query()
+    .where(field, value)
+    .whereNull('deleted_at') // Exclude soft-deleted records
+    .firstOrFail();
+    return productDetails;
   }
 
 }

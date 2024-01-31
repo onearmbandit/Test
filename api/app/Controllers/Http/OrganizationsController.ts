@@ -93,16 +93,10 @@ export default class OrganizationsController {
         companyName: requestData.companyName,
         companySize: requestData.companySize,
         companyEmail: requestData.companyEmail,
+        companyAddress: requestData.companyAddress,
         selfPointOfContact: requestData.selfPointOfContact,
         naicsCode: requestData.naicsCode,
         climateTargets: await Organization.setTargets(requestData.climateTargets),
-        addressLine_1: requestData.addressLine1,
-        addressLine_2: requestData.addressLine2,
-        city: requestData.city,
-        state: requestData.state,
-        country: requestData.country,
-        zipcode: requestData.zipCode,
-
       })
 
 
