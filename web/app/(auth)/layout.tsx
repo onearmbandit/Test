@@ -25,6 +25,11 @@ const RootLayout = ({ children }: PropsWithChildren) => {
           <Provider>{children}</Provider>
         </AuthProvider>
         <Toaster position="bottom-center" />
+        <script
+          type="text/javascript"
+          async
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places`}
+        ></script>
       </body>
     </html>
   );
