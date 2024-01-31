@@ -58,6 +58,8 @@ Route.group(() => {
 
       //Invite organization api
       Route.post('/invite-organization', 'OrganizationUsersController.inviteOrganization')
+
+      Route.get('/roles/:name', 'UsersController.getRoleByName')
     })
       .prefix('/auth')
       .middleware('auth')

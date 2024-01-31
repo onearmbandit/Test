@@ -56,6 +56,10 @@ export const updatePassword = ({ formBody }: { formBody: any }) => {
   } as Options);
 };
 
+export const getRoleByName = ({ roleName }: { roleName: string }) => {
+  return fetchApi(`/auth/roles/${roleName}`);
+};
+
 // export const setupOrganizationStep4 = ({
 //   id,
 //   formdata,

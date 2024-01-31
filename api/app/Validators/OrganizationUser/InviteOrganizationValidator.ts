@@ -88,9 +88,5 @@ export default class InviteOrganizationValidator {
     'email.minLength': 'Email must be at least 3 characters long.',
     'email.maxLength': 'Email must not exceed 255 characters.',
     'email.unique': 'Invitation is already sent to this email',
-
-    'address.required': 'Address is required.',
-    'address.minLength': 'Address must be at least 5 characters long.',
-    'address.maxLength': 'Address must not exceed 500 characters.',
   }
 }

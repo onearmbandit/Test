@@ -15,55 +15,45 @@ import { z } from "zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { updatePassword } from "@/services/user.api";
+import { getRoleByName, updatePassword } from "@/services/user.api";
 import { toast } from "sonner";
-import { getAllOrganizations } from "@/services/organizations.api";
+import {
+  getAllOrganizations,
+  inviteOrganization,
+} from "@/services/organizations.api";
+import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const InviteOrganization = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["account-details"],
+  const { data: session } = useSession();
+  const organizationsQ = useQuery({
+    queryKey: ["organizations"],
     queryFn: () => getAllOrganizations(),
   });
+  const organizations = organizationsQ.isSuccess ? organizationsQ.data : [];
 
-  console.log("org data : ", data?.data);
+  const roleQ = useQuery({
+    queryKey: ["role"],
+    queryFn: () => getRoleByName({ roleName: "admin" }),
+  });
+  const role = roleQ.isSuccess ? roleQ.data : null;
+
+  console.log(role);
 
   const validation = z.object({
-    firstName: z
-      .string()
-      .min(8, { message: "length" })
-      .regex(/[A-Z]/, { message: "uppercase" })
-      .regex(/[a-z]/, { message: "lowercase" })
-      .regex(/[0-9]/, { message: "number" })
-      .regex(/[^A-Za-z0-9]/, { message: "special" }),
-    lastName: z
-      .string()
-      .min(8, { message: "length" })
-      .regex(/[A-Z]/, { message: "uppercase" })
-      .regex(/[a-z]/, { message: "lowercase" })
-      .regex(/[0-9]/, { message: "number" })
-      .regex(/[^A-Za-z0-9]/, { message: "special" }),
-    email: z
-      .string()
-      .min(8, { message: "length" })
-      .regex(/[A-Z]/, { message: "uppercase" })
-      .regex(/[a-z]/, { message: "lowercase" })
-      .regex(/[0-9]/, { message: "number" })
-      .regex(/[^A-Za-z0-9]/, { message: "special" }),
-    companyName: z
-      .string()
-      .min(8, { message: "length" })
-      .regex(/[A-Z]/, { message: "uppercase" })
-      .regex(/[a-z]/, { message: "lowercase" })
-      .regex(/[0-9]/, { message: "number" })
-      .regex(/[^A-Za-z0-9]/, { message: "special" }),
+    first_name: z.string().min(3, { message: "length" }),
+    last_name: z.string().min(3, { message: "length" }),
+    email: z.string().email({ message: "Please enter valid email" }),
+    organization_id: z.string(),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["user-details"],
-    mutationFn: updatePassword,
+    mutationFn: inviteOrganization,
     onSuccess: (data) => {
-      console.log("after update : ", data);
-      toast.success("Password updated successfully", {
+      toast.success("Invitation sent successfully", {
         style: { color: "green" },
       });
       // setMyAccSection("home");
@@ -75,20 +65,26 @@ const InviteOrganization = () => {
 
   const inviteOrganizationForm = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       email: "",
-      companyName: "",
+      organization_id: null,
     },
-    // validateOnChange: false,
-    // validationSchema: toFormikValidationSchema(validation),
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: toFormikValidationSchema(validation),
 
     onSubmit: (data: any) => {
-      console.log("data : ", data);
-      // mutate(data);
+      const formData = {
+        ...data,
+        role_id: role?.data?.id,
+        invited_by: session?.user.id,
+      };
+      console.log("data : ", formData);
+      mutate(formData);
     },
   });
-  console.log(inviteOrganizationForm.errors);
+  console.log();
 
   return (
     <div className="min-h-screen w-full grid place-items-center bg-gray-50 absolute inset-0">
@@ -108,12 +104,18 @@ const InviteOrganization = () => {
             >
               First Name
             </label>
-            <div className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full">
+            <div
+              className={cn(
+                "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+                inviteOrganizationForm.errors?.first_name &&
+                  "border border-red-500"
+              )}
+            >
               <Input
                 type="text"
                 id="firstNameInput"
                 placeholder="First Name"
-                name="firstName"
+                name="first_name"
                 onChange={inviteOrganizationForm.handleChange}
                 className="bg-transparent"
               />
@@ -126,12 +128,18 @@ const InviteOrganization = () => {
             >
               Last Name
             </label>
-            <div className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full">
+            <div
+              className={cn(
+                "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+                inviteOrganizationForm.errors?.last_name &&
+                  "border border-red-500"
+              )}
+            >
               <Input
                 type="text"
                 id="lastNameInput"
                 placeholder="Last Name"
-                name="lastName"
+                name="last_name"
                 onChange={inviteOrganizationForm.handleChange}
                 className="bg-transparent"
               />
@@ -145,9 +153,13 @@ const InviteOrganization = () => {
             >
               Email
             </label>
-            <div className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full">
+            <div
+              className={cn(
+                "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+                inviteOrganizationForm.errors?.email && "border border-red-500"
+              )}
+            >
               <Input
-                type="email"
                 id="emailInput"
                 placeholder="Email"
                 name="email"
@@ -165,21 +177,35 @@ const InviteOrganization = () => {
               Company Name
             </label>
 
-            <div className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full">
+            <div
+            // className={cn(
+            //   "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+            //   inviteOrganizationForm.errors?.organization_id &&
+            //     "border border-red-500"
+            // )}
+            >
               <Select
-                name="companyName"
-                onValueChange={inviteOrganizationForm.handleChange}
+                name="organizationId"
+                onValueChange={(e) => {
+                  inviteOrganizationForm.setFieldValue("organization_id", e);
+                }}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger
+                  className={cn(
+                    "text-slate-500 text-sm font-light leading-5  bg-gray-50  mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+                    inviteOrganizationForm.errors?.organization_id &&
+                      "border border-red-500"
+                  )}
+                >
                   <SelectValue placeholder="Select or add a company" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Companies</SelectLabel>
+                    <SelectLabel>Add or select a company</SelectLabel>
 
-                    {!isLoading &&
-                      data?.data?.map((org: any, index: number) => (
-                        <SelectItem key={org?.id} value={org?.company_name}>
+                    {organizationsQ.isSuccess &&
+                      organizations?.data?.map((org: any, index: number) => (
+                        <SelectItem key={org?.id} value={org?.id}>
                           {org?.company_name}
                         </SelectItem>
                       ))}
@@ -195,13 +221,17 @@ const InviteOrganization = () => {
             </div>
           </div>
 
-          <button
-            className="justify-center items-stretch self-center px-4 py-1.5 mt-8 text-sm font-semibold leading-5 text-white whitespace-nowrap bg-blue-600 rounded"
-            aria-label="Invite to Terralab"
-            type="submit"
-          >
-            Invite to Terralab
-          </button>
+          <div className="flex justify-center items-center">
+            {isPending && <Loader2 className="animate-spin text-blue-400" />}
+            <Button
+              disabled={isPending}
+              className="text-sm font-semibold leading-5  whitespace-nowrap "
+              aria-label="Invite to Terralab"
+              type="submit"
+            >
+              Invite to Terralab
+            </Button>
+          </div>
         </form>
       </section>
     </div>

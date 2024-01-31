@@ -38,8 +38,8 @@ const fetchApi = async (
   })
     .then((res) => res.data)
     .catch((err) => {
-      console.log(err);
-      throw new Error(err);
+      console.log(err.response.data.errors[0].message);
+      throw new Error(err.response.data.errors[0].message);
     });
 
   return response;
@@ -99,4 +99,11 @@ export const setupOrganizationStep4 = ({
 
 export const getAllOrganizations = async () => {
   return fetchApi(`/auth/organization`);
+};
+
+export const inviteOrganization = async (formdata: any) => {
+  return fetchApi(`/auth/invite-organization`, {
+    method: "POST",
+    body: formdata,
+  } as Options);
 };
