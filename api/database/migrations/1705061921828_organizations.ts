@@ -12,7 +12,7 @@ export default class extends BaseSchema {
       table.string('company_size')
       table.string('naics_code')
       table.jsonb('climate_targets').comment('climate_targets is used to store the climate targets for the organization in json format')
-      table.string('company_address')
+      table.text('company_address')
       // table.string('address_line_2').nullable().comment("optional address line 2")
       // table.string('city')
       // table.string('state')
