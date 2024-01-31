@@ -148,9 +148,9 @@ export default class SupplierProduct extends BaseModel {
   public static async getProductDetailsData(field, value) {
 
     const productDetails = await SupplierProduct.query()
-    .where(field, value)
-    .whereNull('deleted_at') // Exclude soft-deleted records
-    .firstOrFail();
+      .where(field, value)
+      .whereNull('deleted_at') // Exclude soft-deleted records
+      .firstOrFail();
     return productDetails;
   }
 
