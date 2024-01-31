@@ -71,14 +71,20 @@ export default class Supplier extends BaseModel {
 
 
   public static async getSupplierDetails(field, value) {
-    const supplierData = await Supplier.query()
+    var supplierData = await Supplier.query()
       .where(field, value)
       .andWhereNull('deletedAt')
-      // .preload('supplyChainReportingPeriod')
+      .preload('supplyChainReportingPeriod', (query) => {
+        query.select('id', 'reporting_period_from', 'reporting_period_to')
+      })
       .preload('supplierProducts')
       .firstOrFail();
-    return supplierData
+
+    return supplierData;
   }
+
+
+
 
   public static async updateSupplier(supplierData, requestData) {
     supplierData.merge({
@@ -92,7 +98,7 @@ export default class Supplier extends BaseModel {
   }
 
 
-//:: Need to check 
+  //:: Need to check 
   public static async getAllSuppliersForSpecificPeriod(queryParams: ParsedQs) {
     const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20;
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
@@ -109,7 +115,7 @@ export default class Supplier extends BaseModel {
     query = query.orderBy(sort, order);
 
     const allSuppliersData = await query.preload('supplierProducts')
-    .paginate(page, perPage);
+      .paginate(page, perPage);
 
     return allSuppliersData
   }

@@ -42,10 +42,6 @@ export const ORGANIZATION_RESPONSE = {
   createOrganizationSuccess: "Organization created successfully",
 }
 
-
-
-
-
 export const SUPPLIER_RESPONSE = {
   updateSupplierReportPeriodSuccess: "Supplier chain reporting period  updated successfully.",
   createSupplierReportPeriodSuccess: "Supplier chain reporting period created successfully",
@@ -54,7 +50,9 @@ export const SUPPLIER_RESPONSE = {
   bulkCreationSuccess: "Suppliers created successfully.",
   supplyChainReportingPeriodIdExist: "Supply chain reporting period with this ID does not exist.",
   supplierCreateSuccess: "New supplier added successfully.",
-  supplierUpdateSuccess: "Supplier details updated successfully."
+  supplierUpdateSuccess: "Supplier details updated successfully.",
+  productNotFount:"Supplier product not found.",
+  productDeleteSuccess:"Supplier product deleted successfully."
 }
 
 export const ORGANIZATION_FACILITY_RESPONSE = {
@@ -62,4 +60,8 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
   updateFacilitySuccess: "Organization facility updated successfully.",
   deleteFacilitySuccess: "Organization facility deleted successfully.",
   facilityNotFound: "Organization facility didn't found.",
+  createFacilityReportPeriodSuccess: "Facility reporting period created successfully.",
+  updateFacilityEmissionSuccess: "Facility reporting period updated successfully.",
+  deleteFacilityEmissionSuccess: "Facility reporting period deleted successfully.",
+  FacilityEmissionNotFound: "Facility emission didn't found.",
 }

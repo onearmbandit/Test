@@ -80,7 +80,42 @@ export default class SuppliersController {
     }
   }
 
-  public async show({ }: HttpContextContract) { }
+  public async show({ response, params }: HttpContextContract) {
+    try {
+      var supplierData = await Supplier.getSupplierDetails('id', params.id);
+
+      //;: Calculate total value of scope3Contribution
+      let totalOfScopeContribution = 0
+      let jsonFormat = JSON.parse(JSON.stringify(supplierData));
+      jsonFormat.supplierProducts?.forEach((element) => {
+        totalOfScopeContribution = parseFloat(totalOfScopeContribution + element.scope_3_contribution)
+      })
+
+      jsonFormat['totalOfScopeContribution'] = totalOfScopeContribution
+
+      return apiResponse(response, true, 200, jsonFormat, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'));
+
+    } catch (error) {
+      console.log("error", error)
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
+  }
 
   public async update({ request, response, params }: HttpContextContract) {
     try {

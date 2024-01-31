@@ -35,7 +35,9 @@ Route.group(() => {
       Route.patch('/user', 'UsersController.update')
       Route.post('/user', 'UsersController.destroy')//for delete the user but need request data that's why used post method
 
+      //:: Facilities
       Route.resource('/facility', 'FacilitiesController').only(['index', 'store', 'show', 'update', 'destroy'])
+      Route.resource('/facility-emission', 'FacilityEmissionsController').only(['index', 'store', 'show', 'update', 'destroy'])
 
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier');
@@ -45,6 +47,9 @@ Route.group(() => {
       Route.resource('/suppliers', 'SuppliersController')
 
       Route.resource('/supplier-products', 'SupplierProductsController')
+      Route.get('/supplier-period-emission', 'SupplierProductsController.calculateProductEmissionData')
+      Route.get('/supplier-product-type', 'SupplierProductsController.getAllProductTypes')
+      Route.get('/supplier-product-name', 'SupplierProductsController.getAllProductNames')
 
 
     })

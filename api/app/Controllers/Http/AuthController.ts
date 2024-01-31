@@ -33,17 +33,6 @@ export default class AuthController {
       const role: any = await Role.getRoleByName(UserRoles.ADMIN)
 
       if (userExist) {
-        // if (requestData.invitedUser) {
-
-        //     await userExist.merge({
-        //         password: requestData.password,
-        //         emailVerifyToken: Encryption.encrypt(requestData.email),
-        //         registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
-        //     }).save();
-
-        //     return apiResponse(response, true, 201, userExist, Config.get('responsemessage.AUTH_RESPONSE.userCreated'))
-        // }
-        // else {
         return apiResponse(
           response,
           false,
@@ -58,7 +47,6 @@ export default class AuthController {
           },
           Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
         )
-        // }
       } else {
         const userData = await User.createUserWithRole(
           {
@@ -108,7 +96,6 @@ export default class AuthController {
 
       await userData
         .merge({
-          // password: requestData.password,
           firstName: requestData.firstName,
           lastName: requestData.lastName,
           emailVerifyToken: Encryption.encrypt(requestData.email),
