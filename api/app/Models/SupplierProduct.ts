@@ -50,7 +50,7 @@ export default class SupplierProduct extends BaseModel {
 
   //::_____Relationships End_____:://
 
-  public static async createSupplierProducts(supplierData, requestData) {
+  public static async createSupplierProducts(supplierData, requestData, auth) {
     let products: any = []
     requestData.supplierProducts.forEach(element => {
       let singleData = {
@@ -59,6 +59,11 @@ export default class SupplierProduct extends BaseModel {
       }
       products.push(singleData)
     });
+    supplierData.merge({
+      'updatedBy': `${auth.user?.firstName} ${auth.user?.lastName}`,
+      'updatedAt': DateTime.local()
+    }).save();
+
     let result = await supplierData.related('supplierProducts').createMany(products);
     return result;
   }
@@ -84,7 +89,7 @@ export default class SupplierProduct extends BaseModel {
       //   query.groupOrderBy('supplier.name', order)
       // })
       query = query.whereHas('supplier', async (data) => {
-         data.orderBy('name', order)
+        data.orderBy('name', order)
       })
     }
     else {

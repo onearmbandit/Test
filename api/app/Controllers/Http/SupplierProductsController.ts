@@ -42,7 +42,7 @@ export default class SupplierProductsController {
     }
   }
 
-  public async store({ request, response }: HttpContextContract) {
+  public async store({ request, response ,auth}: HttpContextContract) {
     try {
       let requestData = request.all()
 
@@ -50,7 +50,7 @@ export default class SupplierProductsController {
 
       var supplierData = await Supplier.getSupplierDetails('id', requestData.supplierId);
 
-      var creationResult = await SupplierProduct.createSupplierProducts(supplierData, requestData)
+      var creationResult = await SupplierProduct.createSupplierProducts(supplierData, requestData,auth)
 
       return apiResponse(response, true, 201, creationResult,
         Config.get('responsemessage.SUPPLIER_RESPONSE.productCreateSuccess'))
