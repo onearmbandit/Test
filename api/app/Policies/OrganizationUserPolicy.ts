@@ -3,8 +3,9 @@ import User from 'App/Models/User'
 import { UserRoles } from 'App/helpers/constants'
 
 export default class OrganizationUserPolicy extends BasePolicy {
-  public async invite(user: User, invitedBy: User) {
+  public async invite(user: User) {
     // create array of ids
-    return invitedBy.roles?.some((role: any) => role.name === UserRoles.SUPER_ADMIN)
+    const userFound = await User.getUserDetails('id', user.id)
+    return userFound?.roles?.some((role: any) => role.name === UserRoles.SUPER_ADMIN)
   }
 }

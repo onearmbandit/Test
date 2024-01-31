@@ -25,11 +25,11 @@ export default class OrganizationUsersController {
 
   public async inviteOrganization({ request, response, bouncer, auth }: HttpContextContract) {
     try {
+      await bouncer.with('OrganizationUserPolicy').authorize('invite')
       const invitedBy = await User.getUserDetails('id', auth?.user?.id)
       console.log('invited by : ', invitedBy)
 
-      //:: Authorization (every user can access their organization only)
-      await bouncer.with('OrganizationUserPolicy').authorize('invite', invitedBy)
+      //:: only super admin can access this endpoint to invite an organization
 
       let requestData = request.all()
 
