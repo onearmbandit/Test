@@ -40,6 +40,7 @@ export default async function RootLayout({
         </AuthProvider>
         <Toaster position="bottom-center" />
         <script
+          async
           type="text/javascript"
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places`}
         ></script>

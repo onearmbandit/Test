@@ -44,7 +44,11 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
           placeholder="New york"
         /> */}
         <div>
-          <AutocompleteInput />
+          <AutocompleteInput
+            setAddress={(e: any) => {
+              console.log("todo: set address" + e);
+            }}
+          />
         </div>
 
         <div className="flex justify-end">

@@ -88,8 +88,11 @@ const OrganisationAccount = ({
       </div>
       <div className="justify-between items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-md:max-w-full max-md:flex-wrap">
         {user?.data?.organizations[0]?.climate_targets?.map(
-          (target: string) => (
-            <div className="text-slate-700 text-xs font-light leading-4">
+          (target: string, i: number) => (
+            <div
+              key={i}
+              className="text-slate-700 text-xs font-light leading-4"
+            >
               {target}
             </div>
           )
