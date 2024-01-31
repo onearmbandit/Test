@@ -18,7 +18,7 @@ export default class OrganizationFacility extends BaseModel {
   public address: string
 
   @column.dateTime({ columnName: 'deleted_at' })
-  public deletedAt: DateTime
+  public deleted_at: DateTime
 
   @column.dateTime({ autoCreate: true })
   public created_at: DateTime
