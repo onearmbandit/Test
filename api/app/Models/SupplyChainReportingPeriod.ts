@@ -106,9 +106,9 @@ export default class SupplyChainReportingPeriod extends BaseModel {
     const reportPeriodData = await SupplyChainReportingPeriod.query()
     .where(field, value)
     .andWhereNull('deletedAt')
-    .preload('organization',(query)=>{
-      query.preload('users')
-    })
+    // .preload('organization',(query)=>{
+    //   query.preload('users')
+    // })
     .preload('supplier',(query) => {
       query.preload('supplierProducts')
     })

@@ -50,7 +50,9 @@ export const SUPPLIER_RESPONSE = {
   bulkCreationSuccess: "Suppliers created successfully.",
   supplyChainReportingPeriodIdExist: "Supply chain reporting period with this ID does not exist.",
   supplierCreateSuccess: "New supplier added successfully.",
-  supplierUpdateSuccess: "Supplier details updated successfully."
+  supplierUpdateSuccess: "Supplier details updated successfully.",
+  productNotFount:"Supplier product not found.",
+  productDeleteSuccess:"Supplier product deleted successfully."
 }
 
 export const ORGANIZATION_FACILITY_RESPONSE = {
