@@ -1,13 +1,12 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { apiResponse } from 'App/helpers/response'
 import Config from '@ioc:Adonis/Core/Config';
-// import { v4 as uuidv4 } from 'uuid';
 import AddSupplierProductValidator from 'App/Validators/Supplier/AddSupplierProductValidator';
 import SupplierProduct from 'App/Models/SupplierProduct';
 import Supplier from 'App/Models/Supplier';
 import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 import { DateTime } from 'luxon'
-import DeleteMultipleSupplierProductValidator from 'App/Validators/Supplier/DeleteMultipleSupplierProductValidator';
+// import DeleteMultipleSupplierProductValidator from 'App/Validators/Supplier/DeleteMultipleSupplierProductValidator';
 
 
 export default class SupplierProductsController {
