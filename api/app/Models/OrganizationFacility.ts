@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, BelongsTo, belongsTo } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, BelongsTo, belongsTo, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Organization from './Organization'
 import { v4 as uuidv4 } from 'uuid';
 import { ParsedQs } from 'qs';
+import FacilityEmission from './FacilityEmission';
 
 export default class OrganizationFacility extends BaseModel {
   @column({ isPrimary: true })
@@ -18,7 +19,7 @@ export default class OrganizationFacility extends BaseModel {
   public address: string
 
   @column.dateTime({ columnName: 'deleted_at' })
-  public deletedAt: DateTime
+  public deleted_at: DateTime
 
   @column.dateTime({ autoCreate: true })
   public created_at: DateTime
@@ -27,10 +28,15 @@ export default class OrganizationFacility extends BaseModel {
   public updated_at: DateTime
 
 
-  @belongsTo(() => Organization,{
-    localKey: 'organizations_id',
+  @belongsTo(() => Organization, {
+    localKey: 'organizationsId',
   })
   public organization: BelongsTo<typeof Organization>
+
+  @hasMany(() => FacilityEmission, {
+    foreignKey: 'organizationFacilityId', // defaults to userId
+  })
+  public facilityEmission: HasMany<typeof FacilityEmission>
 
 
   public static async createFacility(facilityData) {
@@ -70,9 +76,12 @@ export default class OrganizationFacility extends BaseModel {
   public static async getOrganizationFacilityData(field, value) {
 
     const facilityDetails = await OrganizationFacility.query()
-    .where(field, value)
-    .whereNull('deleted_at') // Exclude soft-deleted records
-    .firstOrFail();
+      .where(field, value)
+      .whereNull('deleted_at') // Exclude soft-deleted records
+      .preload('facilityEmission', (facilityEmissionQuery) => {
+        facilityEmissionQuery.preload('FacilityProducts');
+      })
+      .firstOrFail();
     return facilityDetails;
   }
 

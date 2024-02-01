@@ -12,8 +12,8 @@ export default class extends BaseSchema {
       .onDelete('CASCADE')
       table.string('type')
       table.string('name')
-      table.integer('quantity')
-      table.string('functional_unit')
+      table.string('quantity')   //:: This field contains number and comma
+      table.string('functional_unit').comment('e.g., tCO2e, liters, kgs')
       table.float('scope_3_contribution')
       table.timestamp('deleted_at', { useTz: true })
       table.timestamp('created_at', { useTz: true })

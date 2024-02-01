@@ -44,7 +44,7 @@ export default class SuppliersController {
     }
   }
 
-  public async store({ request, response }: HttpContextContract) {
+  public async store({ request, response ,auth}: HttpContextContract) {
     try {
       let requestData = request.all()
 
@@ -52,7 +52,7 @@ export default class SuppliersController {
       var reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', requestData.supplyChainReportingPeriodId);
 
       requestData = { ...requestData, id: uuidv4() }
-      var supplierData = await Supplier.createSupplier(reportPeriodData, requestData);
+      var supplierData = await Supplier.createSupplier(reportPeriodData, requestData,auth);
 
       return apiResponse(response, true, 201, supplierData,
         Config.get('responsemessage.SUPPLIER_RESPONSE.supplierCreateSuccess'))
@@ -80,9 +80,44 @@ export default class SuppliersController {
     }
   }
 
-  public async show({ }: HttpContextContract) { }
+  public async show({ response, params }: HttpContextContract) {
+    try {
+      var supplierData = await Supplier.getSupplierDetails('id', params.id);
 
-  public async update({ request, response, params }: HttpContextContract) {
+      //;: Calculate total value of scope3Contribution
+      let totalOfScopeContribution = 0
+      let jsonFormat = JSON.parse(JSON.stringify(supplierData));
+      jsonFormat.supplierProducts?.forEach((element) => {
+        totalOfScopeContribution = parseFloat(totalOfScopeContribution + element.scope_3_contribution)
+      })
+
+      jsonFormat['totalOfScopeContribution'] = totalOfScopeContribution
+
+      return apiResponse(response, true, 200, jsonFormat, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'));
+
+    } catch (error) {
+      console.log("error", error)
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
+  }
+
+  public async update({ request, response, params,auth }: HttpContextContract) {
     try {
       let requestData = request.all()
 
@@ -91,7 +126,7 @@ export default class SuppliersController {
       if (supplierData) {
         await request.validate(UpdateSupplierDatumValidator);
 
-        await Supplier.updateSupplier(supplierData, requestData)
+        await Supplier.updateSupplier(supplierData, requestData,auth)
 
         return apiResponse(response, true, 200, supplierData,
           Config.get('responsemessage.SUPPLIER_RESPONSE.supplierUpdateSuccess'))
@@ -125,7 +160,7 @@ export default class SuppliersController {
 
 
   //:: Create supplier data using csv file
-  public async bulkCreationOfSupplier({ request, response }: HttpContextContract) {
+  public async bulkCreationOfSupplier({ request, response,auth }: HttpContextContract) {
     //::Initialize database transaction
     const trx = await Database.transaction();
 
@@ -235,7 +270,7 @@ export default class SuppliersController {
         await uniqueSuppliers.map(async (elementData) => {
           let data = { ...elementData };
 
-          var supplierData = await Supplier.createSupplier(reportPeriodData, elementData, trx);
+          var supplierData = await Supplier.createSupplier(reportPeriodData, elementData,auth, trx);
           await Promise.all(await elementData.supplierProducts.map(async (product) => {
             var createProductData = await supplierData.related('supplierProducts').create({
               id: product.id,

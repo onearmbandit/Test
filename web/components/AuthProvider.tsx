@@ -8,12 +8,6 @@ interface PropsWithChildren {
 }
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
-  // const router = useRouter();
-  // const token = typeof window != "undefined" && localStorage.getItem("token");
-  // if (!token) {
-  //   router.push("/login");
-  //   return null;
-  // }
   return <SessionProvider>{children}</SessionProvider>;
 };
 

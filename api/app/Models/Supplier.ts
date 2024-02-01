@@ -29,6 +29,9 @@ export default class Supplier extends BaseModel {
   @column()
   public address: string
 
+  @column()
+  public updatedBy: string
+
   @column.dateTime()
   public deletedAt: DateTime
 
@@ -57,7 +60,7 @@ export default class Supplier extends BaseModel {
 
 
 
-  public static async createSupplier(reportPeriodData, requestData, trx: any = undefined) {
+  public static async createSupplier(reportPeriodData, requestData,auth, trx: any = undefined) {
 
     const supplierData = await reportPeriodData.related('supplier').create({
       'id': requestData.id,
@@ -65,34 +68,42 @@ export default class Supplier extends BaseModel {
       'email': requestData.email,
       'organizationRelationship': requestData.organizationRelationship,
       'address': requestData.address,
+      'updatedBy':`${auth.user?.firstName} ${auth.user?.lastName}`
     }, { client: trx })
     return supplierData
   }
 
 
   public static async getSupplierDetails(field, value) {
-    const supplierData = await Supplier.query()
+    var supplierData = await Supplier.query()
       .where(field, value)
       .andWhereNull('deletedAt')
-      // .preload('supplyChainReportingPeriod')
+      .preload('supplyChainReportingPeriod', (query) => {
+        query.select('id', 'reporting_period_from', 'reporting_period_to')
+      })
       .preload('supplierProducts')
       .firstOrFail();
-    return supplierData
+
+    return supplierData;
   }
 
-  public static async updateSupplier(supplierData, requestData) {
+
+
+
+  public static async updateSupplier(supplierData, requestData,auth) {
     supplierData.merge({
       'name': requestData.name,
       'email': requestData.email,
       'organizationRelationship': requestData.organizationRelationship,
       'address': requestData.address,
+      'updatedBy':`${auth.user?.firstName} ${auth.user?.lastName}`
     }).save();
 
     return supplierData;
   }
 
 
-//:: Need to check 
+  //:: Need to check 
   public static async getAllSuppliersForSpecificPeriod(queryParams: ParsedQs) {
     const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20;
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
@@ -109,7 +120,7 @@ export default class Supplier extends BaseModel {
     query = query.orderBy(sort, order);
 
     const allSuppliersData = await query.preload('supplierProducts')
-    .paginate(page, perPage);
+      .paginate(page, perPage);
 
     return allSuppliersData
   }

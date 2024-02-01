@@ -8,7 +8,7 @@ import { DateTime } from 'luxon'
 
 export default class FacilitiesController {
 
-  public async index({response, request}: HttpContextContract) {
+  public async index({ response, request }: HttpContextContract) {
     try {
       const queryParams = request.qs();
 
@@ -61,7 +61,7 @@ export default class FacilitiesController {
     }
   }
 
-  public async show({response, params}: HttpContextContract) {
+  public async show({ response, params }: HttpContextContract) {
     try {
       const organizationFacility = await OrganizationFacility.getOrganizationFacilityData('id', params.id)
 
@@ -74,7 +74,7 @@ export default class FacilitiesController {
     }
   }
 
-  public async update({request, response}: HttpContextContract) {
+  public async update({ request, response }: HttpContextContract) {
     try {
 
       const organizationFacilityData = await OrganizationFacility.getOrganizationFacilityData('id', request.param('id'))
@@ -96,12 +96,12 @@ export default class FacilitiesController {
     }
   }
 
-  public async destroy({request, response}: HttpContextContract) {
+  public async destroy({ request, response }: HttpContextContract) {
     try {
       const organizationFacilityData = await OrganizationFacility.getOrganizationFacilityData('id', request.param('id'))
 
       if (organizationFacilityData) {
-        organizationFacilityData.deletedAt = DateTime.local()
+        organizationFacilityData.deleted_at = DateTime.local()
         await organizationFacilityData.save()
 
         return apiResponse(response, true, 200, {}, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.deleteFacilitySuccess'))
