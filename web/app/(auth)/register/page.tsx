@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -137,15 +137,6 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     },
     validateOnChange: false,
     validationSchema: toFormikValidationSchema(validation),
-    // validate: (values: any) => {
-    //   try {
-    //     console.log(values);
-    //     validation.parse(values);
-    //   } catch (error: any) {
-    //     // Convert Zod error format to Formik error format
-    //     return error.errors.map((err: any) => err.message);
-    //   }
-    // },
     onSubmit: (data) => {
       console.log("mutate", data);
       // if (errors.length > 0 && !errors.includes("length")) {
@@ -494,6 +485,8 @@ const Step2 = ({
 const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const router = useRouter();
   const [addressDisabled, setAddressDisabled] = useState(true);
+  const [address, setAddress] = useState("");
+
   const validation = z.object({
     companyName: z.string(),
     // addressLine1: z.string(),
@@ -521,15 +514,19 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     initialValues: {
       userSlug,
       companyName: "",
-      address: "",
+      companyAddress: "",
       registrationStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
+    validateOnChange: false,
+    validateOnBlur: true,
     onSubmit: (data) => {
       console.log(data);
       mutate(data);
     },
   });
+
+  console.log("err", step3Form.values.companyAddress);
 
   return (
     <form
@@ -575,7 +572,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             >
               Company Address
             </label>
-            {step3Form.values.address != "" && (
+            {step3Form.values.companyAddress != "" && (
               <p
                 role="button"
                 onClick={() => setAddressDisabled(false)}
