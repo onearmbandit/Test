@@ -133,8 +133,8 @@ export default class SupplierProduct extends BaseModel {
     }
 
     if (sort == 'supplierName') {
-      // query = query.preload('supplier', (query) => {
-      //   query.groupOrderBy('supplier.name', order)
+      // query = query.with('supplier', (builder) => {
+      //   builder.orderBy('name', 'asc'); 
       // })
       query = query.whereHas('supplier', async (data) => {
         data.orderBy('name', order)
@@ -146,7 +146,8 @@ export default class SupplierProduct extends BaseModel {
 
     const allSupplierProductsData = await query
       .preload('supplier')
-      .paginate(page, perPage);
+      .orderBy("supplier.name", order)
+      .paginate(page, perPage)
 
     return allSupplierProductsData
   }
@@ -175,7 +176,7 @@ export default class SupplierProduct extends BaseModel {
     const sort = queryParams.sort ? queryParams.sort.toString() : 'type';
 
     if (supplierId) {
-      query.where('supplierId', supplierId).orderBy(sort,order)
+      query.where('supplierId', supplierId).orderBy(sort, order)
     }
 
     const allProductTypesOfSupplier = await query
@@ -193,7 +194,7 @@ export default class SupplierProduct extends BaseModel {
     const sort = queryParams.sort ? queryParams.sort.toString() : 'name';
 
     if (supplierId) {
-      query.where('supplierId', supplierId).orderBy(sort,order)
+      query.where('supplierId', supplierId).orderBy(sort, order)
     }
 
     const allProductNamesOfSupplier = await query
