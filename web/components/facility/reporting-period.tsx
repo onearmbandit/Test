@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   addFacilityReportingPeriod,
+  deleteFacilityReportingPeriod,
   editFacilityReportingPeriod,
 } from "@/services/facility.api";
 import { useFormik } from "formik";
@@ -62,6 +63,16 @@ const ReportingPeriod = ({
         queryKey: ["reporting-periods"],
       });
       toast.success("Reporting period updated", { style: { color: "green" } });
+    },
+  });
+
+  const deleteMut = useMutation({
+    mutationFn: deleteFacilityReportingPeriod,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["reporting-periods"],
+      });
+      toast.success("Reporting period Deleted.", { style: { color: "green" } });
     },
   });
 
@@ -173,20 +184,25 @@ const ReportingPeriod = ({
                 <p className="text text-center">
                   Are you sure you want to delete the reporting period?
                 </p>
-                <Button
-                  type="button"
-                  variant={"outline"}
-                  className="border-2 border-red-500 w-full font-semibold text-red-500 hover:bg-red-50 hover:text-red-600"
-                >
-                  No, don't update the reporting period
-                </Button>
-                <Button
-                  type="button"
-                  variant={"outline"}
-                  className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
-                >
-                  Yes, continue
-                </Button>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="border-2 border-red-500 w-full font-semibold text-red-500 hover:bg-red-50 hover:text-red-600"
+                  >
+                    No, don't delete the reporting period
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => deleteMut.mutate(period.id)}
+                    className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                  >
+                    Yes, continue
+                  </Button>
+                </DialogClose>
               </DialogContent>
             </Dialog>
             <Dialog>

@@ -18,6 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useQuery } from "@tanstack/react-query";
 import { getReportingPeriods } from "@/services/facility.api";
 import dayjs from "dayjs";
+import ScopeEmissions from "./scope-emission";
 
 const FacilityDetails = () => {
   const searchParams = useSearchParams();
@@ -46,7 +47,7 @@ const FacilityDetails = () => {
 
   useEffect(() => {
     if (periodsQ.isSuccess) {
-      setCurrentTab(getTabValue(reportingPeriods[0]));
+      setCurrentTab(reportingPeriods[0].id);
     }
   }, [periodsQ.isSuccess]);
 
@@ -95,13 +96,12 @@ const FacilityDetails = () => {
                 return (
                   <TabsTrigger
                     key={i}
-                    value={reporting}
+                    value={item.id}
                     onClick={() => setCurrentTab(reporting)}
                   >
                     <Popover>
                       <PopoverTrigger className="text-blue-600">
-                        {dayjs(item.reporting_period_from).format("MMM YYYY")} -{" "}
-                        {dayjs(item.reporting_period_to).format("MMM YYYY")}
+                        {reporting}
                       </PopoverTrigger>
                       <PopoverContent
                         align="start"
@@ -132,132 +132,7 @@ const FacilityDetails = () => {
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="mt-5 max-md:max-w-full">
-                      <form>
-                        <div className="flex gap-5 items-center max-md:flex-col max-md:gap-0">
-                          <div className="flex flex-col items-stretch w-[48%] max-md:ml-0 max-md:w-full space-y-6">
-                            {/* Scope 1 */}
-                            <div className="flex gap-3 items-stretch py-0.5 max-md:flex-wrap max-md:max-w-full">
-                              <div className="flex gap-3 justify-center items-stretch px-3 py-1 my-auto bg-blue-100 bg-opacity-50 rounded-[999px]">
-                                <div className="flex flex-col bg-blue-800 shrink-0 my-auto w-3 h-3 rounded-full" />
-                                <p className="text-xs font-semibold leading-4 text-center text-blue-800">
-                                  SCOPE 1
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <label
-                                  htmlFor="totalEmissions1"
-                                  className="grow justify-center self-stretch my-auto text-xs font-light leading-4 whitespace-nowrap text-slate-700"
-                                >
-                                  Total Emissions
-                                </label>
-                                <Input
-                                  id="totalEmissions1"
-                                  placeholder="tCO2e"
-                                  className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-xs font-light leading-4 bg-gray-50 rounded-md text-slate-500"
-                                />
-                                <p className="text-xs text-gray-700 font-light">
-                                  tCO2e
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Scope  2 */}
-                            <div className="flex gap-3 items-stretch py-0.5 max-md:flex-wrap max-md:max-w-full">
-                              <div className="flex gap-3 justify-center items-stretch px-3 py-1 my-auto bg-red-100 bg-opacity-50 rounded-[999px]">
-                                <div className="flex flex-col bg-red-800 shrink-0 my-auto w-3 h-3 rounded-full" />
-                                <p className="text-xs font-semibold leading-4 text-center text-red-800">
-                                  SCOPE 2
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <label
-                                  htmlFor="totalEmissions2"
-                                  className="grow justify-center self-stretch my-auto text-xs font-light leading-4 whitespace-nowrap text-slate-700"
-                                >
-                                  Total Emissions
-                                </label>
-                                <Input
-                                  id="totalEmissions2"
-                                  placeholder="tCO2e"
-                                  className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-xs font-light leading-4 bg-gray-50 rounded-md text-slate-500"
-                                />
-                                <p className="text-xs text-gray-700 font-light">
-                                  tCO2e
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Scope 3 */}
-                            <div className="flex gap-3 items-stretch py-0.5 max-md:flex-wrap max-md:max-w-full">
-                              <div className="flex gap-3 justify-center items-stretch px-3 py-1 my-auto bg-green-100 bg-opacity-50 rounded-[999px]">
-                                <div className="flex flex-col bg-green-800 shrink-0 my-auto w-3 h-3 rounded-full" />
-                                <p className="text-xs font-semibold leading-4 text-center text-green-800">
-                                  SCOPE 3
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <label
-                                  htmlFor="totalEmissions3"
-                                  className="grow justify-center self-stretch my-auto text-xs font-light leading-4 whitespace-nowrap text-slate-700"
-                                >
-                                  Total Emissions
-                                </label>
-                                <Input
-                                  id="totalEmissions3"
-                                  placeholder="tCO2e"
-                                  className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-xs font-light leading-4 bg-gray-50 rounded-md text-slate-500"
-                                />
-                                <p className="text-xs text-gray-700 font-light">
-                                  tCO2e
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="bg-sky-50/50 grow rounded-md p-6 space-y-6">
-                            <div className="flex gap-3">
-                              <div className="flex gap-3 justify-center items-stretch px-3 py-2 my-auto bg-blue-100 bg-opacity-50 rounded-[999px]">
-                                <div className="flex flex-col bg-blue-800 shrink-0 my-auto w-3 h-3 rounded-full" />
-                                <p className="text-xs font-semibold leading-4 text-center text-blue-800">
-                                  SCOPE 1
-                                </p>
-                              </div>
-                              <div className="flex gap-3 justify-center items-stretch px-3 py-2 my-auto bg-red-100 bg-opacity-50 rounded-[999px]">
-                                <div className="flex flex-col bg-red-800 shrink-0 my-auto w-3 h-3 rounded-full" />
-                                <p className="text-xs font-semibold leading-4 text-center text-red-800">
-                                  SCOPE 2
-                                </p>
-                              </div>
-                              <div className="flex gap-3 justify-center items-stretch px-3 py-2 my-auto bg-green-100 bg-opacity-50 rounded-[999px]">
-                                <div className="flex flex-col bg-green-800 shrink-0 my-auto w-3 h-3 rounded-full" />
-                                <p className="text-xs font-semibold leading-4 text-center text-green-800">
-                                  SCOPE 3
-                                </p>
-                              </div>
-                            </div>
-                            <p className="text-lg font-bold text-slate-800 ">
-                              Scope 1 Emissions
-                            </p>
-                            <p className="leading-6 w-[25rem]">
-                              Scope 1 emissions are direct greenhouse gas (GHG)
-                              emissions that a company generates while
-                              performing its business activities. These
-                              emissions come from sources that are owned or
-                              controlled by an organization.
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex justify-end">
-                          <Button
-                            size={"sm"}
-                            className="ml-auto items-stretch self-end px-4 py-2 mt-4 text-sm font-semibold leading-4 text-center"
-                          >
-                            Save
-                          </Button>
-                        </div>
-                      </form>
-                    </div>
+                    <ScopeEmissions />
                   </AccordionContent>
                   {/* <p className="text-xs font-light text-slate-700 mt-[1.88rem] [&[data-state=open]]:hidden">
                   Enter your reporting above. Then fill your scope 1, 2, and 3,
