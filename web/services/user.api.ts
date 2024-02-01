@@ -6,6 +6,7 @@ import axios, {
   AxiosRequestConfig,
   RawAxiosRequestHeaders,
 } from "axios";
+import { url } from "inspector";
 import { getServerSession } from "next-auth";
 // import { getServerSession } from "next-auth/next";
 // import { authOptions } from "../auth";
@@ -36,7 +37,10 @@ const fetchApi = async (
     headers: { ...headers, ...authHeader },
     data: body,
   })
-    .then((res) => res.data)
+    .then((res) => {
+      console.log("res", res);
+      res.data;
+    })
     .catch((err) => {
       console.log(err);
       throw new Error(err);
@@ -60,10 +64,38 @@ export const getRoleByName = ({ roleName }: { roleName: string }) => {
   return fetchApi(`/auth/roles/${roleName}`);
 };
 
-export const exportSupplierDataCsv = ({
+export const exportSupplierDataCsv = async ({
   organizationId,
+  supplyChainReportingPeriodId,
 }: {
   organizationId: string | undefined;
+  supplyChainReportingPeriodId: string | undefined;
 }) => {
-  return fetchApi(`/auth/export-supplier-data/${organizationId}`);
+  const session = await getServerSession(authOptions);
+
+  const token: any = session?.token.token;
+  const authHeader = {
+    Authorization: `bearer ${token}`,
+  };
+
+  const response = await axios({
+    url: `${BASE_URL}/api/v1/auth/export-supplier-data?organizationId=${organizationId}&supplyChainReportingPeriodId=${supplyChainReportingPeriodId}`,
+    method: "GET",
+    headers: { ...authHeader },
+  })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+      throw new Error(err);
+    });
+
+  // console.log("response:", response);
+
+  return response;
+
+  // return fetchApi(
+  //   `/auth/export-supplier-data?organizationId=${organizationId}&supplyChainReportingPeriodId=${supplyChainReportingPeriodId}`
+  // );
 };

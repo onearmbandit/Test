@@ -10,6 +10,7 @@ import Supplier from 'App/Models/Supplier'
 import Database from '@ioc:Adonis/Lucid/Database'
 import AddSupplierDatumValidator from 'App/Validators/Supplier/AddSupplierDatumValidator'
 import UpdateSupplierDatumValidator from 'App/Validators/Supplier/UpdateSupplierDatumValidator'
+import SupplierProduct from 'App/Models/SupplierProduct'
 
 export default class SuppliersController {
   public async index({ request, response }: HttpContextContract) {
@@ -380,15 +381,19 @@ export default class SuppliersController {
   public async exportSupplierData({ request, response, auth }: HttpContextContract) {
     try {
       // Fetch data from the database
-      // const data = await Database.select('*').from('your_table_name');
-      // const organizationId = 'add45ce7-92bf-4abf-a21a-2cfba9515b8a'
-      const organizationId = request.param('organizationId')
+      const queryParams = request.qs()
+      const organizationId = queryParams.organizationId
+      const periodId = queryParams.supplyChainReportingPeriodId
+
       console.log(organizationId)
       const data = await SupplyChainReportingPeriod.query()
-        .where('organization_id', organizationId)
+        .where('id', periodId)
+        .andWhere('organization_id', organizationId)
+        .preload('organization')
         .preload('supplier', (q) => {
           q.preload('supplierProducts')
         })
+        .firstOrFail()
 
       // Create a new workbook and add a worksheet
       const workbook = new ExcelJS.Workbook()
@@ -410,33 +415,41 @@ export default class SuppliersController {
       ])
 
       // Add data to the worksheet
-      data.forEach((item: any) => {
-        worksheet.addRow([
-          item?.supplier_name || '',
-          item?.contact_email || '',
-          item?.address || '',
-          item?.website || '',
-          item?.relationship || '',
-          item?.product_name || '',
-          item?.product_type || '',
-          item?.quantity || '',
-          item?.functional_unit || '',
-          item?.scope3_contribution || '',
-          item?.reporting_period || '',
-        ])
+      data.supplier.forEach((supplier: Supplier) => {
+        supplier.supplierProducts.forEach((product: SupplierProduct) => {
+          worksheet.addRow([
+            supplier?.name || '',
+            supplier?.email || '',
+            supplier?.address || '',
+            '' || '',
+            supplier?.organizationRelationship || '',
+            product?.name || '',
+            product?.type || '',
+            product?.quantity || '',
+            product?.functionalUnit || '',
+            product?.scope_3Contribution || '',
+            `${data?.reportingPeriodFrom.toFormat('MM/yyyy')}-${data?.reportingPeriodTo.toFormat('MM/yyyy')}`,
+          ])
+        })
       })
 
       // Convert the worksheet to a CSV string
       const csvData = await workbook.csv.writeBuffer()
 
-      // Set headers for the response
-      response.header('Content-type', 'application/csv')
-      response.header('Content-disposition', 'attachment; filename=data.csv')
+      // Convert the CSV data to base64
+      const base64CsvData = Buffer.from(csvData).toString('base64')
 
-      // // Write the CSV data to the response
-      return response.send(csvData)
+      // Set headers for the response
+      const orgName = data.organization.companyName || organizationId
+      const fileName = `${orgName}_suppliers_${data?.reportingPeriodFrom.toFormat('MMM')}_${data?.reportingPeriodTo.toFormat('MMM')}_${data?.reportingPeriodTo.toFormat('yyyy')}.csv`
+      response.header('Content-type', 'application/csv')
+      response.header('Content-disposition', `attachment; filename=${fileName}`)
+
+      // Write the CSV data to the response
+      return response.send({ csv: base64CsvData, fileName: fileName })
     } catch (error) {
-      return response.status(500).send({ error: 'Internal Server Error' })
+      console.log(error.message)
+      return apiResponse(response, false, 400, {}, error.messages ? error.messages : error.message)
     }
   }
 }

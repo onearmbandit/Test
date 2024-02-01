@@ -75,7 +75,7 @@ Route.group(() => {
 
       Route.get('/roles/:name', 'UsersController.getRoleByName')
 
-      Route.get('/export-supplier-data/:organizationId', 'SuppliersController.exportSupplierData')
+      Route.get('/export-supplier-data', 'SuppliersController.exportSupplierData')
       // Route.post('/import-supplier-data', 'UsersController.getRoleByName')
     })
       .prefix('/auth')

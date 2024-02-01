@@ -37,20 +37,30 @@ const Sidebar = () => {
     mutationFn: exportSupplierDataCsv,
     onSuccess: (data: any) => {
       // Create a Blob from the response data
-      const blob = new Blob([data], { type: "application/csv" });
+      if (data) {
+        // Extract the filename from the response
+        const fileName = data.fileName || "suppliers.csv";
 
-      // Create a link element to trigger the download
-      const link = document.createElement("a");
-      link.href = window.URL.createObjectURL(blob);
-      link.download = "suppliers.csv";
+        // Decode the base64-encoded CSV data
+        const csvData = atob(data.csv);
 
-      // Append the link to the document and trigger the download
-      document.body.appendChild(link);
-      link.click();
+        // Create a Blob from the decoded CSV data
+        const blob = new Blob([csvData], { type: "application/csv" });
 
-      // Clean up by removing the link element
-      document.body.removeChild(link);
+        // Create a link element to trigger the download
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
 
+        // Append the link to the document and trigger the download
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up by removing the link element
+        document.body.removeChild(link);
+
+        toast.success("Data exported successfully");
+      }
       toast.success("Data exported successfully");
     },
     onError: (error) => {
@@ -199,7 +209,11 @@ const Sidebar = () => {
         )}
         <button
           onClick={() =>
-            mutate({ organizationId: session.data?.user?.organizations[0]?.id })
+            mutate({
+              organizationId: session.data?.user?.organizations[0]?.id,
+              supplyChainReportingPeriodId:
+                "e9e5112f-cd18-45ad-bf8e-fefb9dc63a76",
+            })
           }
         >
           Export Supplier data
