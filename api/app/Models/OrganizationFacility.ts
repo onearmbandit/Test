@@ -29,14 +29,14 @@ export default class OrganizationFacility extends BaseModel {
 
 
   @belongsTo(() => Organization, {
-    localKey: 'organizations_id',
+    localKey: 'organizationsId',
   })
   public organization: BelongsTo<typeof Organization>
 
   @hasMany(() => FacilityEmission, {
-    foreignKey: 'organization_facility_id', // defaults to userId
+    foreignKey: 'organizationFacilityId', // defaults to userId
   })
-  public facilities: HasMany<typeof FacilityEmission>
+  public facilityEmission: HasMany<typeof FacilityEmission>
 
 
   public static async createFacility(facilityData) {
@@ -78,6 +78,9 @@ export default class OrganizationFacility extends BaseModel {
     const facilityDetails = await OrganizationFacility.query()
       .where(field, value)
       .whereNull('deleted_at') // Exclude soft-deleted records
+      .preload('facilityEmission', (facilityEmissionQuery) => {
+        facilityEmissionQuery.preload('FacilityProducts');
+      })
       .firstOrFail();
     return facilityDetails;
   }
