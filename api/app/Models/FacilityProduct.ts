@@ -75,12 +75,9 @@ export default class FacilityProduct extends BaseModel {
     let products: any = []
     let updateProductIds: any = []
 
-    console.log("facilityEmissionData >>", facilityEmissionData)
     let allProductsOfFacility: any = facilityEmissionData.FacilityProducts?.map((item) => (item.id));
-    console.log("allProductsOfFacility >>", allProductsOfFacility)
 
     requestData.facilityProducts.forEach(element => {
-      console.log("element >>", element)
       var singleData: any = {}
       if (element.id) {
         singleData = { ...element }
@@ -94,6 +91,7 @@ export default class FacilityProduct extends BaseModel {
 
     //:: Delete products whose ids not in requestData of update product
     const idsToDelete = await allProductsOfFacility.filter((record) => !updateProductIds.includes(record));
+
     if (idsToDelete.length !== 0) {
       await this.query().whereIn('id', idsToDelete).update({
         'deletedAt': new Date()
@@ -101,8 +99,53 @@ export default class FacilityProduct extends BaseModel {
     }
 
     //:: this manage create or update using id as unique key
-    let result = await facilityEmissionData.related('FacilityProducts')
+    const result = await facilityEmissionData
+      .related('FacilityProducts', (query) => {
+        query.whereNull('deleted_at'); // Exclude soft-deleted records
+      })
       .updateOrCreateMany(products, 'id');
     return result;
+  }
+
+  public static async calculateCarbonEmission(facilityEmissionData) {
+
+    const productEmissions: {
+      name: string;
+      quantity: string;
+      scope1: string;
+      scope2: string;
+      scope3: string;
+    }[] = [];
+
+    const scope1TotalEmission = facilityEmissionData.scope1TotalEmission
+    const scope2TotalEmission = facilityEmissionData.scope2TotalEmission
+    const scope3TotalEmission = facilityEmissionData.scope3TotalEmission
+
+    const allProducts = await this.query()
+      .whereNull('deleted_at')
+      .where('facility_emission_id', facilityEmissionData.id)
+    const totalProducts = allProducts.length
+
+    const percentagePerProduct = 100 / totalProducts
+
+    allProducts.map((product, index) => {
+      const scope1CarbonEmission = ((percentagePerProduct / 100) * scope1TotalEmission).toFixed(2) + '%'
+      const scope2CarbonEmission = ((percentagePerProduct / 100) * scope2TotalEmission).toFixed(2) + '%'
+      const scope3CarbonEmission = ((percentagePerProduct / 100) * scope3TotalEmission).toFixed(2) + '%'
+
+      // Add the calculated values to the product
+      const updatedProduct = {
+        name: product.name,
+        quantity: product.quantity,
+        scope1: scope1CarbonEmission,
+        scope2: scope2CarbonEmission,
+        scope3: scope3CarbonEmission,
+      };
+
+      // Push the modified product to the result array
+      productEmissions.push(updatedProduct);
+
+    });
+    return productEmissions;
   }
 }
