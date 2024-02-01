@@ -13,14 +13,14 @@ export default class AddSupplierProductValidator {
 		]),
 		supplierProducts: schema.array().members(
 			schema.object().members({
-				name: schema.string({ trim: true }, [rules.minLength(3), rules.maxLength(255)]),
-				type: schema.string({ trim: true }, [rules.minLength(3)]),
-				quantity: schema.string([
+				name: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(255)]),
+				type: schema.string.optional({ trim: true }, [rules.minLength(3)]),
+				quantity: schema.string.optional([
 					rules.regex(/^[0-9,]+$/),
 				]),
 
 				// functionalUnit: schema.string({ trim: true }, [rules.maxLength(255)]),
-				scope_3Contribution: schema.number(),
+				scope_3Contribution: schema.number.optional(),
 			})
 		),
 	})
