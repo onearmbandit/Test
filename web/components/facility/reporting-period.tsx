@@ -83,6 +83,7 @@ const ReportingPeriod = ({
       setNew(false);
     },
   });
+
   const { values, setFieldValue, errors, handleSubmit, submitForm } = useFormik(
     {
       initialValues: {

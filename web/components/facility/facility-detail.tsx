@@ -132,7 +132,7 @@ const FacilityDetails = () => {
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
                   <AccordionContent>
-                    <ScopeEmissions />
+                    <ScopeEmissions period={currentTab} />
                   </AccordionContent>
                   {/* <p className="text-xs font-light text-slate-700 mt-[1.88rem] [&[data-state=open]]:hidden">
                   Enter your reporting above. Then fill your scope 1, 2, and 3,

@@ -71,8 +71,19 @@ export const deleteFacilityReportingPeriod = (id: string) => {
   });
 };
 
+export const getReportingPeriodById = (periodId: string) => {
+  return fetchApi(`/auth/facility-emission/${periodId}`);
+};
+
 export const getReportingPeriods = (facilityId: string) => {
   return fetchApi(
     `/auth/facility-emission?per_page=10&page=1&organization_facility_id=${facilityId}`
   );
+};
+
+export const addScopeEmissions = ({ id, obj }: any) => {
+  return fetchApi(`/auth/facility-emission/${id}`, {
+    method: "PATCH",
+    body: obj,
+  });
 };
