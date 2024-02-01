@@ -1,3 +1,5 @@
+import { getUser } from "@/services/user.api";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
 
@@ -8,6 +10,13 @@ const OrganisationAccount = ({
   section: string;
   setSection: (val: string) => void;
 }) => {
+  const userQ = useQuery({
+    queryKey: ["account-details"],
+    queryFn: () => getUser(),
+  });
+
+  const user = userQ.isSuccess ? userQ.data : null;
+
   return (
     <section className="justify-center items-start bg-white rounded-e-lg flex flex-col w-full p-6 max-md:max-w-full max-md:px-5">
       <h2 className="text-gray-700 text-lg font-bold leading-7 self-stretch max-md:max-w-full">
@@ -24,7 +33,7 @@ const OrganisationAccount = ({
         <div className="justify-center items-stretch self-center flex grow basis-[0%] flex-col my-auto">
           <h3 className="text-slate-700 text-xs font-bold leading-4">Name</h3>
           <div className="text-slate-700 text-sm leading-5 mt-2.5">
-            Pepsi Co
+            {user?.data?.organizations[0]?.company_name}
           </div>
         </div>
       </div>
@@ -37,11 +46,7 @@ const OrganisationAccount = ({
       </div>
       <div className="justify-between items-stretch content-center gap-y-2.5 self-stretch flex-wrap flex gap-5 mt-2.5 max-md:max-w-full">
         <div className="text-slate-700 text-xs font-light leading-4">
-          123 Main Street
-          <br />
-          8th floor
-          <br />
-          New York, NY, 10001
+          {user?.data?.organizations[0]?.address_line_1}
         </div>
         <p
           onClick={() => setSection("address")}
@@ -55,7 +60,7 @@ const OrganisationAccount = ({
       </div>
       <div className="justify-between items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-md:max-w-full max-md:flex-wrap">
         <div className="text-slate-700 text-xs font-light leading-4">
-          201 - 500
+          {user?.data?.organizations[0]?.company_size}
         </div>
         <p
           onClick={() => setSection("employees")}
@@ -68,7 +73,9 @@ const OrganisationAccount = ({
         NAICS Code
       </div>
       <div className="justify-between items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-md:max-w-full max-md:flex-wrap">
-        <div className="text-slate-700 text-xs font-light leading-4">3241</div>
+        <div className="text-slate-700 text-xs font-light leading-4">
+          {user?.data?.organizations[0]?.naics_code}
+        </div>
         <p
           onClick={() => setSection("naics")}
           className="text-blue-600 text-center text-xs font-bold leading-4 cursor-pointer"
@@ -80,9 +87,17 @@ const OrganisationAccount = ({
         Climate Commitments
       </div>
       <div className="justify-between items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-md:max-w-full max-md:flex-wrap">
-        <div className="text-slate-700 text-xs font-light leading-4">
-          Net Zero by 2030
-        </div>
+        {user?.data?.organizations[0]?.climate_targets?.map(
+          (target: string, i: number) => (
+            <div
+              key={i}
+              className="text-slate-700 text-xs font-light leading-4"
+            >
+              {target}
+            </div>
+          )
+        )}
+
         <p
           onClick={() => setSection("climate")}
           className="text-blue-600 text-center text-xs font-bold leading-4 cursor-pointer"

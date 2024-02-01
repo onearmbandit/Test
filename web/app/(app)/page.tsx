@@ -1,5 +1,4 @@
 import Dashboard from "@/components/Dashboard";
-import Sidebar from "@/components/Sidebar";
 import { authOptions } from "@/lib/utils";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
@@ -11,9 +10,10 @@ export default async function Home() {
     redirect("/login");
   }
 
+  console.log("session from home page : ", session);
+
   return (
     <>
-      <Sidebar />
       <Dashboard />
     </>
   );

@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge";
 import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
+import AzureADProvider from "next-auth/providers/azure-ad";
+import { boolean } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -22,6 +24,15 @@ export const authOptions: NextAuthOptions = {
           image: profile.picture,
           socialLoginToken: tokens.id_token,
         };
+      },
+    }),
+    AzureADProvider({
+      clientId: process.env.AZURE_AD_CLIENT_ID!,
+      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
+      tenantId: process.env.AZURE_AD_TENANT_ID,
+      profile(profile, tokens) {
+        console.log({ tokens });
+        return { ...profile, id: profile.sub };
       },
     }),
     Credentials({
@@ -47,7 +58,7 @@ export const authOptions: NextAuthOptions = {
 
           const res = await response.json();
 
-          console.log("ress => ", res);
+          // console.log("ress => ", res);
           if (!res?.status) {
             console.log("err", res.message);
             throw new Error(res.message);
@@ -63,32 +74,40 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, session, account }) {
-      console.log({ token, user, session });
-      if (user) {
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
-        if (account?.provider != "credentials") {
-          console.log("tttokenk =====> ", user);
-          const res = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              ...user,
-              loginType:
-                account?.provider == "azure-ad"
-                  ? "microsoft"
-                  : account?.provider,
-            }),
-          });
-
-          const userD = await res.json();
-          console.log(userD);
-        }
-      }
-
       return { ...token, ...user };
     },
+    // async signIn({ user, account, email, credentials, profile }) {
+    //   // console.log({ user, account, email, credentials, profile });
+    //   const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
+    //   const token = localStorage.getItem("isInvited");
+    //   console.log("isinvited ===> ", token);
+    //   if (account?.provider != "credentials") {
+    //     // console.log("tttokenk =====> ", user);
+    //     try {
+    //       const res = await fetch(url, {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-type": "application/json",
+    //         },
+    //         body: JSON.stringify({
+    //           ...user,
+    //           loginType:
+    //             account?.provider == "azure-ad"
+    //               ? "microsoft"
+    //               : account?.provider,
+    //         }),
+    //       });
+
+    //       const userD = await res.json();
+    //       console.log(userD);
+    //       return false;
+    //     } catch (err) {
+    //       console.log({ err });
+    //       throw new Error(err.errors[0].message);
+    //     }
+    //   }
+    //   return true;
+    // },
     async session({ session, token, trigger, user }) {
       return { ...session, ...token };
     },
@@ -100,4 +119,24 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/login",
   },
+};
+
+export const formatAddress = (address: any) => {
+  // Split the address into components
+  let addressComponents = address.split(",");
+
+  // Extract components
+  let streetAddress = addressComponents[0].trim();
+  let floor = addressComponents[1]?.trim();
+  let cityStateZip = addressComponents[2]?.trim();
+  let country = addressComponents[addressComponents.length - 1].trim();
+
+  // Construct formatted address
+  let formattedAddress = `${streetAddress},\n${floor},\n${cityStateZip},\n${country}`;
+
+  return formattedAddress;
+};
+
+export const isSuperAdmin = (rolesArray: any, roleName: string) => {
+  return rolesArray?.some((role: any) => role.name === roleName);
 };

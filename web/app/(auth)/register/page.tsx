@@ -18,6 +18,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import AutocompleteInput from "@/components/Autocomplete";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -142,12 +143,15 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     //   }
     // },
     onSubmit: (data) => {
-      if (errors.length <= 1 && !errors.includes("length")) {
-        return;
-      }
+      console.log("mutate", data);
+      // if (errors.length > 0 && !errors.includes("length")) {
+      //   return;
+      // }
       mutate(data);
     },
   });
+
+  console.log(registerForm.errors, errors);
 
   return (
     <form
@@ -489,18 +493,19 @@ const Step2 = ({
 
 const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const router = useRouter();
+  const [addressDisabled, setAddressDisabled] = useState(true);
   const validation = z.object({
     companyName: z.string(),
-    addressLine1: z.string(),
-    addressLine2: z.string(),
-    city: z.string(),
-    state: z.string(),
-    zipCode: z
-      .string()
-      .min(5)
-      .refine((val) => /^-?\d*\.?\d+$/.test(val), {
-        message: "Enter a valid zipcode.",
-      }),
+    // addressLine1: z.string(),
+    // addressLine2: z.string(),
+    // city: z.string(),
+    // state: z.string(),
+    // zipCode: z
+    //   .string()
+    //   .min(5)
+    //   .refine((val) => /^-?\d*\.?\d+$/.test(val), {
+    //     message: "Enter a valid zipcode.",
+    //   }),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
@@ -516,15 +521,12 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     initialValues: {
       userSlug,
       companyName: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      state: "MH",
-      zipCode: "",
+      address: "",
       registrationStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
+      console.log(data);
       mutate(data);
     },
   });
@@ -548,70 +550,49 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             Company Name
           </label>
 
-          <Input
-            type="text"
-            id="companyName"
-            name="companyName"
-            onChange={step3Form.handleChange}
-            placeholder="Company"
-            className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
-          />
-        </div>
-        <div>
-          <label
-            className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
-            htmlFor="companyAdress"
-          >
-            Company Address
-          </label>
-
-          <Input
-            type="text"
-            id="companyAdress"
-            name="addressLine1"
-            onChange={step3Form.handleChange}
-            placeholder="Street Address"
-            className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
-          />
-        </div>
-        <div>
-          <Input
-            type="text"
-            name="addressLine2"
-            onChange={step3Form.handleChange}
-            placeholder="Apt, suite, floor, unit, etc"
-            className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
-          />
-        </div>
-
-        <div className="items-stretch self-stretch flex justify-between gap-5 mt-3 px-px max-md:max-w-full max-md:flex-wrap">
-          <Input
-            type="text"
-            placeholder="City"
-            name="city"
-            onChange={step3Form.handleChange}
-            className="text-slate-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-6 rounded-md max-md:max-w-full"
-          />
-
-          <div className="items-stretch bg-gray-50 flex justify-between gap-2 w-[35%] px-2 py-6 rounded-md">
-            <div className="text-slate-500 text-sm font-light leading-5 grow whitespace-nowrap">
-              State
-            </div>
-            <img
-              loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/e2291a7397fc864d89d99afc7f9d8722720b9685dfa12431141c0d34998ec61f?apiKey=011554aff43544e6af46800a427fd184&"
-              className="aspect-square object-contain object-center w-4 overflow-hidden self-center shrink-0 max-w-full my-auto"
-              alt="State"
+          <div>
+            <Input
+              type="text"
+              id="companyName"
+              name="companyName"
+              onChange={step3Form.handleChange}
+              placeholder="Company"
+              className={cn(
+                "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+                step3Form.errors.companyName && "border border-red-500"
+              )}
             />
+            <p className="text-xs text-red-500 mt-0.5">
+              {step3Form.errors.companyName}
+            </p>
           </div>
         </div>
-        <Input
-          type="text"
-          placeholder="Zipcode"
-          name="zipCode"
-          onChange={step3Form.handleChange}
-          className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full"
-        />
+        <div className="mt-6">
+          <div className="flex justify-between items-end mb-3 py-2">
+            <label
+              className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
+              htmlFor="companyAdress"
+            >
+              Company Address
+            </label>
+            {step3Form.values.address != "" && (
+              <p
+                role="button"
+                onClick={() => setAddressDisabled(false)}
+                className="text-sm font-semibold leading-4 text-blue-600"
+              >
+                Edit
+              </p>
+            )}
+          </div>
+
+          <AutocompleteInput
+            isDisabled={addressDisabled}
+            setAddress={(e: any) => {
+              step3Form.setFieldValue("addressLine1", e);
+            }}
+          />
+        </div>
 
         <div className="justify-between items-center self-stretch flex gap-5 mt-3 pl-1 pr-2.5 py-2.5 max-md:max-w-full max-md:flex-wrap">
           <div className="text-blue-600 text-center text-sm font-semibold leading-4 my-auto">
