@@ -8,7 +8,7 @@ import FacilityProduct from './FacilityProduct';
 
 export default class FacilityEmission extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
   public organizationFacilityId: string
