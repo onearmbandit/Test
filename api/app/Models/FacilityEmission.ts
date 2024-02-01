@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, BelongsTo, } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, belongsTo, BelongsTo, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import { v4 as uuidv4 } from 'uuid';
 import { ParsedQs } from 'qs';
 import OrganizationFacility from './OrganizationFacility';
+import FacilityProduct from './FacilityProduct';
 
 
 export default class FacilityEmission extends BaseModel {
@@ -39,9 +40,14 @@ export default class FacilityEmission extends BaseModel {
   //::_____Relationships Start_____:://
 
   @belongsTo(() => OrganizationFacility, {
-    foreignKey: 'organization_facility_id',
+    foreignKey: 'organizationFacilityId',
   })
   public OrganizationFacility: BelongsTo<typeof OrganizationFacility>
+
+  @hasMany(() => FacilityProduct, {
+    foreignKey: 'facilityEmissionId', // defaults to userId
+  })
+  public FacilityProducts: HasMany<typeof FacilityProduct>
 
   //::_____Relationships End_____:://
 
