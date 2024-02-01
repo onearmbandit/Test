@@ -55,6 +55,14 @@ Route.group(() => {
         'destroy',
       ])
 
+      Route.resource('/facility-product', 'FacilityProductsController').only([
+        'index',
+        'store',
+        'show',
+        'update',
+        'destroy',
+      ])
+
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier')
 
