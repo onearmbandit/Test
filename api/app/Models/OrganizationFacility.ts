@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, BelongsTo, belongsTo } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, BelongsTo, belongsTo, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Organization from './Organization'
 import { v4 as uuidv4 } from 'uuid';
 import { ParsedQs } from 'qs';
+import FacilityEmission from './FacilityEmission';
 
 export default class OrganizationFacility extends BaseModel {
   @column({ isPrimary: true })
@@ -27,10 +28,15 @@ export default class OrganizationFacility extends BaseModel {
   public updated_at: DateTime
 
 
-  @belongsTo(() => Organization,{
+  @belongsTo(() => Organization, {
     localKey: 'organizations_id',
   })
   public organization: BelongsTo<typeof Organization>
+
+  @hasMany(() => FacilityEmission, {
+    foreignKey: 'organization_facility_id', // defaults to userId
+  })
+  public facilities: HasMany<typeof FacilityEmission>
 
 
   public static async createFacility(facilityData) {
@@ -70,9 +76,9 @@ export default class OrganizationFacility extends BaseModel {
   public static async getOrganizationFacilityData(field, value) {
 
     const facilityDetails = await OrganizationFacility.query()
-    .where(field, value)
-    .whereNull('deleted_at') // Exclude soft-deleted records
-    .firstOrFail();
+      .where(field, value)
+      .whereNull('deleted_at') // Exclude soft-deleted records
+      .firstOrFail();
     return facilityDetails;
   }
 
