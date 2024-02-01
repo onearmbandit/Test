@@ -74,6 +74,9 @@ Route.group(() => {
       Route.post('/invite-organization', 'OrganizationUsersController.inviteOrganization')
 
       Route.get('/roles/:name', 'UsersController.getRoleByName')
+
+      Route.get('/export-supplier-data/:organizationId', 'SuppliersController.exportSupplierData')
+      // Route.post('/import-supplier-data', 'UsersController.getRoleByName')
     })
       .prefix('/auth')
       .middleware('auth')

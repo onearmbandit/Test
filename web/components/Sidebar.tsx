@@ -13,6 +13,9 @@ import { ChevronDown, MailPlus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn, isSuperAdmin } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import { exportSupplierDataCsv } from "@/services/user.api";
+import { toast } from "sonner";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -28,6 +31,32 @@ const Sidebar = () => {
     session?.data?.user?.roles,
     "super-admin"
   );
+
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationKey: ["supplier-data-csv"],
+    mutationFn: exportSupplierDataCsv,
+    onSuccess: (data: any) => {
+      // Create a Blob from the response data
+      const blob = new Blob([data], { type: "application/csv" });
+
+      // Create a link element to trigger the download
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "suppliers.csv";
+
+      // Append the link to the document and trigger the download
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up by removing the link element
+      document.body.removeChild(link);
+
+      toast.success("Data exported successfully");
+    },
+    onError: (error) => {
+      toast.error("Error exporting data:" + error.message);
+    },
+  });
 
   return (
     <div className="flex flex-col bg-gray-50 justify-between w-full h-screen max-w-[240px] px-4 py-5">
@@ -168,6 +197,13 @@ const Sidebar = () => {
             </h2>
           </Link>
         )}
+        <button
+          onClick={() =>
+            mutate({ organizationId: session.data?.user?.organizations[0]?.id })
+          }
+        >
+          Export Supplier data
+        </button>
       </nav>
       <footer>
         <Dialog>

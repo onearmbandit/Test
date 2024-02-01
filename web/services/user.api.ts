@@ -60,15 +60,10 @@ export const getRoleByName = ({ roleName }: { roleName: string }) => {
   return fetchApi(`/auth/roles/${roleName}`);
 };
 
-// export const setupOrganizationStep4 = ({
-//   id,
-//   formdata,
-// }: {
-//   id: string;
-//   formdata: any;
-// }) => {
-//   return fetchApi(`/auth/organization/${id}`, {
-//     method: "PATCH",
-//     body: formdata,
-//   } as Options);
-// };
+export const exportSupplierDataCsv = ({
+  organizationId,
+}: {
+  organizationId: string | undefined;
+}) => {
+  return fetchApi(`/auth/export-supplier-data/${organizationId}`);
+};
