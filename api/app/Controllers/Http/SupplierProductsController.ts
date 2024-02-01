@@ -7,7 +7,6 @@ import SupplierProduct from 'App/Models/SupplierProduct';
 import Supplier from 'App/Models/Supplier';
 import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 import { DateTime } from 'luxon'
-import UpdateSupplierProductValidator from 'App/Validators/Supplier/UpdateSupplierProductValidator';
 
 
 export default class SupplierProductsController {
@@ -51,10 +50,10 @@ export default class SupplierProductsController {
 
       var supplierData = await Supplier.getSupplierDetails('id', requestData.supplierId);
 
-      var creationResult = await SupplierProduct.updateSupplierProducts(supplierData, requestData, auth)
+      var creationResult = await SupplierProduct.updateOrCreateSupplierProducts(supplierData, requestData, auth)
 
       return apiResponse(response, true, 201, creationResult,
-        Config.get('responsemessage.SUPPLIER_RESPONSE.productCreateSuccess'))
+        Config.get('responsemessage.SUPPLIER_RESPONSE.productCreateOrUpdateSuccess'))
 
     }
     catch (error) {
@@ -82,11 +81,10 @@ export default class SupplierProductsController {
   }
 
 
-  public async update({ request, response, auth }: HttpContextContract) {
+  public async update({ request, response }: HttpContextContract) {
     try {
       let requestData = request.all()
 
-      await request.validate(UpdateSupplierProductValidator);
 
       var supplierData = await Supplier.getSupplierDetails('id', requestData.supplierId);
 

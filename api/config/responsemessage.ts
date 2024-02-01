@@ -52,7 +52,8 @@ export const SUPPLIER_RESPONSE = {
   supplierCreateSuccess: "New supplier added successfully.",
   supplierUpdateSuccess: "Supplier details updated successfully.",
   productNotFount:"Supplier product not found.",
-  productDeleteSuccess:"Supplier product deleted successfully."
+  productDeleteSuccess:"Supplier product deleted successfully.",
+  productCreateOrUpdateSuccess:"Supplier products created or updated successfully."
 }
 
 export const ORGANIZATION_FACILITY_RESPONSE = {

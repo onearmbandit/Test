@@ -70,37 +70,37 @@ export default class SupplierProduct extends BaseModel {
 
 
   //:: If id present then update data otherwise create new data
-  public static async updateSupplierProducts(supplierData, requestData, auth) {
+  public static async updateOrCreateSupplierProducts(supplierData, requestData, auth) {
     let products: any = []
+    let updateProductIds:any = []
+    let allProductsOfSupplier:any= supplierData.supplierProducts?.map((item)=> (item.id));
+
     requestData.supplierProducts.forEach(element => {
       var singleData: any = {}
+      element.scope_3Contribution = element.scope_3Contribution ? element.scope_3Contribution : null
       if (element.id) {
-        // singleData = { ...element }
-        singleData = {
-          id: element.id,
-          data: { ...element }
-        }
+        singleData = { ...element }
+        updateProductIds.push(element.id)
       }
       else {
-        // singleData = {
-        //   id: uuidv4(),
-        //   ...element
-        // }
-        singleData = {
-          id: uuidv4(), data: { ...element }
-        }
+        singleData = { id: uuidv4(), ...element }
       }
       products.push(singleData)
     });
 
-    console.log("products", products)
+    //:: Delete products whose ids not in requestData of update product
+    const idsToDelete = await allProductsOfSupplier.filter((record) => !updateProductIds.includes(record));
+    await this.query().whereIn('id',idsToDelete).update({ 
+      'deletedAt':  new Date() 
+     })
+
     supplierData.merge({
       'updatedBy': `${auth.user?.firstName} ${auth.user?.lastName}`,
-      'updatedAt': DateTime.local()
+      'updatedAt':  DateTime.now()
     }).save();
 
     let result = await supplierData.related('supplierProducts')
-    .updateOrCreateMany('id', products);
+      .updateOrCreateMany(products, 'id');
     return result;
   }
 
