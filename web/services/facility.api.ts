@@ -2,6 +2,7 @@
 
 import { authOptions } from "@/lib/utils";
 import axios, { AxiosHeaders } from "axios";
+import { forEach } from "lodash";
 import { getServerSession } from "next-auth";
 
 type Options = {
@@ -47,4 +48,42 @@ export const getFacilities = async () => {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizations[0].id;
   return fetchApi(`/auth/facility?organization_id=${orgId}`);
+};
+
+export const addFacilityReportingPeriod = (formData: any) => {
+  return fetchApi(`/auth/facility-emission`, {
+    method: "POST",
+    body: formData,
+  });
+};
+
+export const editFacilityReportingPeriod = ({ id, formData }: any) => {
+  console.log(id, formData);
+  return fetchApi(`/auth/facility-emission/${id}`, {
+    method: "PATCH",
+    body: formData,
+  });
+};
+
+export const deleteFacilityReportingPeriod = (id: string) => {
+  return fetchApi(`/auth/facility-emission/${id}`, {
+    method: "DELETE",
+  });
+};
+
+export const getReportingPeriodById = (periodId: string) => {
+  return fetchApi(`/auth/facility-emission/${periodId}`);
+};
+
+export const getReportingPeriods = (facilityId: string) => {
+  return fetchApi(
+    `/auth/facility-emission?per_page=10&page=1&organization_facility_id=${facilityId}`
+  );
+};
+
+export const addScopeEmissions = ({ id, obj }: any) => {
+  return fetchApi(`/auth/facility-emission/${id}`, {
+    method: "PATCH",
+    body: obj,
+  });
 };

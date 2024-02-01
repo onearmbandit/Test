@@ -1,14 +1,6 @@
 "use server";
 
-import { authOptions } from "@/lib/utils";
-import axios, {
-  AxiosHeaders,
-  AxiosRequestConfig,
-  RawAxiosRequestHeaders,
-} from "axios";
-import { getServerSession } from "next-auth";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+import axios, { AxiosHeaders, RawAxiosRequestHeaders } from "axios";
 
 type Options = {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -20,6 +12,7 @@ const fetchApi = async (
   url: string,
   options = { method: "GET" } as Options
 ) => {
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const { headers, method, body } = options;
 
   // const session = await getServerSession(authOptions);
@@ -37,7 +30,7 @@ const fetchApi = async (
     .then((res) => res.data)
     .catch((err) => {
       console.log("error : ", err.response.data);
-      throw new Error(err.response.data.message);
+      throw new Error(err.response.data.errors[0].message);
     });
 
   return response;

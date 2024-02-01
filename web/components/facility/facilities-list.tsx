@@ -13,6 +13,7 @@ import { formatAddress } from "@/lib/utils";
 import EditAddress from "../popups/organisation/edit-address";
 import EditFacility from "./edit-facility";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const FacilitiesList = ({ facilities }: any) => {
   const [selectedEdit, setSelectedEdit] = useState<number | null>(null);
@@ -58,9 +59,14 @@ const FacilitiesList = ({ facilities }: any) => {
                 aria-label="Facility Options"
                 aria-role="form"
               >
-                <p className="leading-[114%] whitespace-nowrap">
+                <Link
+                  href={`/facilities/${item.name
+                    .split(" ")
+                    .join("-")}?facilityId=${item.id}`}
+                  className="leading-[114%] whitespace-nowrap"
+                >
                   View / Add Emissions
-                </p>
+                </Link>
                 <button
                   type="button"
                   onClick={() => router.push(`/facilities?edit=${i + 1}`)}

@@ -55,6 +55,10 @@ const Page = () => {
 
   const socialParam = params.get("social");
 
+  const handleSignIn = async (provider: string) => {
+    const res = await signIn(provider, { redirect: false });
+  };
+
   if (session) {
     router.push("/");
   }
@@ -176,7 +180,7 @@ const Page = () => {
           <div className="items-stretch bg-white flex max-w-[408px] flex-col px-16 py-12 rounded-lg">
             <div
               role="button"
-              onClick={() => signIn("google", { callbackUrl: "/" })}
+              onClick={() => handleSignIn("google")}
               className="justify-start items-stretch border-slate-200 flex gap-4 mt-3.5 py-4 px-11 rounded-full border-2 border-solid"
             >
               <img
@@ -190,7 +194,7 @@ const Page = () => {
             </div>
             <div
               role="button"
-              onClick={() => signIn("azure-ad", { callbackUrl: "/" })}
+              onClick={() => handleSignIn("azure-ad")}
               className="justify-start items-stretch border-slate-200 flex gap-4 mt-6 py-4 px-11  rounded-full border-2 border-solid"
             >
               <img

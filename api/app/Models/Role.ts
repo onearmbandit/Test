@@ -4,7 +4,7 @@ import User from 'App/Models/User'
 
 export default class Role extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
   public name: string
