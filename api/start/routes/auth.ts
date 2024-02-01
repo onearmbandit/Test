@@ -56,12 +56,9 @@ Route.group(() => {
       ])
 
       Route.resource('/facility-product', 'FacilityProductsController').only([
-        'index',
         'store',
-        'show',
-        'update',
-        'destroy',
       ])
+      Route.post('/update-facility-products', 'FacilityProductsController.updateFacilityMultipleProducts')
 
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier')

@@ -8,7 +8,7 @@ import FacilityProduct from './FacilityProduct';
 
 export default class FacilityEmission extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
   public organizationFacilityId: string
@@ -89,6 +89,7 @@ export default class FacilityEmission extends BaseModel {
     const facilityDetails = await this.query()
       .where(field, value)
       .whereNull('deleted_at') // Exclude soft-deleted records
+      .preload('FacilityProducts')
       .firstOrFail();
     return facilityDetails;
   }

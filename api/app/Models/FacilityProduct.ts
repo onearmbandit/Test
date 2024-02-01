@@ -70,4 +70,39 @@ export default class FacilityProduct extends BaseModel {
       .firstOrFail();
     return facilityProductDetails;
   }
+
+  public static async updateOrCreateFacilityProducts(facilityEmissionData, requestData) {
+    let products: any = []
+    let updateProductIds: any = []
+
+    console.log("facilityEmissionData >>", facilityEmissionData)
+    let allProductsOfFacility: any = facilityEmissionData.FacilityProducts?.map((item) => (item.id));
+    console.log("allProductsOfFacility >>", allProductsOfFacility)
+
+    requestData.facilityProducts.forEach(element => {
+      console.log("element >>", element)
+      var singleData: any = {}
+      if (element.id) {
+        singleData = { ...element }
+        updateProductIds.push(element.id)
+      }
+      else {
+        singleData = { id: uuidv4(), ...element }
+      }
+      products.push(singleData)
+    });
+
+    //:: Delete products whose ids not in requestData of update product
+    const idsToDelete = await allProductsOfFacility.filter((record) => !updateProductIds.includes(record));
+    if (idsToDelete.length !== 0) {
+      await this.query().whereIn('id', idsToDelete).update({
+        'deletedAt': new Date()
+      })
+    }
+
+    //:: this manage create or update using id as unique key
+    let result = await facilityEmissionData.related('FacilityProducts')
+      .updateOrCreateMany(products, 'id');
+    return result;
+  }
 }
