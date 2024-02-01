@@ -63,6 +63,7 @@ Route.group(() => {
       Route.resource('/suppliers', 'SuppliersController')
 
       Route.resource('/supplier-products', 'SupplierProductsController')
+      Route.post('/remove-multiple-products','SupplierProductsController.deleteMultipleSupplierProducts')
       Route.get(
         '/supplier-period-emission',
         'SupplierProductsController.calculateProductEmissionData'

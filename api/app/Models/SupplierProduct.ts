@@ -72,8 +72,8 @@ export default class SupplierProduct extends BaseModel {
   //:: If id present then update data otherwise create new data
   public static async updateOrCreateSupplierProducts(supplierData, requestData, auth) {
     let products: any = []
-    let updateProductIds:any = []
-    let allProductsOfSupplier:any= supplierData.supplierProducts?.map((item)=> (item.id));
+    let updateProductIds: any = []
+    let allProductsOfSupplier: any = supplierData.supplierProducts?.map((item) => (item.id));
 
     requestData.supplierProducts.forEach(element => {
       var singleData: any = {}
@@ -90,20 +90,32 @@ export default class SupplierProduct extends BaseModel {
 
     //:: Delete products whose ids not in requestData of update product
     const idsToDelete = await allProductsOfSupplier.filter((record) => !updateProductIds.includes(record));
-    await this.query().whereIn('id',idsToDelete).update({ 
-      'deletedAt':  new Date() 
-     })
+    if (idsToDelete.length !== 0) {
+      await this.query().whereIn('id', idsToDelete).update({
+        'deletedAt': new Date()
+      })
+    }
 
+    //:: Update supplier data 
     supplierData.merge({
       'updatedBy': `${auth.user?.firstName} ${auth.user?.lastName}`,
-      'updatedAt':  DateTime.now()
+      'updatedAt': DateTime.now()
     }).save();
 
+
+    //:: this manage create or update using id as unique key
     let result = await supplierData.related('supplierProducts')
       .updateOrCreateMany(products, 'id');
     return result;
   }
 
+  //:: Delete multiple supplier-products
+  public static async deleteMultipleSupplierProducts(requestData) {
+    await this.query().whereIn('id', requestData.products).update({
+      'deletedAt': new Date()
+    })
+    return;
+  }
 
   public static async getAllSupplierProductsForSpecificPeriod(queryParams: ParsedQs) {
     const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20;
@@ -159,8 +171,11 @@ export default class SupplierProduct extends BaseModel {
   public static async getAllProductTypesOfSuppliers(queryParams: ParsedQs) {
     const supplierId = queryParams.supplierId ? queryParams.supplierId.toString() : '';
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+    const order = queryParams.order ? queryParams.order.toString() : 'desc';
+    const sort = queryParams.sort ? queryParams.sort.toString() : 'type';
+
     if (supplierId) {
-      query.where('supplierId', supplierId)
+      query.where('supplierId', supplierId).orderBy(sort,order)
     }
 
     const allProductTypesOfSupplier = await query
@@ -174,8 +189,11 @@ export default class SupplierProduct extends BaseModel {
   public static async getAllProductNamesOfSuppliers(queryParams: ParsedQs) {
     const supplierId = queryParams.supplierId ? queryParams.supplierId.toString() : '';
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+    const order = queryParams.order ? queryParams.order.toString() : 'desc';
+    const sort = queryParams.sort ? queryParams.sort.toString() : 'name';
+
     if (supplierId) {
-      query.where('supplierId', supplierId)
+      query.where('supplierId', supplierId).orderBy(sort,order)
     }
 
     const allProductNamesOfSupplier = await query

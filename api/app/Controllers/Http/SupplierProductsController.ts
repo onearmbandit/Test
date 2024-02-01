@@ -7,6 +7,7 @@ import SupplierProduct from 'App/Models/SupplierProduct';
 import Supplier from 'App/Models/Supplier';
 import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 import { DateTime } from 'luxon'
+import DeleteMultipleSupplierProductValidator from 'App/Validators/Supplier/DeleteMultipleSupplierProductValidator';
 
 
 export default class SupplierProductsController {
@@ -81,14 +82,19 @@ export default class SupplierProductsController {
   }
 
 
-  public async update({ request, response }: HttpContextContract) {
+  public async update({ }: HttpContextContract) {
+
+  }
+
+  public async deleteMultipleSupplierProducts({ request, response }: HttpContextContract) {
     try {
       let requestData = request.all()
-
-
-      var supplierData = await Supplier.getSupplierDetails('id', requestData.supplierId);
-
-    }
+      if (requestData.products.length !== 0) {
+        await SupplierProduct.deleteMultipleSupplierProducts(requestData)
+        return apiResponse(response, true, 200, {}, Config.get('responsemessage.SUPPLIER_RESPONSE.multipleProductDeleteSuccess'))
+      }
+      return apiResponse(response, true, 200, {}, Config.get('responsemessage.SUPPLIER_RESPONSE.multipleProductDeleteSuccess')) 
+   }
     catch (error) {
       if (error.status === 422) {
         return apiResponse(
