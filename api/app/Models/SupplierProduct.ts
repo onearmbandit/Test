@@ -69,6 +69,42 @@ export default class SupplierProduct extends BaseModel {
   }
 
 
+  //:: If id present then update data otherwise create new data
+  public static async updateSupplierProducts(supplierData, requestData, auth) {
+    let products: any = []
+    requestData.supplierProducts.forEach(element => {
+      var singleData: any = {}
+      if (element.id) {
+        // singleData = { ...element }
+        singleData = {
+          id: element.id,
+          data: { ...element }
+        }
+      }
+      else {
+        // singleData = {
+        //   id: uuidv4(),
+        //   ...element
+        // }
+        singleData = {
+          id: uuidv4(), data: { ...element }
+        }
+      }
+      products.push(singleData)
+    });
+
+    console.log("products", products)
+    supplierData.merge({
+      'updatedBy': `${auth.user?.firstName} ${auth.user?.lastName}`,
+      'updatedAt': DateTime.local()
+    }).save();
+
+    let result = await supplierData.related('supplierProducts')
+    .updateOrCreateMany('id', products);
+    return result;
+  }
+
+
   public static async getAllSupplierProductsForSpecificPeriod(queryParams: ParsedQs) {
     const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20;
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;

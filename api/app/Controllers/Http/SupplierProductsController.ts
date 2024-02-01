@@ -7,6 +7,7 @@ import SupplierProduct from 'App/Models/SupplierProduct';
 import Supplier from 'App/Models/Supplier';
 import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 import { DateTime } from 'luxon'
+import UpdateSupplierProductValidator from 'App/Validators/Supplier/UpdateSupplierProductValidator';
 
 
 export default class SupplierProductsController {
@@ -42,7 +43,7 @@ export default class SupplierProductsController {
     }
   }
 
-  public async store({ request, response ,auth}: HttpContextContract) {
+  public async store({ request, response, auth }: HttpContextContract) {
     try {
       let requestData = request.all()
 
@@ -50,7 +51,7 @@ export default class SupplierProductsController {
 
       var supplierData = await Supplier.getSupplierDetails('id', requestData.supplierId);
 
-      var creationResult = await SupplierProduct.createSupplierProducts(supplierData, requestData,auth)
+      var creationResult = await SupplierProduct.updateSupplierProducts(supplierData, requestData, auth)
 
       return apiResponse(response, true, 201, creationResult,
         Config.get('responsemessage.SUPPLIER_RESPONSE.productCreateSuccess'))
@@ -80,7 +81,35 @@ export default class SupplierProductsController {
   public async show({ }: HttpContextContract) {
   }
 
-  public async update({ }: HttpContextContract) {
+
+  public async update({ request, response, auth }: HttpContextContract) {
+    try {
+      let requestData = request.all()
+
+      await request.validate(UpdateSupplierProductValidator);
+
+      var supplierData = await Supplier.getSupplierDetails('id', requestData.supplierId);
+
+    }
+    catch (error) {
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
   }
 
   public async destroy({ response, request }: HttpContextContract) {
