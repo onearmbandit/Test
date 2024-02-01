@@ -2,6 +2,7 @@
 
 import { authOptions } from "@/lib/utils";
 import axios, { AxiosHeaders } from "axios";
+import { forEach } from "lodash";
 import { getServerSession } from "next-auth";
 
 type Options = {
@@ -49,9 +50,23 @@ export const getFacilities = async () => {
   return fetchApi(`/auth/facility?organization_id=${orgId}`);
 };
 
-export const createFacilityReportingPeriod = (formData: any) => {
+export const addFacilityReportingPeriod = (formData: any) => {
   return fetchApi(`/auth/facility-emission`, {
     method: "POST",
     body: formData,
   });
+};
+
+export const editFacilityReportingPeriod = ({ id, formData }: any) => {
+  console.log(id, formData);
+  return fetchApi(`/auth/facility-emission/${id}`, {
+    method: "PATCH",
+    body: formData,
+  });
+};
+
+export const getReportingPeriods = (facilityId: string) => {
+  return fetchApi(
+    `/auth/facility-emission?per_page=10&page=1&organization_facility_id=${facilityId}`
+  );
 };
