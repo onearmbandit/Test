@@ -16,6 +16,9 @@ export default class UpdateFacilityEmissionValidator {
     reportingPeriodTo: schema.date.optional({ format: 'yyyy-MM' }, [
       rules.after(this.refs.allowedDate)
     ]),
+    scope1TotalEmission: schema.number.optional(),
+    scope2TotalEmission: schema.number.optional(),
+    scope3TotalEmission: schema.number.optional(),
   })
 
 
@@ -24,6 +27,9 @@ export default class UpdateFacilityEmissionValidator {
     'reporting_period_to.required': 'Reporting period to is required.',
     'reporting_period_from.date': 'Invalid date format for reporting period from. Use YYYY-MM.',
     'reporting_period_to.date': 'Invalid date format for reporting period to. Use YYYY-MM.',
-    'reporting_period_to.before':'Reporting period to must be greater than reporting period from.'
+    'reporting_period_to.before': 'Reporting period to must be greater than reporting period from.',
+    'scope_1_total_emission.number': 'Scope 1 total emission must be a number.',
+    'scope_2_total_emission.number': 'Scope 2 total emission must be a number.',
+    'scope_3_total_emission.number': 'Scope 3 total emission must be a number.',
   };
 }
