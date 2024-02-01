@@ -33,7 +33,7 @@ export const AUTH_RESPONSE = {
   wrongUserEmail: "Wrong email, try again",
   wrongUserPassword: "Wrong password, try again",
   authUserDeleteSuccess: "User delete successfully.",
-  notMatchInvitedData:"Entered email is not match with invited email.Please check.",
+  notMatchInvitedData: "Entered email is not match with invited email.Please check.",
 }
 
 
@@ -51,8 +51,8 @@ export const SUPPLIER_RESPONSE = {
   supplyChainReportingPeriodIdExist: "Supply chain reporting period with this ID does not exist.",
   supplierCreateSuccess: "New supplier added successfully.",
   supplierUpdateSuccess: "Supplier details updated successfully.",
-  productNotFount:"Supplier product not found.",
-  productDeleteSuccess:"Supplier product deleted successfully."
+  productNotFount: "Supplier product not found.",
+  productDeleteSuccess: "Supplier product deleted successfully."
 }
 
 export const ORGANIZATION_FACILITY_RESPONSE = {
@@ -64,4 +64,5 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
   updateFacilityEmissionSuccess: "Facility reporting period updated successfully.",
   deleteFacilityEmissionSuccess: "Facility reporting period deleted successfully.",
   FacilityEmissionNotFound: "Facility emission didn't found.",
+  createFacilityProductSuccess: "Facility products created successfully.",
 }
