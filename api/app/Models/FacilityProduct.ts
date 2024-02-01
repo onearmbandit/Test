@@ -45,10 +45,9 @@ export default class FacilityProduct extends BaseModel {
   @belongsTo(() => FacilityEmission, {
     foreignKey: 'facilityEmissionId',
   })
-  public OrganizationFacility: BelongsTo<typeof FacilityEmission>
+  public FacilityEmission: BelongsTo<typeof FacilityEmission>
 
   //::_____Relationships End_____:://
-
 
   public static async createFacilityProducts(emissionData, requestData) {
     let products: any = []
@@ -62,5 +61,13 @@ export default class FacilityProduct extends BaseModel {
 
     let result = await emissionData.related('FacilityProducts').createMany(products);
     return result;
+  }
+
+  public static async getFacilityProductData(field, value) {
+    const facilityProductDetails = await this.query()
+      .where(field, value)
+      .whereNull('deleted_at') // Exclude soft-deleted records
+      .firstOrFail();
+    return facilityProductDetails;
   }
 }

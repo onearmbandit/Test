@@ -4,6 +4,7 @@ import Config from '@ioc:Adonis/Core/Config';
 import AddMultipleFacilityProductsValidator from 'App/Validators/FacilityProduct/AddMultipleFacilityProductsValidator';
 import FacilityProduct from 'App/Models/FacilityProduct';
 import FacilityEmission from 'App/Models/FacilityEmission';
+// import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProduct/UpdateMultipleFacilityProductValidator';
 
 export default class FacilityProductsController {
 
@@ -52,6 +53,25 @@ export default class FacilityProductsController {
   }
 
   public async update({ }: HttpContextContract) {
+    // try {
+
+    //   const facilityProductData = await FacilityProduct.getFacilityProductData('id', request.param('id'))
+
+    //   const payload = await request.validate(UpdateMultipleFacilityProductValidator);
+
+    //   const updateFacilityProducts = await FacilityEmission.updateFacilityEmissionData(FacilityEmissionData, payload)
+
+    //   return apiResponse(response, true, 200, updateFacilityEmission,
+    //     Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.updateFacilityEmissionSuccess'))
+    // } catch (error) {
+
+    //   if (error.status === 422) {
+    //     return apiResponse(response, false, error.status, error.messages, Config.get('responsemessage.COMMON_RESPONSE.validationFailed'))
+    //   }
+    //   else {
+    //     return apiResponse(response, false, 400, {}, error.messages ? error.messages : error.message)
+    //   }
+    // }
   }
 
   public async destroy({ }: HttpContextContract) {
