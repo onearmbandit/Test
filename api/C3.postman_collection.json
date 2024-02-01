@@ -2582,7 +2582,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05",
+									"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
 									"host": [
 										"{{base_url}}"
 									],
@@ -2591,7 +2591,7 @@
 										"v1",
 										"auth",
 										"facility",
-										"7bf894c7-4363-499d-8be7-47e092de4a05"
+										"cb86f994-5c37-4361-b691-3fab40554f92"
 									]
 								}
 							},
@@ -2602,7 +2602,7 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05",
+											"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
 											"host": [
 												"{{base_url}}"
 											],
@@ -2611,7 +2611,7 @@
 												"v1",
 												"auth",
 												"facility",
-												"7bf894c7-4363-499d-8be7-47e092de4a05"
+												"cb86f994-5c37-4361-b691-3fab40554f92"
 											]
 										}
 									},
@@ -2621,7 +2621,7 @@
 									"header": [
 										{
 											"key": "content-length",
-											"value": "380"
+											"value": "2828"
 										},
 										{
 											"key": "content-type",
@@ -2629,7 +2629,7 @@
 										},
 										{
 											"key": "Date",
-											"value": "Thu, 25 Jan 2024 18:44:37 GMT"
+											"value": "Thu, 01 Feb 2024 10:54:24 GMT"
 										},
 										{
 											"key": "Connection",
@@ -2641,7 +2641,7 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"7bf894c7-4363-499d-8be7-47e092de4a05\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"power plant 3\",\n        \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-25T16:50:43.000+05:30\",\n        \"updated_at\": \"2024-01-25T16:50:43.000+05:30\"\n    }\n}"
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"power plant 34\",\n        \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-25T17:32:59.000+05:30\",\n        \"updated_at\": \"2024-01-26T00:50:05.000+05:30\",\n        \"facilityEmission\": [\n            {\n                \"id\": \"4d8b4faf-07a9-4881-a239-0b25fa57f97b\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T16:47:34.000+05:30\",\n                \"updated_at\": \"2024-01-30T16:47:34.000+05:30\",\n                \"FacilityProducts\": []\n            },\n            {\n                \"id\": \"7eca774e-88a0-4c4d-b68b-f241ab0b7b06\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T16:36:31.000+05:30\",\n                \"updated_at\": \"2024-01-30T16:36:31.000+05:30\",\n                \"FacilityProducts\": []\n            },\n            {\n                \"id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": 23456,\n                \"scope2_total_emission\": 34,\n                \"scope3_total_emission\": 2345,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T18:30:52.000+05:30\",\n                \"updated_at\": \"2024-02-01T00:45:39.000+05:30\",\n                \"FacilityProducts\": [\n                    {\n                        \"id\": \"14bb5e20-a6fe-414c-8ed6-44dc8a56628d\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"Jackets\",\n                        \"quantity\": 1000,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T13:42:36.000+05:30\",\n                        \"updated_at\": \"2024-02-01T13:42:36.000+05:30\"\n                    },\n                    {\n                        \"id\": \"961ae39b-a56a-45ea-ac43-a2bf4efae154\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"Shirts\",\n                        \"quantity\": 40,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T13:42:36.000+05:30\",\n                        \"updated_at\": \"2024-02-01T13:42:36.000+05:30\"\n                    }\n                ]\n            },\n            {\n                \"id\": \"f791721c-0c2f-4b6b-a400-10bb8b5d6294\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-02-01\",\n                \"reporting_period_to\": \"2024-04-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": \"2024-01-31T12:49:28.000+05:30\",\n                \"created_at\": \"2024-01-31T11:40:30.000+05:30\",\n                \"updated_at\": \"2024-01-31T12:49:28.000+05:30\",\n                \"FacilityProducts\": []\n            }\n        ]\n    }\n}"
 								}
 							]
 						},
@@ -3579,6 +3579,86 @@
 									],
 									"cookie": [],
 									"body": "{\n    \"status\": true,\n    \"code\": 201,\n    \"message\": \"Facility products created successfully.\",\n    \"data\": [\n        {\n            \"id\": \"961ae39b-a56a-45ea-ac43-a2bf4efae154\",\n            \"name\": \"Shirts\",\n            \"quantity\": \"40\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n            \"created_at\": \"2024-02-01T13:42:36.742+05:30\",\n            \"updated_at\": \"2024-02-01T13:42:36.742+05:30\"\n        },\n        {\n            \"id\": \"14bb5e20-a6fe-414c-8ed6-44dc8a56628d\",\n            \"name\": \"Jackets\",\n            \"quantity\": \"1000\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n            \"created_at\": \"2024-02-01T13:42:36.746+05:30\",\n            \"updated_at\": \"2024-02-01T13:42:36.746+05:30\"\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Get facility all details",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility",
+										"cb86f994-5c37-4361-b691-3fab40554f92"
+									]
+								},
+								"description": "this api will give you all the single facility details like facility, reporting period, emissions and products"
+							},
+							"response": [
+								{
+									"name": "Get facility all details",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility",
+												"cb86f994-5c37-4361-b691-3fab40554f92"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "2828"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 01 Feb 2024 10:54:24 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"power plant 34\",\n        \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-25T17:32:59.000+05:30\",\n        \"updated_at\": \"2024-01-26T00:50:05.000+05:30\",\n        \"facilityEmission\": [\n            {\n                \"id\": \"4d8b4faf-07a9-4881-a239-0b25fa57f97b\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T16:47:34.000+05:30\",\n                \"updated_at\": \"2024-01-30T16:47:34.000+05:30\",\n                \"FacilityProducts\": []\n            },\n            {\n                \"id\": \"7eca774e-88a0-4c4d-b68b-f241ab0b7b06\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T16:36:31.000+05:30\",\n                \"updated_at\": \"2024-01-30T16:36:31.000+05:30\",\n                \"FacilityProducts\": []\n            },\n            {\n                \"id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": 23456,\n                \"scope2_total_emission\": 34,\n                \"scope3_total_emission\": 2345,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T18:30:52.000+05:30\",\n                \"updated_at\": \"2024-02-01T00:45:39.000+05:30\",\n                \"FacilityProducts\": [\n                    {\n                        \"id\": \"14bb5e20-a6fe-414c-8ed6-44dc8a56628d\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"Jackets\",\n                        \"quantity\": 1000,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T13:42:36.000+05:30\",\n                        \"updated_at\": \"2024-02-01T13:42:36.000+05:30\"\n                    },\n                    {\n                        \"id\": \"961ae39b-a56a-45ea-ac43-a2bf4efae154\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"Shirts\",\n                        \"quantity\": 40,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T13:42:36.000+05:30\",\n                        \"updated_at\": \"2024-02-01T13:42:36.000+05:30\"\n                    }\n                ]\n            },\n            {\n                \"id\": \"f791721c-0c2f-4b6b-a400-10bb8b5d6294\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-02-01\",\n                \"reporting_period_to\": \"2024-04-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": \"2024-01-31T12:49:28.000+05:30\",\n                \"created_at\": \"2024-01-31T11:40:30.000+05:30\",\n                \"updated_at\": \"2024-01-31T12:49:28.000+05:30\",\n                \"FacilityProducts\": []\n            }\n        ]\n    }\n}"
 								}
 							]
 						}
