@@ -12,6 +12,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import email from "next-auth/providers/email";
 
 function Page() {
   const { data: session } = useSession();
@@ -74,7 +75,8 @@ function Page() {
         >
           <img
             loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/9c31c226fc0c71362158bd2a54e4d2b381d4680c739e010c167fd3d08f46c8af?apiKey=011554aff43544e6af46800a427fd184&"
+            // src="https://cdn.builder.io/api/v1/image/assets/TEMP/9c31c226fc0c71362158bd2a54e4d2b381d4680c739e010c167fd3d08f46c8af?apiKey=011554aff43544e6af46800a427fd184&"
+            src="/assets/images/C3Logo.svg"
             className="aspect-[0.95] object-contain object-center w-[107px] fill-[linear-gradient(180deg,#39775F_81.94%,#3A9B8C_105.47%)] overflow-hidden self-center max-w-full mt-16 max-md:mt-10"
             alt="Password Reset Logo"
           />

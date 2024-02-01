@@ -54,7 +54,10 @@ const FacilityTable = () => {
         <TableBody>
           {isSuccess &&
             facilities.data.map((item: any) => (
-              <TableRow onClick={() => router.push(`/facilities/${item.name}`)}>
+              <TableRow
+                key={item.id}
+                onClick={() => router.push(`/facilities/${item.name}`)}
+              >
                 <TableCell className="flex justify-between">
                   {item.name}
                   <Button

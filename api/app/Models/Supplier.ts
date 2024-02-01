@@ -29,6 +29,9 @@ export default class Supplier extends BaseModel {
   @column()
   public address: string
 
+  @column()
+  public updatedBy: string
+
   @column.dateTime()
   public deletedAt: DateTime
 
@@ -57,7 +60,7 @@ export default class Supplier extends BaseModel {
 
 
 
-  public static async createSupplier(reportPeriodData, requestData, trx: any = undefined) {
+  public static async createSupplier(reportPeriodData, requestData,auth, trx: any = undefined) {
 
     const supplierData = await reportPeriodData.related('supplier').create({
       'id': requestData.id,
@@ -65,6 +68,7 @@ export default class Supplier extends BaseModel {
       'email': requestData.email,
       'organizationRelationship': requestData.organizationRelationship,
       'address': requestData.address,
+      'updatedBy':`${auth.user?.firstName} ${auth.user?.lastName}`
     }, { client: trx })
     return supplierData
   }
@@ -86,12 +90,13 @@ export default class Supplier extends BaseModel {
 
 
 
-  public static async updateSupplier(supplierData, requestData) {
+  public static async updateSupplier(supplierData, requestData,auth) {
     supplierData.merge({
       'name': requestData.name,
       'email': requestData.email,
       'organizationRelationship': requestData.organizationRelationship,
       'address': requestData.address,
+      'updatedBy':`${auth.user?.firstName} ${auth.user?.lastName}`
     }).save();
 
     return supplierData;

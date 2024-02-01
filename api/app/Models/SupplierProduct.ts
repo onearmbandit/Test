@@ -50,7 +50,7 @@ export default class SupplierProduct extends BaseModel {
 
   //::_____Relationships End_____:://
 
-  public static async createSupplierProducts(supplierData, requestData) {
+  public static async createSupplierProducts(supplierData, requestData, auth) {
     let products: any = []
     requestData.supplierProducts.forEach(element => {
       let singleData = {
@@ -59,6 +59,11 @@ export default class SupplierProduct extends BaseModel {
       }
       products.push(singleData)
     });
+    supplierData.merge({
+      'updatedBy': `${auth.user?.firstName} ${auth.user?.lastName}`,
+      'updatedAt': DateTime.local()
+    }).save();
+
     let result = await supplierData.related('supplierProducts').createMany(products);
     return result;
   }
@@ -80,12 +85,12 @@ export default class SupplierProduct extends BaseModel {
     }
 
     if (sort == 'supplierName') {
-      query = query.preload('supplier', (query) => {
-        query.groupOrderBy('supplier.name', order)
-      })
-      // query = query.whereHas('supplier', (data) => {
-      //   data.orderBy('name', order)
+      // query = query.preload('supplier', (query) => {
+      //   query.groupOrderBy('supplier.name', order)
       // })
+      query = query.whereHas('supplier', async (data) => {
+        data.orderBy('name', order)
+      })
     }
     else {
       query = query.orderBy(sort, order);
@@ -148,9 +153,9 @@ export default class SupplierProduct extends BaseModel {
   public static async getProductDetailsData(field, value) {
 
     const productDetails = await SupplierProduct.query()
-    .where(field, value)
-    .whereNull('deleted_at') // Exclude soft-deleted records
-    .firstOrFail();
+      .where(field, value)
+      .whereNull('deleted_at') // Exclude soft-deleted records
+      .firstOrFail();
     return productDetails;
   }
 

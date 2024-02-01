@@ -4,6 +4,7 @@ import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
+import { boolean } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -140,4 +141,8 @@ export const formatAddress = (address: any) => {
   let formattedAddress = `${streetAddress},\n${floor},\n${cityStateZip},\n${country}`;
 
   return formattedAddress;
+};
+
+export const isSuperAdmin = (rolesArray: any, roleName: string) => {
+  return rolesArray?.some((role: any) => role.name === roleName);
 };

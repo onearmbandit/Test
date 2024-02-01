@@ -8,16 +8,8 @@ import {
 } from "./ui/accordion";
 import Globe from "./icons/Globe";
 import { ChevronDown } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/services/organizations.api";
 
 const ClimateCommitments = ({ climateTargets }: { climateTargets: any }) => {
-  // const { data, isLoading } = useQuery({
-  //   queryKey: ["climate-commitments"],
-  //   queryFn: () => getUser(),
-  // });
-
   return (
     <div className="items-stretch bg-[#14532D0D] w-full flex flex-col rounded-lg">
       <Accordion type="single" collapsible>

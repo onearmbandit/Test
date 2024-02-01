@@ -18,7 +18,7 @@ export default class extends BaseSchema {
       table.timestamp('remember_token_expires').nullable()
       table.string('timezone');
       table.string('login_type').comment("login type will be to know from sso or from email/password so values will be google, microsoft and web");
-      table.string('social_login_token')
+      table.text('social_login_token')   //jwt type token so text type 
       table.string('registration_step').defaultTo(0).comment("registration step will be used to know at which step the user is at registration");
       table.timestamp('deleted_at', { useTz: true }).comment('deleted_at is used to determine if the user is deleted or not: soft delete')
       table.timestamp('created_at', { useTz: true })

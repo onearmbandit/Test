@@ -2,13 +2,77 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAccountStore } from "@/lib/stores/organisation.store";
-import React from "react";
+import { updatePassword } from "@/services/user.api";
+import { useMutation } from "@tanstack/react-query";
+import { useFormik } from "formik";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const ChangePassword = () => {
   const { setMyAccSection } = useAccountStore();
+
+  // const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const validation = z.object({
+    oldPassword: z
+      .string()
+      .min(8, { message: "length" })
+      .regex(/[A-Z]/, { message: "uppercase" })
+      .regex(/[a-z]/, { message: "lowercase" })
+      .regex(/[0-9]/, { message: "number" })
+      .regex(/[^A-Za-z0-9]/, { message: "special" }),
+    newPassword: z
+      .string()
+      .min(8, { message: "length" })
+      .regex(/[A-Z]/, { message: "uppercase" })
+      .regex(/[a-z]/, { message: "lowercase" })
+      .regex(/[0-9]/, { message: "number" })
+      .regex(/[^A-Za-z0-9]/, { message: "special" }),
+    confirmPassword: z
+      .string()
+      .min(8, { message: "length" })
+      .regex(/[A-Z]/, { message: "uppercase" })
+      .regex(/[a-z]/, { message: "lowercase" })
+      .regex(/[0-9]/, { message: "number" })
+      .regex(/[^A-Za-z0-9]/, { message: "special" }),
+  });
+
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationKey: ["user-details"],
+    mutationFn: updatePassword,
+    onSuccess: (data) => {
+      console.log("after update : ", data);
+      toast.success("Password updated successfully", {
+        style: { color: "green" },
+      });
+      setMyAccSection("home");
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const updatePasswordForm = useFormik({
+    initialValues: {
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    validateOnChange: false,
+    validationSchema: toFormikValidationSchema(validation),
+
+    onSubmit: (data: any) => {
+      mutate(data);
+    },
+  });
+
   return (
     <form
-      action={() => setMyAccSection("home")}
+      onSubmit={updatePasswordForm.handleSubmit}
       className="items-start w-full bg-white flex grow rounded-e-lg flex-col p-6 max-md:px-5"
     >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch max-md:max-w-full">
@@ -26,6 +90,8 @@ const ChangePassword = () => {
             Enter your old password
           </label>
           <Input
+            name={"oldPassword"}
+            onChange={updatePasswordForm.handleChange}
             type="password"
             className="py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700"
             placeholder="Old password"
@@ -36,6 +102,8 @@ const ChangePassword = () => {
             Enter your new password
           </label>
           <Input
+            name={"newPassword"}
+            onChange={updatePasswordForm.handleChange}
             type="password"
             className="py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700"
             placeholder="New password"
@@ -47,6 +115,8 @@ const ChangePassword = () => {
           </label>
           <Input
             type="password"
+            name={"confirmPassword"}
+            onChange={updatePasswordForm.handleChange}
             className="py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700"
             placeholder="New password"
           />

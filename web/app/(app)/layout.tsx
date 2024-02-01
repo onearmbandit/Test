@@ -33,11 +33,14 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className + " flex"}>
         <AuthProvider>
-          {session && <Sidebar />}
-          <Provider>{children}</Provider>
+          <Provider>
+            {session && <Sidebar />}
+            {children}
+          </Provider>
         </AuthProvider>
         <Toaster position="bottom-center" />
         <script
+          async
           type="text/javascript"
           src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=places`}
         ></script>

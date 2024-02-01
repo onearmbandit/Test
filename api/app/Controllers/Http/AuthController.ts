@@ -54,6 +54,7 @@ export default class AuthController {
             email: requestData.email,
             password: requestData.password,
             registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
+            loginType: 'web',
           },
           role
         )

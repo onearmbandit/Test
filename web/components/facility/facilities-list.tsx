@@ -25,9 +25,10 @@ const FacilitiesList = ({ facilities }: any) => {
     <Accordion type="single" className="space-y-3" collapsible>
       {facilities.map((item: any, i: number) =>
         editFacility == i + 1 ? (
-          <EditFacility serialNo={i + 1} facility={item} />
+          <EditFacility key={i} serialNo={i + 1} facility={item} />
         ) : (
           <AccordionItem
+            key={i}
             value={item.id}
             className="items-stretch self-stretch border border-slate-200] bg-white flex flex-col text-xs p-6 rounded-lg border-solid max-md:px-5"
           >
