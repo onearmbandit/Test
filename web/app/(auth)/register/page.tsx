@@ -489,6 +489,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
 
   const validation = z.object({
     companyName: z.string(),
+    companyAddress: z.string(),
     // addressLine1: z.string(),
     // addressLine2: z.string(),
     // city: z.string(),
@@ -525,8 +526,6 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
       mutate(data);
     },
   });
-
-  console.log("err", step3Form.values.companyAddress);
 
   return (
     <form
@@ -583,12 +582,17 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             )}
           </div>
 
-          <AutocompleteInput
-            isDisabled={addressDisabled}
-            setAddress={(e: any) => {
-              step3Form.setFieldValue("companyAddress", e);
-            }}
-          />
+          <div>
+            <AutocompleteInput
+              isDisabled={addressDisabled}
+              setAddress={(e: any) => {
+                step3Form.setFieldValue("companyAddress", e);
+              }}
+            />
+            <p className="text-red-500 text-xs">
+              {step3Form.errors?.companyAddress}
+            </p>
+          </div>
         </div>
 
         <div className="justify-between items-center self-stretch flex gap-5 mt-3 pl-1 pr-2.5 py-2.5 max-md:max-w-full max-md:flex-wrap">

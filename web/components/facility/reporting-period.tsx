@@ -191,7 +191,7 @@ const ReportingPeriod = ({
                     variant={"outline"}
                     className="border-2 border-red-500 w-full font-semibold text-red-500 hover:bg-red-50 hover:text-red-600"
                   >
-                    No, don't delete the reporting period
+                    No, don&apos;t delete the reporting period
                   </Button>
                 </DialogClose>
                 <DialogClose>
@@ -226,7 +226,7 @@ const ReportingPeriod = ({
                     variant={"outline"}
                     className="border-2 border-blue-600 w-full font-semibold text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                   >
-                    No, don't update the reporting period
+                    No, don&apos;t update the reporting period
                   </Button>
                 </DialogClose>
                 <DialogClose>

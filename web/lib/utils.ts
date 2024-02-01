@@ -84,47 +84,47 @@ export const authOptions: NextAuthOptions = {
       // console.log("jwt ==> ", { token });
       return { ...token, ...user };
     },
-    async signIn({ user, account, email, credentials, profile }) {
-      // console.log({ user, account, email, credentials, profile });
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
+    // async signIn({ user, account, email, credentials, profile }) {
+    //   // console.log({ user, account, email, credentials, profile });
+    //   const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
 
-      if (account?.provider != "credentials") {
-        try {
-          const res = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              ...user,
-              loginType:
-                account?.provider == "azure-ad"
-                  ? "microsoft"
-                  : account?.provider,
-            }),
-          });
+    //   if (account?.provider != "credentials") {
+    //     try {
+    //       const res = await fetch(url, {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-type": "application/json",
+    //         },
+    //         body: JSON.stringify({
+    //           ...user,
+    //           loginType:
+    //             account?.provider == "azure-ad"
+    //               ? "microsoft"
+    //               : account?.provider,
+    //         }),
+    //       });
 
-          const userD = await res.json();
+    //       const userD = await res.json();
 
-          user.code = userD.code;
-          if (userD.code == 201) {
-            // this.redirect({
-            //   url: "/register?step=2",
-            //   baseUrl: process.env.NEXTAUTH_URL!,
-            // });
-            return true;
-          } else if (userD.code == 200) {
-            return true;
-          }
+    //       user["code"] = userD.code;
+    //       if (userD.code == 201) {
+    //         // this.redirect({
+    //         //   url: "/register?step=2",
+    //         //   baseUrl: process.env.NEXTAUTH_URL!,
+    //         // });
+    //         return true;
+    //       } else if (userD.code == 200) {
+    //         return true;
+    //       }
 
-          return false;
-        } catch (err) {
-          console.log({ err });
-          throw new Error(err);
-        }
-      }
-      return true;
-    },
+    //       return false;
+    //     } catch (err) {
+    //       console.log({ err });
+    //       throw new Error(err);
+    //     }
+    //   }
+    //   return true;
+    // },
     async session({ session, token, trigger, user }) {
       // console.log({ token });
       return { ...session, ...token };
