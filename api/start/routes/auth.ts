@@ -71,7 +71,10 @@ Route.group(() => {
       Route.resource('/suppliers', 'SuppliersController')
 
       Route.resource('/supplier-products', 'SupplierProductsController')
-      Route.post('/remove-multiple-products','SupplierProductsController.deleteMultipleSupplierProducts')
+      Route.post(
+        '/remove-multiple-products',
+        'SupplierProductsController.deleteMultipleSupplierProducts'
+      )
       Route.get(
         '/supplier-period-emission',
         'SupplierProductsController.calculateProductEmissionData'
@@ -89,5 +92,7 @@ Route.group(() => {
     })
       .prefix('/auth')
       .middleware('auth')
+
+    Route.post('/send-test-email', 'DevTestsController.sendTestMail')
   }).prefix('/v1')
 }).prefix('/api')
