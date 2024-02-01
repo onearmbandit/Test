@@ -453,7 +453,7 @@ const Step4 = ({ setStep }: any) => {
   const removeTarget = (index: any) => {
     setTargets((prevTargets) => prevTargets.filter((_, i) => i !== index));
   };
-  console.log("Form Errors : ", setupOrganizationStep4Form.errors);
+  // console.log("Form Errors : ", setupOrganizationStep4Form.errors);
 
   return (
     <form onSubmit={setupOrganizationStep4Form.handleSubmit}>
@@ -467,25 +467,26 @@ const Step4 = ({ setStep }: any) => {
             For example, Science Based Target initiatives or commitments that
             are climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
           </p>
+          {targets.length > 0 && (
+            <div className="items-stretch self-stretch rounded bg-gray-50 flex max-w-[814px] gap-x-4 gap-y-2.5 w-full mx-auto p-2.5 flex-wrap max-h-[128px] overflow-auto">
+              {targets.map((target, index) => (
+                <div
+                  key={index}
+                  className="justify-between items-stretch border border-green-100 bg-green-50 flex gap-0.5 px-2.5 py-2 rounded-md border-solid"
+                >
+                  <div className="text-green-800 text-xs font-medium leading-4 grow whitespace-nowrap">
+                    {target}
+                  </div>
 
-          <div className="items-stretch self-stretch rounded bg-gray-50 flex max-w-[814px] gap-x-4 gap-y-2.5 w-full mx-auto p-2.5 flex-wrap max-h-[128px] overflow-auto">
-            {targets.map((target, index) => (
-              <div
-                key={index}
-                className="justify-between items-stretch border border-green-100 bg-green-50 flex gap-0.5 px-2.5 py-2 rounded-md border-solid"
-              >
-                <div className="text-green-800 text-xs font-medium leading-4 grow whitespace-nowrap">
-                  {target}
+                  <button onClick={() => removeTarget(index)}>
+                    {" "}
+                    <X size={12} className="text-green-800" />{" "}
+                  </button>
+                  {/* Add the cross button */}
                 </div>
-
-                <button onClick={() => removeTarget(index)}>
-                  {" "}
-                  <X size={12} className="text-green-800" />{" "}
-                </button>
-                {/* Add the cross button */}
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           <div>
             <Input

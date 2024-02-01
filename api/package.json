@@ -41,6 +41,7 @@
     "@adonisjs/assembler": "^5.3.1",
     "@types/proxy-addr": "^2.0.3",
     "@types/source-map-support": "^0.5.10",
+    "@types/uuid": "^9.0.8",
     "adonis-preset-ts": "^2.1.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",

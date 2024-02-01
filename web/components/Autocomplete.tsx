@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Input } from "./ui/input";
 
@@ -13,9 +13,11 @@ import { formatAddress } from "@/lib/utils";
 const AutocompleteInput = ({
   setAddress,
   isDisabled = false,
+  address,
 }: {
   setAddress: React.Dispatch<React.SetStateAction<string>> | ((e: any) => void);
   isDisabled?: boolean;
+  address?: string;
 }) => {
   const [val, setVal] = useState("");
 
@@ -87,6 +89,10 @@ const AutocompleteInput = ({
       );
     });
 
+  useEffect(() => {
+    setAddress(val);
+  }, [val]);
+
   return (
     <div className="relative">
       {val == "" ? (
@@ -102,7 +108,10 @@ const AutocompleteInput = ({
           className="min-h-20 h-full resize-none w-full text-sm focus:outline-none disabled:cursor-not-allowed font-light rounded-lg px-2 py-1 bg-gray-50 text-slate-500"
           value={val}
           disabled={isDisabled}
-          onChange={(e) => setVal(e.target.value)}
+          onChange={(e) => {
+            setVal(e.target.value);
+            // setAddress(e.target.value);
+          }}
         />
       )}
 
