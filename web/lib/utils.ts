@@ -30,8 +30,15 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
       tenantId: process.env.AZURE_AD_TENANT_ID,
       profile(profile, tokens) {
-        console.log({ tokens });
-        return { ...profile, id: profile.sub };
+        console.log({ tokens, profile });
+        const name = profile.name.split(" ");
+        return {
+          ...profile,
+          id: profile.sub,
+          firstName: name[0],
+          lastName: name[-1],
+          socialLoginToken: tokens.id_token,
+        };
       },
     }),
     Credentials({
@@ -79,9 +86,8 @@ export const authOptions: NextAuthOptions = {
       // console.log({ user, account, email, credentials, profile });
       const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
       // const token = localStorage.getItem("isInvited");
-      // console.log("isinvited ===> ", token);
+      // console.log("isinvited ===> ", user);
       if (account?.provider != "credentials") {
-        // console.log("tttokenk =====> ", user);
         try {
           const res = await fetch(url, {
             method: "POST",

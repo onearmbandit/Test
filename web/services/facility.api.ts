@@ -48,3 +48,10 @@ export const getFacilities = async () => {
   const orgId = session?.user?.organizations[0].id;
   return fetchApi(`/auth/facility?organization_id=${orgId}`);
 };
+
+export const createFacilityReportingPeriod = (formData: any) => {
+  return fetchApi(`/auth/facility-emission`, {
+    method: "POST",
+    body: formData,
+  });
+};

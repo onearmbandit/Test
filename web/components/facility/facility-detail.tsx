@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown, HelpCircle, Plus } from "lucide-react";
-import React from "react";
+import React, { ReactNode } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
   Accordion,
@@ -12,12 +12,21 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import ProductLines from "./product-lines";
+import { useRouter, useSearchParams } from "next/navigation";
+import ReportingPeriod from "./reporting-period";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 const FacilityDetails = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const newReporting = searchParams.get("new");
+
   return (
     <div className="mt-5">
       <div className="flex justify-end">
         <p
+          onClick={() => router.push("?new=true")}
           role="button"
           className="text-sm font-semibold flex gap-1 items-center text-blue-600 py-1"
         >
@@ -25,14 +34,28 @@ const FacilityDetails = () => {
         </p>
       </div>
 
-      <div className="mt-3">
+      <div className="mt-3 relative">
+        {/* <ReportingPeriod /> */}
         <Tabs>
           <TabsList className="border-b border-gray-200 w-full">
-            {true ? (
-              <TabsTrigger value="acount">Account</TabsTrigger>
-            ) : (
-              <p>ppp</p>
-            )}
+            {/* {!!newReporting && (
+              <TabsTrigger value="new">
+                <a href="?new" className="text-blue-600">
+                  Add Reporting Period
+                </a>
+              </TabsTrigger>
+            )} */}
+            <TabsTrigger value="acount">
+              <Popover>
+                <PopoverTrigger>Asas</PopoverTrigger>
+                <PopoverContent
+                  align="start"
+                  className="w-full left-0 p-0 -ml-4"
+                >
+                  <ReportingPeriod />
+                </PopoverContent>
+              </Popover>
+            </TabsTrigger>
             <TabsTrigger value="vv">Accountvv</TabsTrigger>
           </TabsList>
           <TabsContent value="acount">
