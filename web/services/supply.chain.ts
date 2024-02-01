@@ -54,3 +54,17 @@ export const importFile = (data: any) => {
     body: formbody,
   });
 };
+export const addReportingPeriod = (data: any) => {
+  const formbody = data;
+  console.log(data, 'formData');
+
+  return fetchApi('auth/supplier-period', {
+    method: 'POST',
+    body: formbody,
+  });
+};
+export const downloadCsvTemplate = () => {
+  return fetchApi('/download-supplier-csv', {
+    method: 'GET',
+  });
+};

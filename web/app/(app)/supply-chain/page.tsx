@@ -1,10 +1,18 @@
 'use client';
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import moment from 'moment';
+// import { format } from '@/date-fns';
+
 import { Button } from '@/components/ui/button';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { importFile } from '@/services/supply.chain';
+
+import {
+  addReportingPeriod,
+  downloadCsvTemplate,
+  importFile,
+} from '@/services/supply.chain';
 import {
   Dialog,
   DialogContent,
@@ -15,9 +23,45 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { useSession } from 'next-auth/react';
+import TabsWithDynamicPopover from '@/components/popups/supply-chain/reporting-period-popover';
+import format from 'date-fns/format';
+
 const page = () => {
   const [file, setFile] = useState('');
   const [fileName, setFileName] = useState('');
+  const [activeTab, setActiveTab] = useState(0);
+  const [showPopover, setShowPopover] = useState(true);
+  const [tabsData, setTabsData] = useState([
+    { id: 0, title: 'Add Reporting Period', data: { value: 'sad' } },
+    { id: 1, title: 'Add Reporting Period', content: {} },
+    { id: 2, title: 'Add Reporting Period', content: {} },
+  ]);
+
+  const session = useSession();
+
+  const handleTabClick = (tabId: any) => {
+    setActiveTab(tabId);
+    // setShowPopover(!showPopover);
+  };
+
+  const handleAddTab = () => {
+    const newTabId = tabsData.length;
+    const newTab = {
+      id: newTabId,
+      title: `Tab ${newTabId + 1}`,
+      content: `Content for Tab ${newTabId + 1}`,
+    };
+
+    setTabsData([...tabsData, newTab]);
+    setActiveTab(newTabId);
+  };
+
   function handleChange(event: any) {
     setFile(event.target.files[0]);
     setFileName(event.target.files[0].name);
@@ -26,7 +70,6 @@ const page = () => {
     event.preventDefault();
     const formData = new FormData();
     formData.append('file', file);
-    //importFile(formData);
     mutate(formData);
   }
   const { mutate, isPending } = useMutation({
@@ -36,7 +79,40 @@ const page = () => {
       toast.error(err.message, { style: { color: 'red' } });
     },
   });
-
+  const DownloadTemplate = () => {
+    downloadCsvMUt.mutate();
+    toast.success('csv downloaded Successfully.');
+  };
+  const downloadCsvMUt = useMutation({
+    mutationFn: downloadCsvTemplate,
+    onSuccess: (data) => {
+      console.log(data, 'data dsfasdf');
+      toast.success('csv downloaded Successfully.', {
+        style: { color: 'green' },
+      });
+    },
+    onError: (err) => {
+      alert(err);
+      toast.error(err.message, { style: { color: 'red' } });
+    },
+  });
+  const addReportMut = useMutation({
+    mutationFn: addReportingPeriod,
+    onSuccess: (data) => {
+      toast.success('Reporting period Added.', { style: { color: 'green' } });
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: 'red' } });
+    },
+  });
+  console.log(session.data, 'session data');
+  const handleReportingDatesData = (data: any) => {
+    addReportMut.mutate({
+      id: '',
+      reportingPeriodFrom: format(data.startDate, 'yyyy-MM'),
+      reportingPeriodTo: format(data.endDate, 'yyyy-MM'),
+    });
+  };
   return (
     <div className='w-full shadow bg-gray-50 flex flex-col pl-6 pr-6 pt-5 pb-12 max-md:px-5'>
       <header className='justify-between items-center self-stretch flex gap-5 py-2 max-md:flex-wrap max-md:px-5'>
@@ -57,17 +133,40 @@ const page = () => {
             className='aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto'
             alt='Reporting Period Image'
           />
-          <header className='text-blue-600 text-sm font-semibold leading-5 self-stretch grow whitespace-nowrap'>
+          <header
+            className='text-blue-600 text-sm font-semibold leading-5 self-stretch grow whitespace-nowrap'
+            onClick={handleAddTab}
+          >
             Add Reporting Period
           </header>
         </div>
       </div>
-      <Tabs defaultValue='account' className='w-full'>
+
+      <Tabs className='w-full' defaultValue='tab1'>
         <TabsList>
-          <TabsTrigger value='account'> Add Reporting Period</TabsTrigger>
-          <TabsTrigger value='password'>Add Reporting Period</TabsTrigger>
+          <TabsTrigger value='tab1'>
+            <Popover defaultOpen={true}>
+              <PopoverTrigger> Add Reporting Period</PopoverTrigger>
+              <PopoverContent align='start' className='w-full left-0 p-0 -ml-4'>
+                <TabsWithDynamicPopover
+                  sendDatatoTabs={handleReportingDatesData}
+                />
+              </PopoverContent>
+            </Popover>
+          </TabsTrigger>
+          <TabsTrigger value='tab2'>
+            <Popover>
+              <PopoverTrigger> Add Reporting Period</PopoverTrigger>
+              <PopoverContent align='start' className='w-full left-0 p-0 -ml-4'>
+                <TabsWithDynamicPopover
+                  sendDatatoTabs={handleReportingDatesData}
+                />
+              </PopoverContent>
+            </Popover>
+          </TabsTrigger>
         </TabsList>
-        <TabsContent value='account'>
+
+        <TabsContent value='tab1' className='relative'>
           <div className='justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5'>
             <img
               loading='lazy'
@@ -153,9 +252,6 @@ const page = () => {
                           </div>
                         )}
 
-                        <div className='text-blue-600 text-sm leading-5 underline self-stretch mt-4 max-md:max-w-full'>
-                          Download our CSV Template
-                        </div>
                         <Button
                           type='submit'
                           disabled={!fileName}
@@ -165,13 +261,21 @@ const page = () => {
                         </Button>
                       </div>
                     </form>
+                    <button
+                      onClick={DownloadTemplate}
+                      className='text-blue-600 absolute bottom-[80px] text-sm leading-5 underline self-stretch mt-4 max-md:max-w-full'
+                    >
+                      Download our CSV Template
+                    </button>
                   </div>
                 </DialogDescription>
               </DialogContent>
             </Dialog>
           </div>
         </TabsContent>
-        <TabsContent value='password'>Change your password here.</TabsContent>
+        <TabsContent value='tab2' className='relative'>
+          sdfasdfs dafdsf
+        </TabsContent>
       </Tabs>
       <div className='items-stretch self-stretch flex flex-col pb-12'>
         <div className='items-stretch rounded-3xl bg-gray-100 flex justify-between gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
