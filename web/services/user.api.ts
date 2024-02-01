@@ -42,8 +42,8 @@ const fetchApi = async (
       res.data;
     })
     .catch((err) => {
-      console.log(err);
-      throw new Error(err);
+      // console.log(err.response.data.errors[0].message);
+      throw new Error(err.response.data.errors[0].message);
     });
 
   return response;

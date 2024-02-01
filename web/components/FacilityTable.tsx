@@ -32,16 +32,13 @@ const FacilityTable = () => {
       <div className="bg-gray-100 px-4 py-3 flex justify-between items-center rounded-t-lg">
         <h3 className="text-slate-800 text-xs font-bold">Facilities</h3>
         <Link
-          href={"/"}
+          href={"/facilities?add-new=true"}
           className="justify-between items-center text-black rounded border border-gray-200 hover:bg-black/10 bg-white flex gap-1.5 px-3.5 py-1.5 border-solid"
         >
           <Plus size={16} className="" />
-          <Link
-            href={"/facilities?add-new=true"}
-            className="text-gray-800 text-sm font-semibold leading-5 grow whitespace-nowrap"
-          >
+          <p className="text-gray-800 text-sm font-semibold leading-5 grow whitespace-nowrap">
             Add Facility
-          </Link>
+          </p>
         </Link>
       </div>
       <Table>
@@ -59,7 +56,9 @@ const FacilityTable = () => {
             facilities.data.map((item: any) => (
               <TableRow
                 key={item.id}
-                onClick={() => router.push(`/facilities/${item.name}`)}
+                onClick={() =>
+                  router.push(`/facilities/${item.name}?facilityId=${item.id}`)
+                }
               >
                 <TableCell className="flex justify-between">
                   {item.name}

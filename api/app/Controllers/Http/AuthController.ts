@@ -19,6 +19,7 @@ import Role from 'App/Models/Role'
 import Organization from 'App/Models/Organization'
 import SocialSignupOrLoginValidator from 'App/Validators/Auth/SocialSignupOrLoginValidator'
 import OrganizationUser from 'App/Models/OrganizationUser'
+import CreateOrganizationValidator from 'App/Validators/Organization/CreateOrganizationValidator'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
@@ -173,6 +174,8 @@ export default class AuthController {
   public async createOrganization({ request, response }: HttpContextContract) {
     try {
       let requestData = request.all()
+
+      await request.validate(CreateOrganizationValidator)
 
       const userData = await User.getUserDetails('slug', requestData.userSlug)
       userData.registrationStep = requestData.registrationStep ? requestData.registrationStep : 3

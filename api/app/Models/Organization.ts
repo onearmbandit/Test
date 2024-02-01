@@ -9,10 +9,10 @@ import { ParsedQs } from 'qs'
 
 export default class Organization extends BaseModel {
   @column({ isPrimary: true })
-  public id: number
+  public id: string
 
   @column()
-  public user_id: number
+  public user_id: string
 
   @column()
   public companyName: string

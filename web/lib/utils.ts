@@ -31,8 +31,15 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
       tenantId: process.env.AZURE_AD_TENANT_ID,
       profile(profile, tokens) {
-        console.log({ tokens });
-        return { ...profile, id: profile.sub };
+        // console.log({ tokens, profile });
+        const name = profile.name.split(" ");
+        return {
+          ...profile,
+          id: profile.sub,
+          firstName: name[0],
+          lastName: name[-1],
+          socialLoginToken: tokens.id_token,
+        };
       },
     }),
     Credentials({
@@ -58,12 +65,12 @@ export const authOptions: NextAuthOptions = {
 
           const res = await response.json();
 
-          // console.log("ress => ", res);
           if (!res?.status) {
             console.log("err", res.message);
             throw new Error(res.message);
           }
 
+          // console.log("ress => ", res);
           return res.data;
         } catch (error: any) {
           console.log(error);
@@ -74,15 +81,14 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, session, account }) {
+      // console.log("jwt ==> ", { token });
       return { ...token, ...user };
     },
     // async signIn({ user, account, email, credentials, profile }) {
     //   // console.log({ user, account, email, credentials, profile });
     //   const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
-    //   const token = localStorage.getItem("isInvited");
-    //   console.log("isinvited ===> ", token);
+
     //   if (account?.provider != "credentials") {
-    //     // console.log("tttokenk =====> ", user);
     //     try {
     //       const res = await fetch(url, {
     //         method: "POST",
@@ -99,16 +105,28 @@ export const authOptions: NextAuthOptions = {
     //       });
 
     //       const userD = await res.json();
-    //       console.log(userD);
+
+    //       user["code"] = userD.code;
+    //       if (userD.code == 201) {
+    //         // this.redirect({
+    //         //   url: "/register?step=2",
+    //         //   baseUrl: process.env.NEXTAUTH_URL!,
+    //         // });
+    //         return true;
+    //       } else if (userD.code == 200) {
+    //         return true;
+    //       }
+
     //       return false;
     //     } catch (err) {
     //       console.log({ err });
-    //       throw new Error(err.errors[0].message);
+    //       throw new Error(err);
     //     }
     //   }
     //   return true;
     // },
     async session({ session, token, trigger, user }) {
+      // console.log({ token });
       return { ...session, ...token };
     },
   },
