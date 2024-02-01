@@ -18,13 +18,13 @@ export default class FacilityEmission extends BaseModel {
   @column.date()
   public reportingPeriodTo: DateTime
 
-  @column()
+  @column({ columnName: 'scope_1_total_emission' })
   public scope1TotalEmission: number
 
-  @column()
+  @column({ columnName: 'scope_2_total_emission' })
   public scope2TotalEmission: number
 
-  @column()
+  @column({ columnName: 'scope_3_total_emission' })
   public scope3TotalEmission: number
 
   @column.dateTime({ columnName: 'deleted_at' })
@@ -81,19 +81,33 @@ export default class FacilityEmission extends BaseModel {
   public static async getFacilityEmissionData(field, value) {
 
     const facilityDetails = await this.query()
-    .where(field, value)
-    .whereNull('deleted_at') // Exclude soft-deleted records
-    .firstOrFail();
+      .where(field, value)
+      .whereNull('deleted_at') // Exclude soft-deleted records
+      .firstOrFail();
     return facilityDetails;
   }
 
   public static async updateFacilityEmissionData(FacilityEmissionData, requestData) {
     const facilityEmission = await this.findOrFail(FacilityEmissionData.id);
 
-    // Update the reporting period fields based on the requestData
-    facilityEmission.reportingPeriodFrom = DateTime.fromJSDate(new Date(requestData.reportingPeriodFrom));
-    facilityEmission.reportingPeriodTo = DateTime.fromJSDate(new Date(requestData.reportingPeriodTo));
+    // Update the reporting period fields based on the requestData if they exist
+    if (requestData.reportingPeriodFrom) {
+      facilityEmission.reportingPeriodFrom = DateTime.fromJSDate(new Date(requestData.reportingPeriodFrom));
+    }
+    if (requestData.reportingPeriodTo) {
+      facilityEmission.reportingPeriodTo = DateTime.fromJSDate(new Date(requestData.reportingPeriodTo));
+    }
 
+    // Add three more fields for update if they exist in the requestData
+    if (requestData.scope1TotalEmission) {
+      facilityEmission.scope1TotalEmission = requestData.scope1TotalEmission;
+    }
+    if (requestData.scope2TotalEmission) {
+      facilityEmission.scope2TotalEmission = requestData.scope2TotalEmission;
+    }
+    if (requestData.scope3TotalEmission) {
+      facilityEmission.scope3TotalEmission = requestData.scope3TotalEmission;
+    }
     // Save the changes to the database
     await facilityEmission.save();
 
