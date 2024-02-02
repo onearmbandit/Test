@@ -57,12 +57,10 @@ Route.group(() => {
       ])
 
       Route.resource('/facility-product', 'FacilityProductsController').only([
-        'index',
         'store',
-        'show',
-        'update',
-        'destroy',
       ])
+      Route.post('/update-facility-products', 'FacilityProductsController.updateFacilityMultipleProducts')
+      Route.get('/equality-emission-calculation', 'FacilityProductsController.calculateEqualityCarbonEmission')
 
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier')
@@ -72,7 +70,7 @@ Route.group(() => {
       Route.resource('/suppliers', 'SuppliersController')
 
       Route.resource('/supplier-products', 'SupplierProductsController')
-      Route.post('/remove-multiple-products','SupplierProductsController.deleteMultipleSupplierProducts')
+      Route.post('/remove-multiple-products', 'SupplierProductsController.deleteMultipleSupplierProducts')
       Route.get(
         '/supplier-period-emission',
         'SupplierProductsController.calculateProductEmissionData'
