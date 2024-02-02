@@ -39,7 +39,7 @@ const fetchApi = async (
   })
     .then((res) => {
       console.log("res", res);
-      res.data;
+      return res.data;
     })
     .catch((err) => {
       // console.log(err.response.data.errors[0].message);
@@ -60,7 +60,7 @@ export const updatePassword = ({ formBody }: { formBody: any }) => {
   } as Options);
 };
 
-export const getRoleByName = ({ roleName }: { roleName: string }) => {
+export const getRoleByName = (roleName: string) => {
   return fetchApi(`/auth/roles/${roleName}`);
 };
 

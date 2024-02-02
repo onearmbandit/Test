@@ -378,7 +378,7 @@ export default class SuppliersController {
   }
 
   //export supplier data using csv file
-  public async exportSupplierData({ request, response, auth }: HttpContextContract) {
+  public async exportSupplierData({ request, response }: HttpContextContract) {
     try {
       // Fetch data from the database
       const queryParams = request.qs()

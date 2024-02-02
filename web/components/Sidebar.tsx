@@ -181,11 +181,12 @@ const Sidebar = () => {
           </h2>
         </Link>
         {superAdmin && (
-          <Link
-            href={"/invite-organization"}
-            className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
-          >
-            {/* <svg
+          <>
+            <Link
+              href={"/invite-organization"}
+              className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
+            >
+              {/* <svg
               width="16"
               height="16"
               viewBox="0 0 16 16"
@@ -200,24 +201,26 @@ const Sidebar = () => {
                 />
               </g>
             </svg> */}
-            <MailPlus />
+              <MailPlus />
 
-            <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
-              Invite Organization (For test)
-            </h2>
-          </Link>
+              <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
+                Invite Organization (For test)
+              </h2>
+            </Link>
+            <span
+              role="button"
+              onClick={() =>
+                mutate({
+                  organizationId: session.data?.user?.organizations[0]?.id,
+                  supplyChainReportingPeriodId:
+                    "e9e5112f-cd18-45ad-bf8e-fefb9dc63a76",
+                })
+              }
+            >
+              Export Supplier data
+            </span>
+          </>
         )}
-        <button
-          onClick={() =>
-            mutate({
-              organizationId: session.data?.user?.organizations[0]?.id,
-              supplyChainReportingPeriodId:
-                "e9e5112f-cd18-45ad-bf8e-fefb9dc63a76",
-            })
-          }
-        >
-          Export Supplier data
-        </button>
       </nav>
       <footer>
         <Dialog>

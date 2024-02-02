@@ -3,7 +3,6 @@ import { BaseModel, column, belongsTo, BelongsTo, hasMany, HasMany } from '@ioc:
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod'
 import SupplierProduct from './SupplierProduct'
 import { ParsedQs } from 'qs'
-import Organization from './Organization'
 
 export default class Supplier extends BaseModel {
   @column({ isPrimary: true })

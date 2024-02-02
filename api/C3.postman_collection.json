@@ -263,6 +263,39 @@
 						"url": "{{base_url}}/api/v1/social-login"
 					},
 					"response": []
+				},
+				{
+					"name": "get role by name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/roles/:name",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"roles",
+								":name"
+							],
+							"variable": [
+								{
+									"key": "name",
+									"value": "sub-admin"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1879,7 +1912,7 @@
 								"auth": {
 									"type": "bearer",
 									"bearer": {
-										"token": "{{access_token}}"
+										"token": "MTA.Ej3SNgsAbrYQhipnM4CLOAYC_V9JzzmoSvFO9t_5dw3yajCd7kQKUuYKFFip"
 									}
 								},
 								"method": "GET",

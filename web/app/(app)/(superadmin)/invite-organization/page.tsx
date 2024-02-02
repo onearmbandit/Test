@@ -36,9 +36,9 @@ const InviteOrganization = () => {
 
   const roleQ = useQuery({
     queryKey: ["role"],
-    queryFn: () => getRoleByName({ roleName: "admin" }),
+    queryFn: () => getRoleByName("admin"),
   });
-  const role = roleQ.isSuccess ? roleQ.data : null;
+  const role: any = roleQ.isSuccess ? roleQ.data : null;
 
   console.log(role);
 
@@ -75,6 +75,7 @@ const InviteOrganization = () => {
     validationSchema: toFormikValidationSchema(validation),
 
     onSubmit: (data: any) => {
+      console.log("role : ", role);
       const formData = {
         ...data,
         role_id: role?.data?.id,
@@ -84,8 +85,8 @@ const InviteOrganization = () => {
       mutate(formData);
     },
   });
-  console.log();
 
+  console.log("role baher: ", role);
   return (
     <div className="min-h-screen w-full grid place-items-center bg-gray-50 absolute inset-0">
       <img src="/assets/images/Logo.svg" className="p-4" />
