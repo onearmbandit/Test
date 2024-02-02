@@ -1,12 +1,11 @@
 'use server';
-
 import axios, {
   AxiosHeaders,
   AxiosRequestConfig,
   RawAxiosRequestHeaders,
 } from 'axios';
-// import { authOptions } from '@/lib/utils';
-// import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/utils';
+import { getServerSession } from 'next-auth';
 type CreateAPIMethod = <TInput extends Record<string, string>, TOutput>(opts: {
   url: string;
   method: 'GET' | 'POST' | 'PATCH' | 'PUT';
@@ -26,8 +25,9 @@ const fetchApi = async (
 ) => {
   const { headers, method, body } = options;
   // const session = await getServerSession(authOptions);
-  const token =
-    'OQ.aGk2BbPD6TM1Qd60sG5IZUBJIxV1-M8KxnYOxqcpss0S1a9gfROPcjrnWGZT';
+  const session = await getServerSession(authOptions);
+  const token = session?.token.token;
+  console.log(token, 'token');
   const authHeader = {
     Authorization: `bearer ${token}`,
   };
@@ -39,7 +39,7 @@ const fetchApi = async (
   })
     .then((res) => res.data)
     .catch((err) => {
-      // console.log(err.response.data);
+      console.log(err.response.data, 'error');
       throw new Error(err.response.data.message);
     });
 
@@ -56,11 +56,27 @@ export const importFile = (data: any) => {
 };
 export const addReportingPeriod = (data: any) => {
   const formbody = data;
-  console.log(data, 'formData');
-
-  return fetchApi('auth/supplier-period', {
+  return fetchApi('/auth/supplier-period', {
     method: 'POST',
     body: formbody,
+  });
+};
+export const getAllReportingPeriods = (organizationId: string) => {
+  console.log(organizationId, 'organizationId');
+  return fetchApi(
+    `/auth/supplier-period?page=1&per_page=10&organizationId=${organizationId}`
+  );
+};
+export const editReportingPerid = ({ id, formData }: any) => {
+  const formbody = formData;
+  return fetchApi(`/auth/supplier-period/${id}`, {
+    method: 'PATCH',
+    body: formbody,
+  });
+};
+export const deleteReportingPerid = (id: string) => {
+  return fetchApi(`/auth/supplier-period/${id}`, {
+    method: 'DELETE',
   });
 };
 export const downloadCsvTemplate = () => {
