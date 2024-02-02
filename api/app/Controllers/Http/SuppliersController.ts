@@ -322,7 +322,7 @@ export default class SuppliersController {
 
   //:: Compare two CSVs for field format
   private async compareSupplierCSVFileWithTemplate(worksheet) {
-    const filePath = Application.publicPath('downloads/Supplier CSV Template.csv');
+    const filePath = Application.publicPath('downloads/Supplier GHG Emissions CSV Template.csv');
     const csvFilePath = filePath ? filePath : '';
     const workbook = new ExcelJS.Workbook();
     await workbook.csv.readFile(csvFilePath);

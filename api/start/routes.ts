@@ -24,3 +24,6 @@ import './routes/auth'
 Route.get('/', async () => {
   return { hello: 'world' }
 })
+
+//:: Download any file 
+Route.get('/download/:fileName', 'FilesController.download')

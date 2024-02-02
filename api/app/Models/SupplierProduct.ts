@@ -124,7 +124,9 @@ export default class SupplierProduct extends BaseModel {
     const sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at';
     const supplyChainReportingPeriodId = queryParams.supplyChainReportingPeriodId ? queryParams.supplyChainReportingPeriodId.toString() : '';
 
-    let query: any = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+
+
+    let query: any = this.query().whereNull('supplier_products.deleted_at') // Exclude soft-deleted records;
 
     if (supplyChainReportingPeriodId) {
       query = query.whereHas('supplier', (data) => {
@@ -133,12 +135,10 @@ export default class SupplierProduct extends BaseModel {
     }
 
     if (sort == 'supplierName') {
-      // query = query.preload('supplier', (query) => {
-      //   query.groupOrderBy('supplier.name', order)
-      // })
-      query = query.whereHas('supplier', async (data) => {
-        data.orderBy('name', order)
-      })
+      query = query
+      .join('suppliers', 'supplier_products.supplier_id', '=','suppliers.id')
+      .orderBy('suppliers.name', order)
+      .select('supplier_products.*')
     }
     else {
       query = query.orderBy(sort, order);
@@ -146,8 +146,8 @@ export default class SupplierProduct extends BaseModel {
 
     const allSupplierProductsData = await query
       .preload('supplier')
-      .paginate(page, perPage);
-
+      .paginate(page, perPage)
+      
     return allSupplierProductsData
   }
 
@@ -175,7 +175,7 @@ export default class SupplierProduct extends BaseModel {
     const sort = queryParams.sort ? queryParams.sort.toString() : 'type';
 
     if (supplierId) {
-      query.where('supplierId', supplierId).orderBy(sort,order)
+      query.where('supplierId', supplierId).orderBy(sort, order)
     }
 
     const allProductTypesOfSupplier = await query
@@ -193,7 +193,7 @@ export default class SupplierProduct extends BaseModel {
     const sort = queryParams.sort ? queryParams.sort.toString() : 'name';
 
     if (supplierId) {
-      query.where('supplierId', supplierId).orderBy(sort,order)
+      query.where('supplierId', supplierId).orderBy(sort, order)
     }
 
     const allProductNamesOfSupplier = await query
