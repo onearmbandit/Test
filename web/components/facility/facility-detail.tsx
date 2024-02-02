@@ -72,7 +72,10 @@ const FacilityDetails = () => {
           <Loader2 className="text-blue-500 animate-spin" />
         )}
         {periodsQ.isSuccess && (
-          <Tabs value={showNew ? "new" : currentTab!}>
+          <Tabs
+            value={showNew ? "new" : currentTab!}
+            onValueChange={setCurrentTab}
+          >
             <TabsList className="border-b border-gray-200 w-full">
               {showNew && (
                 <TabsTrigger value="new">

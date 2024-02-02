@@ -60,15 +60,12 @@ export const getRoleByName = ({ roleName }: { roleName: string }) => {
   return fetchApi(`/auth/roles/${roleName}`);
 };
 
-// export const setupOrganizationStep4 = ({
-//   id,
-//   formdata,
-// }: {
-//   id: string;
-//   formdata: any;
-// }) => {
-//   return fetchApi(`/auth/organization/${id}`, {
-//     method: "PATCH",
-//     body: formdata,
-//   } as Options);
-// };
+export const deleteUser = ({ obj }: { obj: any }) => {
+  const formData = new FormData();
+  formData.append("email", obj.email);
+  formData.append("password", obj.password);
+  return fetchApi(`/auth/user`, {
+    method: "POST",
+    body: formData,
+  } as Options);
+};
