@@ -29,9 +29,11 @@ export default Env.rules({
   MYSQL_PASSWORD: Env.schema.string.optional(),
   MYSQL_DB_NAME: Env.schema.string(),
 
-
   SMTP_HOST: Env.schema.string({ format: 'host' }),
   SMTP_PORT: Env.schema.number(),
   SMTP_USERNAME: Env.schema.string(),
   SMTP_PASSWORD: Env.schema.string(),
+  MAIL_ENCRYPTION: Env.schema.string(),
+  MAIL_FROM_ADDRESS: Env.schema.string(),
+  MAIL_FROM_NAME: Env.schema.string(),
 })

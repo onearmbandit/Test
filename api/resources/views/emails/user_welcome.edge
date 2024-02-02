@@ -1,19 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
-  <div style="border:1">
-  <h1>Welcome to C3insets.ai!</h1>
-  <h4> Hi, {{ user.firstName }} {{user.lastName }} </h4>
-    <p> We're thrilled to have you with us! If you haven’t already, sign into the platform to:</p>
-    <ul>
-        <li> Create your organization profile </li>
-        <li> Add your facilities and scope emissions </li>
-        <li> Invite your suppliers to the platform </li>
-    </ul>
-    <p>Cheers</p> 
-    <p>The C3 Team </p>
-
-    <a href={{url}}><button>Take me to C3</button></a>
-  </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome Email</title>
+</head>
+<body style="background-color: #f1f5f9; margin: 0; padding: 0; height: 100vh; -webkit-text-size-adjust: none; -ms-text-size-adjust: none;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; height: 100vh; padding: 48px 8px;">
+    <tr>
+      <td align="center">
+        <table width="640px" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td align="left">
+              <img src="https://drive.google.com/thumbnail?id=1TEiEPlbQ2UVlsHsCOP0GZMN_QxIF-GJK&sz=w300-h300" width="200" style="mix-blend-mode: multiply;margin-bottom: 18px; display: block;" alt="Logo" />
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #ffffff; padding: 32px; border-radius: 0.375rem;" align="center">
+              <h1 style="color: #374151; font-size: 24px; font-weight: 600; margin: 0 0 16px 0;text-align: left;">
+                Welcome to Terralab.ai!
+              </h1>
+              <p style="color: #374151; font-size: 16px; margin: 0 0 16px 0; text-align: left;">
+                Hi {{ user.firstName }} {{user.lastName }},
+                <br /><br />
+                We&apos;re thrilled to have you with us! If you haven&apos;t already, sign into the platform to:
+                </p>
+                <ul style="text-align: left;">
+                  <li> Create your organization profile </li>
+                  <li>  Add your facilities and scope emissions </li>
+                  <li> Invite your suppliers to the platform </li>
+              </ul>
+                <p style="text-align: left;">
+                <br /><br />
+                Cheers,
+                <br /><br />
+                The Terralab Team
+              </p>
+              <!-- Replace # with the actual link -->
+              <a href="{{ url }}" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 0.375rem; font-size: 16px; font-weight: 600; text-align: center; text-decoration: none; display: inline-block; margin-top: 16px;">
+                Take me to Terralab
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #f9fafb; padding: 32px; text-align: left;">
+              <p style="color: #6b7280; font-size: 16px; margin: 0;">
+                Questions? Email us at <a href="mailto:support@terralab.ai" style="color: #2563eb; text-decoration: none;">support@terralab.ai</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
+
