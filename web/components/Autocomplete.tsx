@@ -19,7 +19,7 @@ const AutocompleteInput = ({
   isDisabled?: boolean;
   address?: string;
 }) => {
-  const [val, setVal] = useState("");
+  const [val, setVal] = useState<string>(address || "");
 
   const {
     ready,

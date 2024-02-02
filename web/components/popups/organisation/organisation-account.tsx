@@ -1,7 +1,9 @@
+import { formatAddress } from "@/lib/utils";
 import { getUser } from "@/services/user.api";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import React from "react";
+import parse from "html-react-parser";
 
 const OrganisationAccount = ({
   section,
@@ -46,7 +48,19 @@ const OrganisationAccount = ({
       </div>
       <div className="justify-between items-stretch content-center gap-y-2.5 self-stretch flex-wrap flex gap-5 mt-2.5 max-md:max-w-full">
         <div className="text-slate-700 text-xs font-light leading-4">
-          {user?.data?.organizations[0]?.address_line_1}
+          {/* {user?.data?.organizations[0]?.company_address
+            ? (user?.data?.organizations[0]?.company_address)
+            : "-"}
+             */}
+
+          {user?.data?.organizations[0]?.company_address
+            ? parse(
+                user?.data?.organizations[0]?.company_address.replaceAll(
+                  /\n/g,
+                  "<br>"
+                )
+              )
+            : "-"}
         </div>
         <p
           onClick={() => setSection("address")}

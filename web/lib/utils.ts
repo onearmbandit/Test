@@ -141,10 +141,10 @@ export const authOptions: NextAuthOptions = {
 
 export const formatAddress = (address: any) => {
   // Split the address into components
-  let addressComponents = address.split(",");
+  let addressComponents = address?.split(",");
 
   // Extract components
-  let streetAddress = addressComponents[0].trim();
+  let streetAddress = addressComponents[0]?.trim();
   let floor = addressComponents[1]?.trim();
   let cityStateZip = addressComponents[2]?.trim();
   let country = addressComponents[addressComponents.length - 1].trim();

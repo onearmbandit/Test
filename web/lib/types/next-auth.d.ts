@@ -49,12 +49,7 @@ declare module "next-auth" {
         company_size: string;
         naics_code: string;
         climate_targets: string[];
-        address_line_1: string;
-        address_line_2: string;
-        city: string;
-        state: string;
-        country: string | null;
-        zipcode: string | null;
+        company_address: string;
         deleted_at: string | null;
         created_at: string;
         updated_at: string;
