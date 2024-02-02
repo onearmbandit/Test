@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { getServerSession } from "next-auth/next";
 import React from "react";
 
-const Page = async () => {
+const Page = async ({ params }: { params: any }) => {
   const session = await getServerSession(authOptions);
 
   return (
@@ -22,14 +22,9 @@ const Page = async () => {
             {session?.user?.organizations[0].company_name}&apos;s Facilities
           </a>{" "}
           &gt;{" "}
-          <a
-            href="/facility1"
-            className="font-bold text-blue-700"
-            aria-label="Facility 1"
-            role="link"
-          >
-            Facility 1
-          </a>
+          <span className="font-bold text-blue-700" role="link">
+            {params.slug.split("-").join(" ")}
+          </span>
         </nav>
       </div>
 

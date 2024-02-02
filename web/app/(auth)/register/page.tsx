@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -96,6 +96,9 @@ export default function Page() {
 
 const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isInvited = searchParams.get("invited");
+  const social = searchParams.get("social");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
   const validation = z.object({
@@ -115,6 +118,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     mutationKey: ["step1"],
     mutationFn: register,
     onSuccess: (user) => {
+      console.log(user);
       setUserId(user.data.id);
       router.push("/register?step=2");
       // setCurrentStep(2);
@@ -133,15 +137,6 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     },
     validateOnChange: false,
     validationSchema: toFormikValidationSchema(validation),
-    // validate: (values: any) => {
-    //   try {
-    //     console.log(values);
-    //     validation.parse(values);
-    //   } catch (error: any) {
-    //     // Convert Zod error format to Formik error format
-    //     return error.errors.map((err: any) => err.message);
-    //   }
-    // },
     onSubmit: (data) => {
       console.log("mutate", data);
       // if (errors.length > 0 && !errors.includes("length")) {
@@ -151,195 +146,236 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     },
   });
 
-  console.log(registerForm.errors, errors);
-
   return (
-    <form
-      onSubmit={registerForm.handleSubmit}
-      className="items-center flex flex-1 max-w-[840px] w-full flex-col px-20 py-12 max-md:px-5"
-    >
+    <div className="items-center flex flex-1 max-w-[840px] w-full flex-col px-20 py-12 max-md:px-5">
       <header className="header justify-center text-neutral-900 text-center text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl">
         Create your account
       </header>
-      <div className="input-wrapper justify-center items-stretch self-stretch flex flex-col mt-14 py-6 max-md:max-w-full max-md:mr-2.5 max-md:mt-10 max-md:px-5">
-        <label
-          htmlFor="email"
-          className="label text-slate-700 text-base font-light leading-6 max-md:max-w-full"
-        >
-          Work email*
-        </label>
-        <div
-          className={cn(
-            "input text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
-            registerForm.errors.email && "border border-red-500"
-          )}
-        >
-          <Input
-            className={"w-full bg-transparent"}
-            id="email"
-            name="email"
-            onBlur={() => registerForm.validateField("email")}
-            onChange={registerForm.handleChange}
-            placeholder="Email"
-          />
-        </div>
-        <p className="text-red-500 text-xs mt-[10px]">
-          {registerForm.errors.email}
-        </p>
-        <label
-          htmlFor="password"
-          className="label text-slate-700 text-base font-light leading-6 mt-10 max-md:max-w-full"
-        >
-          Create your password*
-        </label>
-        <div
-          className={cn(
-            "input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 py-7 rounded-md max-md:max-w-full max-md:flex-wrap"
-          )}
-        >
-          <Input
-            type={showPassword ? "text" : "password"}
-            id="password"
-            className="w-full bg-transparent"
-            name="password"
-            onChange={(e) => {
-              registerForm.handleChange(e);
-              const value = e.target.value;
-              const values = { password: value };
+      {social != "true" ? (
+        <form onSubmit={registerForm.handleSubmit} className="w-full">
+          <div className="input-wrapper justify-center items-stretch self-stretch flex flex-col mt-14 py-6 max-md:max-w-full max-md:mr-2.5 max-md:mt-10 max-md:px-5">
+            <label
+              htmlFor="email"
+              className="label text-slate-700 text-base font-light leading-6 max-md:max-w-full"
+            >
+              Work email*
+            </label>
+            <div
+              className={cn(
+                "input text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
+                registerForm.errors.email && "border border-red-500"
+              )}
+            >
+              <Input
+                className={"w-full bg-transparent"}
+                id="email"
+                name="email"
+                onBlur={() => registerForm.validateField("email")}
+                onChange={registerForm.handleChange}
+                placeholder="Email"
+              />
+            </div>
+            <p className="text-red-500 text-xs mt-[10px]">
+              {registerForm.errors.email}
+            </p>
+            <label
+              htmlFor="password"
+              className="label text-slate-700 text-base font-light leading-6 mt-10 max-md:max-w-full"
+            >
+              Create your password*
+            </label>
+            <div
+              className={cn(
+                "input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 py-7 rounded-md max-md:max-w-full max-md:flex-wrap"
+              )}
+            >
+              <Input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                className="w-full bg-transparent"
+                name="password"
+                onChange={(e) => {
+                  registerForm.handleChange(e);
+                  const value = e.target.value;
+                  const values = { password: value };
 
-              try {
-                passwordValidation.parse(values);
-              } catch (error: any) {
-                // Convert Zod error format to Formik error format
-                setErrors(error.errors.map((err: any) => err.message));
-              }
-              // registerForm.validateField("password");
-            }}
-            placeholder="Password"
-          />
-          <div
-            onClick={() => setShowPassword(!showPassword)}
-            className="flex items-center cursor-pointer"
-          >
-            {showPassword ? (
-              <EyeOff size={16} color="#64748B" />
-            ) : (
-              <Eye size={16} color="#64748B" />
+                  try {
+                    passwordValidation.parse(values);
+                  } catch (error: any) {
+                    // Convert Zod error format to Formik error format
+                    setErrors(error.errors.map((err: any) => err.message));
+                  }
+                  // registerForm.validateField("password");
+                }}
+                placeholder="Password"
+              />
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                className="flex items-center cursor-pointer"
+              >
+                {showPassword ? (
+                  <EyeOff size={16} color="#64748B" />
+                ) : (
+                  <Eye size={16} color="#64748B" />
+                )}
+              </div>
+            </div>
+            <div className="input-group items-stretch flex justify-between gap-5 mt-10 max-md:max-w-full max-md:flex-wrap">
+              <div className="input-help items-stretch flex grow basis-[0%] flex-col">
+                <div className="input-help-item items-stretch flex justify-between gap-2">
+                  <Tick
+                    variant={
+                      registerForm.values.password != ""
+                        ? // ? registerForm.errors.password?.includes("lowercase")
+                          errors.includes("lowercase")
+                          ? "red"
+                          : "green"
+                        : "gray"
+                    }
+                  />
+                  <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
+                    One lowercase character
+                  </div>
+                </div>
+                <div className="input-help-item items-stretch flex justify-between gap-2 mt-2.5">
+                  <Tick
+                    variant={
+                      registerForm.values.password != ""
+                        ? // ? registerForm.errors.password?.includes("uppercase")
+                          errors.includes("uppercase")
+                          ? "red"
+                          : "green"
+                        : "gray"
+                    }
+                  />
+                  <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
+                    One uppercase character
+                  </div>
+                </div>
+                <div className="input-help-item items-stretch flex gap-2 mt-2.5">
+                  <Tick
+                    variant={
+                      registerForm.values.password != ""
+                        ? registerForm.values.password.length < 8
+                          ? "red"
+                          : "green"
+                        : "gray"
+                    }
+                  />
+                  <div className="input-help-text text-zinc-950 text-opacity-30 text-sm">
+                    8 characters minimum
+                  </div>
+                </div>
+              </div>
+              <div className="input-help items-stretch flex grow basis-[0%] flex-col self-start">
+                <div className="input-help-item items-stretch flex justify-between gap-2">
+                  <Tick
+                    variant={
+                      registerForm.values.password != ""
+                        ? errors.includes("number")
+                          ? "red"
+                          : "green"
+                        : "gray"
+                    }
+                  />
+                  <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
+                    One number
+                  </div>
+                </div>
+                <div className="input-help-item items-stretch flex justify-between gap-2 mt-2.5">
+                  <Tick
+                    variant={
+                      registerForm.values.password != ""
+                        ? errors.includes("special")
+                          ? "red"
+                          : "green"
+                        : "gray"
+                    }
+                  />
+                  <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
+                    One special character
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="button-wrapper justify-end flex items-center w-full space-x-2 py-2.5 max-md:max-w-full max-md:pl-5">
+            {isPending && (
+              <Loader2 size={30} className="text-slate-400 animate-spin" />
             )}
+            <Button
+              size={"lg"}
+              disabled={isPending}
+              type="submit"
+              className="button text-base font-semibold leading-6 whitespace-nowrap px-6 py-4 max-md:px-5"
+            >
+              Continue
+            </Button>
           </div>
+          <div
+            onClick={() => {
+              router.push("?social=true");
+            }}
+            className="text-blue-700 text-center text-sm cursor-pointer font-bold leading-5 mt-6 max-md:max-w-full"
+          >
+            Or Sign Up with SSO
+          </div>
+          <div className="text-blue-700 text-center text-xs font-medium leading-5 mt-6 max-md:max-w-full">
+            Already have an account?{" "}
+            <Link href="/login" className="font-bold text-sm text-blue-700">
+              Sign In
+            </Link>
+          </div>
+          <div className="text-slate-700 text-center text-xs font-light leading-4 mt-6 max-md:max-w-full">
+            By clicking &apos;Continue&apos; above, you agree to our Terms of
+            Service and Privacy Policy.
+          </div>
+        </form>
+      ) : (
+        <div className="items-stretch bg-white flex max-w-[408px] flex-col px-16 py-12 rounded-lg">
+          <div
+            role="button"
+            onClick={() => signIn("google", { callbackUrl: "/" })}
+            className="justify-start items-stretch border-slate-200 flex gap-4 mt-3.5 py-4 px-11 rounded-full border-2 border-solid"
+          >
+            <img
+              loading="lazy"
+              src="/assets/images/google-logo.svg"
+              className="aspect-square object-contain object-center w-6 overflow-hidden shrink-0 max-w-full"
+            />
+            <div className="text-slate-800 text-base font-medium leading-6 tracking-tight grow whitespace-nowrap">
+              Sign in with Google
+            </div>
+          </div>
+          <div
+            // role="button"
+            // onClick={() => signIn("microsoft")}
+            className="justify-start items-stretch border-slate-200 flex gap-4 mt-6 py-4 px-11  rounded-full border-2 border-solid"
+          >
+            <img
+              loading="lazy"
+              src="/assets/images/microsoft-logo.svg"
+              className="aspect-square object-contain object-center w-6 justify-center items-center overflow-hidden shrink-0 max-w-full"
+            />
+            <div className="text-slate-800 text-base font-medium leading-6 tracking-tight grow whitespace-nowrap">
+              Sign in with Microsoft
+            </div>
+          </div>
+          <Link
+            href={"/register"}
+            className="text-blue-700 text-sm font-bold cursor-pointer leading-5 self-center whitespace-nowrap mt-6"
+          >
+            Sign in without SSO
+          </Link>
+          <Link
+            href="/login"
+            className="text-slate-700 text-sm leading-5 underline self-center whitespace-nowrap mt-6 mb-3.5"
+          >
+            Have an account? Sign in
+          </Link>
         </div>
-        <div className="input-group items-stretch flex justify-between gap-5 mt-10 max-md:max-w-full max-md:flex-wrap">
-          <div className="input-help items-stretch flex grow basis-[0%] flex-col">
-            <div className="input-help-item items-stretch flex justify-between gap-2">
-              <Tick
-                variant={
-                  registerForm.values.password != ""
-                    ? // ? registerForm.errors.password?.includes("lowercase")
-                      errors.includes("lowercase")
-                      ? "red"
-                      : "green"
-                    : "gray"
-                }
-              />
-              <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
-                One lowercase character
-              </div>
-            </div>
-            <div className="input-help-item items-stretch flex justify-between gap-2 mt-2.5">
-              <Tick
-                variant={
-                  registerForm.values.password != ""
-                    ? // ? registerForm.errors.password?.includes("uppercase")
-                      errors.includes("uppercase")
-                      ? "red"
-                      : "green"
-                    : "gray"
-                }
-              />
-              <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
-                One uppercase character
-              </div>
-            </div>
-            <div className="input-help-item items-stretch flex gap-2 mt-2.5">
-              <Tick
-                variant={
-                  registerForm.values.password != ""
-                    ? registerForm.values.password.length < 8
-                      ? "red"
-                      : "green"
-                    : "gray"
-                }
-              />
-              <div className="input-help-text text-zinc-950 text-opacity-30 text-sm">
-                8 characters minimum
-              </div>
-            </div>
-          </div>
-          <div className="input-help items-stretch flex grow basis-[0%] flex-col self-start">
-            <div className="input-help-item items-stretch flex justify-between gap-2">
-              <Tick
-                variant={
-                  registerForm.values.password != ""
-                    ? errors.includes("number")
-                      ? "red"
-                      : "green"
-                    : "gray"
-                }
-              />
-              <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
-                One number
-              </div>
-            </div>
-            <div className="input-help-item items-stretch flex justify-between gap-2 mt-2.5">
-              <Tick
-                variant={
-                  registerForm.values.password != ""
-                    ? errors.includes("special")
-                      ? "red"
-                      : "green"
-                    : "gray"
-                }
-              />
-              <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
-                One special character
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="button-wrapper justify-end flex items-center w-full space-x-2 py-2.5 max-md:max-w-full max-md:pl-5">
-        {isPending && (
-          <Loader2 size={30} className="text-slate-400 animate-spin" />
-        )}
-        <Button
-          size={"lg"}
-          disabled={isPending}
-          type="submit"
-          className="button text-base font-semibold leading-6 whitespace-nowrap px-6 py-4 max-md:px-5"
-        >
-          Continue
-        </Button>
-      </div>
-      <div
-        onClick={() => {
-          setCurrentStep(2);
-          setSSOReg(true);
-        }}
-        className="text-blue-700 text-center text-sm cursor-pointer font-bold leading-5 mt-6 max-md:max-w-full"
-      >
-        Or Sign Up with SSO
-      </div>
-      <div className="text-blue-700 text-center text-xs font-medium leading-5 mt-6 max-md:max-w-full">
-        Already have an account?{" "}
-        <Link href="/login" className="font-bold text-sm text-blue-700">
-          Sign In
-        </Link>
-      </div>
-      <div className="text-slate-700 text-center text-xs font-light leading-4 mt-6 max-md:max-w-full">
-        By clicking &apos;Continue&apos; above, you agree to our Terms of
-        Service and Privacy Policy.
-      </div>
-    </form>
+      )}
+    </div>
   );
 };
 
@@ -391,102 +427,57 @@ const Step2 = ({
       <header className="justify-center text-neutral-900 text-6xl font-semibold mt-5 max-md:max-w-full max-md:text-4xl">
         What&apos;s your name?
       </header>
-      {!ssoReg ? (
-        <div className="justify-center items-stretch self-stretch space-y-10 flex flex-col mt-14 mb-52 py-6 max-md:max-w-full max-md:mr-2.5 max-md:my-10 max-md:px-5">
-          <div>
-            <label
-              className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
-              htmlFor="firstNameInput"
-            >
-              First Name
-            </label>
-            <div className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full">
-              <Input
-                type="text"
-                id="firstNameInput"
-                placeholder="First Name"
-                name="firstName"
-                onChange={step2Form.handleChange}
-                className="bg-transparent"
-              />
-            </div>
+      <div className="justify-center items-stretch self-stretch space-y-10 flex flex-col mt-14 mb-52 py-6 max-md:max-w-full max-md:mr-2.5 max-md:my-10 max-md:px-5">
+        <div>
+          <label
+            className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
+            htmlFor="firstNameInput"
+          >
+            First Name
+          </label>
+          <div className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full">
+            <Input
+              type="text"
+              id="firstNameInput"
+              placeholder="First Name"
+              name="firstName"
+              onChange={step2Form.handleChange}
+              className="bg-transparent"
+            />
           </div>
-          <div>
-            <label
-              className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
-              htmlFor="lastNameInput"
-            >
-              Last Name
-            </label>
-            <div className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full">
-              <Input
-                type="text"
-                id="lastNameInput"
-                className="bg-transparent"
-                name="lastName"
-                onChange={step2Form.handleChange}
-                placeholder="Last Name"
-              />
-            </div>
+        </div>
+        <div>
+          <label
+            className="text-slate-700 text-base font-light leading-6 max-md:max-w-full"
+            htmlFor="lastNameInput"
+          >
+            Last Name
+          </label>
+          <div className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full">
+            <Input
+              type="text"
+              id="lastNameInput"
+              className="bg-transparent"
+              name="lastName"
+              onChange={step2Form.handleChange}
+              placeholder="Last Name"
+            />
           </div>
+        </div>
 
-          <div className="justify-end flex pl-16 pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
-            {isPending && (
-              <Loader2 size={30} className="text-slate-400 animate-spin" />
-            )}
-            <Button
-              disabled={isPending}
-              className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center px-6 py-4 max-md:px-5"
-              type="submit"
-            >
-              Continue
-            </Button>
-          </div>
+        <div className="justify-end flex pl-16 pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
+          {isPending && (
+            <Loader2 size={30} className="text-slate-400 animate-spin" />
+          )}
+          <Button
+            disabled={isPending}
+            className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center px-6 py-4 max-md:px-5"
+            type="submit"
+          >
+            Continue
+          </Button>
         </div>
-      ) : (
-        <div className="items-stretch bg-white flex max-w-[408px] flex-col px-16 py-12 rounded-lg">
-          <div
-            role="button"
-            onClick={() => signIn("google", { callbackUrl: "/" })}
-            className="justify-start items-stretch border-slate-200 flex gap-4 mt-3.5 py-4 px-11 rounded-full border-2 border-solid"
-          >
-            <img
-              loading="lazy"
-              src="/assets/images/google-logo.svg"
-              className="aspect-square object-contain object-center w-6 overflow-hidden shrink-0 max-w-full"
-            />
-            <div className="text-slate-800 text-base font-medium leading-6 tracking-tight grow whitespace-nowrap">
-              Sign in with Google
-            </div>
-          </div>
-          <div
-            // role="button"
-            // onClick={() => signIn("microsoft")}
-            className="justify-start items-stretch border-slate-200 flex gap-4 mt-6 py-4 px-11  rounded-full border-2 border-solid"
-          >
-            <img
-              loading="lazy"
-              src="/assets/images/microsoft-logo.svg"
-              className="aspect-square object-contain object-center w-6 justify-center items-center overflow-hidden shrink-0 max-w-full"
-            />
-            <div className="text-slate-800 text-base font-medium leading-6 tracking-tight grow whitespace-nowrap">
-              Sign in with Microsoft
-            </div>
-          </div>
-          <Link
-            href={"/login"}
-            className="text-blue-700 text-sm font-bold cursor-pointer leading-5 self-center whitespace-nowrap mt-6"
-          >
-            Sign in without SSO
-          </Link>
-          <Link
-            href="/login"
-            className="text-slate-700 text-sm leading-5 underline self-center whitespace-nowrap mt-6 mb-3.5"
-          >
-            Have an account? Sign in
-          </Link>
-        </div>
-      )}
+      </div>
     </form>
   );
 };
@@ -494,8 +485,11 @@ const Step2 = ({
 const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const router = useRouter();
   const [addressDisabled, setAddressDisabled] = useState(true);
+  const [address, setAddress] = useState("");
+
   const validation = z.object({
     companyName: z.string(),
+    companyAddress: z.string(),
     // addressLine1: z.string(),
     // addressLine2: z.string(),
     // city: z.string(),
@@ -521,10 +515,12 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     initialValues: {
       userSlug,
       companyName: "",
-      address: "",
+      companyAddress: "",
       registrationStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
+    validateOnChange: false,
+    validateOnBlur: true,
     onSubmit: (data) => {
       console.log(data);
       mutate(data);
@@ -575,7 +571,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             >
               Company Address
             </label>
-            {step3Form.values.address != "" && (
+            {step3Form.values.companyAddress != "" && (
               <p
                 role="button"
                 onClick={() => setAddressDisabled(false)}
@@ -586,12 +582,17 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             )}
           </div>
 
-          <AutocompleteInput
-            isDisabled={addressDisabled}
-            setAddress={(e: any) => {
-              step3Form.setFieldValue("addressLine1", e);
-            }}
-          />
+          <div>
+            <AutocompleteInput
+              isDisabled={addressDisabled}
+              setAddress={(e: any) => {
+                step3Form.setFieldValue("companyAddress", e);
+              }}
+            />
+            <p className="text-red-500 text-xs">
+              {step3Form.errors?.companyAddress}
+            </p>
+          </div>
         </div>
 
         <div className="justify-between items-center self-stretch flex gap-5 mt-3 pl-1 pr-2.5 py-2.5 max-md:max-w-full max-md:flex-wrap">
