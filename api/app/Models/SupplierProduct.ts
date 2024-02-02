@@ -6,6 +6,7 @@ import {
 import Supplier from './Supplier'
 import { v4 as uuidv4 } from 'uuid';
 import { ParsedQs } from 'qs';
+import Database from '@ioc:Adonis/Lucid/Database';
 
 
 export default class SupplierProduct extends BaseModel {
@@ -124,7 +125,9 @@ export default class SupplierProduct extends BaseModel {
     const sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at';
     const supplyChainReportingPeriodId = queryParams.supplyChainReportingPeriodId ? queryParams.supplyChainReportingPeriodId.toString() : '';
 
-    let query: any = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+
+
+    let query: any = this.query().whereNull('supplier_products.deleted_at') // Exclude soft-deleted records;
 
     if (supplyChainReportingPeriodId) {
       query = query.whereHas('supplier', (data) => {
@@ -133,12 +136,10 @@ export default class SupplierProduct extends BaseModel {
     }
 
     if (sort == 'supplierName') {
-      // query = query.with('supplier', (builder) => {
-      //   builder.orderBy('name', 'asc'); 
-      // })
-      query = query.whereHas('supplier', async (data) => {
-        data.orderBy('name', order)
-      })
+      query = query
+      .join('suppliers', 'supplier_products.supplier_id', '=','suppliers.id')
+      .orderBy('suppliers.name', order)
+      .select('supplier_products.*')
     }
     else {
       query = query.orderBy(sort, order);
@@ -146,9 +147,8 @@ export default class SupplierProduct extends BaseModel {
 
     const allSupplierProductsData = await query
       .preload('supplier')
-      // .orderBy("supplier.name", order)
       .paginate(page, perPage)
-
+      
     return allSupplierProductsData
   }
 

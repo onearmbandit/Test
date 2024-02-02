@@ -16,7 +16,7 @@ export default class SupplierProductsController {
 
       const allSupplierProductsData = await SupplierProduct.getAllSupplierProductsForSpecificPeriod(queryParams);
 
-      const isPaginated = !request.input('perPage') || request.input('perPage') !== 'all';
+      const isPaginated = !request.qs().perPage || request.qs().perPage !== 'all';
 
       return apiResponse(response, true, 200, allSupplierProductsData, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'), isPaginated);
 
