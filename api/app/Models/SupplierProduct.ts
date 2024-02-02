@@ -146,7 +146,7 @@ export default class SupplierProduct extends BaseModel {
 
     const allSupplierProductsData = await query
       .preload('supplier')
-      .orderBy("supplier.name", order)
+      // .orderBy("supplier.name", order)
       .paginate(page, perPage)
 
     return allSupplierProductsData
