@@ -89,6 +89,7 @@ export default class FacilityEmission extends BaseModel {
     const facilityDetails = await this.query()
       .where(field, value)
       .whereNull('deleted_at') // Exclude soft-deleted records
+      .preload('FacilityProducts')
       .firstOrFail();
     return facilityDetails;
   }

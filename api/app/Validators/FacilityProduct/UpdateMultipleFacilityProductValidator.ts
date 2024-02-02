@@ -5,6 +5,10 @@ export default class UpdateMultipleFacilityProductValidator {
   constructor(protected ctx: HttpContextContract) { }
 
   public schema = schema.create({
+    facilityEmissionId: schema.string({ trim: true }, [
+      rules.uuid(),
+      rules.exists({ table: 'facility_emissions', column: 'id' }),
+    ]),
 
     facilityProducts: schema.array().members(
       schema.object().members({
@@ -12,13 +16,7 @@ export default class UpdateMultipleFacilityProductValidator {
           rules.required(),
           rules.minLength(3),
           rules.maxLength(255),
-          rules.unique({
-            table: 'facility_products',
-            column: 'name',
-            whereNot: {
-              id: this.ctx.params.id,
-            },
-          }),
+          // rules.unique({ table: 'facility_products', column: 'name' })
         ]),
         quantity: schema.number.optional(),
         functionalUnit: schema.string.optional({ trim: true }, [rules.maxLength(255)]),
