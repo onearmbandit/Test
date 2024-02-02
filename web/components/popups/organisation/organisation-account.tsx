@@ -48,11 +48,6 @@ const OrganisationAccount = ({
       </div>
       <div className="justify-between items-stretch content-center gap-y-2.5 self-stretch flex-wrap flex gap-5 mt-2.5 max-md:max-w-full">
         <div className="text-slate-700 text-xs font-light leading-4">
-          {/* {user?.data?.organizations[0]?.company_address
-            ? (user?.data?.organizations[0]?.company_address)
-            : "-"}
-             */}
-
           {user?.data?.organizations[0]?.company_address
             ? parse(
                 user?.data?.organizations[0]?.company_address.replaceAll(
