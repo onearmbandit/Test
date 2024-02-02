@@ -6,7 +6,6 @@ import {
 import Supplier from './Supplier'
 import { v4 as uuidv4 } from 'uuid';
 import { ParsedQs } from 'qs';
-import Database from '@ioc:Adonis/Lucid/Database';
 
 
 export default class SupplierProduct extends BaseModel {
