@@ -22,7 +22,7 @@ Route.group(() => {
     Route.post('/social-login', 'AuthController.socialLogin')
 
     //:: Api for download supplier csv template
-    Route.get('/download-supplier-csv', 'FilesController.download')
+    Route.get('/download-supplier-csv', 'FilesController.downloadSupplierCSV')
 
     //Auth routes
     Route.group(() => {
@@ -55,13 +55,15 @@ Route.group(() => {
         'destroy',
       ])
 
-      Route.resource('/facility-product', 'FacilityProductsController').only([
-        'index',
-        'store',
-        'show',
-        'update',
-        'destroy',
-      ])
+      Route.resource('/facility-product', 'FacilityProductsController').only(['store'])
+      Route.post(
+        '/update-facility-products',
+        'FacilityProductsController.updateFacilityMultipleProducts'
+      )
+      Route.get(
+        '/equality-emission-calculation',
+        'FacilityProductsController.calculateEqualityCarbonEmission'
+      )
 
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier')

@@ -1046,7 +1046,43 @@
 						"header": [],
 						"url": "{{base_url}}/api/v1/download-supplier-csv"
 					},
-					"response": []
+					"response": [
+						{
+							"name": "download supplier csv template Copy",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}/api/v1/download-supplier-csv"
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "136"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Feb 2024 09:23:38 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 201,\n    \"message\": \"\",\n    \"data\": {\n        \"download_url\": \"http://localhost:8000/download/Supplier_GHG_Emissions_CSV_Template.csv\"\n    }\n}"
+						}
+					]
 				}
 			]
 		},
@@ -1681,7 +1717,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/api/v1/auth/supplier-products?supplyChainReportingPeriodId=4de9af3a-a148-426b-93db-059f1e849c44&order=desc&sort=supplierName",
+									"raw": "{{base_url}}/api/v1/auth/supplier-products?supplyChainReportingPeriodId=6488377f-a0c7-4ae9-b783-9f956cca4a1a&order=desc&sort=supplierName",
 									"host": [
 										"{{base_url}}"
 									],
@@ -1705,7 +1741,7 @@
 										},
 										{
 											"key": "supplyChainReportingPeriodId",
-											"value": "4de9af3a-a148-426b-93db-059f1e849c44",
+											"value": "6488377f-a0c7-4ae9-b783-9f956cca4a1a",
 											"description": "required to fetch list of products "
 										},
 										{
@@ -3054,6 +3090,217 @@
 									],
 									"cookie": [],
 									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"power plant 34\",\n        \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-25T17:32:59.000+05:30\",\n        \"updated_at\": \"2024-01-26T00:50:05.000+05:30\",\n        \"facilityEmission\": [\n            {\n                \"id\": \"4d8b4faf-07a9-4881-a239-0b25fa57f97b\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T16:47:34.000+05:30\",\n                \"updated_at\": \"2024-01-30T16:47:34.000+05:30\",\n                \"FacilityProducts\": []\n            },\n            {\n                \"id\": \"7eca774e-88a0-4c4d-b68b-f241ab0b7b06\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T16:36:31.000+05:30\",\n                \"updated_at\": \"2024-01-30T16:36:31.000+05:30\",\n                \"FacilityProducts\": []\n            },\n            {\n                \"id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": 23456,\n                \"scope2_total_emission\": 34,\n                \"scope3_total_emission\": 2345,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T18:30:52.000+05:30\",\n                \"updated_at\": \"2024-02-01T00:45:39.000+05:30\",\n                \"FacilityProducts\": [\n                    {\n                        \"id\": \"14bb5e20-a6fe-414c-8ed6-44dc8a56628d\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"Jackets\",\n                        \"quantity\": 1000,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T13:42:36.000+05:30\",\n                        \"updated_at\": \"2024-02-01T13:42:36.000+05:30\"\n                    },\n                    {\n                        \"id\": \"961ae39b-a56a-45ea-ac43-a2bf4efae154\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"Shirts\",\n                        \"quantity\": 40,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T13:42:36.000+05:30\",\n                        \"updated_at\": \"2024-02-01T13:42:36.000+05:30\"\n                    }\n                ]\n            },\n            {\n                \"id\": \"f791721c-0c2f-4b6b-a400-10bb8b5d6294\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-02-01\",\n                \"reporting_period_to\": \"2024-04-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": \"2024-01-31T12:49:28.000+05:30\",\n                \"created_at\": \"2024-01-31T11:40:30.000+05:30\",\n                \"updated_at\": \"2024-01-31T12:49:28.000+05:30\",\n                \"FacilityProducts\": []\n            }\n        ]\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Update facility products",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{access_token}}"
+									}
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"facilityEmissionId\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n    \"facilityProducts\": [\n        {\n            \"id\":\"14bb5e20-a6fe-414c-8ed6-44dc8a56628d\",\n            \"name\":\"Shirts V neck\",\n            \"quantity\":\"404\",\n            \"functionalUnit\":\"one wearing cycle1\"\n        },\n        {\n            \"id\": \"23bfe19a-bea3-4b60-8977-802418498187\",\n            \"name\":\"Jackets\",\n            \"quantity\":\"33\",\n            \"functionalUnit\":\"one wearing cycle\"\n        },\n        {\n            \"id\": \"4b23772a-e601-4291-aceb-4804d0ee96b5\",\n            \"name\":\"jeans bell bottom\",\n            \"quantity\":\"12002\",\n            \"functionalUnit\":\"one wearing cycle\"\n        },\n        {\n            \"name\":\"frock\",\n            \"quantity\":\"12002\",\n            \"functionalUnit\":\"one wearing cycle\"\n        },\n        {\n            \"name\":\"sweat shirt\",\n            \"quantity\":\"120\",\n            \"functionalUnit\":\"one wearing cycle\"\n        }\n\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/v1/auth/update-facility-products"
+							},
+							"response": [
+								{
+									"name": "Update facility products",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"facilityEmissionId\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n    \"facilityProducts\": [\n        {\n            \"id\":\"14bb5e20-a6fe-414c-8ed6-44dc8a56628d\",\n            \"name\":\"Shirts V neck\",\n            \"quantity\":\"404\",\n            \"functionalUnit\":\"one wearing cycle1\"\n        },\n        {\n            \"id\": \"23bfe19a-bea3-4b60-8977-802418498187\",\n            \"name\":\"Jackets\",\n            \"quantity\":\"33\",\n            \"functionalUnit\":\"one wearing cycle\"\n        },\n        {\n            \"id\": \"4b23772a-e601-4291-aceb-4804d0ee96b5\",\n            \"name\":\"jeans bell bottom\",\n            \"quantity\":\"12002\",\n            \"functionalUnit\":\"one wearing cycle\"\n        },\n        {\n            \"name\":\"frock\",\n            \"quantity\":\"12002\",\n            \"functionalUnit\":\"one wearing cycle\"\n        },\n        {\n            \"name\":\"sweat shirt\",\n            \"quantity\":\"120\",\n            \"functionalUnit\":\"one wearing cycle\"\n        }\n\n    ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{base_url}}/api/v1/auth/update-facility-products"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "1887"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 01 Feb 2024 18:03:57 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Facility reporting period updated successfully.\",\n    \"data\": [\n        {\n            \"id\": \"14bb5e20-a6fe-414c-8ed6-44dc8a56628d\",\n            \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n            \"name\": \"Shirts V neck\",\n            \"quantity\": \"404\",\n            \"functional_unit\": \"one wearing cycle1\",\n            \"scope1_carbon_emission\": null,\n            \"scope2_carbon_emission\": null,\n            \"scope3_carbon_emission\": null,\n            \"equality_attribute\": 0,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-02-01T13:42:36.000+05:30\",\n            \"updated_at\": \"2024-02-01T23:33:57.563+05:30\"\n        },\n        {\n            \"id\": \"23bfe19a-bea3-4b60-8977-802418498187\",\n            \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n            \"name\": \"Jackets\",\n            \"quantity\": \"33\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope1_carbon_emission\": null,\n            \"scope2_carbon_emission\": null,\n            \"scope3_carbon_emission\": null,\n            \"equality_attribute\": 0,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-02-01T19:20:31.000+05:30\",\n            \"updated_at\": \"2024-02-01T23:33:57.566+05:30\"\n        },\n        {\n            \"id\": \"4b23772a-e601-4291-aceb-4804d0ee96b5\",\n            \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n            \"name\": \"jeans bell bottom\",\n            \"quantity\": \"12002\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope1_carbon_emission\": null,\n            \"scope2_carbon_emission\": null,\n            \"scope3_carbon_emission\": null,\n            \"equality_attribute\": 0,\n            \"deleted_at\": \"2024-02-01T22:58:02.000+05:30\",\n            \"created_at\": \"2024-02-01T19:20:31.000+05:30\",\n            \"updated_at\": \"2024-02-01T23:33:57.567+05:30\"\n        },\n        {\n            \"id\": \"bc2547a2-cde9-4044-841a-5750f9454ae2\",\n            \"name\": \"frock\",\n            \"quantity\": \"12002\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n            \"created_at\": \"2024-02-01T23:33:57.568+05:30\",\n            \"updated_at\": \"2024-02-01T23:33:57.568+05:30\"\n        },\n        {\n            \"id\": \"3a9b31a3-4518-47c9-b615-ebbc3e174a77\",\n            \"name\": \"sweat shirt\",\n            \"quantity\": \"120\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n            \"created_at\": \"2024-02-01T23:33:57.569+05:30\",\n            \"updated_at\": \"2024-02-01T23:33:57.569+05:30\"\n        }\n    ]\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "5. Carbon Emission To product",
+					"item": [
+						{
+							"name": "Get carbon emission details",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{access_token}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+								"description": "This API will give you all the facility details with reporting period, scope emission, products and carbon emissions"
+							},
+							"response": [
+								{
+									"name": "Get carbon emission details",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "6647"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 01 Feb 2024 18:10:34 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"power plant 34\",\n        \"address\": \"New York Times Bldg 620 8th Avenue, Manhattan, New York, 10018\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-25T17:32:59.000+05:30\",\n        \"updated_at\": \"2024-01-26T00:50:05.000+05:30\",\n        \"facilityEmission\": [\n            {\n                \"id\": \"4d8b4faf-07a9-4881-a239-0b25fa57f97b\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T16:47:34.000+05:30\",\n                \"updated_at\": \"2024-01-30T16:47:34.000+05:30\",\n                \"FacilityProducts\": []\n            },\n            {\n                \"id\": \"7eca774e-88a0-4c4d-b68b-f241ab0b7b06\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T16:36:31.000+05:30\",\n                \"updated_at\": \"2024-01-30T16:36:31.000+05:30\",\n                \"FacilityProducts\": []\n            },\n            {\n                \"id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-01-01\",\n                \"reporting_period_to\": \"2024-03-01\",\n                \"scope1_total_emission\": 23456,\n                \"scope2_total_emission\": 34,\n                \"scope3_total_emission\": 2345,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T18:30:52.000+05:30\",\n                \"updated_at\": \"2024-02-01T00:45:39.000+05:30\",\n                \"FacilityProducts\": [\n                    {\n                        \"id\": \"14bb5e20-a6fe-414c-8ed6-44dc8a56628d\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"Shirts V neck\",\n                        \"quantity\": 404,\n                        \"functional_unit\": \"one wearing cycle1\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T13:42:36.000+05:30\",\n                        \"updated_at\": \"2024-02-01T23:33:57.000+05:30\"\n                    },\n                    {\n                        \"id\": \"1ef606f8-1319-445b-902b-00517bf470bf\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"frock\",\n                        \"quantity\": 12002,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": \"2024-02-01T23:33:58.000+05:30\",\n                        \"created_at\": \"2024-02-01T23:29:57.000+05:30\",\n                        \"updated_at\": \"2024-02-01T23:29:57.000+05:30\"\n                    },\n                    {\n                        \"id\": \"23bfe19a-bea3-4b60-8977-802418498187\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"Jackets\",\n                        \"quantity\": 33,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T19:20:31.000+05:30\",\n                        \"updated_at\": \"2024-02-01T23:33:57.000+05:30\"\n                    },\n                    {\n                        \"id\": \"3a9b31a3-4518-47c9-b615-ebbc3e174a77\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"sweat shirt\",\n                        \"quantity\": 120,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T23:33:57.000+05:30\",\n                        \"updated_at\": \"2024-02-01T23:33:57.000+05:30\"\n                    },\n                    {\n                        \"id\": \"4952f5d7-f31d-4662-9d54-9377e0f3d61b\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"jeanaddas\",\n                        \"quantity\": 12002,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": \"2024-02-01T23:33:58.000+05:30\",\n                        \"created_at\": \"2024-02-01T22:57:40.000+05:30\",\n                        \"updated_at\": \"2024-02-01T22:57:40.000+05:30\"\n                    },\n                    {\n                        \"id\": \"4b23772a-e601-4291-aceb-4804d0ee96b5\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"jeans bell bottom\",\n                        \"quantity\": 12002,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": \"2024-02-01T22:58:02.000+05:30\",\n                        \"created_at\": \"2024-02-01T19:20:31.000+05:30\",\n                        \"updated_at\": \"2024-02-01T23:33:57.000+05:30\"\n                    },\n                    {\n                        \"id\": \"bc2547a2-cde9-4044-841a-5750f9454ae2\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"frock\",\n                        \"quantity\": 12002,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": null,\n                        \"created_at\": \"2024-02-01T23:33:57.000+05:30\",\n                        \"updated_at\": \"2024-02-01T23:33:57.000+05:30\"\n                    },\n                    {\n                        \"id\": \"c641ffef-ad2d-40b2-b8c2-6a0ab6bd202e\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"frock\",\n                        \"quantity\": 12002,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": \"2024-02-01T23:33:58.000+05:30\",\n                        \"created_at\": \"2024-02-01T23:32:08.000+05:30\",\n                        \"updated_at\": \"2024-02-01T23:32:08.000+05:30\"\n                    },\n                    {\n                        \"id\": \"d5a8eab1-15be-4169-b3cf-da7686022f8d\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"jeanassas\",\n                        \"quantity\": 12002,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": \"2024-02-01T23:33:58.000+05:30\",\n                        \"created_at\": \"2024-02-01T22:57:40.000+05:30\",\n                        \"updated_at\": \"2024-02-01T22:57:40.000+05:30\"\n                    },\n                    {\n                        \"id\": \"da2f4698-b0b2-45de-af8b-66fadec1aedc\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"sweat shirt\",\n                        \"quantity\": 120,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": \"2024-02-01T23:33:58.000+05:30\",\n                        \"created_at\": \"2024-02-01T23:29:57.000+05:30\",\n                        \"updated_at\": \"2024-02-01T23:29:57.000+05:30\"\n                    },\n                    {\n                        \"id\": \"dc6d5ac4-bc42-4a86-b771-eb7c79609f60\",\n                        \"facility_emission_id\": \"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299\",\n                        \"name\": \"sweat shirt\",\n                        \"quantity\": 120,\n                        \"functional_unit\": \"one wearing cycle\",\n                        \"scope1_carbon_emission\": null,\n                        \"scope2_carbon_emission\": null,\n                        \"scope3_carbon_emission\": null,\n                        \"equality_attribute\": 0,\n                        \"deleted_at\": \"2024-02-01T23:33:58.000+05:30\",\n                        \"created_at\": \"2024-02-01T23:32:08.000+05:30\",\n                        \"updated_at\": \"2024-02-01T23:32:08.000+05:30\"\n                    }\n                ]\n            },\n            {\n                \"id\": \"f791721c-0c2f-4b6b-a400-10bb8b5d6294\",\n                \"organization_facility_id\": \"cb86f994-5c37-4361-b691-3fab40554f92\",\n                \"reporting_period_from\": \"2024-02-01\",\n                \"reporting_period_to\": \"2024-04-01\",\n                \"scope1_total_emission\": null,\n                \"scope2_total_emission\": null,\n                \"scope3_total_emission\": null,\n                \"deleted_at\": \"2024-01-31T12:49:28.000+05:30\",\n                \"created_at\": \"2024-01-31T11:40:30.000+05:30\",\n                \"updated_at\": \"2024-01-31T12:49:28.000+05:30\",\n                \"FacilityProducts\": []\n            }\n        ]\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Get equality emission calculation",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": {
+										"token": "{{access_token}}"
+									}
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/equality-emission-calculation?facilityEmissionId=8f7b88f3-4d0d-4fcc-aca3-7fac60b18299",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"equality-emission-calculation"
+									],
+									"query": [
+										{
+											"key": "facilityEmissionId",
+											"value": "8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get equality emission calculation",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/equality-emission-calculation?facilityEmissionId=8f7b88f3-4d0d-4fcc-aca3-7fac60b18299",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"equality-emission-calculation"
+											],
+											"query": [
+												{
+													"key": "facilityEmissionId",
+													"value": "8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "482"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 01 Feb 2024 19:08:46 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Equality carbon emission to product line calculated successfully.\",\n    \"data\": [\n        {\n            \"name\": \"Shirts V neck\",\n            \"quantity\": 404,\n            \"scope1\": \"5864.00%\",\n            \"scope2\": \"8.50%\",\n            \"scope3\": \"586.25%\"\n        },\n        {\n            \"name\": \"Jackets\",\n            \"quantity\": 33,\n            \"scope1\": \"5864.00%\",\n            \"scope2\": \"8.50%\",\n            \"scope3\": \"586.25%\"\n        },\n        {\n            \"name\": \"sweat shirt\",\n            \"quantity\": 120,\n            \"scope1\": \"5864.00%\",\n            \"scope2\": \"8.50%\",\n            \"scope3\": \"586.25%\"\n        },\n        {\n            \"name\": \"frock\",\n            \"quantity\": 12002,\n            \"scope1\": \"5864.00%\",\n            \"scope2\": \"8.50%\",\n            \"scope3\": \"586.25%\"\n        }\n    ]\n}"
 								}
 							]
 						}
