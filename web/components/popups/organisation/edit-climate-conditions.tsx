@@ -103,7 +103,7 @@ const EditClimateConditions = ({
       <h2 className="self-stretch text-slate-700 text-base font-semibold leading-6 mt-6 max-md:max-w-full">
         Climate commitments
       </h2>
-      <div className="rounded bg-gray-50 self-stretch flex gap-4 h-[5.875rem] p-[0.62rem] items-start max-md:max-w-full">
+      <div className="rounded bg-gray-50 self-stretch flex gap-4 h-[5.875rem] max-h-[128px] overflow-auto p-[0.62rem] items-start max-md:max-w-full">
         {targets.map((target, index) => (
           <div
             key={index}
@@ -114,7 +114,7 @@ const EditClimateConditions = ({
             </div>
 
             <button onClick={() => removeTarget(index)}>
-              <X size={12} className="text-green-800" />{" "}
+              <X size={12} className="text-green-800" />
             </button>
           </div>
         ))}

@@ -12,14 +12,13 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ScopeEmissions = ({ period }: { period: any }) => {
-  console.log(period);
   const {
     data: periodDetails,
     isLoading,
     isSuccess,
     status,
   } = useQuery({
-    queryKey: ["specific-period"],
+    queryKey: ["specific-period", period],
     queryFn: () => getReportingPeriodById(period),
   });
   const isScopeEmissionsNull =
@@ -28,13 +27,18 @@ const ScopeEmissions = ({ period }: { period: any }) => {
     periodDetails?.data.scope2_total_emission == null &&
     periodDetails?.data.scope3_total_emission == null;
   const [editMode, setEditMode] = useState(isScopeEmissionsNull ? true : false);
+
   const addScopeMut = useMutation({
     mutationFn: addScopeEmissions,
     onSuccess: (data) => {
       toast.success("Scope Emissions updated", { style: { color: "green" } });
       setEditMode(false);
     },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
   });
+
   const { values, setValues, handleChange, handleSubmit } = useFormik({
     initialValues: {
       scope1TotalEmission: "",
@@ -42,7 +46,6 @@ const ScopeEmissions = ({ period }: { period: any }) => {
       scope3TotalEmission: "",
     },
     onSubmit: (data) => {
-      console.log(data);
       addScopeMut.mutate({ id: period, obj: data });
     },
   });

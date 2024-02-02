@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAccountStore } from "@/lib/stores/organisation.store";
+import { cn } from "@/lib/utils";
 import { updatePassword } from "@/services/user.api";
 import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
@@ -17,29 +18,39 @@ const ChangePassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
 
-  const validation = z.object({
-    oldPassword: z
-      .string()
-      .min(8, { message: "length" })
-      .regex(/[A-Z]/, { message: "uppercase" })
-      .regex(/[a-z]/, { message: "lowercase" })
-      .regex(/[0-9]/, { message: "number" })
-      .regex(/[^A-Za-z0-9]/, { message: "special" }),
-    newPassword: z
-      .string()
-      .min(8, { message: "length" })
-      .regex(/[A-Z]/, { message: "uppercase" })
-      .regex(/[a-z]/, { message: "lowercase" })
-      .regex(/[0-9]/, { message: "number" })
-      .regex(/[^A-Za-z0-9]/, { message: "special" }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: "length" })
-      .regex(/[A-Z]/, { message: "uppercase" })
-      .regex(/[a-z]/, { message: "lowercase" })
-      .regex(/[0-9]/, { message: "number" })
-      .regex(/[^A-Za-z0-9]/, { message: "special" }),
-  });
+  const validation = z
+    .object({
+      oldPassword: z
+        .string()
+        .min(8, { message: "length" })
+        .regex(/[A-Z]/, { message: "uppercase" })
+        .regex(/[a-z]/, { message: "lowercase" })
+        .regex(/[0-9]/, { message: "number" })
+        .regex(/[^A-Za-z0-9]/, { message: "special" }),
+      newPassword: z
+        .string()
+        .min(8, { message: "length" })
+        .regex(/[A-Z]/, { message: "uppercase" })
+        .regex(/[a-z]/, { message: "lowercase" })
+        .regex(/[0-9]/, { message: "number" })
+        .regex(/[^A-Za-z0-9]/, { message: "special" }),
+      confirmPassword: z
+        .string()
+        .min(8, { message: "length" })
+        .regex(/[A-Z]/, { message: "uppercase" })
+        .regex(/[a-z]/, { message: "lowercase" })
+        .regex(/[0-9]/, { message: "number" })
+        .regex(/[^A-Za-z0-9]/, { message: "special" }),
+    })
+    .superRefine((val, ctx) => {
+      if (val.confirmPassword != val.newPassword) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Confirm Password do not match.",
+          path: ["confirmPassword"],
+        });
+      }
+    });
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["user-details"],
@@ -113,13 +124,22 @@ const ChangePassword = () => {
           <label className="text-slate-700 text-base font-semibold leading-6 self-stretch max-md:max-w-full">
             Re enter your new password
           </label>
-          <Input
-            type="password"
-            name={"confirmPassword"}
-            onChange={updatePasswordForm.handleChange}
-            className="py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700"
-            placeholder="New password"
-          />
+          <div>
+            <Input
+              type="password"
+              name={"confirmPassword"}
+              onChange={updatePasswordForm.handleChange}
+              className={cn(
+                "py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700",
+                updatePasswordForm.errors?.confirmPassword &&
+                  "border border-red-500"
+              )}
+              placeholder="New password"
+            />
+            <p className="text-xs text-red-500 mt-0.5">
+              {updatePasswordForm.errors?.confirmPassword as string}
+            </p>
+          </div>
         </div>
         <div>
           <p className="text-xs text-slate-700 w-[82%]">

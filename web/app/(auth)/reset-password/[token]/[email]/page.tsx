@@ -1,12 +1,15 @@
 "use client";
+import Tick from "@/components/icons/Tick";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { resetPassword } from "@/services/auth.api";
 import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
+import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ParsedUrlQuery } from "querystring";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -20,15 +23,32 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
     email = params.email;
   }
 
-  const validation = z.object({
-    newPassword: z
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setConfirm] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const validation = z
+    .object({
+      newPassword: z.string(),
+      confirmPassword: z.string(),
+    })
+    .superRefine((val, ctx) => {
+      if (val.confirmPassword != val.newPassword) {
+        ctx.addIssue({
+          code: "custom",
+          message: "Confirm password not matching",
+          path: ["confirmPassword"],
+        });
+      }
+    });
+  const passwordValidation = z.object({
+    password: z
       .string()
       .min(8, { message: "length" })
       .regex(/[A-Z]/, { message: "uppercase" })
       .regex(/[a-z]/, { message: "lowercase" })
       .regex(/[0-9]/, { message: "number" })
       .regex(/[^A-Za-z0-9]/, { message: "special" }),
-    confirmPassword: z.string().min(8, { message: "length" }),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
@@ -65,6 +85,8 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
     },
   });
 
+  console.log(resetPasswordForm.errors);
+
   return (
     <div className="h-screen grid place-items-center">
       <form
@@ -73,7 +95,7 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
       >
         <img
           loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/2ba7f0ebe157a835760ab4b6847ec52dfedca1e1a17dd5d36073b60a9f580c48?apiKey=011554aff43544e6af46800a427fd184&"
+          src="/assets/images/C3Logo.svg"
           className="aspect-[0.95] object-contain object-center w-[107px] fill-[linear-gradient(180deg,#39775F_81.94%,#3A9B8C_105.47%)] overflow-hidden self-center max-w-full mt-7"
           alt="Logo"
         />
@@ -91,18 +113,37 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
             </label>
             <div className="form-control-group items-stretch bg-gray-50 self-stretch flex justify-between gap-2 mt-3 px-2  rounded-md max-md:max-w-full max-md:flex-wrap">
               <Input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="newPassword"
                 name={"newPassword"}
-                onChange={resetPasswordForm.handleChange}
+                onChange={(e) => {
+                  resetPasswordForm.handleChange(e);
+                  const value = e.target.value;
+                  const values = { password: value };
+
+                  try {
+                    passwordValidation.parse(values);
+                  } catch (error: any) {
+                    // Convert Zod error format to Formik error format
+                    setErrors(error.errors.map((err: any) => err.message));
+                  }
+                  // registerForm.validateField("password");
+                }}
                 className="form-control-text text-slate-700 text-xs font-light leading-4 py-7 bg-gray-50 grow max-md:max-w-full"
               />
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/74f51194517706f1d0602129c5033bf960d574016dc91aac5b148f475ebaa9f1?apiKey=011554aff43544e6af46800a427fd184&"
-                className="aspect-square object-contain object-center w-4 cursor-pointer justify-center items-center overflow-hidden shrink-0 max-w-full"
-                alt=""
-              />
+              {showPassword ? (
+                <EyeOff
+                  size={16}
+                  className="text-slate-400 self-center cursor-pointer"
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <Eye
+                  size={16}
+                  className="text-slate-400 self-center cursor-pointer"
+                  onClick={() => setShowPassword(true)}
+                />
+              )}
             </div>
           </div>
           <div className="form-group flex w-full max-w-[589px] flex-col max-md:max-w-full">
@@ -112,23 +153,39 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
             >
               Confirm password
             </label>
-            <div className="form-control-group items-stretch bg-gray-50 self-stretch flex justify-between gap-2 mt-3 px-2 rounded-md max-md:max-w-full max-md:flex-wrap">
+            <div
+              className={cn(
+                "form-control-group items-stretch bg-gray-50 self-stretch flex justify-between gap-2 mt-3 px-2 rounded-md max-md:max-w-full max-md:flex-wrap",
+                resetPasswordForm.errors?.confirmPassword &&
+                  "border border-red-500"
+              )}
+            >
               <Input
-                type="password"
+                type={showConfirm ? "text" : "password"}
                 id="confirmPassword"
                 name={"confirmPassword"}
                 onChange={resetPasswordForm.handleChange}
                 className="form-control-text text-slate-700 text-xs font-light leading-4 py-7 bg-gray-50 grow max-md:max-w-full"
               />
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/74f51194517706f1d0602129c5033bf960d574016dc91aac5b148f475ebaa9f1?apiKey=011554aff43544e6af46800a427fd184&"
-                className="aspect-square object-contain object-center w-4 justify-center items-center overflow-hidden shrink-0 max-w-full"
-                alt=""
-              />
+              {showConfirm ? (
+                <EyeOff
+                  size={16}
+                  className="text-slate-400 self-center cursor-pointer"
+                  onClick={() => setConfirm(false)}
+                />
+              ) : (
+                <Eye
+                  size={16}
+                  className="text-slate-400 self-center cursor-pointer"
+                  onClick={() => setConfirm(true)}
+                />
+              )}
             </div>
+            <p className="text-xs text-red-500 mt-0.5">
+              {resetPasswordForm.errors?.confirmPassword}
+            </p>
           </div>
-          <div className="form-group flex w-full max-w-[589px] mx-auto items-stretch self-stretch justify-between gap-5 mt-3 max-md:max-w-full max-md:flex-wrap">
+          {/* <div className="form-group flex w-full max-w-[589px] mx-auto items-stretch self-stretch justify-between gap-5 mt-3 max-md:max-w-full max-md:flex-wrap">
             <div className="form-group flex grow basis-[0%] flex-col">
               <div className="items-stretch flex justify-between gap-2">
                 <img
@@ -196,6 +253,84 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
                 />
                 <div className="text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
                   Passwords match
+                </div>
+              </div>
+            </div>
+          </div> */}
+          <div className="input-group items-stretch w-full max-w-[589px] flex justify-between gap-5 mt-10 max-md:flex-wrap">
+            <div className="input-help items-stretch flex grow basis-[0%] flex-col">
+              <div className="input-help-item items-stretch flex justify-between gap-2">
+                <Tick
+                  variant={
+                    resetPasswordForm.values.newPassword != ""
+                      ? // ? resetPasswordForm.errors.password?.includes("lowercase")
+                        errors.includes("lowercase")
+                        ? "red"
+                        : "green"
+                      : "gray"
+                  }
+                />
+                <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
+                  One lowercase character
+                </div>
+              </div>
+              <div className="input-help-item items-stretch flex justify-between gap-2 mt-2.5">
+                <Tick
+                  variant={
+                    resetPasswordForm.values.newPassword != ""
+                      ? // ? resetPasswordForm.errors.password?.includes("uppercase")
+                        errors.includes("uppercase")
+                        ? "red"
+                        : "green"
+                      : "gray"
+                  }
+                />
+                <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
+                  One uppercase character
+                </div>
+              </div>
+              <div className="input-help-item items-stretch flex gap-2 mt-2.5">
+                <Tick
+                  variant={
+                    resetPasswordForm.values.newPassword != ""
+                      ? resetPasswordForm.values.newPassword.length < 8
+                        ? "red"
+                        : "green"
+                      : "gray"
+                  }
+                />
+                <div className="input-help-text text-zinc-950 text-opacity-30 text-sm">
+                  8 characters minimum
+                </div>
+              </div>
+            </div>
+            <div className="input-help items-stretch flex grow basis-[0%] flex-col self-start">
+              <div className="input-help-item items-stretch flex justify-between gap-2">
+                <Tick
+                  variant={
+                    resetPasswordForm.values.newPassword != ""
+                      ? errors.includes("number")
+                        ? "red"
+                        : "green"
+                      : "gray"
+                  }
+                />
+                <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
+                  One number
+                </div>
+              </div>
+              <div className="input-help-item items-stretch flex justify-between gap-2 mt-2.5">
+                <Tick
+                  variant={
+                    resetPasswordForm.values.newPassword != ""
+                      ? errors.includes("special")
+                        ? "red"
+                        : "green"
+                      : "gray"
+                  }
+                />
+                <div className="input-help-text text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
+                  One special character
                 </div>
               </div>
             </div>
