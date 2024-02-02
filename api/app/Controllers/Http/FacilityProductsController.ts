@@ -9,7 +9,25 @@ import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProdu
 
 export default class FacilityProductsController {
 
-  public async index({ }: HttpContextContract) {
+  public async index({ request, response }: HttpContextContract) {
+    try {
+      const queryParams = request.qs();
+
+      const facilityProducts = await FacilityProduct.getAllFacilityProducts(queryParams);
+
+      const isPaginated = !request.input('per_page') || request.input('per_page') !== 'all';
+
+      return apiResponse(response, true, 200, facilityProducts, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.dataFetchSuccess'), isPaginated);
+
+    } catch (error) {
+      return apiResponse(
+        response,
+        false,
+        400,
+        {},
+        error.messages ? error.messages : error.message
+      )
+    }
   }
 
   public async store({ request, response }: HttpContextContract) {
