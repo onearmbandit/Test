@@ -87,3 +87,11 @@ export const addScopeEmissions = ({ id, obj }: any) => {
     body: obj,
   });
 };
+
+export const addProductLines = (formData: any) => {
+  return fetchApi(`/auth/facility-product`, { method: "POST", body: formData });
+};
+
+export const getProductLines = (facilityId: string) => {
+  return fetchApi(`/auth/facility/${facilityId}`);
+};

@@ -95,3 +95,13 @@ export const exportSupplierDataCsv = async ({
 
   return response;
 };
+
+export const deleteUser = ({ obj }: { obj: any }) => {
+  const formData = new FormData();
+  formData.append("email", obj.email);
+  formData.append("password", obj.password);
+  return fetchApi(`/auth/user`, {
+    method: "POST",
+    body: formData,
+  } as Options);
+};

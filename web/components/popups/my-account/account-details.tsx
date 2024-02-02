@@ -8,21 +8,58 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useAccountStore } from "@/lib/stores/organisation.store";
-import { getUser } from "@/services/user.api";
-import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import { deleteUser, getUser } from "@/services/user.api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useFormik } from "formik";
 import { ChevronRight } from "lucide-react";
+import { signOut } from "next-auth/react";
 import React from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const AccountDetails = () => {
   const { setMyAccSection } = useAccountStore();
+
+  const deleteValidation = z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["account-details"],
     queryFn: () => getUser(),
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: (data) => {
+      signOut();
+      toast.success("Account Deleted.", { style: { color: "green" } });
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const deleteAccount = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: toFormikValidationSchema(deleteValidation),
+    onSubmit: (data) => {
+      mutate({ obj: data });
+    },
+  });
+
+  console.log(deleteAccount.errors);
+
   return (
-    <form className="justify-center items-start bg-white grow rounded-e-lg flex flex-col p-6 max-md:px-5">
+    <div className="justify-center items-start bg-white grow rounded-e-lg flex flex-col p-6 max-md:px-5">
       <header className="text-gray-700 border-b border-gray-300 pb-3 text-lg font-bold leading-7 self-stretch max-md:max-w-full">
         My account
       </header>
@@ -89,45 +126,62 @@ const AccountDetails = () => {
             </p>
           </div>
         </DialogTrigger>
-        <DialogContent className="space-y-6">
-          <h1 className="text-gray-700 text-base leading-6">
-            This action cannot be undone. This will permanently delete your
-            entire account. Please type in your email and password to confirm.
-          </h1>
-          <section className="input-container w-full">
-            <Input
-              type="email"
-              placeholder="johnsmith@pepsico.com"
-              className="text-gray-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md"
-            />
-          </section>
-          <section className="input-container w-full">
-            <Input
-              type="password"
-              id="password"
-              className="text-gray-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md"
-              value={"Pass@123"}
-            />
-          </section>
-          <Button
-            type="button"
-            variant={"outline"}
-            className="border-2 border-red-500 font-semibold text-red-500 hover:bg-red-50 hover:text-red-500"
-          >
-            Permanently delete account
-          </Button>
-          <DialogClose>
+        <DialogContent>
+          <form onSubmit={deleteAccount.handleSubmit} className="space-y-6">
+            <h1 className="text-gray-700 text-base leading-6 pb-6">
+              This action cannot be undone. This will permanently delete your
+              entire account. Please type in your email and password to confirm.
+            </h1>
+            <section className="input-container w-full">
+              <Input
+                name="email"
+                onChange={deleteAccount.handleChange}
+                placeholder="johnsmith@pepsico.com"
+                className={cn(
+                  "text-gray-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md",
+                  deleteAccount.errors?.email && "border border-red-500"
+                )}
+              />
+              <p className="text-xs text-red-500 py-[10px]">
+                {deleteAccount.errors?.email}
+              </p>
+            </section>
+            <section className="input-container w-full">
+              <Input
+                type="password"
+                id="password"
+                name="password"
+                onChange={deleteAccount.handleChange}
+                className={cn(
+                  "text-gray-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md",
+                  deleteAccount.errors?.password && "border border-red-500"
+                )}
+                placeholder={"Pass@123"}
+              />
+              <p className="text-xs text-red-500 py-[10px]">
+                {deleteAccount.errors?.password}
+              </p>
+            </section>
             <Button
-              type="button"
+              type="submit"
               variant={"outline"}
-              className="w-full border-2 border-gray-300 text-gray-500 hover:text-gray-600"
+              className="border-2 w-full border-red-500 font-semibold text-red-500 hover:bg-red-50 hover:text-red-500"
             >
-              Cancel
+              Permanently delete account
             </Button>
-          </DialogClose>
+            <DialogClose className="block w-full">
+              <Button
+                type="button"
+                variant={"outline"}
+                className="w-full border-2 border-gray-300 text-gray-500 hover:text-gray-600"
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+          </form>
         </DialogContent>
       </Dialog>
-    </form>
+    </div>
   );
 };
 
