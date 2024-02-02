@@ -103,11 +103,11 @@ export default class OrganizationsController {
             url: `${WEB_BASE_URL}?email=${requestData.companyEmail}`,
           }
 
-          let userEmail = auth.user ? auth.user.email : ''
+          // let userEmail = auth.user ? auth.user.email : ''
           let userName = auth.user ? `${auth.user.firstName} ${auth.user.lastName}` : ''
 
           await sendMail(
-            userEmail,
+            requestData.companyEmail,
             `${userName} invited you to join C3 Insets`,
             'emails/invite_sub_user',
             emailData

@@ -22,6 +22,7 @@ export default class UpdateOrganizationValidator {
     companyEmail: schema.string.optional({}, [
       rules.email(),
       rules.unique({ table: 'users', column: 'email' }),
+      // rules.unique({ table: 'organizationUsers', column: 'email' }),
     ]),
 
   })
