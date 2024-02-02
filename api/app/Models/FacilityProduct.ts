@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm'
 import FacilityEmission from './FacilityEmission'
 import { v4 as uuidv4 } from 'uuid'
+import { ParsedQs } from 'qs';
 
 export default class FacilityProduct extends BaseModel {
   @column({ isPrimary: true })
@@ -48,6 +49,26 @@ export default class FacilityProduct extends BaseModel {
   public FacilityEmission: BelongsTo<typeof FacilityEmission>
 
   //::_____Relationships End_____:://
+
+  public static async getAllFacilityProducts(queryParams: ParsedQs) {
+    const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8;
+    const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
+    const order = queryParams.order ? queryParams.order.toString() : 'desc';
+    const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at';
+    const facilityEmissionId = queryParams.facilityEmissionId ? queryParams.facilityEmissionId.toString() : '';
+
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+
+    if (facilityEmissionId) {
+      query = query.where('facility_emission_id', facilityEmissionId);
+    }
+
+    query = query.orderBy(sort, order);
+
+    const facilityProducts = await query.paginate(page, perPage);
+
+    return facilityProducts
+  }
 
   public static async createFacilityProducts(emissionData, requestData) {
     let products: any = []
