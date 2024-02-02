@@ -55,7 +55,7 @@ Route.group(() => {
         'destroy',
       ])
 
-      Route.resource('/facility-product', 'FacilityProductsController').only(['store'])
+      Route.resource('/facility-product', 'FacilityProductsController').only(['index', 'store'])
       Route.post(
         '/update-facility-products',
         'FacilityProductsController.updateFacilityMultipleProducts'
