@@ -51,10 +51,10 @@ export const SUPPLIER_RESPONSE = {
   supplyChainReportingPeriodIdExist: "Supply chain reporting period with this ID does not exist.",
   supplierCreateSuccess: "New supplier added successfully.",
   supplierUpdateSuccess: "Supplier details updated successfully.",
-  productNotFount:"Supplier product not found.",
-  productDeleteSuccess:"Supplier product deleted successfully.",
-  productCreateOrUpdateSuccess:"Supplier products created or updated successfully.",
-  multipleProductDeleteSuccess:"Selected supplier products deleted successfully.",
+  productNotFount: "Supplier product not found.",
+  productDeleteSuccess: "Supplier product deleted successfully.",
+  productCreateOrUpdateSuccess: "Supplier products created or updated successfully.",
+  multipleProductDeleteSuccess: "Selected supplier products deleted successfully.",
 
 }
 
@@ -68,4 +68,6 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
   deleteFacilityEmissionSuccess: "Facility reporting period deleted successfully.",
   FacilityEmissionNotFound: "Facility emission didn't found.",
   createFacilityProductSuccess: "Facility products created successfully.",
+  equalityCarbonEmissionSuccess: "Equality carbon emission to product line calculated successfully.",
+  updateFacilityProductSuccess: "Facility product details updated successfully.",
 }
