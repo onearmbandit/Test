@@ -94,8 +94,4 @@ export const exportSupplierDataCsv = async ({
   // console.log("response:", response);
 
   return response;
-
-  // return fetchApi(
-  //   `/auth/export-supplier-data?organizationId=${organizationId}&supplyChainReportingPeriodId=${supplyChainReportingPeriodId}`
-  // );
 };
