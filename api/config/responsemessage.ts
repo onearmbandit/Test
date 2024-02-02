@@ -69,4 +69,5 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
   FacilityEmissionNotFound: "Facility emission didn't found.",
   createFacilityProductSuccess: "Facility products created successfully.",
   equalityCarbonEmissionSuccess: "Equality carbon emission to product line calculated successfully.",
+  updateFacilityProductSuccess: "Facility product details updated successfully.",
 }

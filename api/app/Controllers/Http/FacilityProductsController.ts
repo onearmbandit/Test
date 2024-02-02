@@ -80,7 +80,7 @@ export default class FacilityProductsController {
       const updateFacilityProducts = await FacilityProduct.updateOrCreateFacilityProducts(facilityEmissionData, requestData)
 
       return apiResponse(response, true, 200, updateFacilityProducts,
-        Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.updateFacilityEmissionSuccess'))
+        Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.updateFacilityProductSuccess'))
     } catch (error) {
 
       if (error.status === 422) {
