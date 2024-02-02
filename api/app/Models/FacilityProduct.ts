@@ -128,7 +128,7 @@ export default class FacilityProduct extends BaseModel {
 
     const percentagePerProduct = 100 / totalProducts
 
-    allProducts.map((product, index) => {
+    allProducts.map((product, _) => {
       const scope1CarbonEmission = ((percentagePerProduct / 100) * scope1TotalEmission).toFixed(2) + '%'
       const scope2CarbonEmission = ((percentagePerProduct / 100) * scope2TotalEmission).toFixed(2) + '%'
       const scope3CarbonEmission = ((percentagePerProduct / 100) * scope3TotalEmission).toFixed(2) + '%'

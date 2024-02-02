@@ -57,7 +57,7 @@ export default class FacilityProductsController {
 
       const facilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', requestData.facilityEmissionId)
 
-      const payload = await request.validate(UpdateMultipleFacilityProductValidator);
+      await request.validate(UpdateMultipleFacilityProductValidator);
 
       const updateFacilityProducts = await FacilityProduct.updateOrCreateFacilityProducts(facilityEmissionData, requestData)
 
