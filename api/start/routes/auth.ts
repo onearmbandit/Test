@@ -22,7 +22,8 @@ Route.group(() => {
     Route.post('/social-login', 'AuthController.socialLogin')
 
     //:: Api for download supplier csv template
-    Route.get('/download-supplier-csv', 'FilesController.download')
+    Route.get('/download-supplier-csv', 'FilesController.downloadSupplierCSV')
+
 
     //Auth routes
     Route.group(() => {
