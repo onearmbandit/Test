@@ -1,5 +1,6 @@
 export type Product = {
   name: string;
   quantity: number;
-  unit: string;
+  functionalUnit: string;
+  functional_unit?: string;
 };
