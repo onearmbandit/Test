@@ -24,7 +24,6 @@ Route.group(() => {
     //:: Api for download supplier csv template
     Route.get('/download-supplier-csv', 'FilesController.downloadSupplierCSV')
 
-
     //Auth routes
     Route.group(() => {
       //:: used for setup and update organization
@@ -56,12 +55,15 @@ Route.group(() => {
         'destroy',
       ])
 
-      Route.resource('/facility-product', 'FacilityProductsController').only([
-        'index',
-        'store',
-      ])
-      Route.post('/update-facility-products', 'FacilityProductsController.updateFacilityMultipleProducts')
-      Route.get('/equality-emission-calculation', 'FacilityProductsController.calculateEqualityCarbonEmission')
+      Route.resource('/facility-product', 'FacilityProductsController').only(['index', 'store'])
+      Route.post(
+        '/update-facility-products',
+        'FacilityProductsController.updateFacilityMultipleProducts'
+      )
+      Route.get(
+        '/equality-emission-calculation',
+        'FacilityProductsController.calculateEqualityCarbonEmission'
+      )
 
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier')
@@ -71,7 +73,10 @@ Route.group(() => {
       Route.resource('/suppliers', 'SuppliersController')
 
       Route.resource('/supplier-products', 'SupplierProductsController')
-      Route.post('/remove-multiple-products', 'SupplierProductsController.deleteMultipleSupplierProducts')
+      Route.post(
+        '/remove-multiple-products',
+        'SupplierProductsController.deleteMultipleSupplierProducts'
+      )
       Route.get(
         '/supplier-period-emission',
         'SupplierProductsController.calculateProductEmissionData'
@@ -83,8 +88,13 @@ Route.group(() => {
       Route.post('/invite-organization', 'OrganizationUsersController.inviteOrganization')
 
       Route.get('/roles/:name', 'UsersController.getRoleByName')
+
+      Route.get('/export-supplier-data', 'SuppliersController.exportSupplierData')
+      // Route.post('/import-supplier-data', 'UsersController.getRoleByName')
     })
       .prefix('/auth')
       .middleware('auth')
+
+    Route.post('/send-test-email', 'DevTestsController.sendTestMail')
   }).prefix('/v1')
 }).prefix('/api')

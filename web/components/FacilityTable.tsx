@@ -57,7 +57,11 @@ const FacilityTable = () => {
               <TableRow
                 key={item.id}
                 onClick={() =>
-                  router.push(`/facilities/${item.name}?facilityId=${item.id}`)
+                  router.push(
+                    `/facilities/${item.name.split(" ").join("-")}?facilityId=${
+                      item.id
+                    }`
+                  )
                 }
               >
                 <TableCell className="flex justify-between">
