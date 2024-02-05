@@ -24,6 +24,8 @@ Route.group(() => {
     //:: Api for download supplier csv template
     Route.get('/download-supplier-csv', 'FilesController.downloadSupplierCSV')
 
+    Route.post('/upload-image', 'FilesController.uploadImageToS3')
+
     //Auth routes
     Route.group(() => {
       //:: used for setup and update organization
