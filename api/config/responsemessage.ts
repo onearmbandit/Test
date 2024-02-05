@@ -77,3 +77,8 @@ export const FILE_UPLOAD_RESPONSE = {
   serverError: 'Looks like something went wrong. Please try again.',
   uploadSuccess:"File uploaded successfully."
 }
+
+
+export const ABATEMENT_PROJECT_RESPONSE = {
+  projectCreateSuccess:""
+}

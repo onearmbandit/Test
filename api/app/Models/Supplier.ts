@@ -3,6 +3,7 @@ import { BaseModel, column, belongsTo, BelongsTo, hasMany, HasMany } from '@ioc:
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod'
 import SupplierProduct from './SupplierProduct'
 import { ParsedQs } from 'qs'
+import AbatementProject from './AbatementProject'
 
 export default class Supplier extends BaseModel {
   @column({ isPrimary: true })
@@ -46,6 +47,11 @@ export default class Supplier extends BaseModel {
     foreignKey: 'supplierId',
   })
   public supplierProducts: HasMany<typeof SupplierProduct>
+
+  @hasMany(() => AbatementProject, {
+    foreignKey: 'supplierId',
+  })
+  public abatementProjects: HasMany<typeof AbatementProject>
 
   //::_____Relationships End_____:://
 
