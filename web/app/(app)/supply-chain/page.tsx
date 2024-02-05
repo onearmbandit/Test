@@ -1,7 +1,6 @@
 'use client';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import download from 'downloadjs';
@@ -29,7 +28,8 @@ import { useSession } from 'next-auth/react';
 import ReportingPeriodPopup from '@/components/supply-chain/reporting-period-popover';
 import dayjs from 'dayjs';
 import AddSupplierManualy from '@/components/supply-chain/addSupplierManualy';
-import { SupplierData } from '@/components/supply-chain/SupplierData';
+import SupplierData from '@/components/supply-chain/SupplierData';
+import { Button } from '@/components/ui/button';
 
 const Page = () => {
   const [file, setFile] = useState('');
@@ -127,10 +127,14 @@ const Page = () => {
         </div>
       </div>
       {periodsQ.isSuccess && (
-        <Tabs className='w-full' value={showNew ? 'new' : currentTab!}>
+        <Tabs
+          className='w-full'
+          value={showNew ? 'new' : currentTab!}
+          onValueChange={setCurrentTab}
+        >
           <TabsList>
             {showNew && (
-              <TabsTrigger value='tab1'>
+              <TabsTrigger value='new'>
                 <Popover defaultOpen={true}>
                   <PopoverTrigger> Add Reporting Period</PopoverTrigger>
                   <PopoverContent
@@ -154,9 +158,7 @@ const Page = () => {
                   onClick={() => setCurrentTab(reporting)}
                 >
                   <Popover>
-                    <PopoverTrigger className='text-blue-600'>
-                      {reporting}
-                    </PopoverTrigger>
+                    <PopoverTrigger className=''>{reporting}</PopoverTrigger>
                     <PopoverContent
                       align='start'
                       className='w-full left-0 p-0 -ml-4'
@@ -170,9 +172,8 @@ const Page = () => {
           </TabsList>
 
           <TabsContent value={currentTab!} className='relative'>
-            {/* <SupplierData period={currentTab}></SupplierData> */}
+            <SupplierData periodId={currentTab!}></SupplierData>
           </TabsContent>
-
           <TabsContent value='new'>
             <div className='justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5'>
               <img
@@ -283,8 +284,9 @@ const Page = () => {
           </TabsContent>
         </Tabs>
       )}
+
       <div className='items-stretch self-stretch flex flex-col pb-12'>
-        <div className='items-stretch rounded-3xl bg-gray-100 flex justify-between gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
+        <div className='items-stretch bg-gray-100 flex justify-between gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
           <div className='text-slate-800 text-xs font-bold leading-4 grow max-md:max-w-full'>
             Suppliers
           </div>

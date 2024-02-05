@@ -1,5 +1,7 @@
 import React from 'react';
 
-export const SupplierData = () => {
+const SupplierData = ({ periodId }: { periodId: string }) => {
   return <div>SupplierData</div>;
 };
+
+export default SupplierData;
