@@ -29,6 +29,7 @@ import { useSession } from 'next-auth/react';
 import ReportingPeriodPopup from '@/components/supply-chain/reporting-period-popover';
 import dayjs from 'dayjs';
 import AddSupplierManualy from '@/components/supply-chain/addSupplierManualy';
+import { SupplierData } from '@/components/supply-chain/SupplierData';
 
 const Page = () => {
   const [file, setFile] = useState('');
@@ -75,7 +76,7 @@ const Page = () => {
     onSuccess: (data) => {
       download(
         data?.data.download_url,
-        'Supplier_GHG_Emissions_CSV_Template.csv',
+        'Supplier GHG Emissions CSV Template',
         'text/csv'
       );
       console.log(data?.data.download_url, 'data dsfasdf');
@@ -169,7 +170,7 @@ const Page = () => {
           </TabsList>
 
           <TabsContent value={currentTab!} className='relative'>
-            <div></div>
+            {/* <SupplierData period={currentTab}></SupplierData> */}
           </TabsContent>
 
           <TabsContent value='new'>
@@ -183,10 +184,10 @@ const Page = () => {
                 Upload supplier product level emissions data
               </div>
               <div className='text-slate-700 text-center text-lg font-light leading-7 self-stretch w-full mt-6 max-md:max-w-full max-md:mr-2'>
-                Your suppliers product-level emission data encompasses the
-                Scope 3 emissions directly linked to your products. To begin,
-                upload this information using a CSV file or enter the data
-                manually in the table below.
+                Your suppliers product-level emission data encompasses the Scope
+                3 emissions directly linked to your products. To begin, upload
+                this information using a CSV file or enter the data manually in
+                the table below.
                 <br />
               </div>
               <Dialog>
@@ -329,7 +330,6 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <AddSupplierManualy />
     </div>
   );
 };
