@@ -6,9 +6,7 @@ import { HelpCircle, X } from "lucide-react";
 import { Product } from "@/lib/types/product.type";
 import { Button } from "../ui/button";
 import _ from "lodash";
-import { usePathname, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addProductLines,
@@ -16,14 +14,11 @@ import {
   getProductLines,
 } from "@/services/facility.api";
 import { toast } from "sonner";
-import { useFormik } from "formik";
 
 const ProductLines = ({ period }: { period: string }) => {
   const searchParams = useSearchParams();
   const facilityId = searchParams.get("facilityId");
   const [isEdit, setEdit] = useState(false);
-  const pathname = usePathname();
-  const router = useRouter();
   const queryClient = useQueryClient();
   const [products, setProducts] = useState<Product[]>([
     { name: "", quantity: 0, functionalUnit: "" },
@@ -34,13 +29,14 @@ const ProductLines = ({ period }: { period: string }) => {
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
-  console.log(productLines.data);
 
   const { mutate } = useMutation({
     mutationFn: addProductLines,
     onSuccess: (data) => {
       toast.success("Products Lines added.", { style: { color: "green" } });
-      queryClient.invalidateQueries({ queryKey: ["product-lines", period] });
+      queryClient.invalidateQueries({
+        queryKey: ["product-lines", period, "facility-details"],
+      });
       setEdit(false);
     },
     onError: (err) => {

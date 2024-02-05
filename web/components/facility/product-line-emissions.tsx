@@ -23,7 +23,6 @@ import { editProductLines, getProductLines } from "@/services/facility.api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Product } from "@/lib/types/product.type";
 import _ from "lodash";
-import { Item } from "@radix-ui/react-accordion";
 import { toast } from "sonner";
 
 const ProductLineEmissions = ({ period }: { period: string }) => {
@@ -39,7 +38,7 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
   const [equallyModal, setEquallyModal] = useState(false);
 
   const prodLines = useQuery({
-    queryKey: ["product-emissions", period],
+    queryKey: ["product-emissions", period, "facility-details"],
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
@@ -87,8 +86,6 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
       setEmissions(productLines.data);
     }
   }, [prodLines.status]);
-
-  console.log(emissions);
 
   return (
     <>

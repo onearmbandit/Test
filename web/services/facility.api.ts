@@ -102,3 +102,7 @@ export const editProductLines = (formData: any) => {
 export const getProductLines = (facilityId: string) => {
   return fetchApi(`/auth/facility-product?facilityEmissionId=${facilityId}`);
 };
+
+export const facilityDetails = (id: string) => {
+  return fetchApi(`/auth/facility/${id}`);
+};
