@@ -4,6 +4,7 @@ import axios, {
   AxiosRequestConfig,
   RawAxiosRequestHeaders,
 } from 'axios';
+
 import { authOptions } from '@/lib/utils';
 import { getServerSession } from 'next-auth';
 type CreateAPIMethod = <TInput extends Record<string, string>, TOutput>(opts: {
@@ -47,9 +48,7 @@ const fetchApi = async (
 };
 export const importFile = (data: any) => {
   const formbody = data;
-  console.log(data, 'formData');
-
-  return fetchApi('/auth/suppliers/csv-upload', {
+  return fetchApi('/auth/supplier-csv-upload', {
     method: 'POST',
     body: formbody,
   });

@@ -65,6 +65,8 @@ const ReportingPeriodPopup = ({
   const addReportMut = useMutation({
     mutationFn: addReportingPeriod,
     onSuccess: (data) => {
+      console.log(data, 'data addd');
+
       toast.success('Reporting period Added.', { style: { color: 'green' } });
     },
   });
@@ -88,7 +90,7 @@ const ReportingPeriodPopup = ({
       validateOnBlur: true,
       onSubmit: (data) => {
         if (period) {
-          console.log(period.id, 'period id');
+          console.log(period, 'period id');
           editMuation.mutate({
             id: period.id,
             formData: {

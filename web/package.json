@@ -26,6 +26,7 @@
     "clsx": "^2.1.0",
     "date-fns": "^3.3.1",
     "dayjs": "^1.11.10",
+    "downloadjs": "^1.4.7",
     "formik": "^2.4.5",
     "lodash": "^4.17.21",
     "lucide-react": "^0.307.0",
@@ -47,6 +48,7 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@types/downloadjs": "^1.4.6",
     "@types/google.maps": "^3.55.1",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20",

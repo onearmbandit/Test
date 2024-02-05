@@ -1,13 +1,10 @@
 'use client';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import moment from 'moment';
-// import { format } from '@/date-fns';
-
 import { Button } from '@/components/ui/button';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
-
+import download from 'downloadjs';
 import {
   addReportingPeriod,
   downloadCsvTemplate,
@@ -23,16 +20,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-
 import { useSession } from 'next-auth/react';
 import ReportingPeriodPopup from '@/components/supply-chain/reporting-period-popover';
 import dayjs from 'dayjs';
+import AddSupplierManualy from '@/components/supply-chain/addSupplierManualy';
 
 const page = () => {
   const [file, setFile] = useState('');
@@ -43,23 +39,24 @@ const page = () => {
 
   const organizationId = session?.data?.user.organizations[0].id!;
 
-  console.log(organizationId);
-
   const periodsQ = useQuery({
     queryKey: ['reporting-periods', organizationId],
     queryFn: () => getAllReportingPeriods(organizationId),
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
   // console.log(session.data? session.data.user.organizations[0].id:"", 'session.data');
-
+  console.log(reportingPeriods, 'reportingPeriods');
   function handleChange(event: any) {
     setFile(event.target.files[0]);
     setFileName(event.target.files[0].name);
   }
   function handleSubmit(event: any) {
     event.preventDefault();
-    const formData = new FormData();
-    formData.append('file', file);
+    const formData = {
+      supplierCSV: fileName,
+      supplyChainReportingPeriodId: 'f942aa90-6dc1-45a4-bc12-bf53e9f38468',
+    };
+    // formData.append('file', file);
     mutate(formData);
   }
   const { mutate, isPending } = useMutation({
@@ -69,13 +66,19 @@ const page = () => {
       toast.error(err.message, { style: { color: 'red' } });
     },
   });
+
   const DownloadTemplate = () => {
     downloadCsvMUt.mutate();
   };
   const downloadCsvMUt = useMutation({
     mutationFn: downloadCsvTemplate,
     onSuccess: (data) => {
-      console.log(data, 'data dsfasdf');
+      download(
+        data?.data.download_url,
+        'Supplier_GHG_Emissions_CSV_Template.csv',
+        'text/csv'
+      );
+      console.log(data?.data.download_url, 'data dsfasdf');
       toast.success('csv downloaded Successfully.', {
         style: { color: 'green' },
       });
@@ -85,6 +88,9 @@ const page = () => {
       toast.error(err.message, { style: { color: 'red' } });
     },
   });
+  const emptyInput = () => {
+    setFileName('');
+  };
 
   useEffect(() => {
     if (periodsQ.isSuccess) {
@@ -163,6 +169,10 @@ const page = () => {
           </TabsList>
 
           <TabsContent value={currentTab!} className='relative'>
+            <div></div>
+          </TabsContent>
+
+          <TabsContent value='new'>
             <div className='justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5'>
               <img
                 loading='lazy'
@@ -210,7 +220,7 @@ const page = () => {
                           </div>
 
                           {fileName ? (
-                            <div className='bg-white-200 self-stretch flex relative cursor-pointer flex-col justify-center items-start mr-4 mt-4 py-12 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
+                            <div className='bg-white-200 self-stretch flex relative cursor-pointer flex-col justify-center items-start mr-4 mt-4 py-8 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
                               <div className='flex gap-3'>
                                 <img
                                   loading='lazy'
@@ -221,6 +231,7 @@ const page = () => {
                                   {fileName}
                                 </div>
                                 <img
+                                  onClick={emptyInput}
                                   loading='lazy'
                                   src='https://cdn.builder.io/api/v1/image/assets/TEMP/c0d4f4b0887ea5dba16339f6f1ded722874e86814a8d420ffd2db31638831bb1?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
                                   className='aspect-square object-contain object-center w-4 self-stretch shrink-0 my-auto'
@@ -318,6 +329,7 @@ const page = () => {
           </div>
         </div>
       </div>
+      <AddSupplierManualy />
     </div>
   );
 };
