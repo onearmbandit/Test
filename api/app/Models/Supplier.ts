@@ -53,6 +53,11 @@ export default class Supplier extends BaseModel {
   })
   public abatementProjects: HasMany<typeof AbatementProject>
 
+  @hasMany(() => AbatementProject, {
+    foreignKey: 'proposedBy',
+  })
+  public proposedProject: HasMany<typeof AbatementProject>
+
   //::_____Relationships End_____:://
 
   public static async createSupplier(reportPeriodData, requestData, auth, trx: any = undefined) {
@@ -115,7 +120,13 @@ export default class Supplier extends BaseModel {
 
     query = query.orderBy(sort, order)
 
-    const allSuppliersData = await query.preload('supplierProducts').paginate(page, perPage)
+    let allSuppliersData:any={}
+    if(queryParams.perPage && queryParams.perPage!=='all'){
+      allSuppliersData = await query.preload('supplierProducts').paginate(page, perPage)
+    }
+    else{
+      allSuppliersData = await query.preload('supplierProducts')
+    }
 
     return allSuppliersData
   }

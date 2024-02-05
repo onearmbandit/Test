@@ -19,8 +19,7 @@ export default class SuppliersController {
 
       const allSuppliersData = await Supplier.getAllSuppliersForSpecificPeriod(queryParams)
 
-      const isPaginated = !request.input('perPage') || request.input('perPage') !== 'all'
-
+      const isPaginated = request.input('perPage') && request.input('perPage') !== 'all'
       return apiResponse(
         response,
         true,
@@ -178,7 +177,7 @@ export default class SuppliersController {
     }
   }
 
-  public async destroy({}: HttpContextContract) {}
+  public async destroy({ }: HttpContextContract) { }
 
   //:: Create supplier data using csv file
   public async bulkCreationOfSupplier({ request, response, auth }: HttpContextContract) {

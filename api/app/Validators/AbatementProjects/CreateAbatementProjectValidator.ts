@@ -7,7 +7,7 @@ export default class CreateAbatementProjectValidator {
 
 	public schema = schema.create({
 		name: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(255)]),
-		description: schema.string.optional({ trim: true }, [rules.maxLength(500)]),
+		description: schema.string.optional({ trim: true }, [rules.maxLength(1000)]),
 		emissionReductions: schema.number.optional(),
 		photoUrl: schema.string.optional(),
 		logoUrl: schema.string.optional(),
@@ -25,7 +25,7 @@ export default class CreateAbatementProjectValidator {
 	public messages = {
 		'name.minLength': 'Abatement project name must be at least 3 characters.',
 		'name.maxLength': 'Abatement project name cannot exceed 255 characters.',
-		'description.maxLength': 'Description cannot exceed 500 characters.',
+		'description.maxLength': 'Description cannot exceed 1000 characters.',
 		'emissionReductions.number': 'Emission reduction must be a number.',
 		'contactEmail.required': 'Email field is required.',
 		'contactEmail.email': 'Please enter a valid email.',

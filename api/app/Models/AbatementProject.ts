@@ -3,6 +3,7 @@ import { BaseModel, column, belongsTo, BelongsTo, } from '@ioc:Adonis/Lucid/Orm'
 import Supplier from './Supplier'
 import Organization from './Organization'
 import { v4 as uuidv4 } from 'uuid'
+import { ParsedQs } from 'qs'
 
 
 export default class AbatementProject extends BaseModel {
@@ -71,16 +72,21 @@ export default class AbatementProject extends BaseModel {
   })
   public organization: BelongsTo<typeof Organization>
 
+  @belongsTo(() => Supplier, {
+    foreignKey: 'proposedBy',
+  })
+  public proposedSupplier: BelongsTo<typeof Supplier>
+
   //::_____Relationships End_____:://
 
 
 
 
   public static async createNewProject(requestData, auth, organizationData) {
-    const projectData = await AbatementProject.create(
+    const projectData = await organizationData.related('abatementProjects').create(
       {
         id: uuidv4(),
-        supplierId: requestData.proposedBy,
+        // supplierId: requestData.proposedBy,
         name: requestData.name,
         description: requestData.description,
         websiteUrl: requestData.websiteUrl,
@@ -96,4 +102,65 @@ export default class AbatementProject extends BaseModel {
     )
     return projectData
   }
+
+
+  public static async getProjectDetails(field, value) {
+    var supplierData = await AbatementProject.query()
+      .where(field, value)
+      .andWhereNull('deletedAt')
+      .preload('organization')
+      .preload('proposedSupplier')
+      .firstOrFail()
+
+    return supplierData
+  }
+
+
+  public static async getAllProjects(queryParams: ParsedQs) {
+    let allProjectData: any = {}
+
+    let perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
+    let page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
+    let order = queryParams.order ? queryParams.order.toString() : 'desc'
+    let sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at'
+    let organizationId = queryParams.organizationId
+      ? queryParams.organizationId.toString()
+      : ''
+    let filters: any = queryParams.filters ? queryParams.filters : {};
+    let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
+
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+    if (organizationId) {
+      query = query.where('organizationId', organizationId)
+    }
+
+    query = query.orderBy(sort, order)
+
+    //::Filter Query
+    if (typeof filters === 'object' && Object.keys(filters).length > 0) {
+      //::filter as per collection status active/inactive
+      if (('status' in filters) && filters['status'].length > 0) {
+        query.where('status', filters['status'])
+      }
+    }
+
+    //::Include Relationship
+    if (includes.length > 0) {
+      includes.forEach((include: any) => query.preload(include.trim()))
+    }
+
+    //:: Pagination handling
+    if (queryParams.perPage && queryParams.perPage !== 'all') {
+      allProjectData = await query.paginate(page, perPage)
+    }
+    else {
+      allProjectData = await query
+    }
+
+
+    return allProjectData
+
+  }
+
+
 }

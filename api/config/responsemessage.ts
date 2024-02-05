@@ -75,10 +75,10 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
 
 export const FILE_UPLOAD_RESPONSE = {
   serverError: 'Looks like something went wrong. Please try again.',
-  uploadSuccess:"File uploaded successfully."
+  uploadSuccess: "File uploaded successfully."
 }
 
 
 export const ABATEMENT_PROJECT_RESPONSE = {
-  projectCreateSuccess:""
+  projectCreateSuccess: "Abatement project created successfully."
 }
