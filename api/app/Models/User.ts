@@ -3,20 +3,20 @@ import {
   BaseModel,
   beforeSave,
   column,
-  manyToMany, ManyToMany,
+  manyToMany,
+  ManyToMany,
   hasMany,
-  HasMany
+  HasMany,
 } from '@ioc:Adonis/Lucid/Orm'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Organization from './Organization'
 import { slugify } from '@ioc:Adonis/Addons/LucidSlugify'
 import Role from './Role'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 import ApiToken from './ApiToken'
 
 // import { SoftDeletes } from '@ioc:Adonis/Addons/LucidSoftDeletes';
 // import { compose } from '@ioc:Adonis/Core/Helpers';
-
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -63,7 +63,6 @@ export default class User extends BaseModel {
   @column()
   public socialLoginToken: string
 
-
   @column()
   public timezone: string
 
@@ -78,8 +77,6 @@ export default class User extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
-
-
 
   @beforeSave()
   public static async hashPassword(user: User) {
@@ -123,47 +120,49 @@ export default class User extends BaseModel {
   })
   public organizations: ManyToMany<typeof Organization>
 
-
   //:: Just with first() method
   public static async getUserDetailsWithFirst(field, value) {
-    const user = await User.query().where(field, value)
+    const user = await User.query()
+      .where(field, value)
       .andWhereNull('deletedAt')
       .preload('roles')
       .preload('organizations')
-      .first();
-    return user;
+      .first()
+    return user
   }
 
   public static async getUserDetails(field, value) {
-    const userData = await User.query().where(field, value)
+    const userData = await User.query()
+      .where(field, value)
       .andWhereNull('deletedAt')
       .preload('roles')
       .preload('organizations')
-      .firstOrFail();
+      .firstOrFail()
 
     return userData
   }
 
   public static async getUserDetailsWithPreloads(id) {
-    const user = await User.query().where('id', id)
+    const user = await User.query()
+      .where('id', id)
       .andWhereNull('deletedAt')
       .preload('roles')
-      .preload('organizations').firstOrFail();
+      .preload('organizations')
+      .firstOrFail()
 
     return user
-
   }
 
-  public static async getUserDetailsWithSocialToken(field, value,token) {
-    const user = await User.query().where(field, value)
+  public static async getUserDetailsWithSocialToken(field, value, token) {
+    const user = await User.query()
+      .where(field, value)
       .orWhere('socialLoginToken', token)
       .andWhereNull('deletedAt')
       .preload('roles')
       .preload('organizations')
-      .first();
-    return user;
+      .first()
+    return user
   }
-
 
   public static async createUserWithRole(userData, roleData) {
     const result = await User.create(userData)
@@ -171,14 +170,12 @@ export default class User extends BaseModel {
     await result.related('roles').attach({
       [roleData.id]: {
         id: uuidv4(),
-      }
+      },
     })
 
     const user = await User.getUserDetails('id', result.id)
-    return user;
+    return user
   }
-
-
 
   public static async getLoggedInUser(authUser) {
     const user = await User.query()
@@ -190,7 +187,6 @@ export default class User extends BaseModel {
     return user
   }
 
-
   public static async deleteUser(user) {
     await ApiToken.expireApiToken(user)
     const userEmail = DateTime.now() + '_' + user.email
@@ -199,13 +195,12 @@ export default class User extends BaseModel {
   }
 
   public static async updateUser(user, requestData) {
-    await user.merge(requestData).save();
-    const userDetails = await User.find(user.id);
-    return userDetails;
+    await user.merge(requestData).save()
+    const userDetails = await User.find(user.id)
+    return userDetails
   }
 
   public async verifyPassword(plainPassword: string): Promise<boolean> {
-    return Hash.verify(plainPassword, this.password);
+    return Hash.verify(plainPassword, this.password)
   }
-
 }

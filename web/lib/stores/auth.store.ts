@@ -5,7 +5,7 @@ type Store = {
   setUser: (val: any) => void;
 };
 
-export const useAccountStore = create<Store>()((set) => ({
+export const useAuthStore = create<Store>()((set) => ({
   user: { firstName: "", lastName: "" },
   setUser: (val: any) => set(() => ({ user: val })),
 }));

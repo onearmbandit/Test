@@ -348,8 +348,8 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
             </div>
           </div>
           <div
-            // role="button"
-            // onClick={() => signIn("microsoft")}
+            role="button"
+            onClick={() => signIn("microsoft", { callbackUrl: "/" })}
             className="justify-start items-stretch border-slate-200 flex gap-4 mt-6 py-4 px-11  rounded-full border-2 border-solid"
           >
             <img
@@ -490,16 +490,6 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const validation = z.object({
     companyName: z.string(),
     companyAddress: z.string(),
-    // addressLine1: z.string(),
-    // addressLine2: z.string(),
-    // city: z.string(),
-    // state: z.string(),
-    // zipCode: z
-    //   .string()
-    //   .min(5)
-    //   .refine((val) => /^-?\d*\.?\d+$/.test(val), {
-    //     message: "Enter a valid zipcode.",
-    //   }),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({

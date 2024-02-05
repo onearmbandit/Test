@@ -16,8 +16,6 @@ const Page = async ({ searchParams }: { searchParams: any }) => {
   const session = await getServerSession(authOptions);
   const { data: facilities } = await getFacilities();
 
-  console.log(facilities);
-
   return (
     <div className="p-6 bg-white w-full">
       {/* Nav */}

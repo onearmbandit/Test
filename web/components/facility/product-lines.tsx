@@ -9,14 +9,35 @@ import _ from "lodash";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { addProductLines, getProductLines } from "@/services/facility.api";
+import { toast } from "sonner";
 
 const ProductLines = () => {
   const searchParams = useSearchParams();
+  const facilityId = searchParams.get("facilityId");
+  const [isEdit, setEdit] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([
     { name: "", quantity: 0, unit: "" },
   ]);
+
+  const prodLines = useQuery({
+    queryKey: ["product-lines"],
+    queryFn: () => getProductLines(facilityId!),
+  });
+  const productLines = prodLines.isSuccess ? prodLines.data : [];
+
+  // console.log(productLines);
+
+  const { mutate } = useMutation({
+    mutationFn: addProductLines,
+    onSuccess: (data) => {
+      toast.success("Products Lines added.", { style: { color: "green" } });
+      setEdit(false);
+    },
+  });
 
   const handleAddProductLine = () => {
     const newProduct = { name: "", quantity: 0, unit: "" };
@@ -31,12 +52,14 @@ const ProductLines = () => {
     setProducts(productLineClone);
   };
 
-  const isEdit = searchParams.get("edit");
-  console.log(pathname);
+  /**
+   * TODO : handle both edit and addition throught this function
+   */
+  const handleSubmit = () => {};
 
   return (
     <>
-      {isEdit == "product" ? (
+      {isEdit ? (
         <div className="flex flex-col items-stretch self-stretch text-xs leading-4 bg-white rounded-lg">
           <header className="grid grid-cols-3 gap-5  px-5 py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 max-md:flex-wrap max-md:max-w-full">
             <div className="flex-auto">Product Name</div>
@@ -132,12 +155,14 @@ const ProductLines = () => {
             <p className="grow">kilowatt/hour</p>
           </div>
           <div className="self-end mt-5 mr-4 text-sm font-semibold leading-5 text-blue-600 max-md:mr-2.5">
-            <Link
-              href={`${pathname}?edit=product`}
+            <Button
+              type="button"
+              variant={"ghost"}
+              onClick={() => setEdit(true)}
               className="font-semibold hover:bg-white hover:text-blue-600"
             >
               Edit
-            </Link>
+            </Button>
           </div>
         </section>
       )}
