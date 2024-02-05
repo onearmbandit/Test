@@ -74,9 +74,20 @@ const ProductLines = ({ period }: { period: string }) => {
   };
 
   const handleSubmit = () => {
+    const productKeys = ["id", "name", "quantity", "functionalUnit"];
+    const copy = _.cloneDeep(products);
+    copy.map((item) => {
+      Object.keys(item).map((i) => {
+        if (!productKeys.includes(i)) {
+          delete item[i];
+        }
+      });
+
+      return item;
+    });
     const formData = {
       facilityEmissionId: period,
-      facilityProducts: products,
+      facilityProducts: copy,
     };
     if (productLines.data.length == 0) {
       mutate(formData);
@@ -195,8 +206,11 @@ const ProductLines = ({ period }: { period: string }) => {
           className="flex flex-col items-stretch self-stretch pb-1.5 text-base font-light leading-6 text-teal-800 bg-white rounded-lg"
           aria-label="Product Card"
         >
-          {productLines.data?.map((item: any) => (
-            <div className="grid grid-cols-3 gap-5 justify-between py-1 w-fit pr-20 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+          {productLines.data?.map((item: any, i: number) => (
+            <div
+              key={i}
+              className="grid grid-cols-3 gap-5 justify-between py-1 w-fit pr-20 max-md:flex-wrap max-md:pr-5 max-md:max-w-full"
+            >
               <h1 className="font-bold whitespace-nowrap w-[8.125rem]">
                 {item.name}
               </h1>

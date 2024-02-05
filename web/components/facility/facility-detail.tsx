@@ -194,7 +194,7 @@ const FacilityDetails = () => {
                     product lines within your facility by functional unit.
                   </p>
                   <AccordionContent>
-                    <ProductLineEmissions />
+                    <ProductLineEmissions period={currentTab!} />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

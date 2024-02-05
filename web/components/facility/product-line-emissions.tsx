@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { Minus, Plus } from "lucide-react";
+import { Loader2, Minus, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -17,34 +17,159 @@ import {
   TableRow,
 } from "../ui/table";
 import { Input } from "../ui/input";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent } from "../ui/dialog";
 import { Button } from "../ui/button";
+import { editProductLines, getProductLines } from "@/services/facility.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Product } from "@/lib/types/product.type";
+import _ from "lodash";
+import { Item } from "@radix-ui/react-accordion";
+import { toast } from "sonner";
 
-const ProductLineEmissions = () => {
+const ProductLineEmissions = ({ period }: { period: string }) => {
+  const queryClient = useQueryClient();
+  const [emissions, setEmissions] = useState<Product[]>([
+    {
+      scope1CarbonEmission: "",
+      scope2CarbonEmission: "",
+      scope3CarbonEmission: "",
+      equalityAttribute: "",
+    },
+  ]);
   const [equallyModal, setEquallyModal] = useState(false);
+
+  const prodLines = useQuery({
+    queryKey: ["product-emissions", period],
+    queryFn: () => getProductLines(period!),
+  });
+  const productLines = prodLines.isSuccess ? prodLines.data : [];
+
+  const { mutate } = useMutation({
+    mutationFn: editProductLines,
+    onSuccess: (data) => {
+      toast.success("Products Lines updated.", { style: { color: "green" } });
+      queryClient.invalidateQueries({
+        queryKey: ["product-emissions", period],
+      });
+      // setEdit(false);
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const handleSubmit = () => {
+    const editKeys = [
+      "scope1CarbonEmission",
+      "id",
+      "scope2CarbonEmission",
+      "scope3CarbonEmission",
+      "equalityAttribute",
+    ];
+    const emissionCopy = _.cloneDeep(emissions);
+    emissionCopy.map((em) => {
+      Object.keys(em).map((item) => {
+        if (!editKeys.includes(item)) {
+          delete em[item];
+        }
+      });
+      return em;
+    });
+    const formData = {
+      facilityEmissionId: period,
+      facilityProducts: emissionCopy,
+    };
+    mutate(formData);
+  };
+
+  useEffect(() => {
+    if (prodLines.isSuccess) {
+      setEmissions(productLines.data);
+    }
+  }, [prodLines.status]);
+
+  console.log(emissions);
+
   return (
     <>
       <Accordion type="multiple" className="space-y-4">
-        <AccordionItem value="i" className="border-0">
-          <AccordionTrigger className="flex rounded-md [&[data-state=closed]>svg#minus]:hidden [&[data-state=open]>svg#plus]:hidden bg-gray-100 px-4 py-2">
-            <p className="text-xs font-bold">Prodcut 1 </p>
-            <Minus size={16} id="minus" />
-            <Plus size={16} id="plus" />
-          </AccordionTrigger>
-          <AccordionContent className="py-3">
-            <ProductLineTable />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="2" className="border-0">
-          <AccordionTrigger className="flex rounded-md [&[data-state=closed]>svg#minus]:hidden [&[data-state=open]>svg#plus]:hidden bg-gray-100 px-4 py-2">
-            <p className="text-xs font-bold">Prodcut 1 </p>
-            <Minus size={16} id="minus" />
-            <Plus size={16} id="plus" />
-          </AccordionTrigger>
-          <AccordionContent className="py-3">
-            <ProductLineTable />
-          </AccordionContent>
-        </AccordionItem>
+        {prodLines.isLoading && (
+          <Loader2 className="text-blue-400 animate-spin" />
+        )}
+        {prodLines.isSuccess &&
+          emissions?.map((item: Product, i: number) => (
+            <AccordionItem key={i} value={item.name!} className="border-0">
+              <AccordionTrigger className="flex rounded-md [&[data-state=closed]>svg#minus]:hidden [&[data-state=open]>svg#plus]:hidden bg-gray-100 px-4 py-2">
+                <p className="text-xs font-bold">{item.name}</p>
+                <Minus size={16} id="minus" />
+                <Plus size={16} id="plus" />
+              </AccordionTrigger>
+              <AccordionContent className="py-3">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b hover:bg-transparent py-2">
+                      <TableHead className="text-xs py-2 h-fit">
+                        Quantity
+                      </TableHead>
+                      <TableHead className="text-xs py-2 h-fit">
+                        Scope 1
+                      </TableHead>
+                      <TableHead className="text-xs py-2 h-fit">
+                        Scope 2
+                      </TableHead>
+                      <TableHead className="text-xs py-2 h-fit">
+                        Scope 3
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="pt-3">
+                    <TableRow className="hover:bg-transparent justify-evenly text-xs">
+                      <TableCell className="w-1/4">{item.quantity}</TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          value={item.scope1_carbon_emission!}
+                          className="bg-gray-50 w-1/2"
+                          onChange={(e) => {
+                            const copy = _.cloneDeep(emissions);
+                            copy[i].scope1CarbonEmission = e.target.value;
+                            copy[i].scope1_carbon_emission = e.target.value;
+                            setEmissions(copy);
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          value={item.scope2_carbon_emission!}
+                          onChange={(e) => {
+                            const copy = _.cloneDeep(emissions);
+                            copy[i].scope2CarbonEmission = e.target.value;
+                            copy[i].scope2_carbon_emission = e.target.value;
+                            setEmissions(copy);
+                          }}
+                          className="bg-gray-50 w-1/2"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          value={item.scope3_carbon_emission!}
+                          onChange={(e) => {
+                            const copy = _.cloneDeep(emissions);
+                            copy[i].scope3CarbonEmission = e.target.value;
+                            copy[i].scope3_carbon_emission = e.target.value;
+                            setEmissions(copy);
+                          }}
+                          className="bg-gray-50 w-1/2"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
       </Accordion>
       <div className="flex justify-end p-[10px]">
         <p className="text-xs font-bold text-slate-600">tCO2e/func. unit</p>
@@ -67,6 +192,15 @@ const ProductLineEmissions = () => {
           Equally attribute emissions across products
         </label>
       </div>
+      <div className="flex justify-end">
+        <Button
+          size={"sm"}
+          onClick={() => handleSubmit()}
+          className="px-4 py-1"
+        >
+          Save
+        </Button>
+      </div>
       <Dialog open={equallyModal} onOpenChange={setEquallyModal}>
         <DialogContent className="space-y-6">
           <p className="text-slate-700">
@@ -88,35 +222,6 @@ const ProductLineEmissions = () => {
         </DialogContent>
       </Dialog>
     </>
-  );
-};
-
-const ProductLineTable = () => {
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow className="border-b hover:bg-transparent py-2">
-          <TableHead className="text-xs py-2 h-fit">Quantity</TableHead>
-          <TableHead className="text-xs py-2 h-fit">Scope 1</TableHead>
-          <TableHead className="text-xs py-2 h-fit">Scope 2</TableHead>
-          <TableHead className="text-xs py-2 h-fit">Scope 3</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody className="pt-3">
-        <TableRow className="hover:bg-transparent justify-evenly text-xs">
-          <TableCell className="w-1/4">1000</TableCell>
-          <TableCell>
-            <Input className="bg-gray-50 w-1/2" />
-          </TableCell>
-          <TableCell>
-            <Input className="bg-gray-50 w-1/2" />
-          </TableCell>
-          <TableCell>
-            <Input className="bg-gray-50 w-1/2" />
-          </TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
   );
 };
 
