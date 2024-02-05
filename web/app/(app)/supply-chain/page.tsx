@@ -30,7 +30,7 @@ import ReportingPeriodPopup from '@/components/supply-chain/reporting-period-pop
 import dayjs from 'dayjs';
 import AddSupplierManualy from '@/components/supply-chain/addSupplierManualy';
 
-const page = () => {
+const Page = () => {
   const [file, setFile] = useState('');
   const [fileName, setFileName] = useState('');
   const [showNew, setShowNew] = useState(false);
@@ -183,7 +183,7 @@ const page = () => {
                 Upload supplier product level emissions data
               </div>
               <div className='text-slate-700 text-center text-lg font-light leading-7 self-stretch w-full mt-6 max-md:max-w-full max-md:mr-2'>
-                Your supplier's product-level emission data encompasses the
+                Your suppliers product-level emission data encompasses the
                 Scope 3 emissions directly linked to your products. To begin,
                 upload this information using a CSV file or enter the data
                 manually in the table below.
@@ -334,4 +334,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
