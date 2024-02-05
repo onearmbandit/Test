@@ -7,7 +7,7 @@ import Env from '@ioc:Adonis/Core/Env'
 
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import fs from 'fs';
-import Drive from '@ioc:Adonis/Core/Drive'
+// import Drive from '@ioc:Adonis/Core/Drive'
 
 
 export default class FilesController {
