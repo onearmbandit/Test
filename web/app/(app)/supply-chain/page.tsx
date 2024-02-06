@@ -4,6 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import download from 'downloadjs';
+import axios, {
+  AxiosHeaders,
+  AxiosRequestConfig,
+  RawAxiosRequestHeaders,
+} from 'axios';
 import {
   addReportingPeriod,
   downloadCsvTemplate,
@@ -24,6 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { Progress } from '@/components/ui/progress';
 import { useSession } from 'next-auth/react';
 import ReportingPeriodPopup from '@/components/supply-chain/reporting-period-popover';
 import dayjs from 'dayjs';
@@ -32,11 +38,15 @@ import SupplierData from '@/components/supply-chain/SupplierData';
 import { Button } from '@/components/ui/button';
 
 const Page = () => {
-  const [file, setFile] = useState('');
+  const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState('');
+  const [periodId, setPeriodId] = useState('');
   const [showNew, setShowNew] = useState(false);
   const session = useSession();
   const [currentTab, setCurrentTab] = useState<string | null>(null);
+  const [progress, setProgress] = useState();
+
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const organizationId = session?.data?.user.organizations[0].id!;
 
@@ -45,28 +55,56 @@ const Page = () => {
     queryFn: () => getAllReportingPeriods(organizationId),
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
-  // console.log(session.data? session.data.user.organizations[0].id:"", 'session.data');
-  console.log(reportingPeriods, 'reportingPeriods');
-  function handleChange(event: any) {
-    setFile(event.target.files[0]);
-    setFileName(event.target.files[0].name);
+  const token = session?.data?.token;
+
+  function handleChange(e: any) {
+    setFile(e.target.files[0]);
+    setFileName(e.target.files[0].name);
   }
-  function handleSubmit(event: any) {
-    event.preventDefault();
-    const formData = {
-      supplierCSV: fileName,
-      supplyChainReportingPeriodId: 'f942aa90-6dc1-45a4-bc12-bf53e9f38468',
-    };
-    // formData.append('file', file);
-    mutate(formData);
-  }
-  const { mutate, isPending } = useMutation({
-    mutationFn: importFile,
-    onSuccess: (data) => {},
-    onError: (err) => {
-      toast.error(err.message, { style: { color: 'red' } });
-    },
-  });
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    console.log(fileName, 'filename');
+    const formData = new FormData();
+    console.log(currentTab, 'currentTab');
+    formData.append(
+      'supplyChainReportingPeriodId',
+      currentTab ? currentTab : ''
+    );
+    axios.post(`${BASE_URL}/api/v1/auth/supplier-csv-upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+      onUploadProgress: (data) => {
+        //Set the progress value to show the progress bar
+        // setProgress(Math.round((100 * data.loaded) / data.total));
+      },
+    });
+  };
+  // function handleSubmit(event: any) {
+  //   event.preventDefault();
+  //   console.log(fileName, 'filename');
+  //   const formData = new FormData();
+  //   // formData.append('supplierCSV', file!);
+  //   formData.append(
+  //     'supplyChainReportingPeriodId',
+  //     'a27357c0-de80-47ba-99a6-4f18de95b355'
+  //   );
+  //   // mutate(formData);
+  // }
+  // const { mutate, isPending } = useMutation({
+  //   mutationFn: importFile,
+  //   onSuccess: (data) => {
+  //     console.log(data, 'file upload success data');
+  //     // setProgress(Math.round((100 * data.loaded) / data.total));
+  //     toast.success('csv uploaded Successfully.', {
+  //       style: { color: 'green' },
+  //     });
+  //   },
+  //   onError: (err) => {
+  //     toast.error(err.message, { style: { color: 'red' } });
+  //   },
+  // });
 
   const DownloadTemplate = () => {
     downloadCsvMUt.mutate();
@@ -243,6 +281,7 @@ const Page = () => {
                           ) : (
                             <div className='bg-gray-200 self-stretch flex relative cursor-pointer flex-col justify-center items-center mr-4 mt-4 px-16 py-12 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
                               <input
+                                id='file'
                                 type='file'
                                 accept='.csv'
                                 onChange={handleChange}
@@ -280,6 +319,27 @@ const Page = () => {
                   </DialogDescription>
                 </DialogContent>
               </Dialog>
+              {progress && (
+                <Dialog defaultOpen={true}>
+                  <DialogTrigger></DialogTrigger>
+                  <DialogContent>
+                    <div className='flex flex-col px-16 py-12 bg-white max-w-[707px] max-md:px-5'>
+                      <div className='mt-3.5 text-xl font-bold leading-7 text-center text-gray-800 max-md:max-w-full'>
+                        Processing your data{' '}
+                      </div>
+                      <div className='mt-4 text-xl leading-7 text-gray-800 max-md:max-w-full'>
+                        We’re uploading your data. It will only take a few
+                        moments.
+                      </div>
+                      <div className='flex flex-col justify-center p-3 mt-4 max-md:max-w-full'>
+                        <div className='flex flex-col justify-center items-start pr-16 bg-green-100 rounded-3xl max-md:pr-5 max-md:max-w-full'>
+                          <Progress value={progress} className='w-[60%]' />
+                        </div>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
             </div>
           </TabsContent>
         </Tabs>
@@ -332,6 +392,7 @@ const Page = () => {
           </div>
         </div>
       </div>
+      {/* <AddSupplierManualy /> */}
     </div>
   );
 };
