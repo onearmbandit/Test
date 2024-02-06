@@ -84,6 +84,12 @@ export const downloadCsvTemplate = () => {
   });
 };
 
+export const getReportingPeriodById = (id: string) => {
+  return fetchApi(`/auth/supplier-period/${id}`, {
+    method: "GET",
+  });
+};
+
 // add supplier manually
 export const addSupplier = (data: any) => {
   const formbody = data;

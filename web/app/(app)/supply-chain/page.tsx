@@ -29,6 +29,7 @@ import { useSession } from "next-auth/react";
 import ReportingPeriodPopup from "@/components/supply-chain/reporting-period-popover";
 import dayjs from "dayjs";
 import AddSupplierManualy from "@/components/supply-chain/addSupplierManualy";
+import Link from "next/link";
 
 const Page = () => {
   const [file, setFile] = useState("");
@@ -114,14 +115,8 @@ const Page = () => {
           className="rounded flex gap-1.5 px-3.5 py-1.5 cursor-pointer"
           onClick={() => setShowNew(true)}
         >
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/0a3b37dc7caf0621d0a3ddfd4c525cb8a2f3841ad00c9625467586617b68bb03?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-            className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto"
-            alt="Reporting Period Image"
-          />
           <header className="text-blue-600 text-sm font-semibold leading-5 self-stretch grow whitespace-nowrap">
-            Add Reporting Period
+            + Add Reporting Period
           </header>
         </div>
       </div>
@@ -150,7 +145,7 @@ const Page = () => {
                 <TabsTrigger
                   key={i}
                   value={item.id}
-                  onClick={() => setCurrentTab(reporting)}
+                  onClick={() => setCurrentTab(item?.id)}
                 >
                   <Popover>
                     <PopoverTrigger className="text-blue-600">
@@ -313,14 +308,12 @@ const Page = () => {
           </div>
           <div className="justify-center items-stretch flex gap-0 mb-12 px-5 max-md:max-w-full max-md:flex-wrap max-md:mb-10">
             <div className="items-center flex-1 border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-2 px-4 py-2.5 border-b border-solid">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/29189ba407ce9b617e1d8bf82171c381b4863b2327accf32d1d2f807bdc438a6?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto"
-              />
-              <div className="overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap">
-                New Supplier
-              </div>
+              <Link
+                href={`/supply-chain/supplier?reportingId=${currentTab}`}
+                className="overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap"
+              >
+                + New Supplier
+              </Link>
             </div>
             <div className="items-center flex-1 border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[235px] shrink-0 h-10 flex-col border-b border-solid" />
             <div className="items-center flex-1  border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[135px] shrink-0 h-10 flex-col border-b border-solid" />

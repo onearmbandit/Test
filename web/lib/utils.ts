@@ -158,3 +158,18 @@ export const formatAddress = (address: any) => {
 export const isSuperAdmin = (rolesArray: any, roleName: string) => {
   return rolesArray?.some((role: any) => role.name === roleName);
 };
+
+export const formatReportingPeriod = (from: string, to: string): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+  };
+  const fromFormatted = new Intl.DateTimeFormat("en-US", options).format(
+    new Date(from)
+  );
+  const toFormatted = new Intl.DateTimeFormat("en-US", options).format(
+    new Date(to)
+  );
+
+  return `${fromFormatted} - ${toFormatted}`;
+};
