@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
@@ -8,7 +9,8 @@ import React from "react";
 
 const page = () => {
   return (
-    <>
+    <div className="px-8">
+      <Header />
       {/* <EmptyState link="/abatement-projects/completed" /> */}
       <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
         <div className="flex items-center space-x-2">
@@ -122,7 +124,7 @@ const page = () => {
           </Card>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

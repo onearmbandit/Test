@@ -15,7 +15,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <>
+    <div className="px-8">
       <Header />
       {/* <EmptyState link="/abatement-project/active" /> */}
       <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
@@ -68,7 +68,9 @@ const page = () => {
               </p>
 
               <CardFooter className="p-0 justify-end">
-                <Link href={"/abatement-projects/active/add"}>
+                <Link
+                  href={"/abatement-projects/active/some-other-project/edit"}
+                >
                   <Button
                     type="button"
                     variant={"ghost"}
@@ -111,7 +113,7 @@ const page = () => {
               </p>
 
               <CardFooter className="p-0 justify-end">
-                <Link href={"/abatement-projects/active/add"}>
+                <Link href={"/abatement-projects/active/Someproject/edit"}>
                   <Button
                     type="button"
                     variant={"ghost"}
@@ -125,18 +127,17 @@ const page = () => {
           </Card>
 
           {/* new Card */}
-          <Card
-            role="button"
-            className="h-[302px] w-full col-span-1 flex justify-center items-center"
-          >
-            <div className="flex items-center space-x-2">
-              <Plus size={24} className="text-slate-400" />
-              <p className="text-slate-400 font-semibold">Add a project</p>
-            </div>
-          </Card>
+          <Link href={"/abatement-projects/active/add"}>
+            <Card className="h-[302px] w-full col-span-1 flex justify-center items-center">
+              <div className="flex items-center space-x-2">
+                <Plus size={24} className="text-slate-400" />
+                <p className="text-slate-400 font-semibold">Add a project</p>
+              </div>
+            </Card>
+          </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

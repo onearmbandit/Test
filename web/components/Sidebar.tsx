@@ -24,7 +24,7 @@ const Sidebar = () => {
   const firstLetterOfFirstName = firstName.charAt(0);
   const firstLetterOfLastName = lastName.charAt(0);
 
-  const organizationLinks = ["/", "/facilities"];
+  const organizationLinks = ["/facilities"];
 
   function urlContainsElements(url: string, elements: string[]) {
     for (const element of elements) {
@@ -62,8 +62,9 @@ const Sidebar = () => {
           href={"/"}
           className={cn(
             "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
-            urlContainsElements(pathname, organizationLinks) &&
-              "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
+            urlContainsElements(pathname, organizationLinks) ||
+              (pathname == "/" &&
+                "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500")
           )}
         >
           <svg
@@ -117,17 +118,33 @@ const Sidebar = () => {
               <div className="flex flex-col items-stretch mt-2 space-y-2">
                 <Link
                   href={"/abatement-projects/active"}
-                  className="text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700  text-xs font-medium leading-5 whitespace-nowrap px-2 py-1.5 rounded-md"
+                  className={cn(
+                    "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700  text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                    urlContainsElements(pathname, ["active"]) &&
+                      "bg-blue-100 text-blue-700 pl-9"
+                  )}
                 >
                   Active
                 </Link>
                 <Link href="/abatement-projects/completed">
-                  <div className="text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap px-2 py-1.5 rounded-md">
+                  <div
+                    className={cn(
+                      "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                      urlContainsElements(pathname, ["completed"]) &&
+                        "bg-blue-100 text-blue-700"
+                    )}
+                  >
                     Completed
                   </div>
                 </Link>
                 <Link href="/abatement-projects/proposed">
-                  <div className="text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap px-2 py-1.5 rounded-md">
+                  <div
+                    className={cn(
+                      "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                      urlContainsElements(pathname, ["proposed"]) &&
+                        "bg-blue-100 text-blue-700"
+                    )}
+                  >
                     Proposed
                   </div>
                 </Link>
