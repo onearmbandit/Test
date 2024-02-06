@@ -38,27 +38,31 @@ const page = () => {
 
         <div className="grid grid-cols-3 gap-6">
           <Card className="px-4 py-3 space-y-4 h-fit">
-            <CardTitle className="text-xs font-medium text-slate-800">
-              Sao Paulo Refinery
-            </CardTitle>
-            <Image
-              height={102}
-              width={300}
-              src={"https://source.unsplash.com/300x102?solar"}
-              alt="project image"
-            />
+            <Link href={"/abatement-projects/details-page"}>
+              <CardTitle className="text-xs font-medium text-slate-800">
+                Sao Paulo Refinery
+              </CardTitle>
+              <Image
+                height={102}
+                width={300}
+                src={"https://source.unsplash.com/300x102?solar"}
+                alt="project image"
+              />
+            </Link>
             <CardContent className="p-0 flex flex-col space-y-2">
-              <div className="space-x-2 flex">
-                <Image
-                  height={16}
-                  width={16}
-                  src="/assets/images/briefcase.svg"
-                  alt="briefcase icon"
-                />
-                <p className="text-xs font-medium text-slate-800">
-                  Agropalma Group
-                </p>
-              </div>
+              <Link href={"/abatement-projects/details-page"}>
+                <div className="space-x-2 flex">
+                  <Image
+                    height={16}
+                    width={16}
+                    src="/assets/images/briefcase.svg"
+                    alt="briefcase icon"
+                  />
+                  <p className="text-xs font-medium text-slate-800">
+                    Agropalma Group
+                  </p>
+                </div>
+              </Link>
               <div className="text-xs text-slate-600 line-clamp-2">
                 Features natural gas boilers and solar powered lights.
               </div>
