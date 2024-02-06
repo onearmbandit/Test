@@ -10,8 +10,8 @@ export default class AbatementProject extends BaseModel {
   @column({ isPrimary: true })
   public id: string
 
-  @column()
-  public supplierId: string
+  // @column()
+  // public supplierId: string
 
   @column()
   public organizationId: string
@@ -40,8 +40,8 @@ export default class AbatementProject extends BaseModel {
   @column()
   public logoUrl: string
 
-  @column()
-  public contactEmail: string
+  // @column()
+  // public contactEmail: string
 
   @column()
   public status: number
@@ -62,10 +62,10 @@ export default class AbatementProject extends BaseModel {
 
   //::_____Relationships Start_____:://
 
-  @belongsTo(() => Supplier, {
-    localKey: 'id',
-  })
-  public supplier: BelongsTo<typeof Supplier>
+  // @belongsTo(() => Supplier, {
+  //   localKey: 'id',
+  // })
+  // public supplier: BelongsTo<typeof Supplier>
 
   @belongsTo(() => Organization, {
     localKey: 'id',
@@ -138,7 +138,7 @@ export default class AbatementProject extends BaseModel {
 
     //::Filter Query
     if (typeof filters === 'object' && Object.keys(filters).length > 0) {
-      //::filter as per collection status active/inactive
+      //::filter as per collection status 
       if (('status' in filters) && filters['status'].length > 0) {
         query.where('status', filters['status'])
       }

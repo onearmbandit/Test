@@ -11,13 +11,16 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import AddSupplierDatumValidator from 'App/Validators/Supplier/AddSupplierDatumValidator'
 import UpdateSupplierDatumValidator from 'App/Validators/Supplier/UpdateSupplierDatumValidator'
 import SupplierProduct from 'App/Models/SupplierProduct'
+import { sendMail } from 'App/helpers/sendEmail'
+
+const WEB_BASE_URL = process.env.WEB_BASE_URL
 
 export default class SuppliersController {
   public async index({ request, response }: HttpContextContract) {
     try {
       const queryParams = request.qs()
 
-      const allSuppliersData = await Supplier.getAllSuppliersForSpecificPeriod(queryParams)
+      const allSuppliersData = await Supplier.getAllSuppliersForSpecificUser(queryParams)
 
       const isPaginated = request.input('perPage') && request.input('perPage') !== 'all'
       return apiResponse(
@@ -63,6 +66,30 @@ export default class SuppliersController {
       requestData = { ...requestData, id: uuidv4() }
       var supplierData = await Supplier.createSupplier(reportPeriodData, requestData, auth)
 
+      const emailData = {
+        initials: (auth.user?.firstName && auth.user?.lastName) ? auth.user?.firstName[0] + auth.user?.lastName[0] : '',
+        fullName: `${auth.user?.firstName} ${auth.user?.lastName}`,
+        organizationName: reportPeriodData.organization?.toJSON().company_name,
+        email: requestData.email,
+        url: `${WEB_BASE_URL}?isSupplier=true`,   // isSupplier required to know invited user is supplier 
+      }
+
+
+      await sendMail(
+        emailData.email,
+        `You’ve been invited to Terralab Insets  by ${emailData.organizationName}`,
+        'emails/invite_organization',
+        emailData
+      )
+
+      //:: Add data in pivot table supplier_organizations
+      await supplierData.related('organizations').attach({
+        [reportPeriodData.organization?.toJSON().id]: {
+          id: uuidv4(),
+          supplier_id: [supplierData.id],
+          supplier_organization_id:[null]
+        },
+      })
       return apiResponse(
         response,
         true,
@@ -316,6 +343,33 @@ export default class SuppliersController {
             })
           )
           uploadResult.push(data)
+
+
+
+          //:: Send invite mail to all suppliers
+          const emailData = {
+            initials: (auth.user?.firstName && auth.user?.lastName) ? auth.user?.firstName[0] + auth.user?.lastName[0] : '',
+            fullName: `${auth.user?.firstName} ${auth.user?.lastName}`,
+            organizationName: reportPeriodData.organization?.toJSON().company_name,
+            email: elementData.email,
+            url: `${WEB_BASE_URL}?isSupplier=true`,   // isSupplier required to know invited user is supplier 
+          }
+    
+          await sendMail(
+            emailData.email,
+            `You’ve been invited to Terralab Insets  by ${emailData.organizationName}`,
+            'emails/invite_organization',
+            emailData
+          )
+    
+          //:: Add data in pivot table supplier_organizations
+          await supplierData.related('organizations').attach({
+            [reportPeriodData.organization?.toJSON().id]: {
+              id: uuidv4(),
+              supplier_id: [supplierData.id],
+              supplier_organization_id:[null]
+            },
+          })
 
           return supplierData
         })
