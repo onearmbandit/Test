@@ -38,7 +38,7 @@ const page = () => {
 
         <div className="grid grid-cols-3 gap-6">
           <Card className="px-4 py-3 space-y-4 h-fit">
-            <Link href={"/abatement-projects/details-page"}>
+            <Link href={"/abatement-projects/active/details-page"}>
               <CardTitle className="text-xs font-medium text-slate-800">
                 Sao Paulo Refinery
               </CardTitle>
@@ -50,7 +50,7 @@ const page = () => {
               />
             </Link>
             <CardContent className="p-0 flex flex-col space-y-2">
-              <Link href={"/abatement-projects/details-page"}>
+              <Link href={"/abatement-projects/active/details-page"}>
                 <div className="space-x-2 flex">
                   <Image
                     height={16}
