@@ -95,7 +95,7 @@ export default class AbatementProject extends BaseModel {
         proposedBy: requestData.proposedBy,
         photoUrl: requestData.photoUrl,
         logoUrl: requestData.logoUrl,
-        contactEmail: requestData.contactEmail,
+        // contactEmail: requestData.contactEmail,
         status: requestData.status,
         updatedBy: `${auth.user?.firstName} ${auth.user?.lastName}`,
       }

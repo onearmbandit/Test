@@ -6,10 +6,10 @@ export default class extends BaseSchema {
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').primary()
-      table.uuid('supplier_id')
-      .nullable()
-      .references('suppliers.id')
-      .onDelete('CASCADE')
+      // table.uuid('supplier_id')
+      // .nullable()
+      // .references('suppliers.id')
+      // .onDelete('CASCADE')
       table.uuid('organization_id')
       .nullable()
       .references('organizations.id')
@@ -19,10 +19,12 @@ export default class extends BaseSchema {
       table.text('website_url')
       table.integer('emission_reductions')
       table.string('emission_unit').comment('e.g., tCO2e, Gallons of water, Metric tonnes of waste')
-      table.string('proposed_by')
+      table.uuid('proposed_by').nullable()
+      .references('suppliers.id')
+      .onDelete('CASCADE')
       table.text('photo_url')
       table.text('logo_url')
-      table.string('contact_email')
+      // table.string('contact_email') as per requirement
       table.tinyint('status').comment('0 for proposed, 1 for active and 2 for completed')
       table.string('updated_by');
       table.timestamp('deleted_at', { useTz: true })

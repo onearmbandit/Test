@@ -6,6 +6,10 @@ export default class CreateAbatementProjectValidator {
 	}
 
 	public schema = schema.create({
+		organizationId:schema.string({ trim: true }, [
+			rules.uuid(),
+			rules.exists({ table: 'organizations', column: 'id' }),
+		  ]),
 		name: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(255)]),
 		description: schema.string.optional({ trim: true }, [rules.maxLength(1000)]),
 		emissionReductions: schema.number.optional(),
@@ -31,6 +35,6 @@ export default class CreateAbatementProjectValidator {
 		'contactEmail.email': 'Please enter a valid email.',
 		'status.enum': 'The value must be one of {{ options.choices }}',
 		'proposedBy.exists': 'Supplier with this ID does not exist.',
-
+		'organizationId.exists': 'Organization with this ID does not exist.',
 	}
 }
