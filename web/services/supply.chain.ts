@@ -83,3 +83,11 @@ export const downloadCsvTemplate = () => {
     method: 'GET',
   });
 };
+export const getAllEmissioScopeData = (id: string) => {
+  return fetchApi(
+    `/auth/supplier-period-emission?supplyChainReportingPeriodId=${id}`,
+    {
+      method: 'GET',
+    }
+  );
+};

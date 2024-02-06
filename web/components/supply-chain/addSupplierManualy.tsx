@@ -1,4 +1,5 @@
 import React from 'react';
+import { ChevronDown, HelpCircle, Loader2, Plus } from 'lucide-react';
 
 export const AddSupplierManualy = () => {
   return (
@@ -137,6 +138,111 @@ export const AddSupplierManualy = () => {
         <div className='mt-6 text-sm leading-5 text-slate-800 max-md:max-w-full'>
           Enter the product type, product name, units created each year, and the
           functional unit associated with the product.
+        </div>
+      </div>
+      <div className='flex flex-col self-stretch p-6 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)] max-md:px-5'>
+        <div className='flex gap-2.5 justify-between max-md:flex-wrap max-md:max-w-full'>
+          <div className='flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]'>
+            2
+          </div>
+          <div className='flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full'>
+            Product & Product Level Contribution
+          </div>
+        </div>
+        <div className='mt-6 text-sm leading-5 text-slate-800 max-md:max-w-full'>
+          Enter the product type, product name, units created each year, and the
+          functional unit associated with the product. If you know the total
+          Scope 3 contributions for the given quantity of each product, enter it
+          here
+        </div>
+        <div className='flex gap-5 justify-between py-2 mt-6 text-xs font-bold leading-4 border-b border-solid border-b-[color:var(--Slate-200,#E2E8F0)] text-slate-700 max-md:flex-wrap max-md:max-w-full'>
+          <div className='grow whitespace-nowrap'>Product Name</div>
+          <div className='flex-auto'>Product Type</div>
+          <div className='flex-auto'>Quantity</div>
+          <div className='flex gap-3 justify-between items-center relative'>
+            <div>Functional Unit</div>
+            <HelpCircle size={12}></HelpCircle>
+            <div className='px-2.5 pt-6 pb-2.5 font-semibold absolute left-full top-5 text-xs leading-4 text-white rounded shadow-sm bg-slate-800 w-[246px]'>
+              A functional unit in sustainability is a measure of performance
+              that quantifies the environmental impacts of a system, used to
+              compare different products or processes within a defined context.
+              <br />
+            </div>
+          </div>
+          <div className='grow whitespace-nowrap'>
+            Scope 3 Contribution (kgCO2)
+          </div>
+        </div>
+        <div className='flex gap-5 justify-between pr-7 mt-11 w-full text-xs font-light leading-4 whitespace-nowrap text-slate-500 max-md:flex-wrap max-md:pr-5 max-md:mt-10 max-md:max-w-full'>
+          <div className='flex gap-5 justify-between max-md:flex-wrap max-md:max-w-full'>
+            <div className='flex gap-2 justify-between p-2 bg-gray-50 rounded-md'>
+              <div className='grow'>Type or select</div>
+              <img
+                loading='lazy'
+                src='https://cdn.builder.io/api/v1/image/assets/TEMP/1d2d6f2702f13cd98129272d42c1232c51acb783de5c985e72095c46636000d2?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                className='w-4 aspect-square'
+              />
+            </div>
+            <div className='flex gap-0 justify-between p-2 bg-gray-50 rounded-md'>
+              <div className='grow'>Type or select</div>
+              <img
+                loading='lazy'
+                src='https://cdn.builder.io/api/v1/image/assets/TEMP/5b6667c691ac053510925bb8002edd7d5d664e2ce4a3d788328cd96a0e47f928?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                className='w-4 aspect-square'
+              />
+            </div>
+            <div className='grow justify-center p-2 bg-gray-50 rounded-md'>
+              unit
+            </div>
+            <div className='grow justify-center p-2 bg-gray-50 rounded-md'>
+              kilowatt/hr
+            </div>
+            <div className='grow justify-center p-2 bg-gray-50 rounded-md text-slate-500'>
+              kgCO2
+            </div>
+          </div>
+          <img
+            loading='lazy'
+            src='https://cdn.builder.io/api/v1/image/assets/TEMP/b45f96b0537e91d103ec812380f1804e4cd1f7e96974a0c9e85f26c27c68544f?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+            className='my-auto w-4 aspect-square'
+          />
+        </div>
+        <div className='flex gap-5 justify-between pr-7 mt-6 w-full text-xs font-light leading-4 whitespace-nowrap text-slate-500 max-md:flex-wrap max-md:pr-5 max-md:max-w-full'>
+          <div className='flex gap-5 justify-between max-md:flex-wrap max-md:max-w-full'>
+            <div className='flex gap-2 justify-between p-2 bg-gray-50 rounded-md'>
+              <div className='grow'>Type or select</div>
+              <img
+                loading='lazy'
+                src='https://cdn.builder.io/api/v1/image/assets/TEMP/1d2d6f2702f13cd98129272d42c1232c51acb783de5c985e72095c46636000d2?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                className='w-4 aspect-square'
+              />
+            </div>
+            <div className='flex gap-0 justify-between p-2 bg-gray-50 rounded-md'>
+              <div className='grow'>Type or select</div>
+              <img
+                loading='lazy'
+                src='https://cdn.builder.io/api/v1/image/assets/TEMP/5b6667c691ac053510925bb8002edd7d5d664e2ce4a3d788328cd96a0e47f928?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                className='w-4 aspect-square'
+              />
+            </div>
+            <div className='grow justify-center p-2 bg-gray-50 rounded-md'>
+              unit
+            </div>
+            <div className='grow justify-center p-2 bg-gray-50 rounded-md'>
+              kilowatt/hr
+            </div>
+            <div className='grow justify-center p-2 bg-gray-50 rounded-md text-slate-500'>
+              kgCO2
+            </div>
+          </div>
+          <img
+            loading='lazy'
+            src='https://cdn.builder.io/api/v1/image/assets/TEMP/0a45c2ce44e5d98e8b19797e4bb5e5025abdcacb4267924cebb5785eb3a6ddac?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+            className='my-auto w-4 aspect-square'
+          />
+        </div>
+        <div className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]'>
+          Save
         </div>
       </div>
     </div>
