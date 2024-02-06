@@ -106,3 +106,9 @@ export const getProductLines = (facilityId: string) => {
 export const facilityDetails = (id: string) => {
   return fetchApi(`/auth/facility/${id}`);
 };
+
+export const getEqualityData = (id: string) => {
+  return fetchApi(
+    `/auth/equality-emission-calculation?facilityEmissionId=${id}`
+  );
+};

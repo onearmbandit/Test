@@ -17,13 +17,18 @@ import {
   TableRow,
 } from "../ui/table";
 import { Input } from "../ui/input";
-import { Dialog, DialogContent } from "../ui/dialog";
+import { Dialog, DialogClose, DialogContent } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { editProductLines, getProductLines } from "@/services/facility.api";
+import {
+  editProductLines,
+  getEqualityData,
+  getProductLines,
+} from "@/services/facility.api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Product } from "@/lib/types/product.type";
 import _ from "lodash";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 
 const ProductLineEmissions = ({ period }: { period: string }) => {
   const queryClient = useQueryClient();
@@ -36,19 +41,30 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
     },
   ]);
   const [equallyModal, setEquallyModal] = useState(false);
+  const [isEqual, setIsEqual] = useState(false);
+  const [isEdit, setEdit] = useState(false);
 
   const prodLines = useQuery({
-    queryKey: ["product-emissions", period, "facility-details"],
+    queryKey: ["product-emissions", period],
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
+
+  const equality = useQuery({
+    queryKey: ["equality", period],
+    queryFn: () => getEqualityData(period!),
+    enabled: false,
+  });
+  const equalEmission = equality.isSuccess ? equality.data : {};
+
+  console.log(equalEmission);
 
   const { mutate } = useMutation({
     mutationFn: editProductLines,
     onSuccess: (data) => {
       toast.success("Products Lines updated.", { style: { color: "green" } });
       queryClient.invalidateQueries({
-        queryKey: ["product-emissions", period],
+        queryKey: ["product-emissions", period, "facility-details"],
       });
       // setEdit(false);
     },
@@ -79,6 +95,50 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
       facilityProducts: emissionCopy,
     };
     mutate(formData);
+  };
+
+  const handleEqual = async () => {
+    const editKeys = [
+      "scope1CarbonEmission",
+      "id",
+      "scope2CarbonEmission",
+      "scope3CarbonEmission",
+      "equalityAttribute",
+    ];
+
+    await queryClient.prefetchQuery({
+      queryKey: ["equality", period],
+      queryFn: () => getEqualityData(period),
+    });
+
+    const copy = _.cloneDeep(emissions);
+
+    copy.map((item) => {
+      equalEmission.data?.map((em: any) => {
+        if (item.name == em.name) {
+          item.scope1CarbonEmission = em.scope1;
+          item.scope2CarbonEmission = em.scope2;
+          item.scope3CarbonEmission = em.scope3;
+        }
+      });
+
+      // Object.keys(item).map((key) => {
+      //   if (!editKeys.includes(key)) {
+      //     delete item[key];
+      //   }
+      // });
+
+      return item;
+    });
+
+    // console.log({ copy });
+
+    const formdata = {
+      facilityEmissionId: period,
+      facilityProducts: copy,
+    };
+
+    setIsEqual(true);
   };
 
   useEffect(() => {
@@ -171,51 +231,74 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
       <div className="flex justify-end p-[10px]">
         <p className="text-xs font-bold text-slate-600">tCO2e/func. unit</p>
       </div>
-      <div className="flex justify-start gap-2 mt-3 p-[10px]">
-        <Input
-          id="equalDistribution"
-          type="checkbox"
-          className="w-fit"
-          onChange={(e) => {
-            if (e.target.checked) {
-              setEquallyModal(true);
-            }
-          }}
-        />{" "}
-        <label
-          htmlFor="equalDistribution"
-          className="text-slate-600 text-xs whitespace-nowrap"
-        >
-          Equally attribute emissions across products
-        </label>
-      </div>
-      <div className="flex justify-end">
-        <Button
-          size={"sm"}
-          onClick={() => handleSubmit()}
-          className="px-4 py-1"
-        >
-          Save
-        </Button>
-      </div>
+      {isEdit ? (
+        <>
+          <div className="flex justify-start gap-2 mt-3 p-[10px]">
+            <Input
+              id="equalDistribution"
+              type="checkbox"
+              checked={isEqual}
+              className="w-fit"
+              onChange={(e) => {
+                if (!isEqual) {
+                  setEquallyModal(true);
+                } else {
+                  setIsEqual(false);
+                }
+              }}
+            />{" "}
+            <label
+              htmlFor="equalDistribution"
+              className="text-slate-600 text-xs whitespace-nowrap"
+            >
+              Equally attribute emissions across products
+            </label>
+          </div>
+          <div className="flex justify-end">
+            <Button
+              size={"sm"}
+              onClick={() => handleSubmit()}
+              className="px-4 py-1"
+            >
+              Save
+            </Button>
+          </div>
+        </>
+      ) : (
+        <div className="flex justify-end">
+          <Button
+            variant={"ghost"}
+            size={"sm"}
+            onClick={() => setEdit(true)}
+            className="text-blue-600 hover:text-blue-600"
+          >
+            Edit
+          </Button>
+        </div>
+      )}
       <Dialog open={equallyModal} onOpenChange={setEquallyModal}>
         <DialogContent className="space-y-6">
           <p className="text-slate-700">
             Are you sure you want to equally attribute emissions across product?
             It will erase your current entry.
           </p>
-          <Button
-            variant={"outline"}
-            className="border-2 text-blue-600 hover:text-blue-600 border-blue-600 w-full"
-          >
-            No, don&apos;t erase my entry
-          </Button>
-          <Button
-            variant={"outline"}
-            className="border-2 border-gray-500 text-gray-500 w-full"
-          >
-            Yes, continue
-          </Button>
+          <DialogClose asChild>
+            <Button
+              variant={"outline"}
+              className="border-2 text-blue-600 hover:text-blue-600 border-blue-600 w-full"
+            >
+              No, don&apos;t erase my entry
+            </Button>
+          </DialogClose>
+          <DialogClose>
+            <Button
+              variant={"outline"}
+              onClick={() => handleEqual()}
+              className="border-2 border-gray-500 text-gray-500 w-full"
+            >
+              Yes, continue
+            </Button>
+          </DialogClose>
         </DialogContent>
       </Dialog>
     </>
