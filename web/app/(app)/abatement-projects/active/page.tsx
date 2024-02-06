@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import React from "react";
 const page = () => {
   return (
     <>
+      <Header />
       {/* <EmptyState link="/abatement-project/active" /> */}
       <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
         <div className="flex items-center space-x-2">

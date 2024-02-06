@@ -10,7 +10,7 @@ const Header = () => {
     queryFn: () => getUser(),
   });
   return (
-    <div className="justify-between self-stretch gap-5 flex flex-row w-full px-8 py-2 max-md:px-5">
+    <div className="justify-between self-stretch gap-5 flex flex-row w-full py-2 max-md:px-5">
       <header className="text-slate-800 text-ellipsis text-base font-semibold leading-6 my-auto">
         {data?.data?.organizations[0]?.company_name}
       </header>
