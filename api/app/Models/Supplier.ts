@@ -117,7 +117,7 @@ export default class Supplier extends BaseModel {
   //:: Need to check
   public static async getAllSuppliersForSpecificUser(queryParams: ParsedQs) {
     let allSuppliersData: any = {}
-    let allOrganizationData: any = {}
+    // let allOrganizationData: any = {}
 
     const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1

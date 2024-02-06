@@ -97,7 +97,7 @@ export default class AbatementProjectsController {
     }
   }
 
-  public async show({ response, params, auth }: HttpContextContract) {
+  public async show({ response, params }: HttpContextContract) {
     try {
       let projectData = await AbatementProject.getProjectDetails('id', params.id)
 

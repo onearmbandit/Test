@@ -1,14 +1,13 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { apiResponse } from 'App/helpers/response'
 import Config from '@ioc:Adonis/Core/Config'
-import { v4 as uuidv4 } from 'uuid'
 import SupplierOrganization from 'App/Models/SupplierOrganization'
 
 export default class SupplierOrganizationsController {
   public async index({ request, response }: HttpContextContract) {
     try {
       const queryParams = request.qs()
-      const allSuppliersData = await SupplierOrganization.getAllSuppliersWithOrganization(queryParams)
+       await SupplierOrganization.getAllSuppliersWithOrganization(queryParams)
 
 
       return apiResponse(

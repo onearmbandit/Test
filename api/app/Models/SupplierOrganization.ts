@@ -32,21 +32,12 @@ export default class SupplierOrganization extends BaseModel {
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
     const order = queryParams.order ? queryParams.order.toString() : 'desc'
     const sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at'
-    let filters: any = queryParams.filters ? queryParams.filters : {};
+    // let filters: any = queryParams.filters ? queryParams.filters : {};
     let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
 
     let query = this.query() // Exclude soft-deleted records;
 
     query = query.orderBy(sort, order)
-
-    //::Filter Query
-    if (typeof filters === 'object' && Object.keys(filters).length > 0) {
-      if (('organizationId' in filters) && filters['organizationId'].length > 0) {
-        query = query.whereHas('supplyChainReportingPeriod', (data) => {
-          data.where('organizationId', filters['organizationId'])
-        })
-      }
-    }
 
     //::Include Relationship
     if (includes.length > 0) {
