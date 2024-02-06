@@ -1,13 +1,13 @@
 "use client";
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import download from "downloadjs";
+
 import {
   addReportingPeriod,
   downloadCsvTemplate,
+  getAllEmissioScopeData,
   getAllReportingPeriods,
   importFile,
 } from "@/services/supply.chain";
@@ -25,18 +25,27 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
 import { useSession } from "next-auth/react";
 import ReportingPeriodPopup from "@/components/supply-chain/reporting-period-popover";
 import dayjs from "dayjs";
 import AddSupplierManualy from "@/components/supply-chain/addSupplierManualy";
+import SupplierData from "@/components/supply-chain/SupplierData";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import download from "downloadjs";
 
 const Page = () => {
-  const [file, setFile] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
+  const [periodId, setPeriodId] = useState("");
   const [showNew, setShowNew] = useState(false);
   const session = useSession();
   const [currentTab, setCurrentTab] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const [uploadStatus, setUploadStatus] = useState("select");
 
   const organizationId = session?.data?.user.organizations[0].id!;
 
@@ -92,6 +101,7 @@ const Page = () => {
   const emptyInput = () => {
     setFileName("");
   };
+  const token = session?.data?.token.token;
 
   useEffect(() => {
     if (periodsQ.isSuccess) {
@@ -121,10 +131,14 @@ const Page = () => {
         </div>
       </div>
       {periodsQ.isSuccess && (
-        <Tabs className="w-full" value={showNew ? "new" : currentTab!}>
+        <Tabs
+          className="w-full"
+          value={showNew ? "new" : currentTab!}
+          onValueChange={setCurrentTab}
+        >
           <TabsList>
             {showNew && (
-              <TabsTrigger value="tab1">
+              <TabsTrigger value="new">
                 <Popover defaultOpen={true}>
                   <PopoverTrigger> Add Reporting Period</PopoverTrigger>
                   <PopoverContent
@@ -145,12 +159,10 @@ const Page = () => {
                 <TabsTrigger
                   key={i}
                   value={item.id}
-                  onClick={() => setCurrentTab(item?.id)}
+                  onClick={() => setCurrentTab(item.id)}
                 >
                   <Popover>
-                    <PopoverTrigger className="text-blue-600">
-                      {reporting}
-                    </PopoverTrigger>
+                    <PopoverTrigger className="">{reporting}</PopoverTrigger>
                     <PopoverContent
                       align="start"
                       className="w-full left-0 p-0 -ml-4"
@@ -164,9 +176,8 @@ const Page = () => {
           </TabsList>
 
           <TabsContent value={currentTab!} className="relative">
-            <div></div>
+            <SupplierData periodId={currentTab!}></SupplierData>
           </TabsContent>
-
           <TabsContent value="new">
             <div className="justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5">
               <img
@@ -214,59 +225,34 @@ const Page = () => {
                             supplier.
                           </div>
 
-                          {fileName ? (
-                            <div className="bg-white-200 self-stretch flex relative cursor-pointer flex-col justify-center items-start mr-4 mt-4 py-8 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5">
-                              <div className="flex gap-3">
-                                <img
-                                  loading="lazy"
-                                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/76539b99402de7bbb2229a3e1b8b794f4df08d5b2955c22676d9840e4ee3a8be?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                                  className="aspect-square object-contain object-center w-16 self-stretch shrink-0"
-                                />
-                                <div className="text-gray-700 text-center text-base font-semibold leading-6 self-stretch grow shrink basis-auto my-auto">
-                                  {fileName}
-                                </div>
-                                <img
-                                  onClick={emptyInput}
-                                  loading="lazy"
-                                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/c0d4f4b0887ea5dba16339f6f1ded722874e86814a8d420ffd2db31638831bb1?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                                  className="aspect-square object-contain object-center w-4 self-stretch shrink-0 my-auto"
-                                />
+                          <div className="bg-gray-200 self-stretch flex relative cursor-pointer flex-col justify-center items-center mr-4 mt-4 px-16 py-12 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5">
+                            <input
+                              type="file"
+                              accept=".csv"
+                              className="absolute left-0 top-0 w-full h-full opacity-0"
+                            ></input>
+                            <div className="items-center flex gap-3 mt-1.5 mb-1">
+                              <img
+                                loading="lazy"
+                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/90462b2605fc6d0399b50fa56cda63f7809e55747efc111afb6771457a2f2140?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
+                                className="aspect-square object-contain object-center w-3 overflow-hidden shrink-0 max-w-full my-auto"
+                              />
+                              <div className="text-slate-500 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap">
+                                ADD A CSV FILE
                               </div>
                             </div>
-                          ) : (
-                            <div className="bg-gray-200 self-stretch flex relative cursor-pointer flex-col justify-center items-center mr-4 mt-4 px-16 py-12 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5">
-                              <input
-                                type="file"
-                                accept=".csv"
-                                onChange={handleChange}
-                                className="absolute left-0 top-0 w-full h-full opacity-0"
-                              ></input>
-                              <div className="items-center flex gap-3 mt-1.5 mb-1">
-                                <img
-                                  loading="lazy"
-                                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/90462b2605fc6d0399b50fa56cda63f7809e55747efc111afb6771457a2f2140?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                                  className="aspect-square object-contain object-center w-3 overflow-hidden shrink-0 max-w-full my-auto"
-                                />
-                                <div className="text-slate-500 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap">
-                                  ADD A CSV FILE
-                                </div>
-                              </div>
-                            </div>
-                          )}
+                          </div>
 
                           <Button
                             type="submit"
-                            disabled={!fileName}
+                            disabled={true}
                             className="text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 aspect-[1.625] mr-4 mt-4 px-4 py-3 self-end max-md:mr-2.5"
                           >
                             Import
                           </Button>
                         </div>
                       </form>
-                      <button
-                        onClick={DownloadTemplate}
-                        className="text-blue-600 absolute bottom-[80px] text-sm leading-5 underline self-stretch mt-4 max-md:max-w-full"
-                      >
+                      <button className="text-blue-600 absolute bottom-[80px] text-sm leading-5 underline self-stretch mt-4 max-md:max-w-full">
                         Download our CSV Template
                       </button>
                     </div>
@@ -277,8 +263,9 @@ const Page = () => {
           </TabsContent>
         </Tabs>
       )}
+
       <div className="items-stretch self-stretch flex flex-col pb-12">
-        <div className="items-stretch rounded-3xl bg-gray-100 flex justify-between gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap">
+        <div className="items-stretch bg-gray-100 flex justify-between gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap">
           <div className="text-slate-800 text-xs font-bold leading-4 grow max-md:max-w-full">
             Suppliers
           </div>

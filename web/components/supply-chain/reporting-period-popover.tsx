@@ -31,7 +31,6 @@ const ReportingPeriodPopup = ({
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const session = useSession();
-
   const queryClient = useQueryClient();
   const organizationId = session?.data?.user.organizations[0].id!;
 
@@ -65,8 +64,12 @@ const ReportingPeriodPopup = ({
   const addReportMut = useMutation({
     mutationFn: addReportingPeriod,
     onSuccess: (data) => {
-      console.log(data, 'data addd');
+      queryClient.invalidateQueries({
+        queryKey: ['reporting-periods', organizationId],
+      });
+      setNew(false);
 
+      console.log(data, 'data addd');
       toast.success('Reporting period Added.', { style: { color: 'green' } });
     },
   });
@@ -90,7 +93,6 @@ const ReportingPeriodPopup = ({
       validateOnBlur: true,
       onSubmit: (data) => {
         if (period) {
-          console.log(period, 'period id');
           editMuation.mutate({
             id: period.id,
             formData: {

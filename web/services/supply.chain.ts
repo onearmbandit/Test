@@ -107,3 +107,11 @@ export const updateSupplier = (data: any) => {
     body: formbody,
   });
 };
+export const getAllEmissioScopeData = (id: string) => {
+  return fetchApi(
+    `/auth/supplier-period-emission?supplyChainReportingPeriodId=${id}`,
+    {
+      method: 'GET',
+    }
+  );
+};
