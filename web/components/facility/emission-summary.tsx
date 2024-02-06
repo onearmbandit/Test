@@ -42,8 +42,8 @@ const EmissionSummary = () => {
               </div>
 
               <div className="space-y-3">
-                {emissions?.map((item: any) => (
-                  <div className="flex justify-between items-center">
+                {emissions?.map((item: any, i: number) => (
+                  <div key={i} className="flex justify-between items-center">
                     <p className="text-[10px] font-bold text-slate-700">
                       {dayjs(item.reporting_period_from).format("MMM YY")} -{" "}
                       {dayjs(item.reporting_period_to).format("MMM YY")}{" "}
@@ -73,8 +73,8 @@ const EmissionSummary = () => {
               </div>
 
               <div className="space-y-3">
-                {emissions?.map((item: any) => (
-                  <div className="flex justify-between items-center">
+                {emissions?.map((item: any, i: number) => (
+                  <div key={i} className="flex justify-between items-center">
                     <p className="text-[10px] font-bold text-slate-700">
                       {dayjs(item.reporting_period_from).format("MMM YY")} -{" "}
                       {dayjs(item.reporting_period_to).format("MMM YY")}{" "}
@@ -104,8 +104,8 @@ const EmissionSummary = () => {
               </div>
 
               <div className="space-y-3">
-                {emissions?.map((item: any) => (
-                  <div className="flex justify-between items-center">
+                {emissions?.map((item: any, i: number) => (
+                  <div key={i} className="flex justify-between items-center">
                     <p className="text-[10px] font-bold text-slate-700">
                       {dayjs(item.reporting_period_from).format("MMM YY")} -{" "}
                       {dayjs(item.reporting_period_to).format("MMM YY")}{" "}
