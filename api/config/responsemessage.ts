@@ -71,3 +71,9 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
   equalityCarbonEmissionSuccess: "Equality carbon emission to product line calculated successfully.",
   updateFacilityProductSuccess: "Facility product details updated successfully.",
 }
+
+
+export const FILE_UPLOAD_RESPONSE = {
+  serverError: 'Looks like something went wrong. Please try again.',
+  uploadSuccess:"File uploaded successfully."
+}

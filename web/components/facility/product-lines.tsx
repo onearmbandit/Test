@@ -1,25 +1,63 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { HelpCircle, X } from "lucide-react";
 import { Product } from "@/lib/types/product.type";
 import { Button } from "../ui/button";
 import _ from "lodash";
-import { usePathname, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  addProductLines,
+  editProductLines,
+  getProductLines,
+} from "@/services/facility.api";
+import { toast } from "sonner";
 
-const ProductLines = () => {
+const ProductLines = ({ period }: { period: string }) => {
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
+  const facilityId = searchParams.get("facilityId");
+  const [isEdit, setEdit] = useState(false);
+  const queryClient = useQueryClient();
   const [products, setProducts] = useState<Product[]>([
-    { name: "", quantity: 0, unit: "" },
+    { name: "", quantity: 0, functionalUnit: "" },
   ]);
 
+  const prodLines = useQuery({
+    queryKey: ["product-lines", period],
+    queryFn: () => getProductLines(period!),
+  });
+  const productLines = prodLines.isSuccess ? prodLines.data : [];
+
+  const { mutate } = useMutation({
+    mutationFn: addProductLines,
+    onSuccess: (data) => {
+      toast.success("Products Lines added.", { style: { color: "green" } });
+      queryClient.invalidateQueries({
+        queryKey: ["product-lines", period, "facility-details"],
+      });
+      setEdit(false);
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const { mutate: editMutate } = useMutation({
+    mutationFn: editProductLines,
+    onSuccess: (data) => {
+      toast.success("Products Lines updated.", { style: { color: "green" } });
+      queryClient.invalidateQueries({ queryKey: ["product-lines", period] });
+      setEdit(false);
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
   const handleAddProductLine = () => {
-    const newProduct = { name: "", quantity: 0, unit: "" };
+    const newProduct = { name: "", quantity: 0, functionalUnit: "" };
     const productLineClone = _.cloneDeep(products);
     productLineClone.push(newProduct);
     setProducts(productLineClone);
@@ -31,12 +69,44 @@ const ProductLines = () => {
     setProducts(productLineClone);
   };
 
-  const isEdit = searchParams.get("edit");
-  console.log(pathname);
+  const handleSubmit = () => {
+    const productKeys = ["id", "name", "quantity", "functionalUnit"];
+    const copy = _.cloneDeep(products);
+    copy.map((item) => {
+      Object.keys(item).map((i) => {
+        if (!productKeys.includes(i)) {
+          delete item[i];
+        }
+      });
+
+      return item;
+    });
+    const formData = {
+      facilityEmissionId: period,
+      facilityProducts: copy,
+    };
+    if (productLines.data.length == 0) {
+      mutate(formData);
+    } else {
+      console.log(formData);
+      editMutate(formData);
+    }
+  };
+
+  useEffect(() => {
+    if (prodLines.isSuccess) {
+      const updated = productLines.data?.map((item: Product) => ({
+        ...item,
+        functionalUnit: item?.functional_unit,
+      }));
+      console.log({ updated });
+      setProducts(updated);
+    }
+  }, [prodLines.status]);
 
   return (
     <>
-      {isEdit == "product" ? (
+      {isEdit ? (
         <div className="flex flex-col items-stretch self-stretch text-xs leading-4 bg-white rounded-lg">
           <header className="grid grid-cols-3 gap-5  px-5 py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 max-md:flex-wrap max-md:max-w-full">
             <div className="flex-auto">Product Name</div>
@@ -57,6 +127,11 @@ const ProductLines = () => {
                   type="text"
                   id="product-name"
                   value={item.name}
+                  onChange={(e) => {
+                    const copy = _.cloneDeep(products);
+                    copy[i].name = e.target.value;
+                    setProducts(copy);
+                  }}
                   name="product-name"
                   required
                   placeholder="product1"
@@ -69,6 +144,11 @@ const ProductLines = () => {
                   type="number"
                   id="quantity"
                   value={item.quantity}
+                  onChange={(e) => {
+                    const copy = _.cloneDeep(products);
+                    copy[i].quantity = Number(e.target.value);
+                    setProducts(copy);
+                  }}
                   name="quantity"
                   required
                   placeholder="1"
@@ -79,8 +159,13 @@ const ProductLines = () => {
                   className="justify-center items-stretch text-xs p-2 max-w-[8.125rem] bg-gray-50 rounded-md"
                   type="text"
                   id="unit"
-                  name="unit"
-                  value={item.unit}
+                  name="functionalUnit"
+                  onChange={(e) => {
+                    const copy = _.cloneDeep(products);
+                    copy[i].functionalUnit = e.target.value;
+                    setProducts(copy);
+                  }}
+                  value={item.functionalUnit}
                   placeholder="Kilowatt/hour"
                   required
                 />
@@ -105,7 +190,7 @@ const ProductLines = () => {
             <Button
               type="button"
               size={"sm"}
-              onClick={() => router.push(pathname)}
+              onClick={() => handleSubmit()}
               className="self-end px-4 py-1.5 mt-8  shadow"
             >
               Save
@@ -117,27 +202,27 @@ const ProductLines = () => {
           className="flex flex-col items-stretch self-stretch pb-1.5 text-base font-light leading-6 text-teal-800 bg-white rounded-lg"
           aria-label="Product Card"
         >
-          <div className="grid grid-cols-3 gap-5 justify-between py-1 w-fit pr-20 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-            <h1 className="font-bold whitespace-nowrap w-[8.125rem]">
-              Product 1
-            </h1>
-            <p className="w-[9.75rem]">1,000 units</p>
-            <p className="grow">kilowatt/hour</p>
-          </div>
-          <div className="grid grid-cols-3 gap-5 justify-between w-fit py-1 mt-3 max-md:flex-wrap max-md:max-w-full">
-            <h2 className="font-bold whitespace-nowrap w-[8.125rem]">
-              Product 2
-            </h2>
-            <p className="w-[9.75rem]">1,000 units</p>
-            <p className="grow">kilowatt/hour</p>
-          </div>
+          {productLines.data?.map((item: any, i: number) => (
+            <div
+              key={i}
+              className="grid grid-cols-3 gap-5 justify-between py-1 w-fit pr-20 max-md:flex-wrap max-md:pr-5 max-md:max-w-full"
+            >
+              <h1 className="font-bold whitespace-nowrap w-[8.125rem]">
+                {item.name}
+              </h1>
+              <p className="w-[9.75rem]">{item.quantity} units</p>
+              <p className="grow">{item.functionalUnit}</p>
+            </div>
+          ))}
           <div className="self-end mt-5 mr-4 text-sm font-semibold leading-5 text-blue-600 max-md:mr-2.5">
-            <Link
-              href={`${pathname}?edit=product`}
+            <Button
+              type="button"
+              variant={"ghost"}
+              onClick={() => setEdit(true)}
               className="font-semibold hover:bg-white hover:text-blue-600"
             >
               Edit
-            </Link>
+            </Button>
           </div>
         </section>
       )}

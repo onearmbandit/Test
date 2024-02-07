@@ -87,3 +87,28 @@ export const addScopeEmissions = ({ id, obj }: any) => {
     body: obj,
   });
 };
+
+export const addProductLines = (formData: any) => {
+  return fetchApi(`/auth/facility-product`, { method: "POST", body: formData });
+};
+
+export const editProductLines = (formData: any) => {
+  return fetchApi(`/auth/update-facility-products`, {
+    method: "POST",
+    body: formData,
+  });
+};
+
+export const getProductLines = (facilityId: string) => {
+  return fetchApi(`/auth/facility-product?facilityEmissionId=${facilityId}`);
+};
+
+export const facilityDetails = (id: string) => {
+  return fetchApi(`/auth/facility/${id}`);
+};
+
+export const getEqualityData = (id: string) => {
+  return fetchApi(
+    `/auth/equality-emission-calculation?facilityEmissionId=${id}`
+  );
+};
