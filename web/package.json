@@ -45,6 +45,7 @@
     "react-query": "^3.39.3",
     "react-select": "^5.8.0",
     "react-tabs": "^6.0.2",
+    "recharts": "^2.11.0",
     "react-dropzone": "^14.2.3",
     "sonner": "^1.4.0",
     "tailwind-merge": "^2.2.0",

@@ -20,6 +20,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+
 import {
   Popover,
   PopoverContent,
@@ -197,9 +199,12 @@ const Page = () => {
               </div>
               <Dialog>
                 <DialogTrigger>
-                  <div className="text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 mb-9 px-4 py-3">
+                  <Button
+                    disabled
+                    className="text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 mb-9 px-4 py-3"
+                  >
                     Upload CSV
-                  </div>
+                  </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-[44rem] p-[60px]">
                   <DialogDescription>
@@ -245,7 +250,7 @@ const Page = () => {
 
                           <Button
                             type="submit"
-                            disabled={true}
+                            disabled
                             className="text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 aspect-[1.625] mr-4 mt-4 px-4 py-3 self-end max-md:mr-2.5"
                           >
                             Import
@@ -269,11 +274,35 @@ const Page = () => {
           <div className="text-slate-800 text-xs font-bold leading-4 grow max-md:max-w-full">
             Suppliers
           </div>
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/2e0a663d923aa11cad808bb8c9e5a6c4f17b083df00a83ae82feefea8d812672?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-            className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full"
-          />
+          <div>
+            <Button variant="outline" className="mr-3">
+              Select All
+            </Button>
+            <Button variant="outline" className="mr-4">
+              {" "}
+              <Badge variant="outline" className="mr-4">
+                0
+              </Badge>
+              Delete
+            </Button>
+            <Popover>
+              <PopoverTrigger>
+                {" "}
+                <img
+                  loading="lazy"
+                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/2e0a663d923aa11cad808bb8c9e5a6c4f17b083df00a83ae82feefea8d812672?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
+                  className="w-full aspect-square max-w-[16px]"
+                />
+              </PopoverTrigger>
+              <PopoverContent>
+                <ul className="justify-center p-3 text-base leading-5 text-gray-700 bg-white rounded max-w-[200px]">
+                  <li className="mb-4">Add new suppliers via csv</li>
+                  <li className="mb-4"> Manually add a supplier</li>
+                  <li className="mb-4"> Download CSV</li>
+                </ul>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
         <div className="items-stretch bg-white flex w-full flex-col pb-12 max-md:max-w-full max-md:mb-10">
           <div className="items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
