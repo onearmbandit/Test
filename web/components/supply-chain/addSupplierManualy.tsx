@@ -52,14 +52,15 @@ export const AddSupplierManualy = () => {
   const [supplier, setSupplier] = useState<any>(null);
   const [productList, setProductList] = useState<any>([
     {
-      name: "",
-      type: "",
+      name: "Add product name",
+      type: "Add product type",
       quantity: "",
       functionalUnit: "",
       scope_3Contribution: "",
     },
   ]);
   const [createableValue, setCreatableValue] = useState<any>("");
+  const [createableTypeValue, setCreatableTypeValue] = useState<any>("");
 
   const reportingPeriodQ = useQuery({
     queryKey: ["reporting-period", reportingId],
@@ -138,7 +139,7 @@ export const AddSupplierManualy = () => {
 
       toast.success("Supplier Created", { style: { color: "green" } });
 
-      router.push("/");
+      router.push("/supply-chain");
     },
     onError: (err: any) => {
       console.log(err);
@@ -188,6 +189,19 @@ export const AddSupplierManualy = () => {
     newCopy[i].name = inputValue;
     setProductList(newCopy);
     setCreatableValue(newOption);
+  };
+  const handleCreateType = (inputValue: string, i: number) => {
+    const newOption = {
+      name: "",
+      quantity: "",
+      type: inputValue,
+      functionalUnit: "",
+      scope_3Contribution: "",
+    };
+    const newCopy = _.cloneDeep(productList);
+    newCopy[i].type = inputValue;
+    setProductList(newCopy);
+    setCreatableTypeValue(newOption);
   };
 
   console.log(errors);
@@ -431,14 +445,19 @@ export const AddSupplierManualy = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  <Input
-                    value={item.type}
-                    onChange={(e) => {
+                  <CreatableSelect
+                    isClearable
+                    getOptionLabel={(option) => option.type}
+                    getOptionValue={(option) => option.type}
+                    onChange={(newValue) => {
                       const newCopy = _.cloneDeep(productList);
-                      newCopy[i].type = e.target.value;
+                      newCopy[i].type = newValue.type;
+                      console.log(newValue, "new value");
                       setProductList(newCopy);
                     }}
-                    className="bg-gray-100"
+                    onCreateOption={(e) => handleCreateType(e, i)}
+                    options={productList}
+                    value={item}
                   />
                 </TableCell>
                 <TableCell className="w-12">
