@@ -19,6 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getReportingPeriods } from "@/services/facility.api";
 import dayjs from "dayjs";
 import ScopeEmissions from "./scope-emission";
+import ProductLineEmissions from "./product-line-emissions";
 
 const FacilityDetails = () => {
   const searchParams = useSearchParams();
@@ -47,7 +48,7 @@ const FacilityDetails = () => {
 
   useEffect(() => {
     if (periodsQ.isSuccess) {
-      setCurrentTab(reportingPeriods[0].id);
+      setCurrentTab(reportingPeriods[0]?.id);
     }
   }, [periodsQ.isSuccess]);
 
@@ -167,7 +168,7 @@ const FacilityDetails = () => {
                     period
                   </p>
                   <AccordionContent>
-                    <ProductLines />
+                    <ProductLines period={currentTab!} />
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem
@@ -192,6 +193,9 @@ const FacilityDetails = () => {
                     Assign Scope 1, 2, and 3 emissions directly to specific
                     product lines within your facility by functional unit.
                   </p>
+                  <AccordionContent>
+                    <ProductLineEmissions period={currentTab!} />
+                  </AccordionContent>
                 </AccordionItem>
               </Accordion>
             </TabsContent>
