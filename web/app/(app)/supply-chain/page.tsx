@@ -3,6 +3,8 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { ChevronDown, HelpCircle, Loader2, Plus } from 'lucide-react';
+import download from 'downloadjs';
 
 import {
   addReportingPeriod,
@@ -55,7 +57,19 @@ const Page = () => {
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
   const token = session?.data?.token.token;
-
+  const downloadCsvMUt = useMutation({
+    mutationFn: downloadCsvTemplate,
+    onSuccess: (data) => {
+      download(data?.data.download_url);
+      toast.success('csv downloaded Successfully.', {
+        style: { color: 'green' },
+      });
+    },
+    onError: (err) => {
+      alert(err);
+      toast.error(err.message, { style: { color: 'red' } });
+    },
+  });
   useEffect(() => {
     if (periodsQ.isSuccess) {
       setCurrentTab(reportingPeriods[0]?.id);
@@ -89,149 +103,156 @@ const Page = () => {
           </header>
         </div>
       </div>
-      {periodsQ.isSuccess && (
-        <Tabs
-          className='w-full'
-          value={showNew ? 'new' : currentTab!}
-          onValueChange={setCurrentTab}
-        >
-          <TabsList>
-            {showNew && (
-              <TabsTrigger value='new'>
-                <Popover defaultOpen={true}>
-                  <PopoverTrigger> Add Reporting Period</PopoverTrigger>
-                  <PopoverContent
-                    align='start'
-                    className='w-full left-0 p-0 -ml-4'
-                  >
-                    <ReportingPeriodPopup setNew={setShowNew} />
-                  </PopoverContent>
-                </Popover>
-              </TabsTrigger>
-            )}
-
-            {reportingPeriods.map((item: any, i: number) => {
-              const reporting = `${dayjs(item.reporting_period_from).format(
-                'MMM YYYY'
-              )} - ${dayjs(item.reporting_period_to).format('MMM YYYY')}`;
-              return (
-                <TabsTrigger
-                  key={i}
-                  value={item.id}
-                  onClick={() => setCurrentTab(item.id)}
-                >
-                  <Popover>
-                    <PopoverTrigger className=''>{reporting}</PopoverTrigger>
+      <div className='relative'>
+        {periodsQ.isLoading && (
+          <Loader2 className='text-blue-500 animate-spin' />
+        )}
+        {periodsQ.isSuccess && (
+          <Tabs
+            className='w-full'
+            value={showNew ? 'new' : currentTab!}
+            onValueChange={setCurrentTab}
+          >
+            <TabsList>
+              {showNew && (
+                <TabsTrigger value='new'>
+                  <Popover defaultOpen={true}>
+                    <PopoverTrigger> Add Reporting Period</PopoverTrigger>
                     <PopoverContent
                       align='start'
                       className='w-full left-0 p-0 -ml-4'
                     >
-                      <ReportingPeriodPopup setNew={setShowNew} period={item} />
+                      <ReportingPeriodPopup setNew={setShowNew} />
                     </PopoverContent>
                   </Popover>
                 </TabsTrigger>
-              );
-            })}
-          </TabsList>
+              )}
 
-          <TabsContent value={currentTab!} className='relative'>
-            <SupplierData periodId={currentTab!}></SupplierData>
-          </TabsContent>
-          <TabsContent value='new'>
-            <div className='justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5'>
-              <img
-                loading='lazy'
-                src='https://cdn.builder.io/api/v1/image/assets/TEMP/9125c29d6e22fd51a2f1e9dcb27da44ac69b93ebcdb1009043a3b8178d6d05e3?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                className='aspect-[1.17] object-contain object-center w-[54px] overflow-hidden self-center max-w-full mt-9'
-              />
-              <div className='text-slate-700 text-3xl font-semibold leading-9 self-center mt-3 max-md:max-w-full'>
-                Upload supplier product level emissions data
-              </div>
-              <div className='text-slate-700 text-center text-lg font-light leading-7 self-stretch w-full mt-6 max-md:max-w-full max-md:mr-2'>
-                Your suppliers product-level emission data encompasses the Scope
-                3 emissions directly linked to your products. To begin, upload
-                this information using a CSV file or enter the data manually in
-                the table below.
-                <br />
-              </div>
-              <Dialog>
-                <DialogTrigger>
-                  <Button
-                    disabled
-                    className='text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 mb-9 px-4 py-3'
+              {reportingPeriods.map((item: any, i: number) => {
+                const reporting = `${dayjs(item.reporting_period_from).format(
+                  'MMM YYYY'
+                )} - ${dayjs(item.reporting_period_to).format('MMM YYYY')}`;
+                return (
+                  <TabsTrigger
+                    key={i}
+                    value={item.id}
+                    onClick={() => setCurrentTab(item.id)}
                   >
-                    Upload CSV
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className='max-w-[44rem] p-[60px]'>
-                  <DialogDescription>
-                    <div className='bg-white flex max-w-[707px] flex-col items-end'>
-                      <DialogClose asChild>
-                        <Button type='button' variant='ghost'>
-                          <img
-                            loading='lazy'
-                            src='https://cdn.builder.io/api/v1/image/assets/TEMP/d846c09ab3f4187b63077673a631850dbed6d5d8a2e8740d3dfc3f933dba7c58?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                            className='aspect-square object-contain object-center w-6 overflow-hidden max-w-full max-md:mr-2.5'
-                          />
-                        </Button>
-                      </DialogClose>
+                    <Popover>
+                      <PopoverTrigger className=''>{reporting}</PopoverTrigger>
+                      <PopoverContent
+                        align='start'
+                        className='w-full left-0 p-0 -ml-4'
+                      >
+                        <ReportingPeriodPopup
+                          setNew={setShowNew}
+                          period={item}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
 
-                      <div className='text-gray-800 text-center text-xl font-bold leading-7 self-stretch max-md:max-w-full'>
-                        Import Supplier GHG Emissions
-                      </div>
-                      <form>
-                        <div className='self-stretch flex w-full flex-col mt-4 mb-0 max-md:max-w-full max-md:px-5'>
-                          <div className='text-gray-800 text-xl leading-7 self-stretch w-full mr-4 mt-4 max-md:max-w-full max-md:mr-2.5'>
-                            Download our CSV template to ensure successful
-                            upload. Be sure to attribute only one product to a
-                            supplier.
-                          </div>
+            <TabsContent value={currentTab!} className='relative'>
+              <SupplierData periodId={currentTab!}></SupplierData>
+            </TabsContent>
+            <TabsContent value='new'>
+              <div className='justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5'>
+                <img
+                  loading='lazy'
+                  src='https://cdn.builder.io/api/v1/image/assets/TEMP/9125c29d6e22fd51a2f1e9dcb27da44ac69b93ebcdb1009043a3b8178d6d05e3?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                  className='aspect-[1.17] object-contain object-center w-[54px] overflow-hidden self-center max-w-full mt-9'
+                />
+                <div className='text-slate-700 text-3xl font-semibold leading-9 self-center mt-3 max-md:max-w-full'>
+                  Upload supplier product level emissions data
+                </div>
+                <div className='text-slate-700 text-center text-lg font-light leading-7 self-stretch w-full mt-6 max-md:max-w-full max-md:mr-2'>
+                  Your suppliers product-level emission data encompasses the
+                  Scope 3 emissions directly linked to your products. To begin,
+                  upload this information using a CSV file or enter the data
+                  manually in the table below.
+                  <br />
+                </div>
+                <Dialog>
+                  <DialogTrigger>
+                    <Button
+                      disabled
+                      className='text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 mb-9 px-4 py-3'
+                    >
+                      Upload CSV
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className='max-w-[44rem] p-[60px]'>
+                    <DialogDescription>
+                      <div className='bg-white flex max-w-[707px] flex-col items-end'>
+                        <DialogClose asChild>
+                          <Button type='button' variant='ghost'>
+                            <img
+                              loading='lazy'
+                              src='https://cdn.builder.io/api/v1/image/assets/TEMP/d846c09ab3f4187b63077673a631850dbed6d5d8a2e8740d3dfc3f933dba7c58?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                              className='aspect-square object-contain object-center w-6 overflow-hidden max-w-full max-md:mr-2.5'
+                            />
+                          </Button>
+                        </DialogClose>
 
-                          <div className='bg-gray-200 self-stretch flex relative cursor-pointer flex-col justify-center items-center mr-4 mt-4 px-16 py-12 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
-                            <input
-                              type='file'
-                              accept='.csv'
-                              className='absolute left-0 top-0 w-full h-full opacity-0'
-                            ></input>
-                            <div className='items-center flex gap-3 mt-1.5 mb-1'>
-                              <img
-                                loading='lazy'
-                                src='https://cdn.builder.io/api/v1/image/assets/TEMP/90462b2605fc6d0399b50fa56cda63f7809e55747efc111afb6771457a2f2140?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                                className='aspect-square object-contain object-center w-3 overflow-hidden shrink-0 max-w-full my-auto'
-                              />
-                              <div className='text-slate-500 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap'>
-                                ADD A CSV FILE
+                        <div className='text-gray-800 text-center text-xl font-bold leading-7 self-stretch max-md:max-w-full'>
+                          Import Supplier GHG Emissions
+                        </div>
+                        <form>
+                          <div className='self-stretch flex w-full flex-col mt-4 mb-0 max-md:max-w-full max-md:px-5'>
+                            <div className='text-gray-800 text-xl leading-7 self-stretch w-full mr-4 mt-4 max-md:max-w-full max-md:mr-2.5'>
+                              Download our CSV template to ensure successful
+                              upload. Be sure to attribute only one product to a
+                              supplier.
+                            </div>
+
+                            <div className='bg-gray-200 self-stretch flex relative cursor-pointer flex-col justify-center items-center mr-4 mt-4 px-16 py-12 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
+                              <input
+                                type='file'
+                                accept='.csv'
+                                className='absolute left-0 top-0 w-full h-full opacity-0'
+                              ></input>
+                              <div className='items-center flex gap-3 mt-1.5 mb-1'>
+                                <img
+                                  loading='lazy'
+                                  src='https://cdn.builder.io/api/v1/image/assets/TEMP/90462b2605fc6d0399b50fa56cda63f7809e55747efc111afb6771457a2f2140?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                                  className='aspect-square object-contain object-center w-3 overflow-hidden shrink-0 max-w-full my-auto'
+                                />
+                                <div className='text-slate-500 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap'>
+                                  ADD A CSV FILE
+                                </div>
                               </div>
                             </div>
+
+                            <Button
+                              type='submit'
+                              disabled
+                              className='text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 aspect-[1.625] mr-4 mt-4 px-4 py-3 self-end max-md:mr-2.5'
+                            >
+                              Import
+                            </Button>
                           </div>
-
-                          <Button
-                            type='submit'
-                            disabled
-                            className='text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 aspect-[1.625] mr-4 mt-4 px-4 py-3 self-end max-md:mr-2.5'
-                          >
-                            Import
-                          </Button>
-                        </div>
-                      </form>
-                      <button className='text-blue-600 absolute bottom-[80px] text-sm leading-5 underline self-stretch mt-4 max-md:max-w-full'>
-                        Download our CSV Template
-                      </button>
-                    </div>
-                  </DialogDescription>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </TabsContent>
-        </Tabs>
-      )}
-
-      <div className='items-stretch self-stretch flex flex-col pb-12'>
-        <div className='items-stretch bg-gray-100 flex justify-between gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
+                        </form>
+                        <button className='text-blue-600 absolute bottom-[80px] text-sm leading-5 underline self-stretch mt-4 max-md:max-w-full'>
+                          Download our CSV Template
+                        </button>
+                      </div>
+                    </DialogDescription>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </TabsContent>
+          </Tabs>
+        )}
+      </div>
+      <div className='items-stretch self-stretch flex flex-col pb-12 mt-8'>
+        <div className='items-center bg-gray-100 flex justify-between rounded-t-md gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
           <div className='text-slate-800 text-xs font-bold leading-4 grow max-md:max-w-full'>
             Suppliers
           </div>
-          <div>
+          <div className='flex'>
             <Button variant='outline' className='mr-3'>
               Select All
             </Button>
@@ -251,11 +272,13 @@ const Page = () => {
                   className='w-full aspect-square max-w-[16px]'
                 />
               </PopoverTrigger>
-              <PopoverContent>
-                <ul className='justify-center p-3 text-base leading-5 text-gray-700 bg-white rounded max-w-[200px]'>
+              <PopoverContent className='w-[240px] mr-3 mt-3 leff-auto right-0'>
+                <ul className='justify-center text-base leading-5 text-gray-700 bg-white rounded '>
                   <li className='mb-4'>Add new suppliers via csv</li>
                   <li className='mb-4'> Manually add a supplier</li>
-                  <li className='mb-4'> Download CSV</li>
+                  <li className='mb-4' onClick={() => downloadCsvMUt.mutate()}>
+                    Download CSV
+                  </li>
                 </ul>
               </PopoverContent>
             </Popover>
