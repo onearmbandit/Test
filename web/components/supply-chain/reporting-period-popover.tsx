@@ -57,7 +57,7 @@ const ReportingPeriodPopup = ({
     mutationFn: editReportingPerid,
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["reporting-periods"],
+        queryKey: ["reporting-periods", organizationId],
       });
       toast.success("Reporting period updated", { style: { color: "green" } });
     },

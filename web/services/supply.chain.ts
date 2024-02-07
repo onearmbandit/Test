@@ -145,3 +145,10 @@ export const getAllSuppliersByPeriodId = (periodId: string | null) => {
     );
   }
 };
+
+export const deleteMultipleSupplierProducts = (ids: any): any => {
+  return fetchApi(`/auth/remove-multiple-products`, {
+    method: "POST",
+    body: { products: ids },
+  });
+};
