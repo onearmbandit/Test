@@ -7,6 +7,7 @@ import FacilityProduct from './FacilityProduct';
 
 
 export default class FacilityEmission extends BaseModel {
+
   @column({ isPrimary: true })
   public id: string
 
@@ -37,6 +38,10 @@ export default class FacilityEmission extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
+  // Computed property definition
+  // @computed()
+  // public emission_sum: number;
+
   //::_____Relationships Start_____:://
 
   @belongsTo(() => OrganizationFacility, {
@@ -50,6 +55,10 @@ export default class FacilityEmission extends BaseModel {
   public FacilityProducts: HasMany<typeof FacilityProduct>
 
   //::_____Relationships End_____:://
+
+  // getEmissionSum({ scope1TotalEmission, scope2TotalEmission, scope3TotalEmission }) {
+  //   return scope1TotalEmission + scope2TotalEmission + scope3TotalEmission;
+  // }
 
   public static async getAllFacilityEmissions(queryParams: ParsedQs) {
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8;
@@ -91,6 +100,21 @@ export default class FacilityEmission extends BaseModel {
       .whereNull('deleted_at') // Exclude soft-deleted records
       .preload('FacilityProducts')
       .firstOrFail();
+
+    // // Access the computed property method to calculate the emission_sum
+    // const emissionSum = facilityDetails.getEmissionSum({
+    //   scope1TotalEmission: facilityDetails.scope1TotalEmission,
+    //   scope2TotalEmission: facilityDetails.scope2TotalEmission,
+    //   scope3TotalEmission: facilityDetails.scope3TotalEmission,
+    // });
+
+    // // Include the calculated emission_sum in the response
+    // const response = {
+    //   ...facilityDetails.toJSON(),
+    //   emission_sum: emissionSum,
+    // };
+
+    // return response;
     return facilityDetails;
   }
 

@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid'
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod'
 import OrganizationFacility from './OrganizationFacility'
 import { ParsedQs } from 'qs'
+import AbatementProject from './AbatementProject'
+import Supplier from './Supplier'
 
 export default class Organization extends BaseModel {
   @column({ isPrimary: true })
@@ -62,6 +64,16 @@ export default class Organization extends BaseModel {
   })
   public users: ManyToMany<typeof User>
 
+  @manyToMany(() => Supplier, {
+    localKey: 'id',
+    pivotForeignKey: 'organization_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'supplier_id',
+    pivotTable: 'supplier_organizations',
+    pivotTimestamps: true,
+  })
+  public suppliers: ManyToMany<typeof Supplier>
+
   @hasMany(() => OrganizationFacility, {
     foreignKey: 'organizations_id', // defaults to userId
   })
@@ -71,6 +83,12 @@ export default class Organization extends BaseModel {
     foreignKey: 'organizationId',
   })
   public supplyChainReportingPeriod: HasMany<typeof SupplyChainReportingPeriod>
+
+
+  @hasMany(() => AbatementProject, {
+    foreignKey: 'organizationId',
+  })
+  public abatementProjects: HasMany<typeof AbatementProject>
 
   //::_____Relationships End_____:://
 
