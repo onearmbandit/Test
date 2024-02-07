@@ -50,6 +50,7 @@ const Page = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const [uploadStatus, setUploadStatus] = useState("select");
+  const [selectedProductIds, setSelectedProductIds] = useState<any>([]);
 
   const organizationId = session?.data?.user.organizations[0].id!;
 
@@ -105,6 +106,54 @@ const Page = () => {
   const emptyInput = () => {
     setFileName("");
   };
+
+  const handleCheckboxChange = (event: any) => {
+    const productId = event.target.value;
+    if (event.target.checked) {
+      if (!selectedProductIds.includes(productId)) {
+        setSelectedProductIds((prevIds: any) => [...prevIds, productId]);
+      }
+    } else {
+      setSelectedProductIds((prevIds: any) =>
+        prevIds.filter((id: string) => id !== productId)
+      );
+    }
+  };
+
+  const areAllSelected = () => {
+    // Assuming supplierProducts is an array of all products you are iterating over
+    // This checks if every product ID is in the selectedProductIds array
+    const allProductIds = supplierProducts.map((product: any) => product.id);
+    return (
+      allProductIds.length > 0 &&
+      allProductIds.every((id: string) => selectedProductIds.includes(id))
+    );
+  };
+
+  const handleSelectAllChange = (event: any) => {
+    if (event.target.checked) {
+      // Select all: add all product IDs to the selectedProductIds state
+      const allProductIds = supplierProducts.map((product: any) => product.id);
+      setSelectedProductIds(allProductIds);
+    } else {
+      // Deselect all: clear the selectedProductIds state
+      setSelectedProductIds([]);
+    }
+  };
+
+  const handleSelectAllButtonClick = () => {
+    const allProductIds = supplierProducts.map((product: any) => product.id);
+
+    // If not all products are currently selected, select all, otherwise deselect all
+    if (areAllSelected()) {
+      // Deselect all if currently all are selected
+      setSelectedProductIds([]);
+    } else {
+      // Select all if not all products are currently selected
+      setSelectedProductIds(allProductIds);
+    }
+  };
+
   const token = session?.data?.token.token;
 
   useEffect(() => {
@@ -113,11 +162,13 @@ const Page = () => {
     }
   }, [periodsQ.isSuccess]);
 
-  const suppliersQ = useQuery({
-    queryKey: ["suppliers", currentTab],
+  const supplierProductsQ = useQuery({
+    queryKey: ["supplier-products", currentTab],
     queryFn: () => getAllSuppliersByPeriodId(currentTab),
   });
-  const suppliers = suppliersQ.isSuccess ? suppliersQ.data.data : [];
+  const supplierProducts = supplierProductsQ.isSuccess
+    ? supplierProductsQ.data.data
+    : [];
 
   return (
     <div className="w-full shadow bg-gray-50 flex flex-col pl-6 pr-6 pt-5 pb-12 max-md:px-5">
@@ -284,13 +335,23 @@ const Page = () => {
             Suppliers
           </div>
           <div>
-            <Button variant="outline" className="mr-3">
-              Select All
+            <Button
+              onClick={handleSelectAllButtonClick}
+              variant="outline"
+              className="mr-3"
+            >
+              {areAllSelected() ? "Deselect All" : "Select All"}
             </Button>
-            <Button variant="outline" className="mr-4">
+            <Button
+              onClick={() => {
+                console.log("selected product ids : ", selectedProductIds);
+              }}
+              variant="outline"
+              className="mr-4"
+            >
               {" "}
               <Badge variant="outline" className="mr-4">
-                0
+                {selectedProductIds.length}
               </Badge>
               Delete
             </Button>
@@ -323,7 +384,11 @@ const Page = () => {
         <div className="items-stretch bg-white flex w-full flex-col pb-12 max-md:max-w-full max-md:mb-10">
           <div className="items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
             <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap">
-              {""}
+              <input
+                type="checkbox"
+                checked={areAllSelected()}
+                onChange={handleSelectAllChange}
+              />
             </div>
             <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 whitespace-nowrap">
               Supplier Name
@@ -342,57 +407,36 @@ const Page = () => {
             </div>
           </div>
           {/* supplier list start */}
-          {suppliers &&
-            suppliers.length > 0 &&
-            suppliers.map((supplier: any) =>
-              supplier?.supplierProducts?.length > 0 ? (
-                supplier?.supplierProducts?.map(
-                  (product: any, index: number) => (
-                    <div className="items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
-                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 self-stretch grow whitespace-nowrap">
-                        <input type="checkbox" name="supplier" id="supplier" />
-                      </div>
-                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 whitespace-nowrap">
-                        {supplier?.name}
-                      </div>
-                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
-                        {supplier?.supplierProducts[index].name}
-                      </div>
-                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
-                        {supplier?.supplierProducts[index].type}
-                      </div>
-                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
-                        {supplier?.supplierProducts[index].scope_3_contribution}
-                      </div>
-                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 grow whitespace-nowrap">
-                        {convertDateToString(supplier.updated_at)}
-                      </div>
-                    </div>
-                  )
-                )
-              ) : (
-                <div className="items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
-                  <div className="overflow-hidden text-slate-800 text-ellipsis text-sm grow whitespace-nowrap">
-                    <input type="checkbox" name="supplier" id="supplier" />
-                  </div>
-                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 whitespace-nowrap">
-                    {supplier?.name}
-                  </div>
-                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
-                    NA
-                  </div>
-                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
-                    NA
-                  </div>
-                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
-                    NA
-                  </div>
-                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 grow whitespace-nowrap">
-                    {convertDateToString(supplier.updated_at)}
-                  </div>
+          {supplierProducts &&
+            supplierProducts.length > 0 &&
+            supplierProducts.map((product: any, index: number) => (
+              <div className="items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
+                <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 self-stretch grow whitespace-nowrap">
+                  <input
+                    type="checkbox"
+                    name="selectedProduct"
+                    value={product?.id}
+                    checked={selectedProductIds.includes(product?.id)}
+                    onChange={handleCheckboxChange}
+                  />
                 </div>
-              )
-            )}
+                <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 whitespace-nowrap">
+                  {product?.supplier?.name}
+                </div>
+                <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                  {product?.name}
+                </div>
+                <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                  {product?.type}
+                </div>
+                <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                  {product?.scope_3_contribution}
+                </div>
+                <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 grow whitespace-nowrap">
+                  {convertDateToString(product?.updated_at)}
+                </div>
+              </div>
+            ))}
 
           {/* supplier list end */}
           <div className="justify-center items-stretch flex gap-0 mb-12 px-5 max-md:max-w-full max-md:flex-wrap max-md:mb-10">

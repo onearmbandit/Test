@@ -138,7 +138,7 @@ export const createSupplierProduct = (data: any) => {
 export const getAllSuppliersByPeriodId = (periodId: string | null) => {
   if (periodId) {
     return fetchApi(
-      `/auth/suppliers?supplyChainReportingPeriodId=${periodId}`,
+      `/auth/supplier-products?supplyChainReportingPeriodId=${periodId}`,
       {
         method: "GET",
       }
