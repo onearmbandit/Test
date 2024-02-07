@@ -111,7 +111,26 @@ export const getAllEmissioScopeData = (id: string) => {
   return fetchApi(
     `/auth/supplier-period-emission?supplyChainReportingPeriodId=${id}`,
     {
-      method: 'GET',
+      method: "GET",
     }
   );
+};
+
+export const getProductNamesBySupplierId = (id: string) => {
+  return fetchApi(`/auth/supplier-product-name?supplierId=${id}`, {
+    method: "GET",
+  });
+};
+
+export const getProductTypesBySupplierId = (id: string) => {
+  return fetchApi(`/auth/supplier-product-type?supplierId=${id}`, {
+    method: "GET",
+  });
+};
+
+export const createSupplierProduct = (data: any) => {
+  return fetchApi("/auth/supplier-products", {
+    method: "POST",
+    body: data,
+  });
 };

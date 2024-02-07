@@ -1,5 +1,5 @@
 "use client";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import React, { useState } from "react";
 import { Input } from "../ui/input";
 import AutocompleteInput from "../Autocomplete";
@@ -11,7 +11,14 @@ import { useFormik } from "formik";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { addSupplier, getReportingPeriodById } from "@/services/supply.chain";
+import {
+  addSupplier,
+  createSupplierProduct,
+  getProductNamesBySupplierId,
+  getProductTypesBySupplierId,
+  getReportingPeriodById,
+  updateSupplier,
+} from "@/services/supply.chain";
 import {
   Select,
   SelectContent,
@@ -21,16 +28,38 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { cn, formatReportingPeriod } from "@/lib/utils";
+import CreatableSelect from "react-select/creatable";
+
+import { cn, converPeriodToString, formatReportingPeriod } from "@/lib/utils";
 import { report } from "process";
 import { ChevronDown, HelpCircle, Loader2, Plus } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import _, { set } from "lodash";
 
 export const AddSupplierManualy = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reportingId = searchParams.get("reportingId");
 
-  const [edit, setEdit] = useState(false);
+  const [editSupplier, setEditSupplier] = useState(false);
+  const [supplier, setSupplier] = useState<any>(null);
+  const [productList, setProductList] = useState<any>([
+    {
+      name: "",
+      type: "",
+      quantity: "",
+      functionalUnit: "",
+      scope_3Contribution: "",
+    },
+  ]);
+  const [createableValue, setCreatableValue] = useState<any>("");
 
   const reportingPeriodQ = useQuery({
     queryKey: ["reporting-period", reportingId],
@@ -41,12 +70,23 @@ export const AddSupplierManualy = () => {
     ? reportingPeriodQ.data.data
     : null;
 
-  console.log(reportingPeriod, "reporting period");
+  // const productNamesQ = useQuery({
+  //   queryKey: ["product-names"],
+  //   queryFn: () => getProductNamesBySupplierId(supplier?.data?.id),
+  // });
+
+  // const productNames = productNamesQ.isSuccess ? productNamesQ.data.data : [];
+
+  // const productTypesQ = useQuery({
+  //   queryKey: ["product-types"],
+  //   queryFn: () => getProductTypesBySupplierId(supplier?.data?.id),
+  // });
+
+  // const productTypes = productTypesQ.isSuccess ? productTypesQ.data.data : [];
 
   const relationShips = ["OWNED", "CONTRACTED"];
 
   const validation = z.object({
-    supplyChainReportingPeriodId: z.string(),
     name: z.string(),
     email: z.string().email(),
     organizationRelationship: z.string(),
@@ -56,10 +96,16 @@ export const AddSupplierManualy = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: addSupplier,
     onSuccess: (data) => {
-      console.log(data);
+      console.log("supplier created : ", data);
 
+      setSupplier(data);
+
+      setValues({
+        ...data.data,
+        organizationRelationship: data.data.organization_relationship,
+      });
       toast.success("New Supplier Added", { style: { color: "green" } });
-      setEdit(true);
+      setEditSupplier(true);
       // router.push("/supply-chain");
     },
     onError: (err: any) => {
@@ -68,23 +114,83 @@ export const AddSupplierManualy = () => {
     },
   });
 
-  const { values, handleSubmit, handleChange, errors, setFieldValue } =
-    useFormik({
-      initialValues: {
-        supplyChainReportingPeriodId: reportingId,
-        name: "",
-        email: "",
-        organizationRelationship: "",
-      },
-      validateOnBlur: true,
-      validateOnChange: false,
-      validationSchema: toFormikValidationSchema(validation),
-      onSubmit: (data) => {
-        console.log("add supplier : ", data);
-        mutate(data);
-      },
-    });
+  const { mutate: editSupplierMut } = useMutation({
+    mutationFn: updateSupplier,
+    onSuccess: (data) => {
+      console.log("supplier updated : ", data);
 
+      setSupplier(data);
+      setValues(data.data);
+      toast.success("Supplier Updated", { style: { color: "green" } });
+      setEditSupplier(true);
+      // router.push("/supply-chain");
+    },
+    onError: (err: any) => {
+      console.log(err);
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const { mutate: addSupplierProductsMut } = useMutation({
+    mutationFn: createSupplierProduct,
+    onSuccess: (data) => {
+      console.log("supplier products created: ", data);
+
+      toast.success("Supplier Created", { style: { color: "green" } });
+
+      router.push("/");
+    },
+    onError: (err: any) => {
+      console.log(err);
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const {
+    values,
+    handleSubmit,
+    handleChange,
+    errors,
+    setFieldValue,
+    setValues,
+  } = useFormik({
+    initialValues: {
+      id: supplier?.data?.id ? supplier.data.id : "",
+      supplyChainReportingPeriodId: reportingId,
+      name: "",
+      email: "",
+      organizationRelationship: "",
+      address: "",
+    },
+    validateOnBlur: true,
+    validateOnChange: false,
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: (data) => {
+      console.log("add supplier : ", data);
+      data = { ...data, supplyChainReportingPeriodId: reportingId };
+      if (supplier?.data?.id) {
+        editSupplierMut(data);
+      } else {
+        mutate(data);
+      }
+    },
+  });
+
+  const handleCreate = (inputValue: string, i: number) => {
+    const newOption = {
+      name: inputValue,
+      quantity: "",
+      type: "",
+      functionalUnit: "",
+      scope_3Contribution: "",
+    };
+    const newCopy = _.cloneDeep(productList);
+    newCopy[i].name = inputValue;
+    setProductList(newCopy);
+    setCreatableValue(newOption);
+  };
+
+  console.log(errors);
   return (
     <div className="flex flex-col flex-start p-6 w-full">
       <header className="flex gap-2.5 self-stretch p-3 text-sm leading-5 text-blue-600 max-md:flex-wrap">
@@ -101,14 +207,12 @@ export const AddSupplierManualy = () => {
         <div className=" text-lg font-bold leading-7 text-center text-gray-700">
           New Supplier Entry
         </div>
-        <div className="justify-center px-2 py-0.5 my-auto text-xs font-medium leading-4 text-cyan-800 whitespace-nowrap bg-cyan-50 rounded-md">
-          Reporting Period:{" "}
-          {reportingPeriod &&
-            formatReportingPeriod(
-              reportingPeriod?.reporting_period_from,
-              reportingPeriod.reporting_period_to
-            )}
-        </div>
+        <p className="justify-center px-2 py-0.5 my-auto text-xs font-medium leading-4 text-cyan-800 whitespace-nowrap bg-cyan-50 rounded-md">
+          Reporting Period:
+          <span>
+            {reportingPeriod && converPeriodToString(reportingPeriod)}
+          </span>
+        </p>
       </div>
       <div className="text-sm leading-5 text- w-full px-[40px]  text-slate-800">
         <p className="py-8">
@@ -119,153 +223,165 @@ export const AddSupplierManualy = () => {
 
       <div className="flex flex-col self-stretch py-6 mx-10 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)]">
         <div className="flex flex-col px-6 w-full max-md:px-5 max-md:max-w-full">
-          <div className="flex gap-2.5 self-start max-md:flex-wrap max-md:max-w-full">
-            <div className="justify-center items-center px-2 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
-              1
-            </div>
-            <div className="grow text-base font-bold leading-6 text-slate-800 max-md:max-w-full">
-              Supplier Information
-            </div>
-          </div>
-
-          {edit && edit ? <div> Yes </div> : <div> No </div>}
-          <div className="mt-6 text-sm leading-5  text-slate-800 max-md:max-w-full">
-            Add the basic information about your supplier
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            <div className="flex gap-5 justify-between pr-20 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-              <div className=" my-auto font-medium text-slate-700">
-                Supplier Name
-              </div>
-              <Input
-                name="name"
-                onChange={handleChange}
-                className="grow justify-center bg-gray-50 text-slate-700 max-md:pr-5"
-              />
-            </div>
-
-            <div className="flex gap-5 justify-between self-stretch pr-20 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5">
-              <div className=" my-auto font-medium text-slate-700">
-                Contact Email{" "}
-              </div>
-              <Input
-                name="email"
-                onChange={handleChange}
-                className="grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 rounded-md text-slate-700 max-md:pr-5"
-              />
-            </div>
-
-            <div className="flex gap-5 justify-between pr-20 mt-6 text-xs max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-              <div className="my-auto font-medium leading-4 text-slate-700">
-                Relationship <br />
-                to organization
-              </div>
-              <div className="flex gap-2 justify-between px-2 whitespace-nowrap text-slate-700">
-                <Select
-                  value={values.organizationRelationship}
-                  onValueChange={(e) => {
-                    console.log("value changed : ", e);
-                    setFieldValue("organizationRelationship", e);
-                  }}
-                >
-                  <SelectTrigger
-                    className={cn(
-                      "text-slate-500 text-sm font-light leading-5  bg-gray-50  mt-3 px-2 py-6 rounded-md max-md:max-w-full",
-                      errors?.organizationRelationship &&
-                        "border border-red-500"
-                    )}
+          {editSupplier ? (
+            <div>
+              <div className="edit-section">
+                <div className="flex gap-5 justify-between self-stretch pb-1.5 max-md:flex-wrap">
+                  <div className="flex gap-2.5 self-start px-5 text-base font-bold leading-6 text-slate-800 max-md:flex-wrap max-md:max-w-full">
+                    <img
+                      loading="lazy"
+                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/552d063641276c4b19d2c1033b6c711bc8c7c753d57dad4f762bb9bd3533b3c3?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
+                      className="my-auto w-5 aspect-square"
+                    />
+                    <div className="grow max-md:max-w-full">
+                      Supplier Information
+                    </div>
+                  </div>
+                  <div
+                    role="button"
+                    onClick={() => setEditSupplier(false)}
+                    className="text-sm font-semibold leading-5 text-blue-600"
                   >
-                    <SelectValue placeholder="Select relation to organization" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup className="text-sm">
-                      {relationShips?.map((rel: string, index: number) => (
-                        <SelectItem key={index} value={rel}>
-                          {rel}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                    Edit
+                  </div>
+                </div>
+                <div className="text-xs font-medium leading-5 text-green-900 px-5 max-w-[515px]">
+                  <p className="text-slate-500">
+                    Supplier Name:{" "}
+                    <span className="text-green-900">
+                      {supplier?.data?.name}
+                    </span>
+                  </p>
+                  <br />
+                  <span className="text-slate-500">Contact Email:</span>
+                  <span className="text-green-900">
+                    {" "}
+                    {supplier?.data?.email}
+                  </span>
+                  <br />
+                  <span className="text-slate-500">
+                    Relationship to Organization:{" "}
+                  </span>
+                  <span className="text-green-900">
+                    {supplier?.data?.organization_relationship}
+                  </span>
+                  <br />
+                  <span className="text-slate-500">Supplier Address:</span>{" "}
+                  <span className="text-green-900">
+                    {supplier?.data?.address}
+                  </span>
+                </div>
               </div>
             </div>
-
-            <div className="flex gap-5 justify-between mt-6 max-md:flex-wrap max-md:max-w-full">
-              <div className="grow text-xs font-medium leading-4 text-slate-700 max-md:max-w-full">
-                Supplier Address
+          ) : (
+            <div>
+              <div className="flex gap-2.5 self-start max-md:flex-wrap max-md:max-w-full">
+                <div className="justify-center items-center px-2 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
+                  1
+                </div>
+                <div className="grow text-base font-bold leading-6 text-slate-800 max-md:max-w-full">
+                  Supplier Information
+                </div>
               </div>
-              <div className="my-auto text-sm font-semibold leading-4 text-center text-blue-600">
-                Edit
+              <div className="mt-6 text-sm leading-5  text-slate-800 max-md:max-w-full">
+                Add the basic information about your supplier
               </div>
-            </div>
-            <AutocompleteInput
-              setAddress={(a: string) => {
-                /** TODO: add the autocompleted address */
-                setFieldValue("address", a);
-                console.log(a, "address");
-                console.log("first");
-              }}
-            />
+              <form onSubmit={handleSubmit}>
+                <div className="flex gap-5 justify-between pr-20 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+                  <div className=" my-auto font-medium text-slate-700">
+                    Supplier Name
+                  </div>
+                  <Input
+                    name="name"
+                    value={values.name}
+                    onChange={handleChange}
+                    className={cn(
+                      "grow justify-center bg-gray-50 text-slate-700 max-md:pr-5",
+                      errors?.name && "border border-red-500"
+                    )}
+                  />
+                </div>
 
-            <button
-              type="submit"
-              className="justify-center self-end px-4 py-2 mt-6 mr-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)] max-md:mr-2.5"
-            >
-              Save
-            </button>
-          </form>
-        </div>
+                <div className="flex gap-5 justify-between self-stretch pr-20 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5">
+                  <div className=" my-auto font-medium text-slate-700">
+                    Contact Email{" "}
+                  </div>
+                  <Input
+                    name="email"
+                    value={values.email}
+                    onChange={handleChange}
+                    className={cn(
+                      "grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 rounded-md text-slate-700 max-md:pr-5",
+                      errors?.email && "border border-red-500"
+                    )}
+                  />
+                </div>
 
-        <div className="edit-section">
-          <div className="flex gap-5 justify-between self-stretch pb-1.5 max-md:flex-wrap">
-            <div className="flex gap-2.5 self-start px-5 text-base font-bold leading-6 text-slate-800 max-md:flex-wrap max-md:max-w-full">
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/552d063641276c4b19d2c1033b6c711bc8c7c753d57dad4f762bb9bd3533b3c3?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                className="my-auto w-5 aspect-square"
-              />
-              <div className="grow max-md:max-w-full">Supplier Information</div>
+                <div className="flex gap-5 justify-between pr-20 mt-6 text-xs max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+                  <div className="my-auto font-medium leading-4 text-slate-700">
+                    Relationship <br />
+                    to organization
+                  </div>
+                  <div className="flex gap-2 justify-between px-2 whitespace-nowrap text-slate-700">
+                    <Select
+                      value={values.organizationRelationship}
+                      onValueChange={(e) => {
+                        console.log("value changed : ", e);
+                        setFieldValue("organizationRelationship", e);
+                      }}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "text-slate-500 text-sm font-light leading-5  bg-gray-50  mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+                          errors?.organizationRelationship &&
+                            "border border-red-500"
+                        )}
+                      >
+                        <SelectValue placeholder="Select relation to organization" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup className="text-sm">
+                          {relationShips?.map((rel: string, index: number) => (
+                            <SelectItem key={index} value={rel}>
+                              {rel}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="flex gap-5 justify-between mt-6 max-md:flex-wrap max-md:max-w-full">
+                  <div className="grow text-xs font-medium leading-4 text-slate-700 max-md:max-w-full">
+                    Supplier Address
+                  </div>
+                  <div className="my-auto text-sm font-semibold leading-4 text-center text-blue-600">
+                    Edit
+                  </div>
+                </div>
+                <AutocompleteInput
+                  setAddress={(a: string) => {
+                    /** TODO: add the autocompleted address */
+                    setFieldValue("address", a);
+                    console.log(a, "address");
+                    console.log("first");
+                  }}
+                  address={values.address}
+                />
+
+                <button
+                  type="submit"
+                  className="justify-center self-end px-4 py-2 mt-6 mr-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)] max-md:mr-2.5"
+                >
+                  Save
+                </button>
+              </form>
             </div>
-            <div className="text-sm font-semibold leading-5 text-blue-600">
-              Edit
-            </div>
-          </div>
-          <div className="text-xs font-medium leading-5 text-green-900 px-5 max-w-[515px]">
-            <p className="text-slate-500">
-              Supplier Name: <span className="text-green-900">Supplier </span>
-            </p>
-            <br />
-            <span className="text-slate-500">Contact Email:</span>
-            <span className="text-green-900"> contact@supplier.com</span>
-            <br />
-            <span className="text-slate-500">
-              Relationship to Organization:{" "}
-            </span>
-            <span className="text-green-900">Contracted</span>
-            <br />
-            <span className="text-slate-500">Supplier Address:</span>{" "}
-            <span className="text-green-900">
-              Eastern Parkway, Floor 2, Brooklyn, NY, 11223, United States of
-              America
-            </span>
-          </div>
+          )}
         </div>
       </div>
-      <div className="flex flex-col self-stretch p-6 rounded border border-solid mx-10 my-8 border-[color:var(--Gray-200,#E5E7EB)] max-md:px-5">
-        <div className="flex gap-2.5 justify-between max-md:flex-wrap max-md:max-w-full">
-          <div className="justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
-            2
-          </div>
-          <div className="flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full">
-            Product & Product Level Contribution
-          </div>
-        </div>
-        <div className="mt-6 text-sm leading-5 text-slate-800 max-md:max-w-full">
-          Enter the product type, product name, units created each year, and the
-          functional unit associated with the product.
-        </div>
-      </div>
+
       <div className="flex flex-col self-stretch p-6 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)] max-md:px-5">
         <div className="flex gap-2.5 justify-between max-md:flex-wrap max-md:max-w-full">
           <div className="flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
@@ -281,93 +397,129 @@ export const AddSupplierManualy = () => {
           Scope 3 contributions for the given quantity of each product, enter it
           here
         </div>
-        <div className="flex gap-5 justify-between py-2 mt-6 text-xs font-bold leading-4 border-b border-solid border-b-[color:var(--Slate-200,#E2E8F0)] text-slate-700 max-md:flex-wrap max-md:max-w-full">
-          <div className="grow whitespace-nowrap">Product Name</div>
-          <div className="flex-auto">Product Type</div>
-          <div className="flex-auto">Quantity</div>
-          <div className="flex gap-3 justify-between items-center relative">
-            <div>Functional Unit</div>
-            <HelpCircle size={12}></HelpCircle>
-            <div className="px-2.5 pt-6 pb-2.5 font-semibold absolute left-full top-5 text-xs leading-4 text-white rounded shadow-sm bg-slate-800 w-[246px]">
-              A functional unit in sustainability is a measure of performance
-              that quantifies the environmental impacts of a system, used to
-              compare different products or processes within a defined context.
-              <br />
-            </div>
-          </div>
-          <div className="grow whitespace-nowrap">
-            Scope 3 Contribution (kgCO2)
-          </div>
-        </div>
-        <div className="flex gap-5 justify-between pr-7 mt-11 w-full text-xs font-light leading-4 whitespace-nowrap text-slate-500 max-md:flex-wrap max-md:pr-5 max-md:mt-10 max-md:max-w-full">
-          <div className="flex gap-5 justify-between max-md:flex-wrap max-md:max-w-full">
-            <div className="flex gap-2 justify-between p-2 bg-gray-50 rounded-md">
-              <div className="grow">Type or select</div>
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/1d2d6f2702f13cd98129272d42c1232c51acb783de5c985e72095c46636000d2?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                className="w-4 aspect-square"
-              />
-            </div>
-            <div className="flex gap-0 justify-between p-2 bg-gray-50 rounded-md">
-              <div className="grow">Type or select</div>
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/5b6667c691ac053510925bb8002edd7d5d664e2ce4a3d788328cd96a0e47f928?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                className="w-4 aspect-square"
-              />
-            </div>
-            <div className="grow justify-center p-2 bg-gray-50 rounded-md">
-              unit
-            </div>
-            <div className="grow justify-center p-2 bg-gray-50 rounded-md">
-              kilowatt/hr
-            </div>
-            <div className="grow justify-center p-2 bg-gray-50 rounded-md text-slate-500">
-              kgCO2
-            </div>
-          </div>
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/b45f96b0537e91d103ec812380f1804e4cd1f7e96974a0c9e85f26c27c68544f?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-            className="my-auto w-4 aspect-square"
-          />
-        </div>
-        <div className="flex gap-5 justify-between pr-7 mt-6 w-full text-xs font-light leading-4 whitespace-nowrap text-slate-500 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-          <div className="flex gap-5 justify-between max-md:flex-wrap max-md:max-w-full">
-            <div className="flex gap-2 justify-between p-2 bg-gray-50 rounded-md">
-              <div className="grow">Type or select</div>
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/1d2d6f2702f13cd98129272d42c1232c51acb783de5c985e72095c46636000d2?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                className="w-4 aspect-square"
-              />
-            </div>
-            <div className="flex gap-0 justify-between p-2 bg-gray-50 rounded-md">
-              <div className="grow">Type or select</div>
-              <img
-                loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/5b6667c691ac053510925bb8002edd7d5d664e2ce4a3d788328cd96a0e47f928?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                className="w-4 aspect-square"
-              />
-            </div>
-            <div className="grow justify-center p-2 bg-gray-50 rounded-md">
-              unit
-            </div>
-            <div className="grow justify-center p-2 bg-gray-50 rounded-md">
-              kilowatt/hr
-            </div>
-            <div className="grow justify-center p-2 bg-gray-50 rounded-md text-slate-500">
-              kgCO2
-            </div>
-          </div>
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/0a45c2ce44e5d98e8b19797e4bb5e5025abdcacb4267924cebb5785eb3a6ddac?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-            className="my-auto w-4 aspect-square"
-          />
-        </div>
-        <div className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]">
+        <Table>
+          <TableHeader className="border-b">
+            <TableHead className="text-xs">Product Name</TableHead>
+            <TableHead className="text-xs">Product Type</TableHead>
+            <TableHead className="text-xs">Quantity</TableHead>
+            <TableHead className="flex gap-3 text-xs justify-between items-center relative">
+              <div>Functional Unit</div>
+              <HelpCircle size={12}></HelpCircle>
+            </TableHead>
+            <TableHead className="grow whitespace-nowrap text-xs">
+              Scope 3 Contribution (kgCO2)
+            </TableHead>
+            <TableHead></TableHead>
+          </TableHeader>
+          <TableBody>
+            {productList.map((item: any, i: number) => (
+              <TableRow className="mt-4">
+                <TableCell className="min-w-[10rem]">
+                  <CreatableSelect
+                    isClearable
+                    getOptionLabel={(option) => option.name}
+                    getOptionValue={(option) => option.name}
+                    onChange={(newValue) => {
+                      const newCopy = _.cloneDeep(productList);
+                      newCopy[i].name = newValue.name;
+                      console.log(newValue, "new value");
+                      setProductList(newCopy);
+                    }}
+                    onCreateOption={(e) => handleCreate(e, i)}
+                    options={productList}
+                    value={item}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={item.type}
+                    onChange={(e) => {
+                      const newCopy = _.cloneDeep(productList);
+                      newCopy[i].type = e.target.value;
+                      setProductList(newCopy);
+                    }}
+                    className="bg-gray-100"
+                  />
+                </TableCell>
+                <TableCell className="w-12">
+                  <Input
+                    value={item.quantity}
+                    onChange={(e) => {
+                      const newCopy = _.cloneDeep(productList);
+                      newCopy[i].quantity = e.target.value;
+                      setProductList(newCopy);
+                    }}
+                    className="bg-gray-100"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={item.functionalUnit}
+                    onChange={(e) => {
+                      const newCopy = _.cloneDeep(productList);
+                      newCopy[i].functionalUnit = e.target.value;
+                      setProductList(newCopy);
+                    }}
+                    className="bg-gray-100"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={item.scope_3Contribution}
+                    onChange={(e) => {
+                      const newCopy = _.cloneDeep(productList);
+                      newCopy[i].scope_3Contribution = e.target.value;
+                      setProductList(newCopy);
+                    }}
+                    className="bg-gray-100"
+                  />
+                </TableCell>
+                <TableCell>
+                  {productList.length - 1 == i ? (
+                    <Plus
+                      size={16}
+                      role="button"
+                      onClick={() => {
+                        const newCopy = _.cloneDeep(productList);
+                        newCopy.push({
+                          name: "",
+                          type: "",
+                          quantity: "",
+                          functionalUnit: "",
+                          scope_3Contribution: "",
+                        });
+
+                        setProductList(newCopy);
+                      }}
+                    />
+                  ) : (
+                    <X
+                      size={16}
+                      role="button"
+                      onClick={() => {
+                        const newCopy = _.cloneDeep(productList);
+                        newCopy.splice(i, 1);
+                        setProductList(newCopy);
+                      }}
+                    />
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
+        <div
+          role="button"
+          onClick={() => {
+            const data: any = {
+              supplierId: supplier?.data?.id,
+              supplierProducts: productList,
+            };
+            addSupplierProductsMut(data);
+          }}
+          className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]"
+        >
           Save
         </div>
       </div>

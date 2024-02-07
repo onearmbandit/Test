@@ -5,6 +5,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import { boolean } from "zod";
+import dayjs from "dayjs";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -172,4 +173,10 @@ export const formatReportingPeriod = (from: string, to: string): string => {
   );
 
   return `${fromFormatted} - ${toFormatted}`;
+};
+
+export const converPeriodToString = (period: any) => {
+  return `${dayjs(period.reporting_period_from).format("MMM YYYY")} - ${dayjs(
+    period.reporting_period_to
+  ).format("MMM YYYY")}`;
 };
