@@ -9,6 +9,7 @@ import {
 } from "./ui/accordion";
 import Globe from "./icons/Globe";
 import { ChevronDown } from "lucide-react";
+import EmissionSummary from "./facility/emission-summary";
 
 const FacilityEmissionsSummary = () => {
   return (
@@ -23,8 +24,8 @@ const FacilityEmissionsSummary = () => {
             </div>
             <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200" />
           </AccordionTrigger>
-          <AccordionContent className="pb-0">
-            <div className="justify-center items-center min-h-[19.25rem] self-stretch flex flex-col max-md:px-5">
+          <AccordionContent className="pb-0 p-3">
+            {/* <div className="justify-center items-center min-h-[19.25rem] self-stretch flex flex-col max-md:px-5">
               <section className="flex flex-col items-stretch text-lg text-slate-700 max-md:max-w-full">
                 <header
                   className="font-bold leading-[156%] self-center whitespace-nowrap"
@@ -42,7 +43,8 @@ const FacilityEmissionsSummary = () => {
                   adding your reporting data below.
                 </article>
               </section>
-            </div>
+            </div> */}
+            <EmissionSummary />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
