@@ -26,7 +26,7 @@ const fetchApi = async (
 
   const session = await getServerSession(authOptions);
 
-  const token: any = session?.token.token;
+  const token: any = session?.token?.token;
   const authHeader = {
     Authorization: `bearer ${token}`,
   };
@@ -38,7 +38,7 @@ const fetchApi = async (
     data: body,
   })
     .then((res) => {
-      console.log("res", res);
+      // console.log("res", res);
       return res.data;
     })
     .catch((err) => {
