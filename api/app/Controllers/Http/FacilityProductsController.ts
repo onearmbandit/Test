@@ -15,6 +15,8 @@ export default class FacilityProductsController {
 
       const facilityProducts = await FacilityProduct.getAllFacilityProducts(queryParams);
 
+      console.log("facilityProducts", facilityProducts)
+
       const isPaginated = !request.input('per_page') || request.input('per_page') !== 'all';
 
       return apiResponse(response, true, 200, facilityProducts, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.dataFetchSuccess'), isPaginated);
