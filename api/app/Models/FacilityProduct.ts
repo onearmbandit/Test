@@ -67,6 +67,19 @@ export default class FacilityProduct extends BaseModel {
 
     const facilityProducts = await query.paginate(page, perPage);
 
+    // Extracting equality_attribute values from facilityProducts
+    const equalityAttributes = facilityProducts.all().map((product) => product.equalityAttribute);
+    // console.log("equalityAttributes", equalityAttributes)
+
+    // Checking if all equality_attribute values are the same
+    const areEqual = equalityAttributes.every((value, _, array) => value === array[0]);
+    // console.log("areEqual", areEqual)
+
+    // If all equality_attribute values are the same, extract the value
+    const commonEqualityAttribute = areEqual ? equalityAttributes[0] : null;
+
+    facilityProducts['equalityAttributes'] = commonEqualityAttribute;
+
     return facilityProducts
   }
 
@@ -133,14 +146,14 @@ export default class FacilityProduct extends BaseModel {
     const productEmissions: {
       name: string;
       quantity: string;
-      scope1: string;
-      scope2: string;
-      scope3: string;
+      scope1_total_emission: string;
+      scope2_total_emission: string;
+      scope3_total_emission: string;
     }[] = [];
 
-    const scope1TotalEmission = facilityEmissionData.scope1TotalEmission
-    const scope2TotalEmission = facilityEmissionData.scope2TotalEmission
-    const scope3TotalEmission = facilityEmissionData.scope3TotalEmission
+    const scope1TotalEmission = facilityEmissionData.scope1_total_emission
+    const scope2TotalEmission = facilityEmissionData.scope2_total_emission
+    const scope3TotalEmission = facilityEmissionData.scope3_total_emission
 
     const allProducts = await this.query()
       .whereNull('deleted_at')
@@ -156,11 +169,12 @@ export default class FacilityProduct extends BaseModel {
 
       // Add the calculated values to the product
       const updatedProduct = {
+        id: product.id,
         name: product.name,
         quantity: product.quantity,
-        scope1: scope1CarbonEmission,
-        scope2: scope2CarbonEmission,
-        scope3: scope3CarbonEmission,
+        scope1_total_emission: scope1CarbonEmission,
+        scope2_total_emission: scope2CarbonEmission,
+        scope3_total_emission: scope3CarbonEmission,
       };
 
       // Push the modified product to the result array

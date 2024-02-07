@@ -7,6 +7,11 @@ import FacilityProduct from './FacilityProduct';
 
 
 export default class FacilityEmission extends BaseModel {
+
+  static get computed() {
+    return ['emission_sum'];
+  }
+
   @column({ isPrimary: true })
   public id: string
 
@@ -51,6 +56,10 @@ export default class FacilityEmission extends BaseModel {
 
   //::_____Relationships End_____:://
 
+  getEmissionSum({ scope1TotalEmission, scope2TotalEmission, scope3TotalEmission }) {
+    return scope1TotalEmission + scope2TotalEmission + scope3TotalEmission;
+  }
+
   public static async getAllFacilityEmissions(queryParams: ParsedQs) {
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8;
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
@@ -91,7 +100,21 @@ export default class FacilityEmission extends BaseModel {
       .whereNull('deleted_at') // Exclude soft-deleted records
       .preload('FacilityProducts')
       .firstOrFail();
-    return facilityDetails;
+
+    // Access the computed property method to calculate the emission_sum
+    const emissionSum = facilityDetails.getEmissionSum({
+      scope1TotalEmission: facilityDetails.scope1TotalEmission,
+      scope2TotalEmission: facilityDetails.scope2TotalEmission,
+      scope3TotalEmission: facilityDetails.scope3TotalEmission,
+    });
+
+    // Include the calculated emission_sum in the response
+    const response = {
+      ...facilityDetails.toJSON(),
+      emission_sum: emissionSum,
+    };
+
+    return response;
   }
 
   public static async updateFacilityEmissionData(FacilityEmissionData, requestData) {

@@ -11,6 +11,7 @@ import AutocompleteInput from "./Autocomplete";
 import FacilityTable from "./FacilityTable";
 import { getUser } from "@/services/user.api";
 import { useQuery } from "@tanstack/react-query";
+import TotalEmissionsSummary from "./TotalEmissionsSummary";
 
 const Dashboard = () => {
   const { data, isLoading, isSuccess } = useQuery({
@@ -40,6 +41,7 @@ const Dashboard = () => {
               climateTargets={data?.data?.organizations[0]?.climate_targets}
             />
             <NeedHelp />
+            <TotalEmissionsSummary />
             <FacilityTable />
           </>
         ) : (
