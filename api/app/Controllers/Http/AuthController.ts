@@ -20,6 +20,8 @@ import Organization from 'App/Models/Organization'
 import SocialSignupOrLoginValidator from 'App/Validators/Auth/SocialSignupOrLoginValidator'
 import OrganizationUser from 'App/Models/OrganizationUser'
 import CreateOrganizationValidator from 'App/Validators/Organization/CreateOrganizationValidator'
+import Supplier from 'App/Models/Supplier'
+import SupplierOrganization from 'App/Models/SupplierOrganization'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
@@ -59,6 +61,13 @@ export default class AuthController {
           },
           role
         )
+        if (requestData.invitedUser) {
+          let organizationUserData = await OrganizationUser.getOrganizationUserDetails('email', requestData.email);
+          organizationUserData?.merge({
+            user_id: userData.id,
+
+          }).save()
+        }
 
         return apiResponse(
           response,
@@ -113,7 +122,7 @@ export default class AuthController {
         }
 
         await sendMail(userData.email, 'Welcome to C3insets.ai!', 'emails/user_welcome', emailData)
-        if (requestData.invitedUser) {
+        if (requestData.invitedUser && !requestData.isSupplier) {
           const token = await auth.use('api').generate(userData, {
             expiresIn: '1day',
           })
@@ -193,6 +202,15 @@ export default class AuthController {
           email: organizationData.companyEmail,
         },
       })
+
+      if (requestData.isSupplier) {
+        let supplierData = await Supplier.getSupplierDetails('email', userData.email);
+        await SupplierOrganization.query().where('supplier_id', supplierData.id)
+          .update({
+            "supplier_organization_id": organizationData?.id
+          });
+
+      }
 
       const user = await User.getUserDetails('id', userData.id)
 
@@ -574,6 +592,12 @@ export default class AuthController {
             loginType: requestData.loginType,
           })
           .save()
+
+        //:: Update organization user table entry
+        let organizationUserData = await OrganizationUser.getOrganizationUserDetails('email', requestData.email);
+        organizationUserData?.merge({
+          user_id: userExist?.id,
+        }).save()
 
         // const emailData = {
         //     user: userExist,
