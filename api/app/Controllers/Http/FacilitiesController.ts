@@ -8,11 +8,11 @@ import { DateTime } from 'luxon'
 
 export default class FacilitiesController {
 
-  public async index({ response, request }: HttpContextContract) {
+  public async index({ response, request, auth }: HttpContextContract) {
     try {
       const queryParams = request.qs();
 
-      const facilities = await OrganizationFacility.getAllFacilities(queryParams);
+      const facilities = await OrganizationFacility.getAllFacilities(queryParams, auth);
 
       const isPaginated = !request.input('per_page') || request.input('per_page') !== 'all';
 
