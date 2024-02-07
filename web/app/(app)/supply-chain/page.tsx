@@ -40,7 +40,7 @@ import SupplierData from "@/components/supply-chain/SupplierData";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { convertDateToString } from "@/lib/utils";
-import { getUser } from "@/services/user.api";
+import { exportSupplierDataCsv, getUser } from "@/services/user.api";
 
 const Page = () => {
   const queryClient = useQueryClient();
@@ -397,7 +397,9 @@ const Page = () => {
               </PopoverTrigger>
               <PopoverContent>
                 <ul className="justify-center p-3 text-base leading-5 text-gray-700 bg-white rounded max-w-[200px]">
-                  <li className="mb-4">Add new suppliers via csv</li>
+                  <li className="mb-4 cursor-pointer">
+                    Add new suppliers via csv
+                  </li>
                   <li className="mb-4">
                     <Link
                       href={`/supply-chain/supplier?reportingId=${currentTab}`}
@@ -406,7 +408,10 @@ const Page = () => {
                       Manually add a supplier
                     </Link>
                   </li>
-                  <li className="mb-4" onClick={() => downloadCsvMUt.mutate()}>
+                  <li
+                    className="mb-4 cursor-pointer"
+                    onClick={() => downloadCsvMUt.mutate()}
+                  >
                     Download CSV
                   </li>
                 </ul>
