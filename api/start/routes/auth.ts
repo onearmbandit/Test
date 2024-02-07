@@ -69,11 +69,8 @@ Route.group(() => {
 
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier')
-
       Route.resource('/supplier-period', 'SupplyChainReportingPeriodsController')
-
       Route.resource('/suppliers', 'SuppliersController')
-
       Route.resource('/supplier-products', 'SupplierProductsController')
       Route.post(
         '/remove-multiple-products',
@@ -85,6 +82,13 @@ Route.group(() => {
       )
       Route.get('/supplier-product-type', 'SupplierProductsController.getAllProductTypes')
       Route.get('/supplier-product-name', 'SupplierProductsController.getAllProductNames')
+
+
+      //;: AbatementProjects APIs
+      Route.resource('/abatement-projects', 'AbatementProjectsController').only([
+        'index', 'store', 'show', 'update', 'destroy',
+      ])
+
 
       //Invite organization api
       Route.post('/invite-organization', 'OrganizationUsersController.inviteOrganization')
