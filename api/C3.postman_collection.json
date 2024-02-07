@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "565b0f06-e34a-4487-a544-5f81e24b8bf5",
+		"_postman_id": "da345c18-7153-4806-892c-71df46c6b7b3",
 		"name": "C3",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "17650332"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -23,7 +22,17 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/register"
+						"url": {
+							"raw": "{{base_url}}/api/v1/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"register"
+							]
+						}
 					},
 					"response": []
 				},
@@ -41,7 +50,18 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/user/1e9c5079-e2ac-4499-836d-199f404479b8"
+						"url": {
+							"raw": "{{base_url}}/api/v1/user/1e9c5079-e2ac-4499-836d-199f404479b8",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"1e9c5079-e2ac-4499-836d-199f404479b8"
+							]
+						}
 					},
 					"response": []
 				},
@@ -59,7 +79,17 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/organization"
+						"url": {
+							"raw": "{{base_url}}/api/v1/organization",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"organization"
+							]
+						}
 					},
 					"response": []
 				},
@@ -78,7 +108,17 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/verify-email"
+						"url": {
+							"raw": "{{base_url}}/api/v1/verify-email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"verify-email"
+							]
+						}
 					},
 					"response": [
 						{
@@ -96,7 +136,17 @@
 										}
 									]
 								},
-								"url": "{{base_url}}/api/v1/verify-email"
+								"url": {
+									"raw": "{{base_url}}/api/v1/verify-email",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"verify-email"
+									]
+								}
 							},
 							"status": "Bad Request",
 							"code": 400,
@@ -148,7 +198,17 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/login"
+						"url": {
+							"raw": "{{base_url}}/api/v1/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
 					},
 					"response": []
 				},
@@ -157,7 +217,17 @@
 					"request": {
 						"method": "POST",
 						"header": [],
-						"url": "{{base_url}}/api/v1/forgot-password"
+						"url": {
+							"raw": "{{base_url}}/api/v1/forgot-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"forgot-password"
+							]
+						}
 					},
 					"response": []
 				},
@@ -196,7 +266,17 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/reset-password"
+						"url": {
+							"raw": "{{base_url}}/api/v1/reset-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reset-password"
+							]
+						}
 					},
 					"response": []
 				},
@@ -205,13 +285,27 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
-						"url": "{{base_url}}/api/v1/logout"
+						"url": {
+							"raw": "{{base_url}}/api/v1/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"logout"
+							]
+						}
 					},
 					"response": []
 				},
@@ -229,7 +323,17 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/social-signup"
+						"url": {
+							"raw": "{{base_url}}/api/v1/social-signup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"social-signup"
+							]
+						}
 					},
 					"response": []
 				},
@@ -260,7 +364,17 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/social-login"
+						"url": {
+							"raw": "{{base_url}}/api/v1/social-login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"social-login"
+							]
+						}
 					},
 					"response": []
 				},
@@ -269,9 +383,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -307,9 +425,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
@@ -322,7 +444,19 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/auth/organization/42256fd0-1b96-48fa-aa95-283fb76b5a0c"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/organization/42256fd0-1b96-48fa-aa95-283fb76b5a0c",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"organization",
+								"42256fd0-1b96-48fa-aa95-283fb76b5a0c"
+							]
+						}
 					},
 					"response": [
 						{
@@ -339,7 +473,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/e0b0a68c-9835-45f9-acbc-24bd42edafd7"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/e0b0a68c-9835-45f9-acbc-24bd42edafd7",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"e0b0a68c-9835-45f9-acbc-24bd42edafd7"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -383,7 +529,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -427,7 +585,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -471,7 +641,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -508,9 +690,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -523,7 +709,18 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/auth/organization"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/organization",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"organization"
+							]
+						}
 					},
 					"response": [
 						{
@@ -540,7 +737,18 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -577,7 +785,19 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{base_url}}/api/v1/auth/organization/1"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/organization/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"organization",
+								"1"
+							]
+						}
 					},
 					"response": [
 						{
@@ -585,7 +805,19 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -622,9 +854,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
@@ -637,7 +873,19 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/auth/organization/4ebb10ee-9100-4124-bcb9-9c5b6044dadf"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/organization/4ebb10ee-9100-4124-bcb9-9c5b6044dadf",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"organization",
+								"4ebb10ee-9100-4124-bcb9-9c5b6044dadf"
+							]
+						}
 					},
 					"response": [
 						{
@@ -654,7 +902,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -698,7 +958,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -742,7 +1014,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -786,7 +1070,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/organization/1bca512c-1ca4-445b-b641-7058e8f2ccaf",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"organization",
+										"1bca512c-1ca4-445b-b641-7058e8f2ccaf"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -823,9 +1119,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -838,7 +1138,18 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/auth/invite-organization"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/invite-organization",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"invite-organization"
+							]
+						}
 					},
 					"response": []
 				}
@@ -852,13 +1163,28 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
-						"url": "{{base_url}}/api/v1/auth/user"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"user"
+							]
+						}
 					},
 					"response": [
 						{
@@ -866,7 +1192,19 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"user",
+										"dce35841-ff3f-4f45-b6ea-753cefd889ca"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -903,9 +1241,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
 						"header": [],
@@ -918,7 +1260,18 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/auth/user"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"user"
+							]
+						}
 					},
 					"response": [
 						{
@@ -935,7 +1288,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/user/dce35841-ff3f-4f45-b6ea-753cefd889ca",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"user",
+										"dce35841-ff3f-4f45-b6ea-753cefd889ca"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -979,7 +1344,18 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/user"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/user",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"user"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -1023,7 +1399,18 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/user"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/user",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"user"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -1060,9 +1447,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
@@ -1081,7 +1472,18 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/auth/user"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"user"
+							]
+						}
 					},
 					"response": []
 				}
@@ -1095,13 +1497,27 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
-						"url": "{{base_url}}/api/v1/download-supplier-csv"
+						"url": {
+							"raw": "{{base_url}}/api/v1/download-supplier-csv",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"download-supplier-csv"
+							]
+						}
 					},
 					"response": [
 						{
@@ -1109,7 +1525,17 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/download-supplier-csv"
+								"url": {
+									"raw": "{{base_url}}/api/v1/download-supplier-csv",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"download-supplier-csv"
+									]
+								}
 							},
 							"status": "Created",
 							"code": 201,
@@ -1157,7 +1583,17 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/api/v1/upload-image"
+						"url": {
+							"raw": "{{base_url}}/api/v1/upload-image",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"upload-image"
+							]
+						}
 					},
 					"response": [
 						{
@@ -1176,7 +1612,17 @@
 										}
 									]
 								},
-								"url": "{{base_url}}/api/v1/upload-image"
+								"url": {
+									"raw": "{{base_url}}/api/v1/upload-image",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"upload-image"
+									]
+								}
 							},
 							"status": "Unprocessable Entity",
 							"code": 422,
@@ -1222,7 +1668,17 @@
 										}
 									]
 								},
-								"url": "{{base_url}}/api/v1/upload-image"
+								"url": {
+									"raw": "{{base_url}}/api/v1/upload-image",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"upload-image"
+									]
+								}
 							},
 							"status": "Created",
 							"code": 201,
@@ -1264,13 +1720,27 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
-						"url": "{{base_url}}/api/v1/download-supplier-csv"
+						"url": {
+							"raw": "{{base_url}}/api/v1/download-supplier-csv",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"download-supplier-csv"
+							]
+						}
 					},
 					"response": []
 				}
@@ -1287,9 +1757,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
@@ -1302,7 +1776,18 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/facility"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility"
+									]
+								}
 							},
 							"response": [
 								{
@@ -1319,7 +1804,18 @@
 												}
 											}
 										},
-										"url": "{{base_url}}/api/v1/auth/facility"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -1356,9 +1852,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "MTA.Ej3SNgsAbrYQhipnM4CLOAYC_V9JzzmoSvFO9t_5dw3yajCd7kQKUuYKFFip"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "MTA.Ej3SNgsAbrYQhipnM4CLOAYC_V9JzzmoSvFO9t_5dw3yajCd7kQKUuYKFFip",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
@@ -1477,13 +1977,29 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility",
+										"cb86f994-5c37-4361-b691-3fab40554f92"
+									]
+								}
 							},
 							"response": [
 								{
@@ -1491,7 +2007,19 @@
 									"originalRequest": {
 										"method": "GET",
 										"header": [],
-										"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility",
+												"cb86f994-5c37-4361-b691-3fab40554f92"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -1528,9 +2056,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "PATCH",
 								"header": [],
@@ -1543,7 +2075,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility",
+										"7bf894c7-4363-499d-8be7-47e092de4a05"
+									]
+								}
 							},
 							"response": [
 								{
@@ -1560,7 +2104,19 @@
 												}
 											}
 										},
-										"url": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility",
+												"7bf894c7-4363-499d-8be7-47e092de4a05"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -1597,13 +2153,29 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "DELETE",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility",
+										"cb86f994-5c37-4361-b691-3fab40554f92"
+									]
+								}
 							},
 							"response": [
 								{
@@ -1611,7 +2183,19 @@
 									"originalRequest": {
 										"method": "DELETE",
 										"header": [],
-										"url": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility/7bf894c7-4363-499d-8be7-47e092de4a05",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility",
+												"7bf894c7-4363-499d-8be7-47e092de4a05"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -1653,9 +2237,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
@@ -1668,7 +2256,18 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/facility-emission"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility-emission",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility-emission"
+									]
+								}
 							},
 							"response": [
 								{
@@ -1685,7 +2284,18 @@
 												}
 											}
 										},
-										"url": "{{base_url}}/api/v1/auth/facility-emission"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility-emission",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility-emission"
+											]
+										}
 									},
 									"status": "Created",
 									"code": 201,
@@ -1722,9 +2332,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "PATCH",
 								"header": [],
@@ -1737,7 +2351,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility-emission",
+										"f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+									]
+								}
 							},
 							"response": [
 								{
@@ -1754,7 +2380,19 @@
 												}
 											}
 										},
-										"url": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility-emission",
+												"f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -1791,9 +2429,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
@@ -1912,13 +2554,29 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility-emission",
+										"f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+									]
+								}
 							},
 							"response": [
 								{
@@ -1926,7 +2584,19 @@
 									"originalRequest": {
 										"method": "GET",
 										"header": [],
-										"url": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility-emission",
+												"f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -1963,13 +2633,29 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "DELETE",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility-emission",
+										"f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+									]
+								}
 							},
 							"response": [
 								{
@@ -1977,7 +2663,19 @@
 									"originalRequest": {
 										"method": "DELETE",
 										"header": [],
-										"url": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility-emission/f791721c-0c2f-4b6b-a400-10bb8b5d6294",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility-emission",
+												"f791721c-0c2f-4b6b-a400-10bb8b5d6294"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -2019,9 +2717,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "PATCH",
 								"header": [],
@@ -2034,7 +2736,19 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/facility-emission/8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility-emission/8f7b88f3-4d0d-4fcc-aca3-7fac60b18299",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility-emission",
+										"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+									]
+								}
 							},
 							"response": [
 								{
@@ -2051,7 +2765,19 @@
 												}
 											}
 										},
-										"url": "{{base_url}}/api/v1/auth/facility-emission/8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility-emission/8f7b88f3-4d0d-4fcc-aca3-7fac60b18299",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility-emission",
+												"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -2088,13 +2814,29 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/facility-emission/8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility-emission/8f7b88f3-4d0d-4fcc-aca3-7fac60b18299",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility-emission",
+										"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+									]
+								}
 							},
 							"response": [
 								{
@@ -2102,7 +2844,19 @@
 									"originalRequest": {
 										"method": "GET",
 										"header": [],
-										"url": "{{base_url}}/api/v1/auth/facility-emission/8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility-emission/8f7b88f3-4d0d-4fcc-aca3-7fac60b18299",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility-emission",
+												"8f7b88f3-4d0d-4fcc-aca3-7fac60b18299"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -2144,9 +2898,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
@@ -2159,7 +2917,18 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/facility-product"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility-product",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility-product"
+									]
+								}
 							},
 							"response": [
 								{
@@ -2176,7 +2945,18 @@
 												}
 											}
 										},
-										"url": "{{base_url}}/api/v1/auth/facility-product"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility-product",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility-product"
+											]
+										}
 									},
 									"status": "Created",
 									"code": 201,
@@ -2213,13 +2993,29 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility",
+										"cb86f994-5c37-4361-b691-3fab40554f92"
+									]
+								},
 								"description": "this api will give you all the single facility details like facility, reporting period, emissions and products"
 							},
 							"response": [
@@ -2228,7 +3024,19 @@
 									"originalRequest": {
 										"method": "GET",
 										"header": [],
-										"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility",
+												"cb86f994-5c37-4361-b691-3fab40554f92"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -2265,9 +3073,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
@@ -2280,7 +3092,18 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/update-facility-products"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/update-facility-products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"update-facility-products"
+									]
+								}
 							},
 							"response": [
 								{
@@ -2297,7 +3120,18 @@
 												}
 											}
 										},
-										"url": "{{base_url}}/api/v1/auth/update-facility-products"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/update-facility-products",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"update-facility-products"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -2334,9 +3168,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
@@ -2460,13 +3298,29 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"facility",
+										"cb86f994-5c37-4361-b691-3fab40554f92"
+									]
+								},
 								"description": "This API will give you all the facility details with reporting period, scope emission, products and carbon emissions"
 							},
 							"response": [
@@ -2475,7 +3329,19 @@
 									"originalRequest": {
 										"method": "GET",
 										"header": [],
-										"url": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/facility/cb86f994-5c37-4361-b691-3fab40554f92",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"facility",
+												"cb86f994-5c37-4361-b691-3fab40554f92"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -2512,9 +3378,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
@@ -2597,9 +3467,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "GET",
 								"header": [],
@@ -2718,9 +3592,13 @@
 							"request": {
 								"auth": {
 									"type": "bearer",
-									"bearer": {
-										"token": "{{access_token}}"
-									}
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
 								"header": [],
@@ -2733,7 +3611,18 @@
 										}
 									}
 								},
-								"url": "{{base_url}}/api/v1/auth/update-facility-products"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/update-facility-products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"update-facility-products"
+									]
+								}
 							},
 							"response": [
 								{
@@ -2750,7 +3639,18 @@
 												}
 											}
 										},
-										"url": "{{base_url}}/api/v1/auth/update-facility-products"
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/update-facility-products",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"update-facility-products"
+											]
+										}
 									},
 									"status": "OK",
 									"code": 200,
@@ -2806,7 +3706,17 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/send-email"
+						"url": {
+							"raw": "{{base_url}}/api/v1/send-email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"send-email"
+							]
+						}
 					},
 					"response": []
 				},
@@ -2815,9 +3725,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -2863,7 +3777,17 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/send-email"
+						"url": {
+							"raw": "{{base_url}}/api/v1/send-email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"send-email"
+							]
+						}
 					},
 					"response": []
 				}
@@ -2877,37 +3801,124 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"organizationId\":\"42256fd0-1b96-48fa-aa95-283fb76b5a0c\",  /* Auth user organizationID */\n    \"name\": \"Alfa Laval POMEVap second\",\n    \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n    \"websiteUrl\": \"www.alfalavalproject.com/sustainability\",\n    \"emissionReductions\": 88990,\n    \"emissionUnit\": \"tCO2e\",\n    \"proposedBy\": \"dccf212c-1e23-434a-b45c-89e1cd353337\",  /* Selected field id*/\n    \"photoUrl\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n    \"logoUrl\": \"\",\n    \"status\": 0   /*  0 for proposed, 1 for active and 2 for completed  */\n}",
+							"raw": "{\n    \"organizationId\":\"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",  \n    \"name\": \"Alfa Laval POMEVap second\",\n    \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n    \"estimatedCost\": 2300.0,\n    \"websiteUrl\": \"www.alfalavalproject.com/sustainability\",\n    \"emissionReductions\": 88990,\n    \"emissionUnit\": \"tCO2e\",\n    \"proposedBy\": \"8804a7b5-496f-4d36-ae35-c8ef3ad91be3\",  \n    \"photoUrl\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n    \"logoUrl\": \"\",\n    \"status\": 0   \n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/auth/abatement-projects"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/abatement-projects",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"abatement-projects"
+							]
+						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "create project",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"organizationId\":\"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",  \n    \"name\": \"Alfa Laval POMEVap second\",\n    \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n    \"estimatedCost\": 2300.0,\n    \"websiteUrl\": \"www.alfalavalproject.com/sustainability\",\n    \"emissionReductions\": 88990,\n    \"emissionUnit\": \"tCO2e\",\n    \"proposedBy\": \"8804a7b5-496f-4d36-ae35-c8ef3ad91be3\",  \n    \"photoUrl\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n    \"logoUrl\": \"\",\n    \"status\": 0   \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/abatement-projects",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"abatement-projects"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "1414"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 07 Feb 2024 12:27:46 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 201,\n    \"message\": \"Abatement project created successfully.\",\n    \"data\": {\n        \"id\": \"bc69c63a-9754-417e-a8c7-e92807508e76\",\n        \"name\": \"Alfa Laval POMEVap second\",\n        \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n        \"estimated_cost\": 2300,\n        \"website_url\": \"www.alfalavalproject.com/sustainability\",\n        \"emission_reductions\": 88990,\n        \"emission_unit\": \"tCO2e\",\n        \"proposed_by\": \"8804a7b5-496f-4d36-ae35-c8ef3ad91be3\",\n        \"photo_url\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n        \"logo_url\": \"\",\n        \"status\": 0,\n        \"updated_by\": \"Mayuri Chaudhari\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"created_at\": \"2024-02-07T17:57:46.886+05:30\",\n        \"updated_at\": \"2024-02-07T17:57:46.886+05:30\"\n    }\n}"
+						}
+					]
 				},
 				{
 					"name": "get project details",
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
-						"url": "{{base_url}}/api/v1/auth/abatement-projects/c8710c62-b36c-4b24-b180-7acec072687d"
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/abatement-projects/c8710c62-b36c-4b24-b180-7acec072687d",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"abatement-projects",
+								"c8710c62-b36c-4b24-b180-7acec072687d"
+							]
+						}
 					},
 					"response": [
 						{
@@ -2915,16 +3926,19 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{base_url}}/api/v1/auth/abatement-projects/01af7639-0482-4329-8513-e91b3136e6d6"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/abatement-projects/01af7639-0482-4329-8513-e91b3136e6d6",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"abatement-projects",
+										"01af7639-0482-4329-8513-e91b3136e6d6"
+									]
+								}
 							},
 							"status": "Bad Request",
 							"code": 400,
@@ -2959,16 +3973,19 @@
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{base_url}}/api/v1/auth/abatement-projects/01af7639-0482-4329-8513-e91b3136e6d5"
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/abatement-projects/01af7639-0482-4329-8513-e91b3136e6d5",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"abatement-projects",
+										"01af7639-0482-4329-8513-e91b3136e6d5"
+									]
+								}
 							},
 							"status": "OK",
 							"code": 200,
@@ -3005,9 +4022,13 @@
 					"request": {
 						"auth": {
 							"type": "bearer",
-							"bearer": {
-								"token": "{{access_token}}"
-							}
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "GET",
 						"header": [],
@@ -3141,7 +4162,10 @@
 					"name": "get all suppliers",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": ""
+						}
 					},
 					"response": []
 				}

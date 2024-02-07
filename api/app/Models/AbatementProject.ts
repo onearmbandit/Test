@@ -23,6 +23,9 @@ export default class AbatementProject extends BaseModel {
   public description: string
 
   @column()
+  public estimatedCost: number
+
+  @column()
   public websiteUrl: string
 
   @column()
@@ -89,6 +92,7 @@ export default class AbatementProject extends BaseModel {
         // supplierId: requestData.proposedBy,
         name: requestData.name,
         description: requestData.description,
+        estimatedCost: requestData.estimatedCost,
         websiteUrl: requestData.websiteUrl,
         emissionReductions: requestData.emissionReductions,
         emissionUnit: requestData.emissionUnit,
@@ -138,7 +142,7 @@ export default class AbatementProject extends BaseModel {
 
     //::Filter Query
     if (typeof filters === 'object' && Object.keys(filters).length > 0) {
-      //::filter as per collection status 
+      //::filter as per collection status
       if (('status' in filters) && filters['status'].length > 0) {
         query.where('status', filters['status'])
       }

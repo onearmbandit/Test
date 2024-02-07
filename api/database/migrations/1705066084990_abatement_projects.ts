@@ -3,7 +3,7 @@ import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 export default class extends BaseSchema {
   protected tableName = 'abatement_projects'
 
-  public async up () {
+  public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.uuid('id').primary()
       // table.uuid('supplier_id')
@@ -11,17 +11,18 @@ export default class extends BaseSchema {
       // .references('suppliers.id')
       // .onDelete('CASCADE')
       table.uuid('organization_id')
-      .nullable()
-      .references('organizations.id')
-      .onDelete('CASCADE')
+        .nullable()
+        .references('organizations.id')
+        .onDelete('CASCADE')
       table.string('name')
       table.text('description')
+      table.double('estimated_cost')
       table.text('website_url')
       table.integer('emission_reductions')
       table.string('emission_unit').comment('e.g., tCO2e, Gallons of water, Metric tonnes of waste')
       table.uuid('proposed_by').nullable()
-      .references('suppliers.id')
-      .onDelete('CASCADE')
+        .references('suppliers.id')
+        .onDelete('CASCADE')
       table.text('photo_url')
       table.text('logo_url')
       // table.string('contact_email') as per requirement
@@ -33,7 +34,7 @@ export default class extends BaseSchema {
     })
   }
 
-  public async down () {
+  public async down() {
     this.schema.dropTable(this.tableName)
   }
 }
