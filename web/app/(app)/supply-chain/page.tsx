@@ -9,6 +9,7 @@ import {
   downloadCsvTemplate,
   getAllEmissioScopeData,
   getAllReportingPeriods,
+  getAllSuppliersByPeriodId,
   importFile,
 } from "@/services/supply.chain";
 import {
@@ -36,6 +37,7 @@ import SupplierData from "@/components/supply-chain/SupplierData";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import download from "downloadjs";
+import { convertDateToString } from "@/lib/utils";
 
 const Page = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -110,6 +112,13 @@ const Page = () => {
       setCurrentTab(reportingPeriods[0]?.id);
     }
   }, [periodsQ.isSuccess]);
+
+  const suppliersQ = useQuery({
+    queryKey: ["suppliers", currentTab],
+    queryFn: () => getAllSuppliersByPeriodId(currentTab),
+  });
+  const suppliers = suppliersQ.isSuccess ? suppliersQ.data.data : [];
+
   return (
     <div className="w-full shadow bg-gray-50 flex flex-col pl-6 pr-6 pt-5 pb-12 max-md:px-5">
       <header className="justify-between items-center self-stretch flex gap-5 py-2 max-md:flex-wrap max-md:px-5">
@@ -297,7 +306,14 @@ const Page = () => {
               <PopoverContent>
                 <ul className="justify-center p-3 text-base leading-5 text-gray-700 bg-white rounded max-w-[200px]">
                   <li className="mb-4">Add new suppliers via csv</li>
-                  <li className="mb-4"> Manually add a supplier</li>
+                  <li className="mb-4">
+                    <Link
+                      href={`/supply-chain/supplier?reportingId=${currentTab}`}
+                      className="overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap"
+                    >
+                      Manually add a supplier
+                    </Link>
+                  </li>
                   <li className="mb-4"> Download CSV</li>
                 </ul>
               </PopoverContent>
@@ -306,6 +322,9 @@ const Page = () => {
         </div>
         <div className="items-stretch bg-white flex w-full flex-col pb-12 max-md:max-w-full max-md:mb-10">
           <div className="items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
+            <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap">
+              {""}
+            </div>
             <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 whitespace-nowrap">
               Supplier Name
             </div>
@@ -322,6 +341,60 @@ const Page = () => {
               Last Updated
             </div>
           </div>
+          {/* supplier list start */}
+          {suppliers &&
+            suppliers.length > 0 &&
+            suppliers.map((supplier: any) =>
+              supplier?.supplierProducts?.length > 0 ? (
+                supplier?.supplierProducts?.map(
+                  (product: any, index: number) => (
+                    <div className="items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
+                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 self-stretch grow whitespace-nowrap">
+                        <input type="checkbox" name="supplier" id="supplier" />
+                      </div>
+                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 whitespace-nowrap">
+                        {supplier?.name}
+                      </div>
+                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                        {supplier?.supplierProducts[index].name}
+                      </div>
+                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                        {supplier?.supplierProducts[index].type}
+                      </div>
+                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                        {supplier?.supplierProducts[index].scope_3_contribution}
+                      </div>
+                      <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 grow whitespace-nowrap">
+                        {convertDateToString(supplier.updated_at)}
+                      </div>
+                    </div>
+                  )
+                )
+              ) : (
+                <div className="items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
+                  <div className="overflow-hidden text-slate-800 text-ellipsis text-sm grow whitespace-nowrap">
+                    <input type="checkbox" name="supplier" id="supplier" />
+                  </div>
+                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 whitespace-nowrap">
+                    {supplier?.name}
+                  </div>
+                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                    NA
+                  </div>
+                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                    NA
+                  </div>
+                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                    NA
+                  </div>
+                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 grow whitespace-nowrap">
+                    {convertDateToString(supplier.updated_at)}
+                  </div>
+                </div>
+              )
+            )}
+
+          {/* supplier list end */}
           <div className="justify-center items-stretch flex gap-0 mb-12 px-5 max-md:max-w-full max-md:flex-wrap max-md:mb-10">
             <div className="items-center flex-1 border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-2 px-4 py-2.5 border-b border-solid">
               <Link

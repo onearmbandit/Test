@@ -134,3 +134,14 @@ export const createSupplierProduct = (data: any) => {
     body: data,
   });
 };
+
+export const getAllSuppliersByPeriodId = (periodId: string | null) => {
+  if (periodId) {
+    return fetchApi(
+      `/auth/suppliers?supplyChainReportingPeriodId=${periodId}`,
+      {
+        method: "GET",
+      }
+    );
+  }
+};

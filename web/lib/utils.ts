@@ -180,3 +180,7 @@ export const converPeriodToString = (period: any) => {
     period.reporting_period_to
   ).format("MMM YYYY")}`;
 };
+
+export const convertDateToString = (date: any) => {
+  return dayjs(date).format("MM/DD/YYYY");
+};
