@@ -42,6 +42,7 @@
     "react-dom": "^18",
     "react-query": "^3.39.3",
     "react-tabs": "^6.0.2",
+    "recharts": "^2.11.0",
     "sonner": "^1.4.0",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7",

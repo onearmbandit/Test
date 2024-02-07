@@ -13,6 +13,19 @@ import axios, {
   AxiosRequestConfig,
   RawAxiosRequestHeaders,
 } from 'axios';
+import {
+  ComposedChart,
+  Line,
+  Area,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  LabelList,
+  ResponsiveContainer,
+} from 'recharts';
 import { toast } from 'sonner';
 import download from 'downloadjs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -120,19 +133,47 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
   const DownloadTemplate = () => {
     downloadCsvMUt.mutate();
   };
-  const supplierDataList = useQuery({
+  const supplierDataQ = useQuery({
     queryKey: ['reporting-period', periodId],
     queryFn: () => getAllEmissioScopeData(periodId ? periodId : ''),
   });
 
-  const reportingPeriodQ = supplierDataList.isSuccess
-    ? supplierDataList.data.data
-    : null;
-  setData(reportingPeriodQ);
-
+  const supplierData = supplierDataQ.isSuccess ? supplierDataQ.data.data : null;
+  const chartData = [
+    {
+      name: 'Jackets',
+      scope_3_contribution: 121000,
+    },
+    {
+      name: 'Micro-tights',
+      scope_3_contribution: 20000,
+    },
+    {
+      name: 'Jersey',
+      scope_3_contribution: 20000,
+    },
+    {
+      name: 'Shirts',
+      scope_3_contribution: 45000,
+    },
+    {
+      name: "Men's Swimsuits",
+      scope_3_contribution: 90000,
+    },
+  ];
+  console.log(supplierData, 'supplierData');
+  console.log(chartData, 'chartData');
+  const CustomBarLabel = (props: any) => {
+    const { x, y, value } = props;
+    return (
+      <text x={x} y={y} dy={-12} dx={10} fill='#334155' textAnchor='left'>
+        {value}
+      </text>
+    );
+  };
   return (
     <div>
-      {!reportingPeriodQ && (
+      {!supplierData && (
         <div className='justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5'>
           <img
             loading='lazy'
@@ -277,7 +318,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                     Total Product Level Emissions
                   </div>
                   <div className='mt-1.5 text-4xl text-teal-800 leading-[84px]'>
-                    899%
+                    80%
                   </div>
                   <div className='text-sm leading-4 text-gray-500'>tCO2e</div>
                 </div>
@@ -286,44 +327,67 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                     % of missing Product Carbon Footprint
                   </div>
                   <div className='mt-1.5 text-4xl text-teal-800 leading-[84px]'>
-                    70%
+                    80%
                   </div>
                 </div>
               </div>
             </div>
             <div className='flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full'>
-              <div className='flex flex-col grow justify-between pt-12 pb-4 pl-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
-                <div className='flex gap-5 justify-between mt-1.5 font-bold max-md:flex-wrap max-md:max-w-full'>
-                  <div className='flex-auto text-2xl leading-7 text-slate-800'>
+              <div className='h-[342px] overflow-scroll flex flex-col grow justify-between pt-12 pb-4 pl-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
+                <div className='flex gap-5 justify-between mt-1.5 font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)]'>
+                  <div className='flex-auto text-2xl leading-7 text-slate-800 '>
                     Scope 3 Emissions by Product Name
                   </div>
                   <div className='flex-auto self-start mt-3 text-sm leading-4 text-center text-gray-500'>
                     tCO2e
                   </div>
                 </div>
-                <div className='flex gap-5 justify-between mt-2.5 w-full text-slate-700 max-md:flex-wrap max-md:max-w-full'>
-                  <div className='flex flex-col my-auto text-sm leading-4 max-md:max-w-full'>
-                    <div className='max-md:max-w-full'>Lays Chips</div>
-                    <div className='shrink-0 mt-1.5 h-4 bg-green-200 rounded max-md:max-w-full' />
-                    <div className='mt-5 max-md:max-w-full'>
-                      Men’s Swimsuits
-                    </div>
-                    <div className='shrink-0 mt-2.5 h-4 bg-green-200 rounded max-md:max-w-full' />
-                    <div className='mt-5 max-md:max-w-full'>Jersey</div>
-                    <div className='mt-1 h-4 bg-green-200 rounded w-[125px]' />
-                    <div className='mt-5 max-md:max-w-full'>Micro-tights</div>
-                    <div className='mt-1.5 h-4 bg-green-200 rounded w-[27px]' />
-                  </div>
-                  <div className='flex gap-5 justify-between text-xs font-medium leading-4 text-right whitespace-nowrap'>
-                    <div className='flex flex-col self-start mt-2'>
-                      <div>121,799</div>
-                      <div className='mt-11 max-md:mt-10'>50,799</div>
-                      <div className='mt-11 max-md:mt-10'>25,567</div>
-                      <div className='self-start mt-11 ml-3 max-md:mt-10 max-md:ml-2.5'>
-                        5,789
-                      </div>
-                    </div>
-                    <div className='w-px bg-gray-300 rounded-2xl h-[212px]' />
+                <div className='overflow-auto'>
+                  <div className='h-[400px]'>
+                    <ResponsiveContainer className='w-full h-full'>
+                      <ComposedChart
+                        layout='vertical'
+                        width={500}
+                        height={500}
+                        data={chartData}
+                        barGap={20}
+                        barCategoryGap='20%'
+                        margin={{
+                          top: 20,
+                          right: 20,
+                          bottom: 20,
+                          left: 0,
+                        }}
+                      >
+                        <XAxis
+                          hide={true}
+                          type='number'
+                          domain={['auto', 'auto']}
+                        />
+                        <YAxis
+                          dataKey=''
+                          hide={true}
+                          type='category'
+                          scale='band'
+                          padding={{ top: 0, bottom: 0 }}
+                        />
+                        {/* <Tooltip /> */}
+                        {/* <Legend /> */}
+                        <Bar
+                          dataKey='scope_3_contribution'
+                          label={{ position: 'right' }}
+                          barSize={20}
+                          radius={4}
+                          fill='#BBF7D0'
+                        >
+                          <LabelList
+                            dataKey='name'
+                            position='top'
+                            content={<CustomBarLabel />}
+                          />
+                        </Bar>
+                      </ComposedChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
               </div>
