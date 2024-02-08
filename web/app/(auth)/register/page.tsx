@@ -17,7 +17,7 @@ import Tick from "@/components/icons/Tick";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import AutocompleteInput from "@/components/Autocomplete";
 
 export default function Page() {
@@ -96,6 +96,7 @@ export default function Page() {
 
 const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   const router = useRouter();
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
   const social = searchParams.get("social");
@@ -145,6 +146,14 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
       mutate(data);
     },
   });
+
+  const handleSignIn = async (provider: string) => {
+    const res = await signIn(provider, { redirect: false });
+  };
+
+  if (session) {
+    router.push("/");
+  }
 
   return (
     <div className="items-center flex flex-1 max-w-[840px] w-full flex-col px-20 py-12 max-md:px-5">
@@ -335,7 +344,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
         <div className="items-stretch bg-white flex max-w-[408px] flex-col px-16 py-12 rounded-lg">
           <div
             role="button"
-            onClick={() => signIn("google", { callbackUrl: "/" })}
+            onClick={() => handleSignIn("google")}
             className="justify-start items-stretch border-slate-200 flex gap-4 mt-3.5 py-4 px-11 rounded-full border-2 border-solid"
           >
             <img
@@ -349,7 +358,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
           </div>
           <div
             role="button"
-            onClick={() => signIn("microsoft", { callbackUrl: "/" })}
+            onClick={() => handleSignIn("microsoft")}
             className="justify-start items-stretch border-slate-200 flex gap-4 mt-6 py-4 px-11  rounded-full border-2 border-solid"
           >
             <img
@@ -484,6 +493,7 @@ const Step2 = ({
 
 const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const router = useRouter();
+  const { data: session, update } = useSession();
   const [addressDisabled, setAddressDisabled] = useState(true);
   const [address, setAddress] = useState("");
 
@@ -497,13 +507,14 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     onSuccess: (data) => {
       setUserEmail(data.data.email);
       // setCurrentStep(4);
+      console.log("data", data.data.organizations);
+      update({ orgs: data.data.organizations });
       router.push("/register?step=complete");
     },
   });
 
   const step3Form = useFormik({
     initialValues: {
-      userSlug,
       companyName: "",
       companyAddress: "",
       registrationStep: 3,
@@ -512,8 +523,12 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (data) => {
-      console.log(data);
-      mutate(data);
+      console.log(data, session?.user.slug);
+      if (userSlug == null) {
+        mutate({ ...data, userSlug: session?.user.slug });
+      } else {
+        mutate(data);
+      }
     },
   });
 

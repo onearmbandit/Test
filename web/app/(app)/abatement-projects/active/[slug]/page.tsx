@@ -9,7 +9,7 @@ import {
 import Image from "next/image";
 import React from "react";
 
-const page = ({ params }: { params: { slug: string } }) => {
+const ActiveDetailPage = ({ params }: { params: { slug: string } }) => {
   return (
     <div className="bg-white p-6 min-h-screen">
       <div className="items-center self-stretch flex gap-2.5 pl-3 py-3 max-md:flex-wrap">
@@ -106,4 +106,4 @@ const page = ({ params }: { params: { slug: string } }) => {
   );
 };
 
-export default page;
+export default ActiveDetailPage;

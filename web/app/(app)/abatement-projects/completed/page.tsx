@@ -2,12 +2,20 @@ import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { authOptions } from "@/lib/utils";
+import { getActiveAbatementProjects } from "@/services/abatement.api";
 import { Plus } from "lucide-react";
+import { getServerSession } from "next-auth/next";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const page = () => {
+const page = async () => {
+  const session = await getServerSession(authOptions);
+  const res = await getActiveAbatementProjects(
+    session?.user?.organizations[0].id!
+  );
+  console.log("completed", res);
   return (
     <div className="px-8">
       <Header />
