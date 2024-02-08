@@ -81,5 +81,7 @@ export const FILE_UPLOAD_RESPONSE = {
 
 export const ABATEMENT_PROJECT_RESPONSE = {
   projectCreateSuccess: "Abatement project created successfully.",
-  projectUpdateSuccess: "Abatement project updated successfully."
+  projectUpdateSuccess: "Abatement project updated successfully.",
+  projectDeleteSuccess: "Abatement project deleted successfully.",
+  projectNotFound: "Abatement project didn't found."
 }
