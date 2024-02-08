@@ -83,43 +83,6 @@ export default class AbatementProject extends BaseModel {
   //::_____Relationships End_____:://
 
 
-
-
-  public static async createNewProject(requestData, auth, organizationData) {
-    const projectData = await organizationData.related('abatementProjects').create(
-      {
-        id: uuidv4(),
-        // supplierId: requestData.proposedBy,
-        name: requestData.name,
-        description: requestData.description,
-        estimatedCost: requestData.estimatedCost,
-        websiteUrl: requestData.websiteUrl,
-        emissionReductions: requestData.emissionReductions,
-        emissionUnit: requestData.emissionUnit,
-        proposedBy: requestData.proposedBy,
-        photoUrl: requestData.photoUrl,
-        logoUrl: requestData.logoUrl,
-        // contactEmail: requestData.contactEmail,
-        status: requestData.status,
-        updatedBy: `${auth.user?.firstName} ${auth.user?.lastName}`,
-      }
-    )
-    return projectData
-  }
-
-
-  public static async getProjectDetails(field, value) {
-    var supplierData = await AbatementProject.query()
-      .where(field, value)
-      .andWhereNull('deletedAt')
-      .preload('organization')
-      .preload('proposedSupplier')
-      .firstOrFail()
-
-    return supplierData
-  }
-
-
   public static async getAllProjects(queryParams: ParsedQs) {
     let allProjectData: any = {}
 
@@ -166,5 +129,43 @@ export default class AbatementProject extends BaseModel {
 
   }
 
+  public static async createNewProject(requestData, auth, organizationData) {
+    const projectData = await organizationData.related('abatementProjects').create(
+      {
+        id: uuidv4(),
+        // supplierId: requestData.proposedBy,
+        name: requestData.name,
+        description: requestData.description,
+        estimatedCost: requestData.estimatedCost,
+        websiteUrl: requestData.websiteUrl,
+        emissionReductions: requestData.emissionReductions,
+        emissionUnit: requestData.emissionUnit,
+        proposedBy: requestData.proposedBy,
+        photoUrl: requestData.photoUrl,
+        logoUrl: requestData.logoUrl,
+        // contactEmail: requestData.contactEmail,
+        status: requestData.status,
+        updatedBy: `${auth.user?.firstName} ${auth.user?.lastName}`,
+      }
+    )
+    return projectData
+  }
 
+
+  public static async getProjectDetails(field, value) {
+    var supplierData = await AbatementProject.query()
+      .where(field, value)
+      .andWhereNull('deletedAt')
+      .preload('organization')
+      .preload('proposedSupplier')
+      .firstOrFail()
+
+    return supplierData
+  }
+
+  public static async updateProjectDetails(project, requestData) {
+    await project.merge(requestData).save()
+    const projectData = await this.getProjectDetails('id', project.id)
+    return projectData
+  }
 }

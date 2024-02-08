@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\":\"anjpawar+5@cxr.agency\",\n    \"password\":\"Anuja11@\",\n    \"registrationStep\":1,\n    \"invitedUser\":false   /*if user invited by mail then true otherwise false */\n}",
+							"raw": "{\n    \"email\":\"mchaudhari@cxr.agency\",\n    \"password\":\"Mayuri@123\",\n    \"registrationStep\":1,\n    \"invitedUser\":false \n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -72,7 +72,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userSlug\":\"soniya-mehta\",\n    \"companyName\":\"soniya ABC\",\n    \"companyAddress\":\"Giga space IT park,Viman nagar,pune,MH,12345\",\n    \"registrationStep\":3,\n    \"isSupplier\":true /* if supplier user registering using invited mail */\n}",
+							"raw": "{\n    \"userSlug\":\"mayuri-chaudhari1\",\n    \"companyName\":\"Mayuri ABC\",\n    \"companyAddress\":\"Giga space IT park,Viman nagar,pune,MH,12345\",\n    \"registrationStep\":3,\n    \"isSupplier\":false \n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -188,12 +188,12 @@
 							"formdata": [
 								{
 									"key": "email",
-									"value": "anjpawar+4@cxr.agency",
+									"value": "mchaudhari@cxr.agency",
 									"type": "text"
 								},
 								{
 									"key": "password",
-									"value": "Anuja11@",
+									"value": "Mayuri@123",
 									"type": "text"
 								}
 							]
@@ -1715,6 +1715,1213 @@
 		{
 			"name": "Supply chain emission APIs",
 			"item": [
+				{
+					"name": "Supplier chain Report period",
+					"item": [
+						{
+							"name": "Create supplier period",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"organizationId\": \"f735da18-5e1c-4863-98e7-7500f5212ff3\",\n    \"reportingPeriodFrom\":\"2024-01\",\n    \"reportingPeriodTo\":\"2024-04\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-period",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-period"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Create supplier period",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"organizationId\": \"47bb941b-35ef-4b4f-a002-f9bdf4aebf0e\",\n    \"reportingPeriodFrom\":\"2024-02\",\n    \"reportingPeriodTo\":\"2024-04\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/supplier-period",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"supplier-period"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "363"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 01 Feb 2024 06:30:56 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 201,\n    \"message\": \"Supplier chain reporting period created successfully\",\n    \"data\": {\n        \"id\": \"03bd746f-3b18-4e81-b81a-ec6d37f04431\",\n        \"reporting_period_from\": \"2024-02-01\",\n        \"reporting_period_to\": \"2024-04-01\",\n        \"organization_id\": \"47bb941b-35ef-4b4f-a002-f9bdf4aebf0e\",\n        \"created_at\": \"2024-02-01T12:00:56.397+05:30\",\n        \"updated_at\": \"2024-02-01T12:00:56.397+05:30\"\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "show details",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update period",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"organizationId\": \"0b37a38d-32b5-4dbf-bbac-df6d0b51f9f8\",\n    \"reportingPeriodFrom\":\"2024-01\",\n    \"reportingPeriodTo\":\"2024-02\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-period/ebb6669d-7e6f-473e-adfe-0496b83e4a52",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-period",
+										"ebb6669d-7e6f-473e-adfe-0496b83e4a52"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete Period",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-period/ebb6669d-7e6f-473e-adfe-0496b83e4a52",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-period",
+										"ebb6669d-7e6f-473e-adfe-0496b83e4a52"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Reporting periods",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-period?page=1&per_page=10&organizationId=027fe30c-2f7a-4d41-a35e-62960b080dc3",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-period"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"description": "page number value, default value 1"
+										},
+										{
+											"key": "per_page",
+											"value": "10",
+											"description": "default value is 10"
+										},
+										{
+											"key": "order",
+											"value": "desc",
+											"description": "asc,desc  (default=desc)",
+											"disabled": true
+										},
+										{
+											"key": "sort",
+											"value": "created_at",
+											"description": "sort by value  (default=created_at)",
+											"disabled": true
+										},
+										{
+											"key": "organizationId",
+											"value": "027fe30c-2f7a-4d41-a35e-62960b080dc3",
+											"description": "required to fetch specific organization reporting periods"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get All Reporting periods",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/supplier-period?page=1&per_page=10&organizationId=027fe30c-2f7a-4d41-a35e-62960b080dc3",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"supplier-period"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "1",
+													"description": "page number value, default value 1"
+												},
+												{
+													"key": "per_page",
+													"value": "10",
+													"description": "default value is 10"
+												},
+												{
+													"key": "order",
+													"value": "desc",
+													"description": "asc,desc  (default=desc)",
+													"disabled": true
+												},
+												{
+													"key": "sort",
+													"value": "created_at",
+													"description": "sort by value  (default=created_at)",
+													"disabled": true
+												},
+												{
+													"key": "organizationId",
+													"value": "027fe30c-2f7a-4d41-a35e-62960b080dc3",
+													"description": "required to fetch specific organization reporting periods"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "2496"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 29 Jan 2024 10:27:43 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"meta\": {\n        \"total\": 2,\n        \"per_page\": 10,\n        \"current_page\": 1,\n        \"last_page\": 1,\n        \"first_page\": 1,\n        \"first_page_url\": \"/?page=1\",\n        \"last_page_url\": \"/?page=1\",\n        \"next_page_url\": null,\n        \"previous_page_url\": null\n    },\n    \"data\": [\n        {\n            \"id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n            \"organization_id\": \"027fe30c-2f7a-4d41-a35e-62960b080dc3\",\n            \"reporting_period_from\": \"2024-02-01\",\n            \"reporting_period_to\": \"2024-04-01\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:43:01.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:43:01.000+05:30\",\n            \"supplier\": [\n                {\n                    \"id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n                    \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                    \"name\": \"PT KAHATEX\",\n                    \"email\": \"someoneelse@ptkhatex.com\",\n                    \"organization_relationship\": \"OWNED\",\n                    \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                    \"deleted_at\": null,\n                    \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                    \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n                },\n                {\n                    \"id\": \"f09c38aa-e227-4fc8-8020-3e201b5d200f\",\n                    \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                    \"name\": \"KANIZ GARMENTS LIMITED\",\n                    \"email\": \"someone@kaniz.com\",\n                    \"organization_relationship\": \"OWNED\",\n                    \"address\": \"228A, Tejgaon Industrial Area, 1208 Dhaka, Bangladesh\",\n                    \"deleted_at\": null,\n                    \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                    \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n                }\n            ]\n        },\n        {\n            \"id\": \"d37e3f6c-3e69-4f2f-9fdd-f0513c000f7a\",\n            \"organization_id\": \"027fe30c-2f7a-4d41-a35e-62960b080dc3\",\n            \"reporting_period_from\": \"2024-01-01\",\n            \"reporting_period_to\": \"2024-02-01\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T13:32:18.000+05:30\",\n            \"updated_at\": \"2024-01-29T13:32:18.000+05:30\",\n            \"supplier\": [\n                {\n                    \"id\": \"968a2471-7ff2-4579-9e59-caedfe20abfd\",\n                    \"supply_chain_reporting_period_id\": \"d37e3f6c-3e69-4f2f-9fdd-f0513c000f7a\",\n                    \"name\": \"COMFIT COMPOSITE KNIT LTD.\",\n                    \"email\": \"someone@comfitcomposite.net\",\n                    \"organization_relationship\": \"CONTRACTUAL\",\n                    \"address\": \"SARDAGONJ ROAD, SARDAGONJ, KASHIMPUR, 1349 Gazipur, Bangladesh\",\n                    \"deleted_at\": null,\n                    \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                    \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n                },\n                {\n                    \"id\": \"9fefbac8-fc83-4afe-981e-a170859119df\",\n                    \"supply_chain_reporting_period_id\": \"d37e3f6c-3e69-4f2f-9fdd-f0513c000f7a\",\n                    \"name\": \"PT KAHATEX\",\n                    \"email\": \"someone@ptkhatex.com\",\n                    \"organization_relationship\": \"OWNED\",\n                    \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                    \"deleted_at\": null,\n                    \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                    \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n                }\n            ]\n        }\n    ]\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Supplier",
+					"item": [
+						{
+							"name": "supllier csv file upload",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "supplierCSV",
+											"type": "file",
+											"src": "/home/cemtrex/Documents/C3/Supplier CSV2.csv"
+										},
+										{
+											"key": "supplyChainReportingPeriodId",
+											"value": "13f89160-7f18-4106-aefa-2b87eb1e0417",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-csv-upload",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-csv-upload"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "New supplier",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "supplyChainReportingPeriodId",
+											"value": "f4415359-dfbe-4168-a8d0-02f197c47774",
+											"type": "text"
+										},
+										{
+											"key": "name",
+											"value": "first supplier",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "supplier123@mailinator.com",
+											"type": "text"
+										},
+										{
+											"key": "organizationRelationship",
+											"value": "CONTRACTUAL",
+											"description": "CONTRACTUAL,OWNED",
+											"type": "text"
+										},
+										{
+											"key": "address",
+											"value": "test address",
+											"type": "text"
+										},
+										{
+											"key": "updated_by",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/suppliers",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"suppliers"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update supplier",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/suppliers/3d770ec8-a96e-4c6f-bd89-441630e4c50e",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"suppliers",
+										"3d770ec8-a96e-4c6f-bd89-441630e4c50e"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "supplier details API",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": [
+								{
+									"name": "New Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/suppliers/61422caa-8f4e-496e-9943-bf29ca8b35b3",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"suppliers",
+												"61422caa-8f4e-496e-9943-bf29ca8b35b3"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "2395"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 30 Jan 2024 11:18:32 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n        \"supply_chain_reporting_period_id\": \"eeb631bc-fb61-4d2c-b899-23093c8771c1\",\n        \"name\": \"PT KAHATEX\",\n        \"email\": \"someoneelse@ptkhatex.com\",\n        \"organization_relationship\": \"OWNED\",\n        \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n        \"updated_at\": \"2024-01-30T16:30:36.000+05:30\",\n        \"supplyChainReportingPeriod\": {\n            \"id\": \"eeb631bc-fb61-4d2c-b899-23093c8771c1\",\n            \"reporting_period_from\": \"2024-02-01\",\n            \"reporting_period_to\": \"2024-04-01\"\n        },\n        \"supplierProducts\": [\n            {\n                \"id\": \"68cf2d73-84c3-46b0-98ab-12e728477c66\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"Accessories\",\n                \"name\": \"Micro-tights\",\n                \"quantity\": \"10003\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 0.5,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            },\n            {\n                \"id\": \"7565c39b-b30c-41af-89de-dc4bf211ccc3\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"Accessories, Jersey, Knitted, Woven, Home (textile), Night-, swim- and underwear\",\n                \"name\": \"Jersey\",\n                \"quantity\": \"10000\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 0.5,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            },\n            {\n                \"id\": \"d6b754fa-8f57-4769-9f69-7422cb791b00\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"Jersey\",\n                \"name\": \"Jersey\",\n                \"quantity\": \"10003\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 450,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            },\n            {\n                \"id\": \"ghb754fa-8f57-4769-9f69-7422cb791b00\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"Jersey\",\n                \"name\": \"Jersey\",\n                \"quantity\": \"10003\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 300,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            },\n            {\n                \"id\": \"khb754fa-8f57-4769-9f69-7422cb791b00\",\n                \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n                \"type\": \"JerseyXY\",\n                \"name\": \"Jersey\",\n                \"quantity\": \"10003\",\n                \"functional_unit\": \"one wearing cycle\",\n                \"scope_3_contribution\": 233,\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-30T12:50:24.000+05:30\",\n                \"updated_at\": \"2024-01-30T12:50:24.000+05:30\"\n            }\n        ],\n        \"totalOfScopeContribution\": 984\n    }\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Supplier Product",
+					"item": [
+						{
+							"name": "create/Update supplier product",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"supplierId\": \"b18a8374-3d95-4a5e-a412-a974baca8057\",\n    \"supplierProducts\": [\n        {\n            \"id\":\"ee877e96-05ac-4926-a009-025c6dce70b4\", \n            \"name\":\"Shirts25\",\n            \"type\":\"Textile,Professional wear\",\n            \"quantity\":\"12000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"1278\"\n        },\n        {\n            \"name\":\"Jackets25\",\n            \"type\":\"Textile,Professional wear, XYZ\",\n            \"quantity\":\"1000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"345.78\"\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-products"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "error example",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"supplierId\": \"c77d6bab-a88b-479a-8f7e-30b57bbce808\",\n    \"supplierProducts\": [\n        {\n            \"name\":\"Shirts\",\n            \"type\":\"Textile,Professional wear\",\n            \"quantity\":\"10,000j\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"0.4k\"\n        },\n        {\n            \"name\":\"Jackets\",\n            \"type\":\"Textile,Professional wear, XYZ\",\n            \"quantity\":\"1000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"0.3\"\n        }\n    ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/supplier-products",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"supplier-products"
+											]
+										}
+									},
+									"status": "Unprocessable Entity",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "373"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 30 Jan 2024 06:49:24 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": false,\n    \"code\": 422,\n    \"message\": \"Validation failed for given inputs.\",\n    \"errors\": [\n        {\n            \"rule\": \"exists\",\n            \"field\": \"supplierId\",\n            \"message\": \"Supplier with this ID does not exist.\"\n        },\n        {\n            \"rule\": \"regex\",\n            \"field\": \"supplierProducts.0.quantity\",\n            \"message\": \"Please enter valid number\"\n        },\n        {\n            \"rule\": \"number\",\n            \"field\": \"supplierProducts.0.scope_3Contribution\",\n            \"message\": \"Please enter valid number\"\n        }\n    ]\n}"
+								},
+								{
+									"name": "error examples",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"supplierId\": \"bd505164-064c-45d3-b3a8-df028e7779c0\",\n    \"supplierProducts\": [\n        {\n            \"id\":\"ee877e96-05ac-4926-a009-025c6dce70b4\",\n            \"name\":\"Shirts25\",\n            \"type\":\"Textile,Professional wear\",\n            \"quantity\":\"12000%\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"12f\"\n        },\n        {\n            \"id\":\"18f92576-9b00-4b67-868b-7c24163134bf\",\n            \"name\":\"Jackets25\",\n            \"type\":\"Textile,Professional wear, XYZ\",\n            \"quantity\":\"1000*\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"345.78j\"\n        }\n    ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/supplier-products",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"supplier-products"
+											]
+										}
+									},
+									"status": "Unprocessable Entity",
+									"code": 422,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "482"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 01 Feb 2024 07:24:34 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": false,\n    \"code\": 422,\n    \"message\": \"Validation failed for given inputs.\",\n    \"errors\": [\n        {\n            \"rule\": \"regex\",\n            \"field\": \"supplierProducts.0.quantity\",\n            \"message\": \"Please enter valid number\"\n        },\n        {\n            \"rule\": \"number\",\n            \"field\": \"supplierProducts.0.scope_3Contribution\",\n            \"message\": \"Please enter valid number\"\n        },\n        {\n            \"rule\": \"regex\",\n            \"field\": \"supplierProducts.1.quantity\",\n            \"message\": \"Please enter valid number\"\n        },\n        {\n            \"rule\": \"number\",\n            \"field\": \"supplierProducts.1.scope_3Contribution\",\n            \"message\": \"Please enter valid number\"\n        }\n    ]\n}"
+								},
+								{
+									"name": "create supplier product",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"supplierId\": \"7f4f9602-6c5a-4ac5-96e2-d78d25fe3a3e\",\n    \"supplierProducts\": [\n        {\n            \"name\":\"Shirts\",\n            \"type\":\"Textile,Professional wear\",\n            \"quantity\":\"10,000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"450\"\n        },\n        {\n            \"name\":\"Jackets\",\n            \"type\":\"Textile,Professional wear, XYZ\",\n            \"quantity\":\"1000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"345.78\"\n        }\n    ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/supplier-products",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"supplier-products"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "709"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 30 Jan 2024 07:10:14 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 201,\n    \"message\": \"\",\n    \"data\": [\n        {\n            \"id\": \"366d7e0b-2ca4-49b6-bcbe-c7edc12fb80e\",\n            \"name\": \"Shirts\",\n            \"type\": \"Textile,Professional wear\",\n            \"quantity\": \"10,000\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": \"450\",\n            \"supplier_id\": \"7f4f9602-6c5a-4ac5-96e2-d78d25fe3a3e\",\n            \"created_at\": \"2024-01-30T12:40:13.993+05:30\",\n            \"updated_at\": \"2024-01-30T12:40:13.994+05:30\"\n        },\n        {\n            \"id\": \"5500773d-fa28-480d-b9f5-e099f9949614\",\n            \"name\": \"Jackets\",\n            \"type\": \"Textile,Professional wear, XYZ\",\n            \"quantity\": \"1000\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": \"345.78\",\n            \"supplier_id\": \"7f4f9602-6c5a-4ac5-96e2-d78d25fe3a3e\",\n            \"created_at\": \"2024-01-30T12:40:13.995+05:30\",\n            \"updated_at\": \"2024-01-30T12:40:13.995+05:30\"\n        }\n    ]\n}"
+								},
+								{
+									"name": "create/Update supplier product",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"supplierId\": \"bd505164-064c-45d3-b3a8-df028e7779c0\",\n    \"supplierProducts\": [\n        {\n            \"id\":\"ee877e96-05ac-4926-a009-025c6dce70b4\",  /*required if need to update existing product */\n            \"name\":\"Shirts25\",\n            \"type\":\"Textile,Professional wear\",\n            \"quantity\":\"12000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"1278\"\n        },\n        {\n            \"id\": \"06a85448-bad6-4015-bf8d-93a797ec95f7\",\n            \"name\":\"Jackets26\",\n            \"type\":\"Textile,Professional wear, XYZ\",\n            \"quantity\":\"1000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"345.78\"\n        },\n        {\n            \"name\":\"30Jackets\",\n            \"type\":\"Textile,Professional wear, XYZ\",\n            \"quantity\":\"1000\",\n            \"functionalUnit\":\"one wearing cycle\",\n            \"scope_3Contribution\":\"345.78\"\n        }\n    ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/supplier-products",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"supplier-products"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "1135"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 01 Feb 2024 11:50:44 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 201,\n    \"message\": \"Supplier products created or updated successfully.\",\n    \"data\": [\n        {\n            \"id\": \"ee877e96-05ac-4926-a009-025c6dce70b4\",\n            \"supplier_id\": \"bd505164-064c-45d3-b3a8-df028e7779c0\",\n            \"type\": \"Textile,Professional wear\",\n            \"name\": \"Shirts25\",\n            \"quantity\": \"12000\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": \"1278\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-31T14:59:08.000+05:30\",\n            \"updated_at\": \"2024-02-01T17:20:44.120+05:30\"\n        },\n        {\n            \"id\": \"06a85448-bad6-4015-bf8d-93a797ec95f7\",\n            \"supplier_id\": \"bd505164-064c-45d3-b3a8-df028e7779c0\",\n            \"type\": \"Textile,Professional wear, XYZ\",\n            \"name\": \"Jackets26\",\n            \"quantity\": \"1000\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": \"345.78\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-02-01T17:17:51.000+05:30\",\n            \"updated_at\": \"2024-02-01T17:20:44.122+05:30\"\n        },\n        {\n            \"id\": \"100e2cb2-5124-424f-8e8b-32e84a3b84f1\",\n            \"name\": \"30Jackets\",\n            \"type\": \"Textile,Professional wear, XYZ\",\n            \"quantity\": \"1000\",\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": \"345.78\",\n            \"supplier_id\": \"bd505164-064c-45d3-b3a8-df028e7779c0\",\n            \"created_at\": \"2024-02-01T17:20:44.124+05:30\",\n            \"updated_at\": \"2024-02-01T17:20:44.124+05:30\"\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Get All products",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-products?supplyChainReportingPeriodId=6488377f-a0c7-4ae9-b783-9f956cca4a1a&order=desc&sort=supplierName",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-products"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "perPage",
+											"value": "20",
+											"description": "Default=20",
+											"disabled": true
+										},
+										{
+											"key": "supplyChainReportingPeriodId",
+											"value": "6488377f-a0c7-4ae9-b783-9f956cca4a1a",
+											"description": "required to fetch list of products "
+										},
+										{
+											"key": "order",
+											"value": "desc",
+											"description": "asc,desc (default=desc)"
+										},
+										{
+											"key": "sort",
+											"value": "supplierName",
+											"description": "sortBy field value  (default=updated_at)"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Get All products",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/supplier-products?page=1&perPage=20&supplyChainReportingPeriodId=91330b2a-7f11-4f70-963a-d1cb4db2eca7&order=desc&sort=updated_at",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"supplier-products"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "1"
+												},
+												{
+													"key": "perPage",
+													"value": "20",
+													"description": "Default=20"
+												},
+												{
+													"key": "supplyChainReportingPeriodId",
+													"value": "91330b2a-7f11-4f70-963a-d1cb4db2eca7",
+													"description": "required to fetch list of products "
+												},
+												{
+													"key": "order",
+													"value": "desc",
+													"description": "asc,desc (default=desc)"
+												},
+												{
+													"key": "sort",
+													"value": "updated_at",
+													"description": "sortBy field value  (default=updated_at)"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "2549"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 29 Jan 2024 10:27:16 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"meta\": {\n        \"total\": 3,\n        \"per_page\": 20,\n        \"current_page\": 1,\n        \"last_page\": 1,\n        \"first_page\": 1,\n        \"first_page_url\": \"/?page=1\",\n        \"last_page_url\": \"/?page=1\",\n        \"next_page_url\": null,\n        \"previous_page_url\": null\n    },\n    \"data\": [\n        {\n            \"id\": \"9ba61c2e-89c1-4075-a74a-1403883f350d\",\n            \"supplier_id\": \"f09c38aa-e227-4fc8-8020-3e201b5d200f\",\n            \"type\": \"Woven, Home (textile), Night-, swim- and underwear\",\n            \"name\": \"Men's Swimsuits\",\n            \"quantity\": 10000,\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": 0.5,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"supplier\": {\n                \"id\": \"f09c38aa-e227-4fc8-8020-3e201b5d200f\",\n                \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                \"name\": \"KANIZ GARMENTS LIMITED\",\n                \"email\": \"someone@kaniz.com\",\n                \"organization_relationship\": \"OWNED\",\n                \"address\": \"228A, Tejgaon Industrial Area, 1208 Dhaka, Bangladesh\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n            }\n        },\n        {\n            \"id\": \"a2db8725-3ab6-458d-b3ce-db14f5132b17\",\n            \"supplier_id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n            \"type\": \"Accessories\",\n            \"name\": \"Micro-tights\",\n            \"quantity\": 10003,\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": 0.5,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"supplier\": {\n                \"id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n                \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                \"name\": \"PT KAHATEX\",\n                \"email\": \"someoneelse@ptkhatex.com\",\n                \"organization_relationship\": \"OWNED\",\n                \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n            }\n        },\n        {\n            \"id\": \"dfaacd69-8428-476f-84b4-4f53d70847f9\",\n            \"supplier_id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n            \"type\": \"Jersey\",\n            \"name\": \"Jersey\",\n            \"quantity\": 10003,\n            \"functional_unit\": \"one wearing cycle\",\n            \"scope_3_contribution\": 0.5,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"updated_at\": \"2024-01-29T15:11:52.000+05:30\",\n            \"supplier\": {\n                \"id\": \"c77d6bab-a88b-479a-8f7e-30b57bbce809\",\n                \"supply_chain_reporting_period_id\": \"91330b2a-7f11-4f70-963a-d1cb4db2eca7\",\n                \"name\": \"PT KAHATEX\",\n                \"email\": \"someoneelse@ptkhatex.com\",\n                \"organization_relationship\": \"OWNED\",\n                \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n                \"deleted_at\": null,\n                \"created_at\": \"2024-01-29T15:11:52.000+05:30\",\n                \"updated_at\": \"2024-01-29T15:11:52.000+05:30\"\n            }\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "get all emission data for specific period",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-period-emission?supplyChainReportingPeriodId=91330b2a-7f11-4f70-963a-d1cb4db2eca7",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-period-emission"
+									],
+									"query": [
+										{
+											"key": "supplyChainReportingPeriodId",
+											"value": "91330b2a-7f11-4f70-963a-d1cb4db2eca7",
+											"description": "this parameter required"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "get all emission data for specific period",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/supplier-period-emission?supplyChainReportingPeriodId=c449418b-59b9-4fa7-bf24-36fe69470a49",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"supplier-period-emission"
+											],
+											"query": [
+												{
+													"key": "supplyChainReportingPeriodId",
+													"value": "c449418b-59b9-4fa7-bf24-36fe69470a49",
+													"description": "this parameter required"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "389"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 31 Jan 2024 07:10:27 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetch Successfully\",\n    \"data\": {\n        \"totalProductLevelEmission\": 798.28,\n        \"productWise\": [\n            {\n                \"name\": \"Jackets\",\n                \"scope_3_contribution\": 345.78\n            },\n            {\n                \"name\": \"Micro-tights\",\n                \"scope_3_contribution\": 1\n            },\n            {\n                \"name\": \"Jersey\",\n                \"scope_3_contribution\": 1\n            },\n            {\n                \"name\": \"Shirts\",\n                \"scope_3_contribution\": 450\n            },\n            {\n                \"name\": \"Men's Swimsuits\",\n                \"scope_3_contribution\": 0.5\n            }\n        ],\n        \"missingCarbonFootPrint\": 0\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "get all product types only",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-product-type?supplierId=91330b2a-7f11-4f70-963a-d1cb4db2eca7",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-product-type"
+									],
+									"query": [
+										{
+											"key": "supplierId",
+											"value": "91330b2a-7f11-4f70-963a-d1cb4db2eca7",
+											"description": "it is required"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "New Request",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/supplier-product-type?supplierId=61422caa-8f4e-496e-9943-bf29ca8b35b3",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"supplier-product-type"
+											],
+											"query": [
+												{
+													"key": "supplierId",
+													"value": "61422caa-8f4e-496e-9943-bf29ca8b35b3"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "438"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 30 Jan 2024 09:23:46 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": [\n        {\n            \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n            \"type\": \"Accessories\"\n        },\n        {\n            \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n            \"type\": \"Accessories, Jersey, Knitted, Woven, Home (textile), Night-, swim- and underwear\"\n        },\n        {\n            \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n            \"type\": \"Jersey\"\n        },\n        {\n            \"supplier_id\": \"61422caa-8f4e-496e-9943-bf29ca8b35b3\",\n            \"type\": \"JerseyXY\"\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "get all product names only",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "single product delete",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete multiple products",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"products\": [\n        \"06a85448-bad6-4015-bf8d-93a797ec95f7\",\n        \"100e2cb2-5124-424f-8e8b-32e84a3b84f1\"\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/remove-multiple-products",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"remove-multiple-products"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "delete multiple products",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"products\": [\n        \"06a85448-bad6-4015-bf8d-93a797ec95f7\",\n        \"100e2cb2-5124-424f-8e8b-32e84a3b84f1\"\n    ]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/api/v1/auth/remove-multiple-products",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"auth",
+												"remove-multiple-products"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "content-length",
+											"value": "97"
+										},
+										{
+											"key": "content-type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 01 Feb 2024 13:27:59 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Selected supplier products deleted successfully.\",\n    \"data\": {}\n}"
+								}
+							]
+						}
+					]
+				},
 				{
 					"name": "download supplier csv template",
 					"request": {
@@ -3907,7 +5114,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/auth/abatement-projects/c8710c62-b36c-4b24-b180-7acec072687d",
+							"raw": "{{base_url}}/api/v1/auth/abatement-projects/eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75",
 							"host": [
 								"{{base_url}}"
 							],
@@ -3916,7 +5123,7 @@
 								"v1",
 								"auth",
 								"abatement-projects",
-								"c8710c62-b36c-4b24-b180-7acec072687d"
+								"eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75"
 							]
 						}
 					},
@@ -4033,7 +5240,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/auth/abatement-projects?page=1&perPage=20&sort=updated_at&order=desc&filters[status]=0",
+							"raw": "{{base_url}}/api/v1/auth/abatement-projects?page=1&perPage=20&sort=updated_at&order=desc&filters[status]=0&organizationId",
 							"host": [
 								"{{base_url}}"
 							],
@@ -4068,6 +5275,10 @@
 									"key": "filters[status]",
 									"value": "0",
 									"description": "0 for proposed, 1 for active and 2 for completed"
+								},
+								{
+									"key": "organizationId",
+									"value": null
 								}
 							]
 						}
@@ -4168,6 +5379,182 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "update project details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"project 1\",\n    \"estimatedCost\":\"234\",\n    \"emissionReductions\":\"345\",\n    \"website_url\": \"www.alfalavalproject.com/sustainability\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/abatement-projects/eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"abatement-projects",
+								"eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "update project details",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"project 1\",\n    \"estimatedCost\":\"234\",\n    \"emissionReductions\":\"345\",\n    \"website_url\": \"www.alfalavalproject.com/sustainability\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/abatement-projects/eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"abatement-projects",
+										"eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "2121"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 08 Feb 2024 12:43:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Abatement project updated successfully.\",\n    \"data\": {\n        \"id\": \"eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"project 1\",\n        \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n        \"estimated_cost\": 234,\n        \"website_url\": \"www.alfalavalproject.com/sustainability\",\n        \"emission_reductions\": 345,\n        \"proposed_by\": \"8804a7b5-496f-4d36-ae35-c8ef3ad91be3\",\n        \"photo_url\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n        \"logo_url\": \"\",\n        \"emission_unit\": \"tCO2e\",\n        \"updated_by\": \"Mayuri Chaudhari\",\n        \"status\": 0,\n        \"deleted_at\": null,\n        \"created_at\": \"2024-02-08T14:54:40.000+05:30\",\n        \"updated_at\": \"2024-02-08T18:13:11.000+05:30\",\n        \"organization\": {\n            \"id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n            \"company_name\": \"XYZ\",\n            \"company_email\": null,\n            \"self_point_of_contact\": null,\n            \"company_size\": null,\n            \"naics_code\": null,\n            \"climate_targets\": null,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-25T15:47:27.000+05:30\",\n            \"updated_at\": \"2024-01-25T15:47:27.000+05:30\"\n        },\n        \"proposedSupplier\": {\n            \"id\": \"8804a7b5-496f-4d36-ae35-c8ef3ad91be3\",\n            \"supply_chain_reporting_period_id\": \"39aac424-e7e4-43c3-8a28-bc9e23d2a511\",\n            \"name\": \"first supplier\",\n            \"email\": \"supplier123@mailinator.com\",\n            \"organization_relationship\": \"CONTRACTUAL\",\n            \"address\": \"test address\",\n            \"updated_by\": \"Mayuri Chaudhari\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-02-07T17:52:40.000+05:30\",\n            \"updated_at\": \"2024-02-07T17:52:40.000+05:30\"\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "delete project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/abatement-projects/eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"abatement-projects",
+								"eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "delete project",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/abatement-projects/eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"abatement-projects",
+										"eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "88"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 08 Feb 2024 13:07:18 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Abatement project deleted successfully.\",\n    \"data\": {}\n}"
+						}
+					]
 				}
 			]
 		}
