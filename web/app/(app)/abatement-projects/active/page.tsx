@@ -16,7 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Page = async () => {
+const ActivePage = async () => {
   const session = await getServerSession(authOptions);
   const res = await getActiveAbatementProjects(
     session?.user?.organizations[0].id!
@@ -155,4 +155,4 @@ const Page = async () => {
   );
 };
 
-export default Page;
+export default ActivePage;
