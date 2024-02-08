@@ -332,8 +332,8 @@ const Page = () => {
           </Tabs>
         )}
       </div>
-      <div className='items-stretch self-stretch flex flex-col pb-12'>
-        <div className='items-stretch bg-gray-100 flex justify-between gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
+      <div className='items-stretch self-stretch flex flex-col pb-12 mt-8'>
+        <div className='items-center bg-gray-100 flex justify-between rounded-t-md  gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
           <div className='text-slate-800 text-xs font-bold leading-4 grow max-md:max-w-full'>
             Suppliers
           </div>
@@ -353,7 +353,10 @@ const Page = () => {
               className='mr-4'
             >
               {' '}
-              <Badge variant='outline' className='mr-4'>
+              <Badge
+                variant='outline'
+                className='justify-center items-center px-1.5 h-5 mr-4 text-xs font-semibold leading-4 text-blue-800 whitespace-nowrap bg-blue-200 rounded-[100px]'
+              >
                 {selectedProductIds.length}
               </Badge>
               Delete
@@ -373,7 +376,6 @@ const Page = () => {
                   <li className='mb-4'>
                     <Link
                       href={`/supply-chain/supplier?reportingId=${currentTab}`}
-                      className='overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap'
                     >
                       Manually add a supplier
                     </Link>
@@ -391,6 +393,7 @@ const Page = () => {
             <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap'>
               <input
                 type='checkbox'
+                className='flex justify-center items-center w-4 h-4 rounded  checked:bg-blue-600'
                 checked={areAllSelected()}
                 onChange={handleSelectAllChange}
               />
@@ -419,6 +422,7 @@ const Page = () => {
                 <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 self-stretch grow whitespace-nowrap'>
                   <input
                     type='checkbox'
+                    className='flex justify-center items-center w-4 h-4 rounded'
                     name='selectedProduct'
                     value={product?.id}
                     checked={selectedProductIds.includes(product?.id)}
