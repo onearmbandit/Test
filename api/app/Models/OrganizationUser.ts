@@ -48,4 +48,13 @@ export default class OrganizationUser extends BaseModel {
 
     return result
   }
+
+
+  public static async getOrganizationUserDetails(field, value) {
+    var data = await OrganizationUser.query()
+      .where(field, value)
+      .first()
+
+    return data
+  }
 }

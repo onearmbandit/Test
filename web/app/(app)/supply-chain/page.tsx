@@ -11,6 +11,7 @@ import {
   downloadCsvTemplate,
   getAllEmissioScopeData,
   getAllReportingPeriods,
+  getAllSuppliersByPeriodId,
   importFile,
 } from '@/services/supply.chain';
 import {
@@ -36,6 +37,8 @@ import dayjs from 'dayjs';
 import AddSupplierManualy from '@/components/supply-chain/addSupplierManualy';
 import SupplierData from '@/components/supply-chain/SupplierData';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { convertDateToString } from '@/lib/utils';
 
 const Page = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -48,6 +51,7 @@ const Page = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const [uploadStatus, setUploadStatus] = useState('select');
+  const [selectedProductIds, setSelectedProductIds] = useState<any>([]);
 
   const organizationId = session?.data?.user.organizations[0].id!;
 
@@ -56,6 +60,84 @@ const Page = () => {
     queryFn: () => getAllReportingPeriods(organizationId),
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
+  // console.log(session.data? session.data.user.organizations[0].id:"", 'session.data');
+  console.log(reportingPeriods, 'reportingPeriods');
+  function handleChange(event: any) {
+    setFile(event.target.files[0]);
+    setFileName(event.target.files[0].name);
+  }
+  function handleSubmit(event: any) {
+    event.preventDefault();
+    const formData = {
+      supplierCSV: fileName,
+      supplyChainReportingPeriodId: 'f942aa90-6dc1-45a4-bc12-bf53e9f38468',
+    };
+    // formData.append('file', file);
+    mutate(formData);
+  }
+  const { mutate, isPending } = useMutation({
+    mutationFn: importFile,
+    onSuccess: (data) => {},
+    onError: (err) => {
+      toast.error(err.message, { style: { color: 'red' } });
+    },
+  });
+
+  const DownloadTemplate = () => {
+    downloadCsvMUt.mutate();
+  };
+
+  const emptyInput = () => {
+    setFileName('');
+  };
+
+  const handleCheckboxChange = (event: any) => {
+    const productId = event.target.value;
+    if (event.target.checked) {
+      if (!selectedProductIds.includes(productId)) {
+        setSelectedProductIds((prevIds: any) => [...prevIds, productId]);
+      }
+    } else {
+      setSelectedProductIds((prevIds: any) =>
+        prevIds.filter((id: string) => id !== productId)
+      );
+    }
+  };
+
+  const areAllSelected = () => {
+    // Assuming supplierProducts is an array of all products you are iterating over
+    // This checks if every product ID is in the selectedProductIds array
+    const allProductIds = supplierProducts.map((product: any) => product.id);
+    return (
+      allProductIds.length > 0 &&
+      allProductIds.every((id: string) => selectedProductIds.includes(id))
+    );
+  };
+
+  const handleSelectAllChange = (event: any) => {
+    if (event.target.checked) {
+      // Select all: add all product IDs to the selectedProductIds state
+      const allProductIds = supplierProducts.map((product: any) => product.id);
+      setSelectedProductIds(allProductIds);
+    } else {
+      // Deselect all: clear the selectedProductIds state
+      setSelectedProductIds([]);
+    }
+  };
+
+  const handleSelectAllButtonClick = () => {
+    const allProductIds = supplierProducts.map((product: any) => product.id);
+
+    // If not all products are currently selected, select all, otherwise deselect all
+    if (areAllSelected()) {
+      // Deselect all if currently all are selected
+      setSelectedProductIds([]);
+    } else {
+      // Select all if not all products are currently selected
+      setSelectedProductIds(allProductIds);
+    }
+  };
+
   const token = session?.data?.token.token;
   const downloadCsvMUt = useMutation({
     mutationFn: downloadCsvTemplate,
@@ -75,6 +157,15 @@ const Page = () => {
       setCurrentTab(reportingPeriods[0]?.id);
     }
   }, [periodsQ.isSuccess]);
+
+  const supplierProductsQ = useQuery({
+    queryKey: ['supplier-products', currentTab],
+    queryFn: () => getAllSuppliersByPeriodId(currentTab),
+  });
+  const supplierProducts = supplierProductsQ.isSuccess
+    ? supplierProductsQ.data.data
+    : [];
+
   return (
     <div className='w-full shadow bg-gray-50 flex flex-col pl-6 pr-6 pt-5 pb-12 max-md:px-5'>
       <header className='justify-between items-center self-stretch flex gap-5 py-2 max-md:flex-wrap max-md:px-5'>
@@ -92,14 +183,8 @@ const Page = () => {
           className='rounded flex gap-1.5 px-3.5 py-1.5 cursor-pointer'
           onClick={() => setShowNew(true)}
         >
-          <img
-            loading='lazy'
-            src='https://cdn.builder.io/api/v1/image/assets/TEMP/0a3b37dc7caf0621d0a3ddfd4c525cb8a2f3841ad00c9625467586617b68bb03?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-            className='aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto'
-            alt='Reporting Period Image'
-          />
           <header className='text-blue-600 text-sm font-semibold leading-5 self-stretch grow whitespace-nowrap'>
-            Add Reporting Period
+            + Add Reporting Period
           </header>
         </div>
       </div>
@@ -247,19 +332,29 @@ const Page = () => {
           </Tabs>
         )}
       </div>
-      <div className='items-stretch self-stretch flex flex-col pb-12 mt-8'>
-        <div className='items-center bg-gray-100 flex justify-between rounded-t-md gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
+      <div className='items-stretch self-stretch flex flex-col pb-12'>
+        <div className='items-stretch bg-gray-100 flex justify-between gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
           <div className='text-slate-800 text-xs font-bold leading-4 grow max-md:max-w-full'>
             Suppliers
           </div>
-          <div className='flex'>
-            <Button variant='outline' className='mr-3'>
-              Select All
+          <div>
+            <Button
+              onClick={handleSelectAllButtonClick}
+              variant='outline'
+              className='mr-3'
+            >
+              {areAllSelected() ? 'Deselect All' : 'Select All'}
             </Button>
-            <Button variant='outline' className='mr-4'>
+            <Button
+              onClick={() => {
+                console.log('selected product ids : ', selectedProductIds);
+              }}
+              variant='outline'
+              className='mr-4'
+            >
               {' '}
               <Badge variant='outline' className='mr-4'>
-                0
+                {selectedProductIds.length}
               </Badge>
               Delete
             </Button>
@@ -275,7 +370,14 @@ const Page = () => {
               <PopoverContent className='w-[240px] mr-3 mt-3 leff-auto right-0'>
                 <ul className='justify-center text-base leading-5 text-gray-700 bg-white rounded '>
                   <li className='mb-4'>Add new suppliers via csv</li>
-                  <li className='mb-4'> Manually add a supplier</li>
+                  <li className='mb-4'>
+                    <Link
+                      href={`/supply-chain/supplier?reportingId=${currentTab}`}
+                      className='overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap'
+                    >
+                      Manually add a supplier
+                    </Link>
+                  </li>
                   <li className='mb-4' onClick={() => downloadCsvMUt.mutate()}>
                     Download CSV
                   </li>
@@ -286,6 +388,13 @@ const Page = () => {
         </div>
         <div className='items-stretch bg-white flex w-full flex-col pb-12 max-md:max-w-full max-md:mb-10'>
           <div className='items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5'>
+            <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap'>
+              <input
+                type='checkbox'
+                checked={areAllSelected()}
+                onChange={handleSelectAllChange}
+              />
+            </div>
             <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 whitespace-nowrap'>
               Supplier Name
             </div>
@@ -302,16 +411,47 @@ const Page = () => {
               Last Updated
             </div>
           </div>
+          {/* supplier list start */}
+          {supplierProducts &&
+            supplierProducts.length > 0 &&
+            supplierProducts.map((product: any, index: number) => (
+              <div className='items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5'>
+                <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 self-stretch grow whitespace-nowrap'>
+                  <input
+                    type='checkbox'
+                    name='selectedProduct'
+                    value={product?.id}
+                    checked={selectedProductIds.includes(product?.id)}
+                    onChange={handleCheckboxChange}
+                  />
+                </div>
+                <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 whitespace-nowrap'>
+                  {product?.supplier?.name}
+                </div>
+                <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5'>
+                  {product?.name}
+                </div>
+                <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5'>
+                  {product?.type}
+                </div>
+                <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5'>
+                  {product?.scope_3_contribution}
+                </div>
+                <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 grow whitespace-nowrap'>
+                  {convertDateToString(product?.updated_at)}
+                </div>
+              </div>
+            ))}
+
+          {/* supplier list end */}
           <div className='justify-center items-stretch flex gap-0 mb-12 px-5 max-md:max-w-full max-md:flex-wrap max-md:mb-10'>
             <div className='items-center flex-1 border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-2 px-4 py-2.5 border-b border-solid'>
-              <img
-                loading='lazy'
-                src='https://cdn.builder.io/api/v1/image/assets/TEMP/29189ba407ce9b617e1d8bf82171c381b4863b2327accf32d1d2f807bdc438a6?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                className='aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto'
-              />
-              <div className='overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap'>
-                New Supplier
-              </div>
+              <Link
+                href={`/supply-chain/supplier?reportingId=${currentTab}`}
+                className='overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap'
+              >
+                + New Supplier
+              </Link>
             </div>
             <div className='items-center flex-1 border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[235px] shrink-0 h-10 flex-col border-b border-solid' />
             <div className='items-center flex-1  border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[135px] shrink-0 h-10 flex-col border-b border-solid' />
@@ -320,7 +460,7 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <AddSupplierManualy />
+      {/* <AddSupplierManualy /> */}
     </div>
   );
 };
