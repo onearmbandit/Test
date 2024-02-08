@@ -2,7 +2,6 @@
 
 import { authOptions } from "@/lib/utils";
 import axios, { AxiosHeaders } from "axios";
-import { forEach } from "lodash";
 import { getServerSession } from "next-auth";
 
 type Options = {
