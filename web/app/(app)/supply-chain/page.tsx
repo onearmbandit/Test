@@ -393,7 +393,9 @@ const Page = () => {
               </PopoverTrigger>
               <PopoverContent className="w-[240px] mr-3 mt-3 leff-auto right-0">
                 <ul className="justify-center text-base leading-5 text-gray-700 bg-white rounded ">
-                  <li className="mb-4">Add new suppliers via csv</li>
+                  <li className="mb-4 cursor-pointer">
+                    Add new suppliers via csv
+                  </li>
                   <li className="mb-4">
                     <Link
                       href={`/supply-chain/supplier?reportingId=${currentTab}`}
@@ -401,7 +403,10 @@ const Page = () => {
                       Manually add a supplier
                     </Link>
                   </li>
-                  <li className="mb-4" onClick={() => downloadCsvMUt.mutate()}>
+                  <li
+                    className="mb-4 cursor-pointer"
+                    onClick={() => downloadCsvMUt.mutate()}
+                  >
                     Download CSV
                   </li>
                 </ul>

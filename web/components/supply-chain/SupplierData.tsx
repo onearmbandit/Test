@@ -144,9 +144,10 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
       </text>
     );
   };
+  console.log("supplier data: ", supplierData);
   return (
     <div className="relative">
-      {!supplierData && (
+      {!supplierData && supplierData?.productWise.length > 0 && (
         <div className="absolute top-0 left-0 h-full w-full z-10  flex items-center bg-white justify-center">
           <Loader2
             height={50}
@@ -155,7 +156,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
           />
         </div>
       )}
-      {!supplierData && (
+      {supplierData?.productWise.length < 1 && (
         <div className="justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5">
           <img
             loading="lazy"
@@ -175,6 +176,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
           <Dialog>
             <DialogTrigger>
               <div
+                role="button"
                 onClick={() => handlePoover()}
                 className="text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 mb-9 px-4 py-3"
               >
