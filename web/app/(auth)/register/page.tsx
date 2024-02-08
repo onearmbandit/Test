@@ -411,6 +411,7 @@ const Step2 = ({
     onSuccess: (data) => {
       setUserSlug(data.data.slug);
       // setCurrentStep(3);
+      console.log(data.data.slug);
       router.push("/register?step=3");
     },
     onError: (err) => {
@@ -523,11 +524,11 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (data) => {
-      console.log(data, session?.user.slug);
+      console.log(data, userSlug);
       if (userSlug == null) {
         mutate({ ...data, userSlug: session?.user.slug });
       } else {
-        mutate(data);
+        mutate({ ...data, userSlug });
       }
     },
   });

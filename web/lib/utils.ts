@@ -31,6 +31,9 @@ export const authOptions: NextAuthOptions = {
           socialLoginToken: tokens.id_token,
         };
       },
+      httpOptions: {
+        timeout: 10000,
+      },
     }),
     AzureADProvider({
       clientId: process.env.AZURE_AD_CLIENT_ID!,
