@@ -139,7 +139,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
   const CustomBarLabel = (props: any) => {
     const { x, y, value } = props;
     return (
-      <text x={x} y={y} dy={-12} dx={10} fill="#334155" textAnchor="left">
+      <text x={x} y={y} dy={-12} dx={0} fill="#334155" textAnchor="left">
         {value}
       </text>
     );
@@ -339,53 +339,53 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                       tCO2e
                     </div>
                   </div>
-                  <div className="overflow-auto">
-                    <div className="h-[400px]">
-                      <ResponsiveContainer className="w-full h-full">
-                        <ComposedChart
-                          layout="vertical"
-                          width={500}
-                          height={500}
-                          data={chartData}
-                          barGap={20}
-                          barCategoryGap="20%"
-                          margin={{
-                            top: 20,
-                            right: 20,
-                            bottom: 20,
-                            left: 0,
-                          }}
+                  <div className="overflow-auto h-full">
+                    {/* <div className='h-full'> */}
+                    <ResponsiveContainer className="w-full h-full">
+                      <ComposedChart
+                        layout="vertical"
+                        width={500}
+                        height={500}
+                        data={chartData}
+                        barGap={20}
+                        barCategoryGap="20%"
+                        margin={{
+                          top: 20,
+                          right: 20,
+                          bottom: 20,
+                          left: 0,
+                        }}
+                      >
+                        <XAxis
+                          hide={true}
+                          type="number"
+                          domain={["auto", "auto"]}
+                        />
+                        <YAxis
+                          dataKey=""
+                          hide={true}
+                          type="category"
+                          scale="band"
+                          padding={{ top: 0, bottom: 0 }}
+                        />
+                        {/* <Tooltip /> */}
+                        {/* <Legend /> */}
+                        <Bar
+                          dataKey="scope_3_contribution"
+                          label={{ position: "right" }}
+                          barSize={20}
+                          radius={4}
+                          fill="#BBF7D0"
                         >
-                          <XAxis
-                            hide={true}
-                            type="number"
-                            domain={["auto", "auto"]}
+                          <LabelList
+                            dataKey="name"
+                            position="top"
+                            content={<CustomBarLabel />}
                           />
-                          <YAxis
-                            dataKey=""
-                            hide={true}
-                            type="category"
-                            scale="band"
-                            padding={{ top: 0, bottom: 0 }}
-                          />
-                          {/* <Tooltip /> */}
-                          {/* <Legend /> */}
-                          <Bar
-                            dataKey="scope_3_contribution"
-                            label={{ position: "right" }}
-                            barSize={20}
-                            radius={4}
-                            fill="#BBF7D0"
-                          >
-                            <LabelList
-                              dataKey="name"
-                              position="top"
-                              content={<CustomBarLabel />}
-                            />
-                          </Bar>
-                        </ComposedChart>
-                      </ResponsiveContainer>
-                    </div>
+                        </Bar>
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                    {/* </div> */}
                   </div>
                 </div>
               </div>

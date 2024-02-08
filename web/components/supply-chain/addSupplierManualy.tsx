@@ -208,19 +208,19 @@ export const AddSupplierManualy = () => {
   };
 
   return (
-    <div className="flex flex-col flex-start py-6 px-8 w-full">
-      <header className="flex gap-2.5 self-stretch p-3 text-sm leading-5 text-blue-600 max-md:flex-wrap">
+    <div className="flex flex-col flex-start p-6 w-full">
+      <header className="flex gap-2.5 self-stretch p-3 text-sm items-center leading-5 text-blue-600 max-md:flex-wrap">
         <ChevronLeft size={24} className="text-slate-500" />
         <div className="flex-auto max-md:max-w-full">
           <p className="text-slate-500">
             Supply Chain &gt;
-            <span className="font-bold text-blue-600">Add Supplier</span>
+            <span className="font-bold text-blue-600 ml-2">Add Supplier</span>
           </p>
         </div>
       </header>
 
       <div className="flex gap-5 justify-between px-[40px] self-stretch max-md:flex-wrap">
-        <div className=" text-lg font-bold leading-7 text-center text-gray-700">
+        <div className="text-lg mt-2 font-bold leading-7 text-center text-gray-700">
           New Supplier Entry
         </div>
         <p className="justify-center px-2 py-0.5 my-auto text-xs font-medium leading-4 text-cyan-800 whitespace-nowrap bg-cyan-50 rounded-md">
@@ -231,24 +231,22 @@ export const AddSupplierManualy = () => {
         </p>
       </div>
       <div className="text-sm leading-5 text- w-full px-[40px]  text-slate-800">
-        <p className="py-8">
+        <p className="py-6">
           Add your suppliers product carbon footprint to determine your product
           level contribution
         </p>
       </div>
 
-      <div className="flex flex-col self-stretch py-6 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)]">
+      <div className="flex flex-col self-stretch py-6 mx-10 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)]">
         <div className="flex flex-col px-6 w-full max-md:px-5 max-md:max-w-full">
           {editSupplier ? (
             <div>
               <div className="edit-section">
                 <div className="flex gap-5 justify-between self-stretch pb-1.5 max-md:flex-wrap">
-                  <div className="flex gap-2.5 self-start px-5 text-base font-bold leading-6 text-slate-800 max-md:flex-wrap max-md:max-w-full">
-                    <img
-                      loading="lazy"
-                      src="https://cdn.builder.io/api/v1/image/assets/TEMP/552d063641276c4b19d2c1033b6c711bc8c7c753d57dad4f762bb9bd3533b3c3?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                      className="my-auto w-5 aspect-square"
-                    />
+                  <div className="flex gap-2.5 self-start px-5 mb-6 text-base font-bold leading-6 text-slate-800 max-md:flex-wrap max-md:max-w-full">
+                    <div className="flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
+                      1
+                    </div>
                     <div className="grow max-md:max-w-full">
                       Supplier Information
                     </div>
@@ -268,7 +266,6 @@ export const AddSupplierManualy = () => {
                       {supplier?.data?.name}
                     </span>
                   </p>
-                  <br />
                   <span className="text-slate-500">Contact Email:</span>
                   <span className="text-green-900">
                     {" "}
@@ -292,7 +289,7 @@ export const AddSupplierManualy = () => {
           ) : (
             <div>
               <div className="flex gap-2.5 self-start max-md:flex-wrap max-md:max-w-full">
-                <div className="justify-center items-center px-2 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
+                <div className="flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
                   1
                 </div>
                 <div className="grow text-base font-bold leading-6 text-slate-800 max-md:max-w-full">
@@ -303,7 +300,7 @@ export const AddSupplierManualy = () => {
                 Add the basic information about your supplier
               </div>
               <form onSubmit={handleSubmit}>
-                <div className="flex gap-5 justify-between pr-20 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+                <div className="flex gap-5 pr-20 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
                   <div className=" my-auto font-medium text-slate-700">
                     Supplier Name
                   </div>
@@ -312,13 +309,13 @@ export const AddSupplierManualy = () => {
                     value={values.name}
                     onChange={handleChange}
                     className={cn(
-                      "grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 rounded-md text-slate-700 max-md:pr-5",
+                      "grow justify-center bg-gray-50 text-slate-700 max-md:pr-5 max-w-[337px]",
                       errors?.name && "border border-red-500"
                     )}
                   />
                 </div>
 
-                <div className="flex gap-5 mt-6 justify-between self-stretch pr-20 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5">
+                <div className="flex gap-5 self-stretch pr-20 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5">
                   <div className=" my-auto font-medium text-slate-700">
                     Contact Email{" "}
                   </div>
@@ -327,18 +324,18 @@ export const AddSupplierManualy = () => {
                     value={values.email}
                     onChange={handleChange}
                     className={cn(
-                      "grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 rounded-md text-slate-700 max-md:pr-5",
+                      "grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 max-w-[337px] rounded-md text-slate-700 max-md:pr-5",
                       errors?.email && "border border-red-500"
                     )}
                   />
                 </div>
 
-                <div className="flex gap-5 justify-between pr-20 text-xs max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+                <div className="flex gap-5  pr-20 mt-6 text-xs max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
                   <div className="my-auto font-medium leading-4 text-slate-700">
                     Relationship <br />
                     to organization
                   </div>
-                  <div className="flex gap-2 justify-between px-2 whitespace-nowrap text-slate-700">
+                  <div className="flex gap-2 justify-between whitespace-nowrap  text-slate-700 h-[44px]">
                     <Select
                       value={values.organizationRelationship}
                       onValueChange={(e) => {
@@ -348,9 +345,8 @@ export const AddSupplierManualy = () => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm font-light leading-5  bg-gray-50  mt-3 px-2 py-6 rounded-md max-md:max-w-full",
-                          errors?.organizationRelationship &&
-                            "border border-red-500"
+                          "text-slate-500 text-sm font-light leading-5  bg-gray-50 py-6 rounded-md max-md:max-w-full",
+                          errors?.organizationRelationship && " border-red-500"
                         )}
                       >
                         <SelectValue placeholder="Select relation to organization" />
@@ -368,7 +364,7 @@ export const AddSupplierManualy = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-5 justify-between mt-6 max-md:flex-wrap max-md:max-w-full">
+                <div className="flex gap-5 justify-between items-center mt-6 max-md:flex-wrap max-md:max-w-full mb-6">
                   <div className="grow text-xs font-medium leading-4 text-slate-700 max-md:max-w-full">
                     Supplier Address
                   </div>
@@ -376,37 +372,39 @@ export const AddSupplierManualy = () => {
                     Edit
                   </div>
                 </div>
-                <AutocompleteInput
-                  setAddress={(a: string) => {
-                    /** TODO: add the autocompleted address */
-                    setFieldValue("address", a);
-                    console.log(a, "address");
-                    console.log("first");
-                  }}
-                  address={values.address}
-                />
-
-                <button
-                  type="submit"
-                  className="justify-center self-end px-4 py-2 mt-6 mr-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)] max-md:mr-2.5"
-                >
-                  Save
-                </button>
+                <div className="max-w-[768px]">
+                  <AutocompleteInput
+                    setAddress={(a: string) => {
+                      /** TODO: add the autocompleted address */
+                      setFieldValue("address", a);
+                      console.log(a, "address");
+                      console.log("first");
+                    }}
+                    address={values.address}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    variant="outline"
+                    type="submit"
+                    className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)] max-md:mr-2.5"
+                  >
+                    Save
+                  </Button>
+                </div>
               </form>
             </div>
           )}
         </div>
       </div>
 
-      <div className="flex flex-col self-stretch p-6 mt-6 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)] max-md:px-5">
+      <div className="flex flex-col self-stretch p-6 rounded border mt-6 mx-10 border-solid border-[color:var(--Gray-200,#E5E7EB)] max-md:px-5">
         <div className="flex gap-2.5 justify-between max-md:flex-wrap max-md:max-w-full">
-          <div className="flex space-x-3 items-center">
-            <div className="flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
-              2
-            </div>
-            <div className="flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full">
-              Product & Product Level Contribution
-            </div>
+          <div className="flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
+            2
+          </div>
+          <div className="flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full">
+            Product & Product Level Contribution
           </div>
           {!editProductTable && (
             <Button
