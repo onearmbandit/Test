@@ -13,6 +13,8 @@ declare module "next-auth" {
       slug: string;
       /** User's email. */
       email: string;
+      /** Data for the social login */
+      code: any;
       /** Timestamp when the email was verified. */
       email_verified_at: string | null;
       /** Token for email verification. */

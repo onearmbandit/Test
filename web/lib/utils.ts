@@ -1,15 +1,20 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { NextAuthOptions } from "next-auth";
+import { NextAuthOptions, User, TokenSet } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import { boolean } from "zod";
 import dayjs from "dayjs";
+import _ from "lodash";
+import { AdapterUser } from "next-auth/adapters";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+type ExtendedUser = (User | AdapterUser) & { code: any };
+type ExtendedToken = TokenSet & { code: { user: any } };
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -81,54 +86,54 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, session, account }) {
+    async jwt({ token, user, session, account, trigger }) {
+      if (trigger == "update" && session.orgs) {
+        (token.code as ExtendedToken) = {
+          ...(token.code as ExtendedToken),
+          user: {
+            ...((token.code as ExtendedToken).user as ExtendedToken),
+            organizations: session.orgs,
+          },
+        };
+      }
+
       // console.log("jwt ==> ", { token });
       return { ...token, ...user };
     },
-    // async signIn({ user, account, email, credentials, profile }) {
-    //   // console.log({ user, account, email, credentials, profile });
-    //   const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
+    async signIn({ user, account, email, credentials, profile }) {
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/social-signup`;
 
-    //   if (account?.provider != "credentials") {
-    //     try {
-    //       const res = await fetch(url, {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-type": "application/json",
-    //         },
-    //         body: JSON.stringify({
-    //           ...user,
-    //           loginType:
-    //             account?.provider == "azure-ad"
-    //               ? "microsoft"
-    //               : account?.provider,
-    //         }),
-    //       });
+      if (account?.provider != "credentials") {
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              ...user,
+              loginType:
+                account?.provider == "azure-ad"
+                  ? "microsoft"
+                  : account?.provider,
+            }),
+          });
 
-    //       const userD = await res.json();
+          const userD = await res.json();
+          (user as ExtendedUser).code = userD.data;
 
-    //       user["code"] = userD.code;
-    //       if (userD.code == 201) {
-    //         // this.redirect({
-    //         //   url: "/register?step=2",
-    //         //   baseUrl: process.env.NEXTAUTH_URL!,
-    //         // });
-    //         return true;
-    //       } else if (userD.code == 200) {
-    //         return true;
-    //       }
+          return true;
+        } catch (err: any) {
+          console.log({ err });
+          throw new Error(err);
+        }
+      }
+      return true;
+    },
+    async session({ session, token, trigger, user, newSession }) {
+      const loginData: any = _.cloneDeep(token.code);
 
-    //       return false;
-    //     } catch (err) {
-    //       console.log({ err });
-    //       throw new Error(err);
-    //     }
-    //   }
-    //   return true;
-    // },
-    async session({ session, token, trigger, user }) {
-      // console.log({ token });
-      return { ...session, ...token };
+      return { ...session, ...token, ...loginData };
     },
   },
   session: {

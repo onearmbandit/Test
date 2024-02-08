@@ -57,8 +57,6 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
   });
   const equalEmission = equality.isSuccess ? equality.data : {};
 
-  console.log(equalEmission);
-
   const { mutate } = useMutation({
     mutationFn: editProductLines,
     onSuccess: (data) => {
@@ -66,7 +64,7 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
       queryClient.invalidateQueries({
         queryKey: ["product-emissions", period, "facility-details"],
       });
-      // setEdit(false);
+      setEdit(false);
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -110,35 +108,6 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
       queryKey: ["equality", period],
       queryFn: () => getEqualityData(period),
     });
-
-    const copy = _.cloneDeep(emissions);
-
-    copy.map((item) => {
-      equalEmission.data?.map((em: any) => {
-        if (item.name == em.name) {
-          item.scope1CarbonEmission = em.scope1;
-          item.scope2CarbonEmission = em.scope2;
-          item.scope3CarbonEmission = em.scope3;
-        }
-      });
-
-      // Object.keys(item).map((key) => {
-      //   if (!editKeys.includes(key)) {
-      //     delete item[key];
-      //   }
-      // });
-
-      return item;
-    });
-
-    // console.log({ copy });
-
-    const formdata = {
-      facilityEmissionId: period,
-      facilityProducts: copy,
-    };
-
-    setIsEqual(true);
   };
 
   useEffect(() => {
@@ -146,6 +115,13 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
       setEmissions(productLines.data);
     }
   }, [prodLines.status]);
+
+  useEffect(() => {
+    if (equality.isSuccess) {
+      setEmissions(equalEmission.data);
+      setIsEqual(true);
+    }
+  }, [equality.status]);
 
   return (
     <>
@@ -184,7 +160,8 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
                       <TableCell className="w-1/4">{item.quantity}</TableCell>
                       <TableCell>
                         <Input
-                          type="number"
+                          type={isEqual ? "text" : "number"}
+                          disabled={!isEdit}
                           value={item.scope1_carbon_emission!}
                           className="bg-gray-50 w-1/2"
                           onChange={(e) => {
@@ -197,7 +174,8 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
                       </TableCell>
                       <TableCell>
                         <Input
-                          type="number"
+                          type={isEqual ? "text" : "number"}
+                          disabled={!isEdit}
                           value={item.scope2_carbon_emission!}
                           onChange={(e) => {
                             const copy = _.cloneDeep(emissions);
@@ -210,7 +188,8 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
                       </TableCell>
                       <TableCell>
                         <Input
-                          type="number"
+                          type={isEqual ? "text" : "number"}
+                          disabled={!isEdit}
                           value={item.scope3_carbon_emission!}
                           onChange={(e) => {
                             const copy = _.cloneDeep(emissions);

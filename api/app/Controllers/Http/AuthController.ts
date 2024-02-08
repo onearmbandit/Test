@@ -572,26 +572,33 @@ export default class AuthController {
             loginType: requestData.loginType,
             firstName: requestData.firstName ? requestData.firstName : null,
             lastName: requestData.lastName ? requestData.lastName : null,
+            emailVerifiedAt: DateTime.now(),
+            emailVerifyToken: '',
+            userStatus: activeStatus,
           },
           role
         )
+
+        const token = await auth.use('api').generate(userData as User, {
+          expiresIn: '1day',
+        })
 
         return apiResponse(
           response,
           true,
           201,
-          userData,
+          { token, user: userData },
           Config.get('responsemessage.AUTH_RESPONSE.userCreated')
         )
       } else {
-        userExist
-          ?.merge({
-            firstName: requestData.firstName ? requestData.firstName : null,
-            lastName: requestData.lastName ? requestData.lastName : null,
-            socialLoginToken: requestData.socialLoginToken,
-            loginType: requestData.loginType,
-          })
-          .save()
+        // userExist
+        //   ?.merge({
+        //     firstName: requestData.firstName ? requestData.firstName : null,
+        //     lastName: requestData.lastName ? requestData.lastName : null,
+        //     socialLoginToken: requestData.socialLoginToken,
+        //     loginType: requestData.loginType,
+        //   })
+        //   .save()
 
         //:: Update organization user table entry
         let organizationUserData = await OrganizationUser.getOrganizationUserDetails('email', requestData.email);
@@ -613,7 +620,7 @@ export default class AuthController {
           response,
           true,
           200,
-          { token, userExist },
+          { token, user: userExist },
           Config.get('responsemessage.AUTH_RESPONSE.loginSuccess')
         )
 

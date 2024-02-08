@@ -35,7 +35,12 @@ const ProductLines = ({ period }: { period: string }) => {
     onSuccess: (data) => {
       toast.success("Products Lines added.", { style: { color: "green" } });
       queryClient.invalidateQueries({
-        queryKey: ["product-lines", period, "facility-details"],
+        queryKey: [
+          "product-lines",
+          period,
+          "facility-details",
+          "product-emissions",
+        ],
       });
       setEdit(false);
     },
@@ -48,7 +53,14 @@ const ProductLines = ({ period }: { period: string }) => {
     mutationFn: editProductLines,
     onSuccess: (data) => {
       toast.success("Products Lines updated.", { style: { color: "green" } });
-      queryClient.invalidateQueries({ queryKey: ["product-lines", period] });
+      queryClient.invalidateQueries({
+        queryKey: [
+          "product-lines",
+          period,
+          "facility-details",
+          "product-emissions",
+        ],
+      });
       setEdit(false);
     },
     onError: (err) => {
@@ -99,7 +111,7 @@ const ProductLines = ({ period }: { period: string }) => {
         ...item,
         functionalUnit: item?.functional_unit,
       }));
-      console.log({ updated });
+      // console.log({ updated });
       setProducts(updated);
     }
   }, [prodLines.status]);
