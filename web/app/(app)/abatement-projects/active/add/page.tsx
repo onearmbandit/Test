@@ -25,7 +25,7 @@ import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import { toast } from "sonner";
 
-const page = () => {
+const AddActivePage = () => {
   const selections = ["Supplier 1", "Supplier 2", "Supplier 3"];
   const [currentSection, setCurrentSection] = useState(1);
   const [projectDetails, setProjectDetails] = useState({
@@ -507,4 +507,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default AddActivePage;
