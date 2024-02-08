@@ -42,6 +42,7 @@ import {
   TableRow,
 } from "../ui/table";
 import _, { set } from "lodash";
+import { Button } from "../ui/button";
 
 export const AddSupplierManualy = () => {
   const router = useRouter();
@@ -49,6 +50,7 @@ export const AddSupplierManualy = () => {
   const reportingId = searchParams.get("reportingId");
 
   const [editSupplier, setEditSupplier] = useState(false);
+  const [editProductTable, setEditProductTable] = useState(false);
   const [supplier, setSupplier] = useState<any>(null);
   const [productList, setProductList] = useState<any>([
     {
@@ -139,7 +141,8 @@ export const AddSupplierManualy = () => {
 
       toast.success("Supplier Created", { style: { color: "green" } });
 
-      router.push("/supply-chain");
+      setEditProductTable(false);
+      // router.push("/supply-chain");
     },
     onError: (err: any) => {
       console.log(err);
@@ -204,9 +207,8 @@ export const AddSupplierManualy = () => {
     setCreatableTypeValue(newOption);
   };
 
-  console.log(errors);
   return (
-    <div className="flex flex-col flex-start p-6 w-full">
+    <div className="flex flex-col flex-start py-6 px-8 w-full">
       <header className="flex gap-2.5 self-stretch p-3 text-sm leading-5 text-blue-600 max-md:flex-wrap">
         <ChevronLeft size={24} className="text-slate-500" />
         <div className="flex-auto max-md:max-w-full">
@@ -235,7 +237,7 @@ export const AddSupplierManualy = () => {
         </p>
       </div>
 
-      <div className="flex flex-col self-stretch py-6 mx-10 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)]">
+      <div className="flex flex-col self-stretch py-6 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)]">
         <div className="flex flex-col px-6 w-full max-md:px-5 max-md:max-w-full">
           {editSupplier ? (
             <div>
@@ -310,13 +312,13 @@ export const AddSupplierManualy = () => {
                     value={values.name}
                     onChange={handleChange}
                     className={cn(
-                      "grow justify-center bg-gray-50 text-slate-700 max-md:pr-5",
+                      "grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 rounded-md text-slate-700 max-md:pr-5",
                       errors?.name && "border border-red-500"
                     )}
                   />
                 </div>
 
-                <div className="flex gap-5 justify-between self-stretch pr-20 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5">
+                <div className="flex gap-5 mt-6 justify-between self-stretch pr-20 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5">
                   <div className=" my-auto font-medium text-slate-700">
                     Contact Email{" "}
                   </div>
@@ -331,7 +333,7 @@ export const AddSupplierManualy = () => {
                   />
                 </div>
 
-                <div className="flex gap-5 justify-between pr-20 mt-6 text-xs max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+                <div className="flex gap-5 justify-between pr-20 text-xs max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
                   <div className="my-auto font-medium leading-4 text-slate-700">
                     Relationship <br />
                     to organization
@@ -396,151 +398,184 @@ export const AddSupplierManualy = () => {
         </div>
       </div>
 
-      <div className="flex flex-col self-stretch p-6 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)] max-md:px-5">
+      <div className="flex flex-col self-stretch p-6 mt-6 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)] max-md:px-5">
         <div className="flex gap-2.5 justify-between max-md:flex-wrap max-md:max-w-full">
-          <div className="flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
-            2
+          <div className="flex space-x-3 items-center">
+            <div className="flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]">
+              2
+            </div>
+            <div className="flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full">
+              Product & Product Level Contribution
+            </div>
           </div>
-          <div className="flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full">
-            Product & Product Level Contribution
-          </div>
+          {!editProductTable && (
+            <Button
+              variant={"ghost"}
+              onClick={() => setEditProductTable(true)}
+              className="text-blue-600 hover:text-blue-600 font-semibold"
+            >
+              Edit
+            </Button>
+          )}
         </div>
-        <div className="mt-6 text-sm leading-5 text-slate-800 max-md:max-w-full">
-          Enter the product type, product name, units created each year, and the
-          functional unit associated with the product. If you know the total
-          Scope 3 contributions for the given quantity of each product, enter it
-          here
-        </div>
-        <Table>
-          <TableHeader className="border-b">
-            <TableHead className="text-xs">Product Name</TableHead>
-            <TableHead className="text-xs">Product Type</TableHead>
-            <TableHead className="text-xs">Quantity</TableHead>
-            <TableHead className="flex gap-3 text-xs justify-between items-center relative">
-              <div>Functional Unit</div>
-              <HelpCircle size={12}></HelpCircle>
-            </TableHead>
-            <TableHead className="grow whitespace-nowrap text-xs">
-              Scope 3 Contribution (kgCO2)
-            </TableHead>
-            <TableHead></TableHead>
-          </TableHeader>
-          <TableBody>
+
+        {editProductTable ? (
+          <>
+            <div className="mt-6 text-sm leading-5 text-slate-800 max-md:max-w-full">
+              Enter the product type, product name, units created each year, and
+              the functional unit associated with the product. If you know the
+              total Scope 3 contributions for the given quantity of each
+              product, enter it here
+            </div>
+            <Table>
+              <TableHeader className="border-b">
+                <TableHead className="text-xs">Product Name</TableHead>
+                <TableHead className="text-xs">Product Type</TableHead>
+                <TableHead className="text-xs">Quantity</TableHead>
+                <TableHead className="flex gap-3 text-xs justify-between items-center relative">
+                  <div>Functional Unit</div>
+                  <HelpCircle size={12}></HelpCircle>
+                </TableHead>
+                <TableHead className="grow whitespace-nowrap text-xs">
+                  Scope 3 Contribution (kgCO2)
+                </TableHead>
+                <TableHead></TableHead>
+              </TableHeader>
+              <TableBody>
+                {productList.map((item: any, i: number) => (
+                  <TableRow className="mt-4">
+                    <TableCell className="min-w-[10rem]">
+                      <CreatableSelect
+                        isClearable
+                        getOptionLabel={(option) => option.name}
+                        getOptionValue={(option) => option.name}
+                        onChange={(newValue) => {
+                          const newCopy = _.cloneDeep(productList);
+                          newCopy[i].name = newValue.name;
+                          console.log(newValue, "new value");
+                          setProductList(newCopy);
+                        }}
+                        onCreateOption={(e) => handleCreate(e, i)}
+                        options={productList}
+                        value={item}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <CreatableSelect
+                        isClearable
+                        getOptionLabel={(option) => option.type}
+                        getOptionValue={(option) => option.type}
+                        onChange={(newValue) => {
+                          const newCopy = _.cloneDeep(productList);
+                          newCopy[i].type = newValue.type;
+                          console.log(newValue, "new value");
+                          setProductList(newCopy);
+                        }}
+                        onCreateOption={(e) => handleCreateType(e, i)}
+                        options={productList}
+                        value={item}
+                      />
+                    </TableCell>
+                    <TableCell className="w-12">
+                      <Input
+                        value={item.quantity}
+                        onChange={(e) => {
+                          const newCopy = _.cloneDeep(productList);
+                          newCopy[i].quantity = e.target.value;
+                          setProductList(newCopy);
+                        }}
+                        className="bg-gray-100"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={item.functionalUnit}
+                        onChange={(e) => {
+                          const newCopy = _.cloneDeep(productList);
+                          newCopy[i].functionalUnit = e.target.value;
+                          setProductList(newCopy);
+                        }}
+                        className="bg-gray-100"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Input
+                        value={item.scope_3Contribution}
+                        onChange={(e) => {
+                          const newCopy = _.cloneDeep(productList);
+                          newCopy[i].scope_3Contribution = e.target.value;
+                          setProductList(newCopy);
+                        }}
+                        className="bg-gray-100"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {productList.length - 1 == i ? (
+                        <Plus
+                          size={16}
+                          role="button"
+                          onClick={() => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy.push({
+                              name: "",
+                              type: "",
+                              quantity: "",
+                              functionalUnit: "",
+                              scope_3Contribution: "",
+                            });
+
+                            setProductList(newCopy);
+                          }}
+                        />
+                      ) : (
+                        <X
+                          size={16}
+                          role="button"
+                          onClick={() => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy.splice(i, 1);
+                            setProductList(newCopy);
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            <div
+              role="button"
+              onClick={() => {
+                const data: any = {
+                  supplierId: supplier?.data?.id,
+                  supplierProducts: productList,
+                };
+                addSupplierProductsMut(data);
+              }}
+              className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]"
+            >
+              Save
+            </div>
+          </>
+        ) : (
+          <div>
             {productList.map((item: any, i: number) => (
-              <TableRow className="mt-4">
-                <TableCell className="min-w-[10rem]">
-                  <CreatableSelect
-                    isClearable
-                    getOptionLabel={(option) => option.name}
-                    getOptionValue={(option) => option.name}
-                    onChange={(newValue) => {
-                      const newCopy = _.cloneDeep(productList);
-                      newCopy[i].name = newValue.name;
-                      console.log(newValue, "new value");
-                      setProductList(newCopy);
-                    }}
-                    onCreateOption={(e) => handleCreate(e, i)}
-                    options={productList}
-                    value={item}
-                  />
-                </TableCell>
-                <TableCell>
-                  <CreatableSelect
-                    isClearable
-                    getOptionLabel={(option) => option.type}
-                    getOptionValue={(option) => option.type}
-                    onChange={(newValue) => {
-                      const newCopy = _.cloneDeep(productList);
-                      newCopy[i].type = newValue.type;
-                      console.log(newValue, "new value");
-                      setProductList(newCopy);
-                    }}
-                    onCreateOption={(e) => handleCreateType(e, i)}
-                    options={productList}
-                    value={item}
-                  />
-                </TableCell>
-                <TableCell className="w-12">
-                  <Input
-                    value={item.quantity}
-                    onChange={(e) => {
-                      const newCopy = _.cloneDeep(productList);
-                      newCopy[i].quantity = e.target.value;
-                      setProductList(newCopy);
-                    }}
-                    className="bg-gray-100"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    value={item.functionalUnit}
-                    onChange={(e) => {
-                      const newCopy = _.cloneDeep(productList);
-                      newCopy[i].functionalUnit = e.target.value;
-                      setProductList(newCopy);
-                    }}
-                    className="bg-gray-100"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    value={item.scope_3Contribution}
-                    onChange={(e) => {
-                      const newCopy = _.cloneDeep(productList);
-                      newCopy[i].scope_3Contribution = e.target.value;
-                      setProductList(newCopy);
-                    }}
-                    className="bg-gray-100"
-                  />
-                </TableCell>
-                <TableCell>
-                  {productList.length - 1 == i ? (
-                    <Plus
-                      size={16}
-                      role="button"
-                      onClick={() => {
-                        const newCopy = _.cloneDeep(productList);
-                        newCopy.push({
-                          name: "",
-                          type: "",
-                          quantity: "",
-                          functionalUnit: "",
-                          scope_3Contribution: "",
-                        });
+              <div
+                key={i}
+                className="flex justify-between items-center text-green-900"
+              >
+                <div className="space-y-1">
+                  <p className="font-bold">{item.name}</p>
 
-                        setProductList(newCopy);
-                      }}
-                    />
-                  ) : (
-                    <X
-                      size={16}
-                      role="button"
-                      onClick={() => {
-                        const newCopy = _.cloneDeep(productList);
-                        newCopy.splice(i, 1);
-                        setProductList(newCopy);
-                      }}
-                    />
-                  )}
-                </TableCell>
-              </TableRow>
+                  <p className="text-sm">{item.type}</p>
+                </div>
+
+                <p>{item.scope_3Contribution}</p>
+              </div>
             ))}
-          </TableBody>
-        </Table>
-
-        <div
-          role="button"
-          onClick={() => {
-            const data: any = {
-              supplierId: supplier?.data?.id,
-              supplierProducts: productList,
-            };
-            addSupplierProductsMut(data);
-          }}
-          className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]"
-        >
-          Save
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
