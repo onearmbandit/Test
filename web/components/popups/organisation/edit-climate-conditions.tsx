@@ -78,7 +78,7 @@ const EditClimateConditions = ({
   return (
     <form
       onSubmit={climateForm.handleSubmit}
-      className="items-start self-stretch bg-white flex grow rounded-e-lg flex-col space-y-6  pt-6 px-8 max-md:px-5"
+      className="items-start self-stretch bg-white flex grow rounded-e-lg flex-col max-w-full space-y-6  pt-6 px-8 max-md:px-5"
     >
       <header className="text-blue-600 text-xs font-medium leading-5 self-stretch max-md:max-w-full">
         <span className="text-slate-500">
@@ -103,7 +103,7 @@ const EditClimateConditions = ({
       <h2 className="self-stretch text-slate-700 text-base font-semibold leading-6 mt-6 max-md:max-w-full">
         Climate commitments
       </h2>
-      <div className="rounded bg-gray-50 self-stretch flex gap-4 h-[5.875rem] max-h-[128px] overflow-auto p-[0.62rem] items-start max-md:max-w-full">
+      <div className="rounded bg-gray-50 self-stretch flex flex-wrap gap-4 h-[5.875rem] max-h-[128px] overflow-auto p-[0.62rem] items-start max-md:max-w-full">
         {targets.map((target, index) => (
           <div
             key={index}
