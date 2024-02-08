@@ -5476,6 +5476,85 @@
 							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Abatement project updated successfully.\",\n    \"data\": {\n        \"id\": \"eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"name\": \"project 1\",\n        \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n        \"estimated_cost\": 234,\n        \"website_url\": \"www.alfalavalproject.com/sustainability\",\n        \"emission_reductions\": 345,\n        \"proposed_by\": \"8804a7b5-496f-4d36-ae35-c8ef3ad91be3\",\n        \"photo_url\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n        \"logo_url\": \"\",\n        \"emission_unit\": \"tCO2e\",\n        \"updated_by\": \"Mayuri Chaudhari\",\n        \"status\": 0,\n        \"deleted_at\": null,\n        \"created_at\": \"2024-02-08T14:54:40.000+05:30\",\n        \"updated_at\": \"2024-02-08T18:13:11.000+05:30\",\n        \"organization\": {\n            \"id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n            \"company_name\": \"XYZ\",\n            \"company_email\": null,\n            \"self_point_of_contact\": null,\n            \"company_size\": null,\n            \"naics_code\": null,\n            \"climate_targets\": null,\n            \"deleted_at\": null,\n            \"created_at\": \"2024-01-25T15:47:27.000+05:30\",\n            \"updated_at\": \"2024-01-25T15:47:27.000+05:30\"\n        },\n        \"proposedSupplier\": {\n            \"id\": \"8804a7b5-496f-4d36-ae35-c8ef3ad91be3\",\n            \"supply_chain_reporting_period_id\": \"39aac424-e7e4-43c3-8a28-bc9e23d2a511\",\n            \"name\": \"first supplier\",\n            \"email\": \"supplier123@mailinator.com\",\n            \"organization_relationship\": \"CONTRACTUAL\",\n            \"address\": \"test address\",\n            \"updated_by\": \"Mayuri Chaudhari\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-02-07T17:52:40.000+05:30\",\n            \"updated_at\": \"2024-02-07T17:52:40.000+05:30\"\n        }\n    }\n}"
 						}
 					]
+				},
+				{
+					"name": "delete project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/abatement-projects/eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"abatement-projects",
+								"eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "delete project",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/abatement-projects/eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"abatement-projects",
+										"eb9d9ce5-f7cf-41fb-b194-0bb0c1d70b75"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "88"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 08 Feb 2024 13:07:18 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Abatement project deleted successfully.\",\n    \"data\": {}\n}"
+						}
+					]
 				}
 			]
 		}
