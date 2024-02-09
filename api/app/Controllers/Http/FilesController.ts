@@ -4,7 +4,6 @@ import { apiResponse } from 'App/helpers/response'
 import Config from '@ioc:Adonis/Core/Config';
 import ImageUploadValidator from 'App/Validators/FileUpload/ImageUploadValidator';
 import Env from '@ioc:Adonis/Core/Env'
-import { cuid } from '@ioc:Adonis/Core/Helpers'
 
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import fs from 'fs';
