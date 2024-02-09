@@ -510,7 +510,7 @@ export const EditSupplier = () => {
               </TableHeader>
               <TableBody>
                 {productList.map((item: any, i: number) => (
-                  <TableRow className="mt-4 border-0">
+                  <TableRow key={i} className="mt-4 border-0">
                     <TableCell className="max-w-[16rem] py-3 px-3 pl-0 pr-4">
                       <CreatableSelect
                         // isClearable
