@@ -16,10 +16,6 @@ export default class AddSupplierDatumValidator {
       rules.email(),
     ]),
     address: schema.string.optional({ trim: true }, [rules.maxLength(500)]),
-    // addressLine_2: schema.string.optional({ trim: true }, [rules.maxLength(255)]),
-    // city: schema.string({ trim: true }, [rules.maxLength(100)]),
-    // state: schema.string({ trim: true }, [rules.maxLength(50)]),
-    // zipCode: schema.string({ trim: true }, [rules.maxLength(20),rules.minLength(5)]),
   })
 
 
