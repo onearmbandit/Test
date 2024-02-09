@@ -74,8 +74,12 @@ export const authOptions: NextAuthOptions = {
           const res = await response.json();
 
           if (!res?.status) {
-            console.log("err", res.message);
-            throw new Error(res.message);
+            console.log("err", res);
+            if (res.errors) {
+              throw new Error(res.errors.message);
+            } else {
+              throw new Error(res.message);
+            }
           }
 
           // console.log("ress => ", res);

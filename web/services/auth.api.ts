@@ -30,10 +30,12 @@ const fetchApi = async (
     .then((res) => res.data)
     .catch((err) => {
       console.log("error : ", err.response.data);
-      if (err.response.data.message == "") {
-        throw new Error(err.response.data.errors[0].message);
+      if (err.response.data.errors) {
+        // throw new Error(err.response.data.errors[0].message);
+        return err.response.data;
       } else {
-        throw new Error(err.response.data.message);
+        // throw new Error(err.response.data.message);
+        return err.response.data;
       }
     });
 
