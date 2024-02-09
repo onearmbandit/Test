@@ -152,3 +152,7 @@ export const deleteMultipleSupplierProducts = (ids: any): any => {
     body: { products: ids },
   });
 };
+
+export const getSupplierDetailsById = (supplierId: string) => {
+  return fetchApi(`/auth/suppliers/${supplierId}`);
+};
