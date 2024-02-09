@@ -3,7 +3,13 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { ChevronDown, HelpCircle, Loader2, Plus } from 'lucide-react';
+import {
+  ArrowUpRight,
+  ChevronDown,
+  HelpCircle,
+  Loader2,
+  Plus,
+} from 'lucide-react';
 import download from 'downloadjs';
 
 import {
@@ -141,6 +147,8 @@ const Page = () => {
   const deleteProductsMut = useMutation({
     mutationFn: deleteMultipleSupplierProducts,
     onSuccess: (data: any) => {
+      queryClient.invalidateQueries();
+      setSelectedProductIds([]);
       toast.success('Selected products deleted successfully.', {
         style: { color: 'green' },
       });
@@ -232,7 +240,10 @@ const Page = () => {
                     <TabsTrigger
                       key={i}
                       value={item.id}
-                      onClick={() => setCurrentTab(item.id)}
+                      onClick={() => {
+                        setCurrentTab(item.id);
+                        setSelectedProductIds([]);
+                      }}
                     >
                       <Popover>
                         <PopoverTrigger className=''>
@@ -361,6 +372,17 @@ const Page = () => {
               <Button
                 onClick={() => {
                   console.log('selected product ids : ', selectedProductIds);
+                  deleteProductsMut.mutate(selectedProductIds);
+
+                  // queryClient.invalidateQueries({
+                  //   queryKey: [
+                  //     "supplier-products",
+                  //     currentTab,
+                  //     "reporting-periods",
+                  //     organizationId,
+                  //     "user-data",
+                  //   ],
+                  // });
                 }}
                 variant='outline'
                 className='mr-4'
@@ -507,16 +529,13 @@ const Page = () => {
                     </div>
 
                     <button className='flex flex-col justify-center bg-gradient-to-b from-gray-100  hover:from-gray-200 hover:via-gray-200 hover:to-gray-300 px-2 py-2 text-xs font-semibold leading-4 text-center text-gray-500 whitespace-nowrap bg-white rounded border border-solid shadow border-[color:var(--Gray-100,#F3F4F6)] max-w-[72px]'>
-                      <div className='flex gap-2 justify-between'>
-                        <img
-                          loading='lazy'
-                          src='https://cdn.builder.io/api/v1/image/assets/TEMP/1e2945c0359012bb5240bb38f587151755106a85c91a3069f70d9c667c8a8e17?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                          className='w-4 aspect-square'
-                        />
-                        <a href='#' className='link'>
-                          VIEW
-                        </a>
-                      </div>
+                      <Link
+                        href={`/supply-chain/supplier/${product?.supplier?.id}`}
+                        className='flex gap-2 justify-between'
+                      >
+                        <ArrowUpRight size={16} className='text-slate-600' />
+                        <p className='link'>VIEW</p>
+                      </Link>
                     </button>
                   </div>
                   <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5'>

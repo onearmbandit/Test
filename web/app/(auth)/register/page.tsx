@@ -105,22 +105,38 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   const validation = z.object({
     email: z.string().email(),
   });
-  const passwordValidation = z.object({
-    password: z
-      .string()
-      .min(8, { message: "length" })
-      .regex(/[A-Z]/, { message: "uppercase" })
-      .regex(/[a-z]/, { message: "lowercase" })
-      .regex(/[0-9]/, { message: "number" })
-      .regex(/[^A-Za-z0-9]/, { message: "special" }),
-  });
+  const passwordValidation = z
+    .object({
+      password: z.string(),
+    })
+    .superRefine((val, ctx) => {
+      if (val.password.length < 8) {
+        ctx.addIssue({ code: "custom", message: "length" });
+      }
+      if (!/[A-Z]/.test(val.password)) {
+        ctx.addIssue({ code: "custom", message: "uppercase" });
+      }
+
+      if (!/[a-z]/.test(val.password)) {
+        ctx.addIssue({ code: "custom", message: "lowercase" });
+      }
+      if (!/[0-9]/.test(val.password)) {
+        ctx.addIssue({ code: "custom", message: "number" });
+      }
+      if (!/[^A-Za-z0-9]/.test(val.password)) {
+        ctx.addIssue({ code: "custom", message: "special" });
+      }
+    });
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: register,
     onSuccess: (user) => {
       console.log(user);
-      setUserId(user.data.id);
+      if (user.errors) {
+        throw new Error(user.errors[0].message);
+      }
+      setUserId(user.data?.id);
       router.push("/register?step=2");
       // setCurrentStep(2);
     },
@@ -140,12 +156,14 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
       console.log("mutate", data);
-      // if (errors.length > 0 && !errors.includes("length")) {
-      //   return;
-      // }
+      if (errors.length > 0) {
+        return;
+      }
       mutate(data);
     },
   });
+
+  console.log(errors);
 
   const handleSignIn = async (provider: string) => {
     const res = await signIn(provider, { redirect: false });
@@ -154,6 +172,8 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   if (session) {
     router.push("/");
   }
+
+  // console.log("errors", errors);
 
   return (
     <div className="items-center flex flex-1 max-w-[840px] w-full flex-col px-20 py-12 max-md:px-5">
@@ -208,13 +228,13 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
                   const value = e.target.value;
                   const values = { password: value };
 
-                  try {
-                    passwordValidation.parse(values);
-                  } catch (error: any) {
-                    // Convert Zod error format to Formik error format
-                    setErrors(error.errors.map((err: any) => err.message));
+                  const result = passwordValidation.safeParse(values);
+
+                  if (!result.success) {
+                    setErrors(result.error.format()._errors);
+                  } else {
+                    setErrors([]);
                   }
-                  // registerForm.validateField("password");
                 }}
                 placeholder="Password"
               />
@@ -409,6 +429,9 @@ const Step2 = ({
     mutationKey: ["step2"],
     mutationFn: registerStep2,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       setUserSlug(data.data.slug);
       // setCurrentStep(3);
       console.log(data.data.slug);
@@ -506,11 +529,18 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const { mutate, isSuccess, isPending } = useMutation({
     mutationFn: registerOrganisation,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
+
       setUserEmail(data.data.email);
       // setCurrentStep(4);
       console.log("data", data.data.organizations);
       update({ orgs: data.data.organizations });
       router.push("/register?step=complete");
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
     },
   });
 

@@ -1,3 +1,4 @@
+'use cliemt';
 import {
   Dialog,
   DialogContent,
@@ -41,6 +42,8 @@ const UploadCsvModal = ({
   const [uploadStatus, setUploadStatus] = useState('select');
   // const [modalStatus, setModalStatus] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  // const [uploadStatus, setUploadStatus] = useState("select");
+  const [modalStatus, setModalStatus] = useState(false);
   const [progress, setProgress] = useState(0);
   const queryClient = useQueryClient();
 
@@ -111,9 +114,7 @@ const UploadCsvModal = ({
         setProgress(100);
         await delay(1100);
         setProgress(0);
-        queryClient.invalidateQueries({
-          queryKey: ['reporting-period', periodId],
-        });
+        queryClient.invalidateQueries();
 
         toast.success('csv file uploaded Successfully.', {
           style: { color: 'green' },
@@ -121,7 +122,7 @@ const UploadCsvModal = ({
         setUploadStatus('done');
       })
       .catch(async (error) => {
-        setError(error.response.data.errors[0].message);
+        setError(error?.response?.data?.errors[0]?.message);
         console.log(error, 'error');
       });
   };
@@ -138,7 +139,6 @@ const UploadCsvModal = ({
             Upload CSV
           </div>
         </DialogTrigger>
-
         <DialogContent className='z-50 max-w-[44rem] p-[60px]'>
           <DialogDescription>
             <div className='bg-white flex max-w-[707px] flex-col items-end'>
