@@ -89,6 +89,10 @@ Route.group(() => {
         'index', 'store', 'show', 'update', 'destroy',
       ])
 
+      Route.resource('/supplier-organizations', 'SupplierOrganizationsController').only([
+        'index'
+      ])
+
 
       //Invite organization api
       Route.post('/invite-organization', 'OrganizationUsersController.inviteOrganization')
