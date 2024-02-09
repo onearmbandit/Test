@@ -5555,6 +5555,107 @@
 							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Abatement project deleted successfully.\",\n    \"data\": {}\n}"
 						}
 					]
+				},
+				{
+					"name": "Get organisation supplier list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/supplier-organizations?order=desc&include=supplier,organization",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"supplier-organizations"
+							],
+							"query": [
+								{
+									"key": "order",
+									"value": "desc",
+									"description": "'asc','desc'"
+								},
+								{
+									"key": "include",
+									"value": "supplier,organization",
+									"description": "supplier,organization"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get organisation supplier list",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/api/v1/auth/supplier-organizations?order=desc&include=supplier,organization",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"auth",
+										"supplier-organizations"
+									],
+									"query": [
+										{
+											"key": "order",
+											"value": "desc",
+											"description": "'asc','desc'"
+										},
+										{
+											"key": "include",
+											"value": "supplier,organization",
+											"description": "supplier,organization"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "106"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 08 Feb 2024 19:04:08 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": [\n        \"first supplier 123\",\n        \"DEF\",\n        \"ABC\"\n    ]\n}"
+						}
+					]
 				}
 			]
 		}

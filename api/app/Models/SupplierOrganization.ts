@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, BelongsTo, belongsTo } from '@ioc:Adonis/Lucid/Orm'
 import { ParsedQs } from 'qs'
+import Organization from './Organization'
+import Supplier from './Supplier'
 
 
 export default class SupplierOrganization extends BaseModel {
@@ -8,13 +10,13 @@ export default class SupplierOrganization extends BaseModel {
   public id: number
 
   @column({ columnName: 'organization_id' })
-  public organization_id: number
+  public organizationId: number
 
   @column({ columnName: 'supplier_id' })
-  public supplier_id: number
+  public supplierId: number
 
   @column({ columnName: 'supplier_organization_id' })
-  public supplier_organization_id: number
+  public supplierOrganizationId: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -22,36 +24,62 @@ export default class SupplierOrganization extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
+  //::_____Relationships Start_____:://
+
+  @belongsTo(() => Organization, {
+    foreignKey: 'supplierOrganizationId',
+    localKey: 'id',
+  })
+  public organization: BelongsTo<typeof Organization>
+
+  @belongsTo(() => Supplier, {
+    foreignKey: 'supplierId',
+  })
+  public supplier: BelongsTo<typeof Supplier>
+
+  //::_____Relationships End_____:://
 
 
-  //:: Need to check
   public static async getAllSuppliersWithOrganization(queryParams: ParsedQs) {
-    let allSuppliersData: any = {}
-
-    const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
-    const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
     const order = queryParams.order ? queryParams.order.toString() : 'desc'
-    const sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at'
-    // let filters: any = queryParams.filters ? queryParams.filters : {};
     let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
 
-    let query = this.query() // Exclude soft-deleted records;
+    // Step 1: Iterate through the array
+    const mergedArray: Array<string> = [];
 
-    query = query.orderBy(sort, order)
+    let query = this.query()
 
-    //::Include Relationship
+    // query = query.orderBy(sort, order)
+
+    // Step 2: Include Relationship
     if (includes.length > 0) {
       includes.forEach((include: any) => query.preload(include.trim()))
     }
 
-    //:: Pagination handling
-    if (queryParams.perPage && queryParams.perPage !== 'all') {
-      allSuppliersData = await query.paginate(page, perPage)
-    }
-    else {
-      allSuppliersData = await query
-    }
+    (await query).forEach((item) => {
+      // Step 3: Extract relevant information from supplier and organization objects
+      const supplierName = item.supplier.name;
+      const companyName = item.organization.companyName;
 
-    return allSuppliersData
+      // Step 3: Merge supplierName and companyName into one array
+      mergedArray.push(supplierName, companyName);
+    });
+
+    // Step 4: Convert the merged array into a unique array
+    const uniqueMergedArray = Array.from(new Set(mergedArray));
+
+    // console.log(uniqueMergedArray);
+
+    // Function to sort the array based on order ("asc" or "desc")
+    const sortArray = (order: 'asc' | 'desc'): Array<string> => {
+      return order === 'asc'
+        ? uniqueMergedArray.slice().sort() // Use slice to create a copy and avoid modifying the original array
+        : uniqueMergedArray.slice().sort((a, b) => b.localeCompare(a));
+    };
+
+    const sortedArray: Array<string> = sortArray(order);
+
+
+    return sortedArray
   }
 }

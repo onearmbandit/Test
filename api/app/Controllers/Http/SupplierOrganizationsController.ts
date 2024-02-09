@@ -7,14 +7,13 @@ export default class SupplierOrganizationsController {
   public async index({ request, response }: HttpContextContract) {
     try {
       const queryParams = request.qs()
-       await SupplierOrganization.getAllSuppliersWithOrganization(queryParams)
-
+      const result = await SupplierOrganization.getAllSuppliersWithOrganization(queryParams)
 
       return apiResponse(
         response,
         true,
         200,
-        {},
+        result,
         Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'),
       )
     } catch (error) {

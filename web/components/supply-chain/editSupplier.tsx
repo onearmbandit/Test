@@ -1,14 +1,14 @@
 "use client";
 import { ChevronLeft, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import AutocompleteInput from "../Autocomplete";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 
 import { useFormik } from "formik";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import {
@@ -17,6 +17,7 @@ import {
   getProductNamesBySupplierId,
   getProductTypesBySupplierId,
   getReportingPeriodById,
+  getSupplierDetailsById,
   updateSupplier,
 } from "@/services/supply.chain";
 import {
@@ -50,20 +51,24 @@ import {
 import _, { set } from "lodash";
 import { Button } from "../ui/button";
 
-export const AddSupplierManualy = () => {
+export const EditSupplier = () => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const params = useParams();
   const reportingId = searchParams.get("reportingId");
+  const supplierId: any = params.id;
 
-  const [editSupplier, setEditSupplier] = useState(false);
+  const [editSupplier, setEditSupplier] = useState(true);
   const [editProductTable, setEditProductTable] = useState(false);
-  const [supplier, setSupplier] = useState<any>(null);
+  //   const [supplier, setSupplier] = useState<any>(null);
   const [productList, setProductList] = useState<any>([
     {
+      id: "",
       name: "Add product name",
       type: "Add product type",
       quantity: "",
-      functionalUnit: "",
+      functional_unit: "",
       scope_3Contribution: "",
     },
   ]);
@@ -79,19 +84,13 @@ export const AddSupplierManualy = () => {
     ? reportingPeriodQ.data.data
     : null;
 
-  // const productNamesQ = useQuery({
-  //   queryKey: ["product-names"],
-  //   queryFn: () => getProductNamesBySupplierId(supplier?.data?.id),
-  // });
+  const supplierQ = useQuery({
+    queryKey: ["supplier", supplierId],
+    queryFn: () => getSupplierDetailsById(supplierId!),
+  });
 
-  // const productNames = productNamesQ.isSuccess ? productNamesQ.data.data : [];
-
-  // const productTypesQ = useQuery({
-  //   queryKey: ["product-types"],
-  //   queryFn: () => getProductTypesBySupplierId(supplier?.data?.id),
-  // });
-
-  // const productTypes = productTypesQ.isSuccess ? productTypesQ.data.data : [];
+  const supplier = supplierQ.isSuccess ? supplierQ.data.data : {};
+  console.log("supplier", supplier);
 
   const relationShips = ["OWNED", "CONTRACTED"];
 
@@ -107,7 +106,7 @@ export const AddSupplierManualy = () => {
     onSuccess: (data) => {
       console.log("supplier created : ", data);
 
-      setSupplier(data);
+      //   setSupplier(data);
 
       setValues({
         ...data.data,
@@ -115,7 +114,6 @@ export const AddSupplierManualy = () => {
       });
       toast.success("New Supplier Added", { style: { color: "green" } });
       setEditSupplier(true);
-      // router.push("/supply-chain");
     },
     onError: (err: any) => {
       console.log(err);
@@ -128,7 +126,7 @@ export const AddSupplierManualy = () => {
     onSuccess: (data) => {
       console.log("supplier updated : ", data);
 
-      setSupplier(data);
+      //   setSupplier(data);
       setValues(data.data);
       toast.success("Supplier Updated", { style: { color: "green" } });
       setEditSupplier(true);
@@ -165,7 +163,7 @@ export const AddSupplierManualy = () => {
     setValues,
   } = useFormik({
     initialValues: {
-      id: supplier?.data?.id ? supplier.data.id : "",
+      id: supplier?.id ? supplier.id : "",
       supplyChainReportingPeriodId: reportingId,
       name: "",
       email: "",
@@ -178,7 +176,7 @@ export const AddSupplierManualy = () => {
     onSubmit: (data) => {
       console.log("add supplier : ", data);
       data = { ...data, supplyChainReportingPeriodId: reportingId };
-      if (supplier?.data?.id) {
+      if (supplier?.id) {
         editSupplierMut(data);
       } else {
         mutate(data);
@@ -188,10 +186,11 @@ export const AddSupplierManualy = () => {
 
   const handleCreate = (inputValue: string, i: number) => {
     const newOption = {
+      id: "",
       name: inputValue,
       quantity: "",
       type: "",
-      functionalUnit: "",
+      functional_unit: "",
       scope_3Contribution: "",
     };
     const newCopy = _.cloneDeep(productList);
@@ -199,6 +198,7 @@ export const AddSupplierManualy = () => {
     setProductList(newCopy);
     setCreatableValue(newOption);
   };
+
   const customDropdownStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
@@ -210,12 +210,14 @@ export const AddSupplierManualy = () => {
       display: "none",
     }),
   };
+
   const handleCreateType = (inputValue: string, i: number) => {
     const newOption = {
+      id: "",
       name: "",
       quantity: "",
       type: inputValue,
-      functionalUnit: "",
+      functional_unit: "",
       scope_3Contribution: "",
     };
     const newCopy = _.cloneDeep(productList);
@@ -224,21 +226,46 @@ export const AddSupplierManualy = () => {
     setCreatableTypeValue(newOption);
   };
 
+  useEffect(() => {
+    if (supplierQ.isSuccess) {
+      setValues(supplier);
+      setFieldValue(
+        "organizationRelationship",
+        supplier.organization_relationship
+      );
+      const newSupplierList = supplier.supplierProducts.map((product: any) => ({
+        ...product,
+        scope_3Contribution: product.scope_3_contribution,
+      }));
+      setProductList(newSupplierList);
+    }
+  }, [supplierQ.status]);
+
+  console.log(productList);
+
   return (
     <div className="flex flex-col flex-start p-6 w-full">
       <header className="flex gap-2.5 self-stretch p-3 text-sm items-center leading-5 text-blue-600 max-md:flex-wrap">
-        <ChevronLeft size={24} className="text-slate-500" />
+        <ChevronLeft
+          size={24}
+          className="text-slate-500 cursor-pointer"
+          onClick={() => {
+            router.back();
+          }}
+        />
         <div className="flex-auto max-md:max-w-full">
           <p className="text-slate-500">
             Supply Chain &gt;
-            <span className="font-bold text-blue-600 ml-2">Add Supplier</span>
+            <span className="font-bold text-blue-600 ml-2">
+              {supplier?.name}
+            </span>
           </p>
         </div>
       </header>
 
       <div className="flex gap-5 justify-between px-[40px] self-stretch max-md:flex-wrap">
         <div className="text-lg mt-2 font-bold leading-7 text-center text-gray-700">
-          New Supplier Entry
+          {supplier?.name}
         </div>
         <p className="justify-center px-2 py-0.5 my-auto text-xs font-medium leading-4 text-cyan-800 whitespace-nowrap bg-cyan-50 rounded-md">
           Reporting Period:
@@ -248,10 +275,7 @@ export const AddSupplierManualy = () => {
         </p>
       </div>
       <div className="text-sm leading-5 text- w-full px-[40px]  text-slate-800">
-        <p className="py-6">
-          Add your suppliers product carbon footprint to determine your product
-          level contribution
-        </p>
+        <p className="py-6">Edit your supplier product information</p>
       </div>
 
       <div className="flex flex-col self-stretch py-6 mx-10 rounded border border-solid border-[color:var(--Gray-200,#E5E7EB)]">
@@ -283,27 +307,20 @@ export const AddSupplierManualy = () => {
                 <div className="text-xs font-medium leading-5 text-green-900 px-5 max-w-[515px]">
                   <p className="text-slate-500">
                     Supplier Name:{" "}
-                    <span className="text-green-900">
-                      {supplier?.data?.name}
-                    </span>
+                    <span className="text-green-900">{supplier?.name}</span>
                   </p>
                   <span className="text-slate-500">Contact Email:</span>
-                  <span className="text-green-900">
-                    {" "}
-                    {supplier?.data?.email}
-                  </span>
+                  <span className="text-green-900"> {supplier?.email}</span>
                   <br />
                   <span className="text-slate-500">
                     Relationship to Organization:{" "}
                   </span>
                   <span className="text-green-900">
-                    {supplier?.data?.organization_relationship}
+                    {supplier?.organization_relationship}
                   </span>
                   <br />
                   <span className="text-slate-500">Supplier Address:</span>{" "}
-                  <span className="text-green-900">
-                    {supplier?.data?.address}
-                  </span>
+                  <span className="text-green-900">{supplier?.address}</span>
                 </div>
               </div>
             </div>
@@ -503,6 +520,7 @@ export const AddSupplierManualy = () => {
                         onChange={(newValue) => {
                           const newCopy = _.cloneDeep(productList);
                           newCopy[i].name = newValue.name;
+                          newCopy[i].id = newValue.id;
                           console.log(newValue, "new value");
                           setProductList(newCopy);
                         }}
@@ -521,6 +539,7 @@ export const AddSupplierManualy = () => {
                         onChange={(newValue) => {
                           const newCopy = _.cloneDeep(productList);
                           newCopy[i].type = newValue.type;
+                          newCopy[i].id = newValue.id;
                           console.log(newValue, "new value");
                           setProductList(newCopy);
                         }}
@@ -542,10 +561,10 @@ export const AddSupplierManualy = () => {
                     </TableCell>
                     <TableCell className="pl-0 pr-4 w-[12rem] py-3">
                       <Input
-                        value={item.functionalUnit}
+                        value={item.functional_unit}
                         onChange={(e) => {
                           const newCopy = _.cloneDeep(productList);
-                          newCopy[i].functionalUnit = e.target.value;
+                          newCopy[i].functional_unit = e.target.value;
                           setProductList(newCopy);
                         }}
                         className="bg-[#F9FAFB] rounded-md"
@@ -570,10 +589,11 @@ export const AddSupplierManualy = () => {
                           onClick={() => {
                             const newCopy = _.cloneDeep(productList);
                             newCopy.push({
+                              id: "",
                               name: "",
                               type: "",
                               quantity: "",
-                              functionalUnit: "",
+                              functional_unit: "",
                               scope_3Contribution: "",
                             });
 
@@ -600,10 +620,15 @@ export const AddSupplierManualy = () => {
               role="button"
               onClick={() => {
                 const data: any = {
-                  supplierId: supplier?.data?.id,
+                  supplierId: supplier?.id,
                   supplierProducts: productList,
                 };
+                console.log("edit list : ", productList);
                 addSupplierProductsMut(data);
+
+                queryClient.invalidateQueries({
+                  queryKey: ["supplier", supplierId],
+                });
               }}
               className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]"
             >
@@ -632,4 +657,4 @@ export const AddSupplierManualy = () => {
     </div>
   );
 };
-export default AddSupplierManualy;
+export default EditSupplier;
