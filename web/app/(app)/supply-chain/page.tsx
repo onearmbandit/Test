@@ -1,16 +1,26 @@
-'use client';
-import React, { ReactNode, useEffect, useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { toast } from 'sonner';
-import download from 'downloadjs';
+"use client";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import {
+  ArrowUpRight,
+  ChevronDown,
+  HelpCircle,
+  Loader2,
+  Plus,
+} from "lucide-react";
+import download from "downloadjs";
+
 import {
   addReportingPeriod,
+  deleteMultipleSupplierProducts,
   downloadCsvTemplate,
+  getAllEmissioScopeData,
   getAllReportingPeriods,
+  getAllSuppliersByPeriodId,
   importFile,
-} from '@/services/supply.chain';
+} from "@/services/supply.chain";
 import {
   Dialog,
   DialogContent,
@@ -19,318 +29,555 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { useSession } from 'next-auth/react';
-import ReportingPeriodPopup from '@/components/supply-chain/reporting-period-popover';
-import dayjs from 'dayjs';
-import AddSupplierManualy from '@/components/supply-chain/addSupplierManualy';
+} from "@/components/ui/popover";
+import { useSession } from "next-auth/react";
+import ReportingPeriodPopup from "@/components/supply-chain/reporting-period-popover";
+import dayjs from "dayjs";
+import SupplierData from "@/components/supply-chain/SupplierData";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { convertDateToString } from "@/lib/utils";
+import { exportSupplierDataCsv, getUser } from "@/services/user.api";
+import UploadCsvModal from "@/components/supply-chain/UploadCsvModal";
 
 const Page = () => {
-  const [file, setFile] = useState('');
-  const [fileName, setFileName] = useState('');
+  const queryClient = useQueryClient();
+  const [fileName, setFileName] = useState("");
   const [showNew, setShowNew] = useState(false);
   const session = useSession();
   const [currentTab, setCurrentTab] = useState<string | null>(null);
+  const [showCsvUploadModal, setShowCsvUploadModal] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState("select");
+  const [selectedProductIds, setSelectedProductIds] = useState<any>([]);
 
   const organizationId = session?.data?.user.organizations[0].id!;
 
   const periodsQ = useQuery({
-    queryKey: ['reporting-periods', organizationId],
+    queryKey: ["reporting-periods", organizationId],
     queryFn: () => getAllReportingPeriods(organizationId),
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
   // console.log(session.data? session.data.user.organizations[0].id:"", 'session.data');
-  console.log(reportingPeriods, 'reportingPeriods');
-  function handleChange(event: any) {
-    setFile(event.target.files[0]);
-    setFileName(event.target.files[0].name);
-  }
-  function handleSubmit(event: any) {
-    event.preventDefault();
-    const formData = {
-      supplierCSV: fileName,
-      supplyChainReportingPeriodId: 'f942aa90-6dc1-45a4-bc12-bf53e9f38468',
-    };
-    // formData.append('file', file);
-    mutate(formData);
-  }
+  console.log(reportingPeriods, "reportingPeriods");
   const { mutate, isPending } = useMutation({
     mutationFn: importFile,
     onSuccess: (data) => {},
     onError: (err) => {
-      toast.error(err.message, { style: { color: 'red' } });
+      toast.error(err.message, { style: { color: "red" } });
     },
   });
 
   const DownloadTemplate = () => {
     downloadCsvMUt.mutate();
   };
+
+  const emptyInput = () => {
+    setFileName("");
+  };
+
+  const handleCheckboxChange = (event: any) => {
+    const productId = event.target.value;
+    if (event.target.checked) {
+      if (!selectedProductIds.includes(productId)) {
+        setSelectedProductIds((prevIds: any) => [...prevIds, productId]);
+      }
+    } else {
+      setSelectedProductIds((prevIds: any) =>
+        prevIds.filter((id: string) => id !== productId)
+      );
+    }
+  };
+
+  const areAllSelected = () => {
+    // Assuming supplierProducts is an array of all products you are iterating over
+    // This checks if every product ID is in the selectedProductIds array
+    const allProductIds = supplierProducts.map((product: any) => product.id);
+    return (
+      allProductIds.length > 0 &&
+      allProductIds.every((id: string) => selectedProductIds.includes(id))
+    );
+  };
+
+  const handleSelectAllChange = (event: any) => {
+    if (event.target.checked) {
+      // Select all: add all product IDs to the selectedProductIds state
+      const allProductIds = supplierProducts.map((product: any) => product.id);
+      setSelectedProductIds(allProductIds);
+    } else {
+      // Deselect all: clear the selectedProductIds state
+      setSelectedProductIds([]);
+    }
+  };
+
+  const handleSelectAllButtonClick = () => {
+    const allProductIds = supplierProducts.map((product: any) => product.id);
+
+    // If not all products are currently selected, select all, otherwise deselect all
+    if (areAllSelected()) {
+      // Deselect all if currently all are selected
+      setSelectedProductIds([]);
+    } else {
+      // Select all if not all products are currently selected
+      setSelectedProductIds(allProductIds);
+    }
+  };
+
+  const token = session?.data?.token.token;
   const downloadCsvMUt = useMutation({
     mutationFn: downloadCsvTemplate,
     onSuccess: (data) => {
-      download(
-        data?.data.download_url,
-        'Supplier_GHG_Emissions_CSV_Template.csv',
-        'text/csv'
-      );
-      console.log(data?.data.download_url, 'data dsfasdf');
-      toast.success('csv downloaded Successfully.', {
-        style: { color: 'green' },
+      download(data?.data.download_url);
+      toast.success("csv downloaded Successfully.", {
+        style: { color: "green" },
       });
     },
     onError: (err) => {
       alert(err);
-      toast.error(err.message, { style: { color: 'red' } });
+      toast.error(err.message, { style: { color: "red" } });
     },
   });
-  const emptyInput = () => {
-    setFileName('');
-  };
 
+  const deleteProductsMut = useMutation({
+    mutationFn: deleteMultipleSupplierProducts,
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries();
+      setSelectedProductIds([]);
+      toast.success("Selected products deleted successfully.", {
+        style: { color: "green" },
+      });
+    },
+    onError: (err: any) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
   useEffect(() => {
     if (periodsQ.isSuccess) {
       setCurrentTab(reportingPeriods[0]?.id);
     }
   }, [periodsQ.isSuccess]);
+
+  const supplierProductsQ = useQuery({
+    queryKey: ["supplier-products", currentTab],
+    queryFn: () => getAllSuppliersByPeriodId(currentTab),
+  });
+  const supplierProducts = supplierProductsQ.isSuccess
+    ? supplierProductsQ.data.data
+    : [];
+
+  const userQ = useQuery({
+    queryKey: ["user-data"],
+    queryFn: () => getUser(),
+  });
+  const user = userQ.isSuccess ? userQ.data.data : null;
+
   return (
-    <div className='w-full shadow bg-gray-50 flex flex-col pl-6 pr-6 pt-5 pb-12 max-md:px-5'>
-      <header className='justify-between items-center self-stretch flex gap-5 py-2 max-md:flex-wrap max-md:px-5'>
-        <div className='overflow-hidden text-slate-800 text-ellipsis text-base font-semibold leading-6 my-auto'>
-          Pepsi Co
-        </div>
-        <div className='justify-center self-stretch flex flex-col pl-16 py-6 items-end max-md:max-w-full max-md:pl-5'>
-          <div className='text-gray-900 text-xs font-medium leading-4 whitespace-nowrap justify-center items-stretch bg-gray-50 p-2 rounded-md'>
-            NAICS: 3241
-          </div>
-        </div>
-      </header>
-      <div className='w-full flex justify-end items-center'>
-        <div
-          className='rounded flex gap-1.5 px-3.5 py-1.5 cursor-pointer'
-          onClick={() => setShowNew(true)}
-        >
-          <img
-            loading='lazy'
-            src='https://cdn.builder.io/api/v1/image/assets/TEMP/0a3b37dc7caf0621d0a3ddfd4c525cb8a2f3841ad00c9625467586617b68bb03?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-            className='aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto'
-            alt='Reporting Period Image'
-          />
-          <header className='text-blue-600 text-sm font-semibold leading-5 self-stretch grow whitespace-nowrap'>
-            Add Reporting Period
-          </header>
-        </div>
-      </div>
-      {periodsQ.isSuccess && (
-        <Tabs className='w-full' value={showNew ? 'new' : currentTab!}>
-          <TabsList>
-            {showNew && (
-              <TabsTrigger value='tab1'>
-                <Popover defaultOpen={true}>
-                  <PopoverTrigger> Add Reporting Period</PopoverTrigger>
-                  <PopoverContent
-                    align='start'
-                    className='w-full left-0 p-0 -ml-4'
-                  >
-                    <ReportingPeriodPopup setNew={setShowNew} />
-                  </PopoverContent>
-                </Popover>
-              </TabsTrigger>
-            )}
-
-            {reportingPeriods.map((item: any, i: number) => {
-              const reporting = `${dayjs(item.reporting_period_from).format(
-                'MMM YYYY'
-              )} - ${dayjs(item.reporting_period_to).format('MMM YYYY')}`;
-              return (
-                <TabsTrigger
-                  key={i}
-                  value={item.id}
-                  onClick={() => setCurrentTab(reporting)}
-                >
-                  <Popover>
-                    <PopoverTrigger className='text-blue-600'>
-                      {reporting}
-                    </PopoverTrigger>
-                    <PopoverContent
-                      align='start'
-                      className='w-full left-0 p-0 -ml-4'
-                    >
-                      <ReportingPeriodPopup setNew={setShowNew} period={item} />
-                    </PopoverContent>
-                  </Popover>
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-
-          <TabsContent value={currentTab!} className='relative'>
-            <div></div>
-          </TabsContent>
-
-          <TabsContent value='new'>
-            <div className='justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5'>
-              <img
-                loading='lazy'
-                src='https://cdn.builder.io/api/v1/image/assets/TEMP/9125c29d6e22fd51a2f1e9dcb27da44ac69b93ebcdb1009043a3b8178d6d05e3?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                className='aspect-[1.17] object-contain object-center w-[54px] overflow-hidden self-center max-w-full mt-9'
-              />
-              <div className='text-slate-700 text-3xl font-semibold leading-9 self-center mt-3 max-md:max-w-full'>
-                Upload supplier product level emissions data
-              </div>
-              <div className='text-slate-700 text-center text-lg font-light leading-7 self-stretch w-full mt-6 max-md:max-w-full max-md:mr-2'>
-                Your suppliers product-level emission data encompasses the
-                Scope 3 emissions directly linked to your products. To begin,
-                upload this information using a CSV file or enter the data
-                manually in the table below.
-                <br />
-              </div>
-              <Dialog>
-                <DialogTrigger>
-                  <div className='text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 mb-9 px-4 py-3'>
-                    Upload CSV
-                  </div>
-                </DialogTrigger>
-                <DialogContent className='max-w-[44rem] p-[60px]'>
-                  <DialogDescription>
-                    <div className='bg-white flex max-w-[707px] flex-col items-end'>
-                      <DialogClose asChild>
-                        <Button type='button' variant='ghost'>
-                          <img
-                            loading='lazy'
-                            src='https://cdn.builder.io/api/v1/image/assets/TEMP/d846c09ab3f4187b63077673a631850dbed6d5d8a2e8740d3dfc3f933dba7c58?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                            className='aspect-square object-contain object-center w-6 overflow-hidden max-w-full max-md:mr-2.5'
-                          />
-                        </Button>
-                      </DialogClose>
-
-                      <div className='text-gray-800 text-center text-xl font-bold leading-7 self-stretch max-md:max-w-full'>
-                        Import Supplier GHG Emissions
-                      </div>
-                      <form onSubmit={handleSubmit}>
-                        <div className='self-stretch flex w-full flex-col mt-4 mb-0 max-md:max-w-full max-md:px-5'>
-                          <div className='text-gray-800 text-xl leading-7 self-stretch w-full mr-4 mt-4 max-md:max-w-full max-md:mr-2.5'>
-                            Download our CSV template to ensure successful
-                            upload. Be sure to attribute only one product to a
-                            supplier.
-                          </div>
-
-                          {fileName ? (
-                            <div className='bg-white-200 self-stretch flex relative cursor-pointer flex-col justify-center items-start mr-4 mt-4 py-8 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
-                              <div className='flex gap-3'>
-                                <img
-                                  loading='lazy'
-                                  src='https://cdn.builder.io/api/v1/image/assets/TEMP/76539b99402de7bbb2229a3e1b8b794f4df08d5b2955c22676d9840e4ee3a8be?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                                  className='aspect-square object-contain object-center w-16 self-stretch shrink-0'
-                                />
-                                <div className='text-gray-700 text-center text-base font-semibold leading-6 self-stretch grow shrink basis-auto my-auto'>
-                                  {fileName}
-                                </div>
-                                <img
-                                  onClick={emptyInput}
-                                  loading='lazy'
-                                  src='https://cdn.builder.io/api/v1/image/assets/TEMP/c0d4f4b0887ea5dba16339f6f1ded722874e86814a8d420ffd2db31638831bb1?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                                  className='aspect-square object-contain object-center w-4 self-stretch shrink-0 my-auto'
-                                />
-                              </div>
-                            </div>
-                          ) : (
-                            <div className='bg-gray-200 self-stretch flex relative cursor-pointer flex-col justify-center items-center mr-4 mt-4 px-16 py-12 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
-                              <input
-                                type='file'
-                                accept='.csv'
-                                onChange={handleChange}
-                                className='absolute left-0 top-0 w-full h-full opacity-0'
-                              ></input>
-                              <div className='items-center flex gap-3 mt-1.5 mb-1'>
-                                <img
-                                  loading='lazy'
-                                  src='https://cdn.builder.io/api/v1/image/assets/TEMP/90462b2605fc6d0399b50fa56cda63f7809e55747efc111afb6771457a2f2140?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                                  className='aspect-square object-contain object-center w-3 overflow-hidden shrink-0 max-w-full my-auto'
-                                />
-                                <div className='text-slate-500 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap'>
-                                  ADD A CSV FILE
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          <Button
-                            type='submit'
-                            disabled={!fileName}
-                            className='text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 aspect-[1.625] mr-4 mt-4 px-4 py-3 self-end max-md:mr-2.5'
-                          >
-                            Import
-                          </Button>
-                        </div>
-                      </form>
-                      <button
-                        onClick={DownloadTemplate}
-                        className='text-blue-600 absolute bottom-[80px] text-sm leading-5 underline self-stretch mt-4 max-md:max-w-full'
-                      >
-                        Download our CSV Template
-                      </button>
-                    </div>
-                  </DialogDescription>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </TabsContent>
-        </Tabs>
+    <>
+      {showCsvUploadModal && (
+        <UploadCsvModal
+          open={showCsvUploadModal}
+          setOpen={setShowCsvUploadModal}
+          periodId={currentTab!}
+        ></UploadCsvModal>
       )}
-      <div className='items-stretch self-stretch flex flex-col pb-12'>
-        <div className='items-stretch rounded-3xl bg-gray-100 flex justify-between gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>
-          <div className='text-slate-800 text-xs font-bold leading-4 grow max-md:max-w-full'>
-            Suppliers
+      <div className="w-full shadow bg-gray-50 flex flex-col pl-6 pr-6 pt-5 pb-12 max-md:px-5">
+        <header className="justify-between items-center self-stretch flex gap-5 py-2 max-md:flex-wrap max-md:px-5">
+          <div className="overflow-hidden text-slate-800 text-ellipsis text-base font-semibold leading-6 my-auto">
+            {user?.organizations[0]?.company_name}
           </div>
-          <img
-            loading='lazy'
-            src='https://cdn.builder.io/api/v1/image/assets/TEMP/2e0a663d923aa11cad808bb8c9e5a6c4f17b083df00a83ae82feefea8d812672?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-            className='aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full'
-          />
+          <div className="justify-center self-stretch flex flex-col pl-16 py-6 items-end max-md:max-w-full max-md:pl-5">
+            <div className="text-gray-900 text-xs font-medium leading-4 whitespace-nowrap justify-center items-stretch bg-gray-50 p-2 rounded-md">
+              NAICS: {user?.organizations[0]?.naics_code}
+            </div>
+          </div>
+        </header>
+        <div className="w-full flex justify-end items-center">
+          <div
+            className="rounded flex gap-1.5 px-3.5 py-1.5 cursor-pointer"
+            onClick={() => setShowNew(true)}
+          >
+            <header className="text-blue-600 text-sm font-semibold leading-5 self-stretch grow whitespace-nowrap">
+              + Add Reporting Period
+            </header>
+          </div>
         </div>
-        <div className='items-stretch bg-white flex w-full flex-col pb-12 max-md:max-w-full max-md:mb-10'>
-          <div className='items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5'>
-            <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 whitespace-nowrap'>
-              Supplier Name
+        <div className="relative">
+          {periodsQ.isLoading && (
+            <Loader2 className="text-blue-500 animate-spin" />
+          )}
+          {periodsQ.isSuccess && (
+            <Tabs
+              className="w-full"
+              value={showNew ? "new" : currentTab!}
+              onValueChange={setCurrentTab}
+            >
+              <TabsList>
+                {showNew && (
+                  <TabsTrigger value="new">
+                    <Popover defaultOpen={true}>
+                      <PopoverTrigger> Add Reporting Period</PopoverTrigger>
+                      <PopoverContent
+                        align="start"
+                        className="w-full left-0 p-0 -ml-4"
+                      >
+                        <ReportingPeriodPopup setNew={setShowNew} />
+                      </PopoverContent>
+                    </Popover>
+                  </TabsTrigger>
+                )}
+
+                {reportingPeriods.map((item: any, i: number) => {
+                  const reporting = `${dayjs(item.reporting_period_from).format(
+                    "MMM YYYY"
+                  )} - ${dayjs(item.reporting_period_to).format("MMM YYYY")}`;
+                  return (
+                    <TabsTrigger
+                      key={i}
+                      value={item.id}
+                      onClick={() => {
+                        setCurrentTab(item.id);
+                        setSelectedProductIds([]);
+                      }}
+                    >
+                      <Popover>
+                        <PopoverTrigger className="">
+                          {reporting}
+                        </PopoverTrigger>
+                        <PopoverContent
+                          align="start"
+                          className="w-full left-0 p-0 -ml-4"
+                        >
+                          <ReportingPeriodPopup
+                            setNew={setShowNew}
+                            period={item}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
+
+              <TabsContent value={currentTab!} className="relative">
+                <SupplierData periodId={currentTab!}></SupplierData>
+              </TabsContent>
+              <TabsContent value="new">
+                <div className="justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5">
+                  <img
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/9125c29d6e22fd51a2f1e9dcb27da44ac69b93ebcdb1009043a3b8178d6d05e3?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
+                    className="aspect-[1.17] object-contain object-center w-[54px] overflow-hidden self-center max-w-full mt-9"
+                  />
+                  <div className="text-slate-700 text-3xl font-semibold leading-9 self-center mt-3 max-md:max-w-full">
+                    Upload supplier product level emissions data
+                  </div>
+                  <div className="text-slate-700 text-center text-lg font-light leading-7 self-stretch w-full mt-6 max-md:max-w-full max-md:mr-2">
+                    Your suppliers product-level emission data encompasses the
+                    Scope 3 emissions directly linked to your products. To
+                    begin, upload this information using a CSV file or enter the
+                    data manually in the table below.
+                    <br />
+                  </div>
+                  <Dialog>
+                    <DialogTrigger>
+                      <Button
+                        disabled
+                        className="text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 mb-9 px-4 py-3"
+                      >
+                        Upload CSV
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-[44rem] p-[60px]">
+                      <DialogDescription>
+                        <div className="bg-white flex max-w-[707px] flex-col items-end">
+                          <DialogClose asChild>
+                            <Button type="button" variant="ghost">
+                              <img
+                                loading="lazy"
+                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/d846c09ab3f4187b63077673a631850dbed6d5d8a2e8740d3dfc3f933dba7c58?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
+                                className="aspect-square object-contain object-center w-6 overflow-hidden max-w-full max-md:mr-2.5"
+                              />
+                            </Button>
+                          </DialogClose>
+
+                          <div className="text-gray-800 text-center text-xl font-bold leading-7 self-stretch max-md:max-w-full">
+                            Import Supplier GHG Emissions
+                          </div>
+                          <form>
+                            <div className="self-stretch flex w-full flex-col mt-4 mb-0 max-md:max-w-full max-md:px-5">
+                              <div className="text-gray-800 text-xl leading-7 self-stretch w-full mr-4 mt-4 max-md:max-w-full max-md:mr-2.5">
+                                Download our CSV template to ensure successful
+                                upload. Be sure to attribute only one product to
+                                a supplier.
+                              </div>
+
+                              <div className="bg-gray-200 self-stretch flex relative cursor-pointer flex-col justify-center items-center mr-4 mt-4 px-16 py-12 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5">
+                                <input
+                                  type="file"
+                                  accept=".csv"
+                                  className="absolute left-0 top-0 w-full h-full opacity-0"
+                                ></input>
+                                <div className="items-center flex gap-3 mt-1.5 mb-1">
+                                  <img
+                                    loading="lazy"
+                                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/90462b2605fc6d0399b50fa56cda63f7809e55747efc111afb6771457a2f2140?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
+                                    className="aspect-square object-contain object-center w-3 overflow-hidden shrink-0 max-w-full my-auto"
+                                  />
+                                  <div className="text-slate-500 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap">
+                                    ADD A CSV FILE
+                                  </div>
+                                </div>
+                              </div>
+
+                              <Button
+                                type="submit"
+                                disabled
+                                className="text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 aspect-[1.625] mr-4 mt-4 px-4 py-3 self-end max-md:mr-2.5"
+                              >
+                                Import
+                              </Button>
+                            </div>
+                          </form>
+                          <button className="text-blue-600 absolute bottom-[80px] text-sm leading-5 underline self-stretch mt-4 max-md:max-w-full">
+                            Download our CSV Template
+                          </button>
+                        </div>
+                      </DialogDescription>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </TabsContent>
+            </Tabs>
+          )}
+        </div>
+        <div className="items-stretch self-stretch flex flex-col pb-12 mt-8">
+          <div className="items-center bg-gray-100 flex justify-between rounded-t-md  gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap">
+            <div className="text-slate-800 text-xs font-bold leading-4 grow max-md:max-w-full">
+              Suppliers
             </div>
-            <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5'>
-              Product Name
-            </div>
-            <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5'>
-              Product Type
-            </div>
-            <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5'>
-              Product Level Contribution
-            </div>
-            <div className='overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 grow whitespace-nowrap'>
-              Last Updated
+            <div>
+              <Button
+                onClick={handleSelectAllButtonClick}
+                variant="outline"
+                className="mr-3"
+              >
+                {areAllSelected() ? "Deselect All" : "Select All"}
+              </Button>
+              <Button
+                onClick={() => {
+                  console.log("selected product ids : ", selectedProductIds);
+                  deleteProductsMut.mutate(selectedProductIds);
+
+                  // queryClient.invalidateQueries({
+                  //   queryKey: [
+                  //     "supplier-products",
+                  //     currentTab,
+                  //     "reporting-periods",
+                  //     organizationId,
+                  //     "user-data",
+                  //   ],
+                  // });
+                }}
+                variant="outline"
+                className="mr-4"
+              >
+                {" "}
+                <Badge
+                  variant="outline"
+                  className="justify-center items-center px-1.5 h-5 mr-4 text-xs font-semibold leading-4 text-blue-800 whitespace-nowrap bg-blue-200 rounded-[100px]"
+                >
+                  {selectedProductIds.length}
+                </Badge>
+                Delete
+              </Button>
+              <Popover>
+                <PopoverTrigger>
+                  {" "}
+                  <img
+                    loading="lazy"
+                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/2e0a663d923aa11cad808bb8c9e5a6c4f17b083df00a83ae82feefea8d812672?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
+                    className="w-full aspect-square max-w-[16px]"
+                  />
+                </PopoverTrigger>
+                <PopoverContent className="w-[240px] mr-3 mt-3 leff-auto right-0">
+                  <ul className="justify-center text-base leading-5 text-gray-700 bg-white rounded ">
+                    <li
+                      className="mb-4 cursor-pointer"
+                      onClick={() => setShowCsvUploadModal(true)}
+                    >
+                      Add new suppliers via csv
+                    </li>
+
+                    <li className="mb-4">
+                      <Link
+                        href={`/supply-chain/supplier?reportingId=${currentTab}`}
+                      >
+                        Manually add a supplier
+                      </Link>
+                    </li>
+                    <li
+                      className="mb-4 cursor-pointer"
+                      onClick={() => downloadCsvMUt.mutate()}
+                    >
+                      Download CSV
+                    </li>
+                  </ul>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
-          <div className='justify-center items-stretch flex gap-0 mb-12 px-5 max-md:max-w-full max-md:flex-wrap max-md:mb-10'>
-            <div className='items-center flex-1 border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-2 px-4 py-2.5 border-b border-solid'>
-              <img
-                loading='lazy'
-                src='https://cdn.builder.io/api/v1/image/assets/TEMP/29189ba407ce9b617e1d8bf82171c381b4863b2327accf32d1d2f807bdc438a6?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                className='aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full my-auto'
-              />
-              <div className='overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap'>
-                New Supplier
+
+          <div className="items-stretch bg-white flex w-full flex-col pb-12 max-md:max-w-full max-md:mb-10">
+            <div className="items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
+              {/* <div className='overflow-hidden text-slate-800 text-ellipsis text-sm font-bold leading-5 self-stretch grow whitespace-nowrap'></div> */}
+              <div className="flex items-center text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 whitespace-nowrap">
+                <div className="mr-3">
+                  <div className="inline-flex items-center">
+                    <label
+                      className="relative flex items-center rounded-full cursor-pointer"
+                      htmlFor="check"
+                    >
+                      <input
+                        type="checkbox"
+                        className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-[#2C75D3] checked:before:bg-[#2C75D3] hover:before:opacity-10"
+                        checked={areAllSelected()}
+                        onChange={handleSelectAllChange}
+                      />
+                      <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-3.5 w-3.5"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          stroke="currentColor"
+                          stroke-width="1"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clip-rule="evenodd"
+                          ></path>
+                        </svg>
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                Supplier Name
+              </div>
+              <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5">
+                Product Name
+              </div>
+              <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5">
+                Product Type
+              </div>
+              <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5">
+                Product Level Contribution
+              </div>
+              <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 grow whitespace-nowrap">
+                Last Updated
               </div>
             </div>
-            <div className='items-center flex-1 border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[235px] shrink-0 h-10 flex-col border-b border-solid' />
-            <div className='items-center flex-1  border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[135px] shrink-0 h-10 flex-col border-b border-solid' />
-            <div className='items-center flex-1 border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[173px] shrink-0 h-10 flex-col border-b border-solid' />
-            <div className='items-center flex-1 border-b-[color:var(--Gray-300,#D1D5DB)] flex w-56 shrink-0 h-10 flex-col border-b border-solid' />
+            {/* supplier list start */}
+            {supplierProducts &&
+              supplierProducts.length > 0 &&
+              supplierProducts.map((product: any, index: number) => (
+                <div
+                  key={index}
+                  className="items-center bg-[#F9FAFB] border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5"
+                >
+                  <div className="flex items-center justify-between text-slate-800 text-ellipsis flex-1 text-sm leading-5 whitespace-nowrap">
+                    <div className="flex items-center max-w-[190px]">
+                      <div className="mr-2">
+                        <div className="inline-flex items-center">
+                          <label
+                            className="relative flex items-center rounded-full cursor-pointer"
+                            htmlFor="check"
+                          >
+                            <input
+                              type="checkbox"
+                              className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-[#2C75D3] checked:before:bg-[#2C75D3] hover:before:opacity-10"
+                              name="selectedProduct"
+                              value={product?.id}
+                              checked={selectedProductIds.includes(product?.id)}
+                              onChange={handleCheckboxChange}
+                            />
+                            <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-3.5 w-3.5"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                stroke="currentColor"
+                                stroke-width="1"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clip-rule="evenodd"
+                                ></path>
+                              </svg>
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+                      <p className="truncate" title={product?.supplier?.name}>
+                        {product?.supplier?.name}
+                      </p>
+                    </div>
+
+                    <button className="flex flex-col justify-center bg-gradient-to-b from-gray-100  hover:from-gray-200 hover:via-gray-200 hover:to-gray-300 px-2 py-2 text-xs font-semibold leading-4 text-center text-gray-500 whitespace-nowrap bg-white rounded border border-solid shadow border-[color:var(--Gray-100,#F3F4F6)] max-w-[72px]">
+                      <Link
+                        href={`/supply-chain/supplier/${product?.supplier?.id}`}
+                        className="flex gap-2 justify-between"
+                      >
+                        <ArrowUpRight size={16} className="text-slate-600" />
+                        <p className="link">VIEW</p>
+                      </Link>
+                    </button>
+                  </div>
+                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                    {product?.name}
+                  </div>
+                  <div
+                    className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 truncate"
+                    title={product?.type}
+                  >
+                    {product?.type}
+                  </div>
+                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5">
+                    {product?.scope_3_contribution}
+                  </div>
+                  <div className="overflow-hidden text-slate-800 text-ellipsis flex-1 text-sm leading-5 grow whitespace-nowrap">
+                    {convertDateToString(product?.updated_at)}
+                  </div>
+                </div>
+              ))}
+
+            {/* supplier list end */}
+            <div className="justify-center items-stretch flex gap-0 mb-12 px-5 max-md:max-w-full max-md:flex-wrap max-md:mb-10">
+              <div className="items-center flex-1 border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-2 px-4 py-2.5 border-b border-solid">
+                <Link
+                  href={`/supply-chain/supplier?reportingId=${currentTab}`}
+                  className="overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap"
+                >
+                  + New Supplier
+                </Link>
+              </div>
+              <div className="items-center flex-1 border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[235px] shrink-0 h-10 flex-col border-b border-solid" />
+              <div className="items-center flex-1  border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[135px] shrink-0 h-10 flex-col border-b border-solid" />
+              <div className="items-center flex-1 border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[173px] shrink-0 h-10 flex-col border-b border-solid" />
+              <div className="items-center flex-1 border-b-[color:var(--Gray-300,#D1D5DB)] flex w-56 shrink-0 h-10 flex-col border-b border-solid" />
+            </div>
           </div>
         </div>
       </div>
-      <AddSupplierManualy />
-    </div>
+    </>
   );
 };
 
