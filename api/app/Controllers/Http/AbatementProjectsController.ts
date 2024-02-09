@@ -2,8 +2,10 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { apiResponse } from 'App/helpers/response'
 import Config from '@ioc:Adonis/Core/Config'
 import CreateAbatementProjectValidator from 'App/Validators/AbatementProjects/CreateAbatementProjectValidator'
+import UpdateAbatementProjectValidator from 'App/Validators/AbatementProjects/UpdateAbatementProjectValidator'
 import AbatementProject from 'App/Models/AbatementProject'
 import Organization from 'App/Models/Organization'
+import { DateTime } from 'luxon'
 
 export default class AbatementProjectsController {
   public async index({ request, response }: HttpContextContract) {
@@ -130,9 +132,59 @@ export default class AbatementProjectsController {
     }
   }
 
-  public async update({ }: HttpContextContract) {
+  public async update({ request, response }: HttpContextContract) {
+    try {
+
+      const projectData = await AbatementProject.getProjectDetails('id', request.param('id'))
+
+      const payload = await request.validate(UpdateAbatementProjectValidator)
+
+      const updateProject = await AbatementProject.updateProjectDetails(projectData, payload)
+
+      return apiResponse(
+        response,
+        true,
+        200,
+        updateProject,
+        Config.get('responsemessage.ABATEMENT_PROJECT_RESPONSE.projectUpdateSuccess')
+      )
+    } catch (error) {
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
+      }
+    }
   }
 
-  public async destroy({ }: HttpContextContract) {
+  public async destroy({ request, response }: HttpContextContract) {
+    try {
+      const projectData = await AbatementProject.getProjectDetails('id', request.param('id'))
+
+      if (projectData) {
+        projectData.deletedAt = DateTime.local()
+        await projectData.save()
+
+        return apiResponse(response, true, 200, {}, Config.get('responsemessage.ABATEMENT_PROJECT_RESPONSE.projectDeleteSuccess'))
+      } else {
+        return apiResponse(response, false, 401, {}, Config.get('responsemessage.ABATEMENT_PROJECT_RESPONSE.projectNotFound'))
+      }
+
+    } catch (error) {
+      return apiResponse(response, false, 404, {}, error.message)
+    }
   }
 }
+
