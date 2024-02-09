@@ -172,7 +172,11 @@ const Page = () => {
   return (
     <>
       {showCsvUploadModal && (
-        <UploadCsvModal periodId={currentTab!}></UploadCsvModal>
+        <UploadCsvModal
+          open={showCsvUploadModal}
+          setOpen={setShowCsvUploadModal}
+          periodId={currentTab!}
+        ></UploadCsvModal>
       )}
       <div className='w-full shadow bg-gray-50 flex flex-col pl-6 pr-6 pt-5 pb-12 max-md:px-5'>
         <header className='justify-between items-center self-stretch flex gap-5 py-2 max-md:flex-wrap max-md:px-5'>
@@ -412,12 +416,35 @@ const Page = () => {
               {/* <div className='overflow-hidden text-slate-800 text-ellipsis text-sm font-bold leading-5 self-stretch grow whitespace-nowrap'></div> */}
               <div className='flex items-center text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 whitespace-nowrap'>
                 <div className='mr-3'>
-                  <input
-                    type='checkbox'
-                    className='flex justify-center items-center w-4 h-4 rounded border-[#E5E7EB]  checked:bg-blue-600'
-                    checked={areAllSelected()}
-                    onChange={handleSelectAllChange}
-                  />
+                  <div className='inline-flex items-center'>
+                    <label
+                      className='relative flex items-center rounded-full cursor-pointer'
+                      htmlFor='check'
+                    >
+                      <input
+                        type='checkbox'
+                        className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-[#2C75D3] checked:before:bg-[#2C75D3] hover:before:opacity-10"
+                        checked={areAllSelected()}
+                        onChange={handleSelectAllChange}
+                      />
+                      <span className='absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100'>
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          className='h-3.5 w-3.5'
+                          viewBox='0 0 20 20'
+                          fill='currentColor'
+                          stroke='currentColor'
+                          stroke-width='1'
+                        >
+                          <path
+                            fill-rule='evenodd'
+                            d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                            clip-rule='evenodd'
+                          ></path>
+                        </svg>
+                      </span>
+                    </label>
+                  </div>
                 </div>
                 Supplier Name
               </div>
@@ -438,25 +465,48 @@ const Page = () => {
             {supplierProducts &&
               supplierProducts.length > 0 &&
               supplierProducts.map((product: any, index: number) => (
-                <div className='items-stretch border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5'>
+                <div className='items-center bg-[#F9FAFB] border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5'>
                   <div className='flex items-center justify-between text-slate-800 text-ellipsis flex-1 text-sm leading-5 whitespace-nowrap'>
                     <div className='flex items-center max-w-[190px]'>
                       <div className='mr-2'>
-                        <input
-                          type='checkbox'
-                          className='flex justify-center items-center w-4 h-4 rounded border-[#E5E7EB]'
-                          name='selectedProduct'
-                          value={product?.id}
-                          checked={selectedProductIds.includes(product?.id)}
-                          onChange={handleCheckboxChange}
-                        />
+                        <div className='inline-flex items-center'>
+                          <label
+                            className='relative flex items-center rounded-full cursor-pointer'
+                            htmlFor='check'
+                          >
+                            <input
+                              type='checkbox'
+                              className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-[#2C75D3] checked:before:bg-[#2C75D3] hover:before:opacity-10"
+                              name='selectedProduct'
+                              value={product?.id}
+                              checked={selectedProductIds.includes(product?.id)}
+                              onChange={handleCheckboxChange}
+                            />
+                            <span className='absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100'>
+                              <svg
+                                xmlns='http://www.w3.org/2000/svg'
+                                className='h-3.5 w-3.5'
+                                viewBox='0 0 20 20'
+                                fill='currentColor'
+                                stroke='currentColor'
+                                stroke-width='1'
+                              >
+                                <path
+                                  fill-rule='evenodd'
+                                  d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                                  clip-rule='evenodd'
+                                ></path>
+                              </svg>
+                            </span>
+                          </label>
+                        </div>
                       </div>
                       <p className='truncate' title={product?.supplier?.name}>
                         {product?.supplier?.name}
                       </p>
                     </div>
 
-                    <button className='flex flex-col justify-center px-2 py-2 text-xs font-semibold leading-4 text-center text-gray-500 whitespace-nowrap bg-white rounded border border-solid shadow border-[color:var(--Gray-100,#F3F4F6)] max-w-[72px]'>
+                    <button className='flex flex-col justify-center bg-gradient-to-b from-gray-100  hover:from-gray-200 hover:via-gray-200 hover:to-gray-300 px-2 py-2 text-xs font-semibold leading-4 text-center text-gray-500 whitespace-nowrap bg-white rounded border border-solid shadow border-[color:var(--Gray-100,#F3F4F6)] max-w-[72px]'>
                       <div className='flex gap-2 justify-between'>
                         <img
                           loading='lazy'
