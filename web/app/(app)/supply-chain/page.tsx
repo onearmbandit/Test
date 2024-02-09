@@ -147,6 +147,8 @@ const Page = () => {
   const deleteProductsMut = useMutation({
     mutationFn: deleteMultipleSupplierProducts,
     onSuccess: (data: any) => {
+      queryClient.invalidateQueries();
+      setSelectedProductIds([]);
       toast.success("Selected products deleted successfully.", {
         style: { color: "green" },
       });
@@ -234,7 +236,10 @@ const Page = () => {
                     <TabsTrigger
                       key={i}
                       value={item.id}
-                      onClick={() => setCurrentTab(item.id)}
+                      onClick={() => {
+                        setCurrentTab(item.id);
+                        setSelectedProductIds([]);
+                      }}
                     >
                       <Popover>
                         <PopoverTrigger className="">
@@ -363,6 +368,17 @@ const Page = () => {
               <Button
                 onClick={() => {
                   console.log("selected product ids : ", selectedProductIds);
+                  deleteProductsMut.mutate(selectedProductIds);
+
+                  // queryClient.invalidateQueries({
+                  //   queryKey: [
+                  //     "supplier-products",
+                  //     currentTab,
+                  //     "reporting-periods",
+                  //     organizationId,
+                  //     "user-data",
+                  //   ],
+                  // });
                 }}
                 variant="outline"
                 className="mr-4"

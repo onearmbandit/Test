@@ -8,7 +8,7 @@ import { z } from "zod";
 
 import { useFormik } from "formik";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import {
@@ -52,6 +52,7 @@ import _, { set } from "lodash";
 import { Button } from "../ui/button";
 
 export const EditSupplier = () => {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = useParams();
@@ -63,10 +64,11 @@ export const EditSupplier = () => {
   //   const [supplier, setSupplier] = useState<any>(null);
   const [productList, setProductList] = useState<any>([
     {
+      id: "",
       name: "Add product name",
       type: "Add product type",
       quantity: "",
-      functionalUnit: "",
+      functional_unit: "",
       scope_3Contribution: "",
     },
   ]);
@@ -90,13 +92,6 @@ export const EditSupplier = () => {
   const supplier = supplierQ.isSuccess ? supplierQ.data.data : {};
   console.log("supplier", supplier);
 
-  // const productTypesQ = useQuery({
-  //   queryKey: ["product-types"],
-  //   queryFn: () => getProductTypesBySupplierId(supplier?.data?.id),
-  // });
-
-  // const productTypes = productTypesQ.isSuccess ? productTypesQ.data.data : [];
-
   const relationShips = ["OWNED", "CONTRACTED"];
 
   const validation = z.object({
@@ -119,7 +114,6 @@ export const EditSupplier = () => {
       });
       toast.success("New Supplier Added", { style: { color: "green" } });
       setEditSupplier(true);
-      // router.push("/supply-chain");
     },
     onError: (err: any) => {
       console.log(err);
@@ -192,10 +186,11 @@ export const EditSupplier = () => {
 
   const handleCreate = (inputValue: string, i: number) => {
     const newOption = {
+      id: "",
       name: inputValue,
       quantity: "",
       type: "",
-      functionalUnit: "",
+      functional_unit: "",
       scope_3Contribution: "",
     };
     const newCopy = _.cloneDeep(productList);
@@ -218,10 +213,11 @@ export const EditSupplier = () => {
 
   const handleCreateType = (inputValue: string, i: number) => {
     const newOption = {
+      id: "",
       name: "",
       quantity: "",
       type: inputValue,
-      functionalUnit: "",
+      functional_unit: "",
       scope_3Contribution: "",
     };
     const newCopy = _.cloneDeep(productList);
@@ -237,7 +233,11 @@ export const EditSupplier = () => {
         "organizationRelationship",
         supplier.organization_relationship
       );
-      setProductList(supplier.supplierProducts);
+      const newSupplierList = supplier.supplierProducts.map((product: any) => ({
+        ...product,
+        scope_3Contribution: product.scope_3_contribution,
+      }));
+      setProductList(newSupplierList);
     }
   }, [supplierQ.status]);
 
@@ -520,6 +520,7 @@ export const EditSupplier = () => {
                         onChange={(newValue) => {
                           const newCopy = _.cloneDeep(productList);
                           newCopy[i].name = newValue.name;
+                          newCopy[i].id = newValue.id;
                           console.log(newValue, "new value");
                           setProductList(newCopy);
                         }}
@@ -538,6 +539,7 @@ export const EditSupplier = () => {
                         onChange={(newValue) => {
                           const newCopy = _.cloneDeep(productList);
                           newCopy[i].type = newValue.type;
+                          newCopy[i].id = newValue.id;
                           console.log(newValue, "new value");
                           setProductList(newCopy);
                         }}
@@ -559,10 +561,10 @@ export const EditSupplier = () => {
                     </TableCell>
                     <TableCell className="pl-0 pr-4 w-[12rem] py-3">
                       <Input
-                        value={item.functionalUnit}
+                        value={item.functional_unit}
                         onChange={(e) => {
                           const newCopy = _.cloneDeep(productList);
-                          newCopy[i].functionalUnit = e.target.value;
+                          newCopy[i].functional_unit = e.target.value;
                           setProductList(newCopy);
                         }}
                         className="bg-[#F9FAFB] rounded-md"
@@ -587,10 +589,11 @@ export const EditSupplier = () => {
                           onClick={() => {
                             const newCopy = _.cloneDeep(productList);
                             newCopy.push({
+                              id: "",
                               name: "",
                               type: "",
                               quantity: "",
-                              functionalUnit: "",
+                              functional_unit: "",
                               scope_3Contribution: "",
                             });
 
@@ -620,7 +623,12 @@ export const EditSupplier = () => {
                   supplierId: supplier?.id,
                   supplierProducts: productList,
                 };
+                console.log("edit list : ", productList);
                 addSupplierProductsMut(data);
+
+                queryClient.invalidateQueries({
+                  queryKey: ["supplier", supplierId],
+                });
               }}
               className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]"
             >
