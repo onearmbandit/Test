@@ -25,7 +25,7 @@ const Page = async ({ searchParams }: { searchParams: any }) => {
             src="/assets/images/Logo.svg"
             className="self-center mb-10"
           />
-          <p className="text-green-500">Success! Email Verified</p>
+          <p className="text-green-500 text-center">Success! Email Verified</p>
           <Link
             href={"/login"}
             className="text-center inline-block font-medium w-fit px-4 py-3 mt-[300px] mx-auto rounded bg-blue-600 text-white"

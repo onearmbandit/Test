@@ -62,6 +62,7 @@ const AddActivePage = () => {
     },
     onSubmit: (data) => {
       console.log("formdata", data);
+      mutate(data);
     },
   });
 
@@ -90,10 +91,13 @@ const AddActivePage = () => {
           <CardHeader className="flex-row justify-between">
             {/* TODO : conditionally render blue tick after save */}
             <div className="flex items-center space-x-2.5">
-              {/* <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
-                1
-              </div> */}
-              <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              {values.name != "" ? (
+                <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
+                  1
+                </div>
+              ) : (
+                <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              )}
               <p className="flex-1 font-bold">Project Name*</p>
             </div>
             {values.name != "" && (
@@ -107,20 +111,34 @@ const AddActivePage = () => {
             )}
           </CardHeader>
           <CardContent className="space-y-6">
-            <label className="text-sm">
-              Add the name of the Abatement Project
-            </label>
-
-            <Input
-              value={projectDetails[1].name}
-              onChange={(e) => {
-                const copy = _.cloneDeep(projectDetails);
-                copy[1].name = e.target.value;
-                setProjectDetails(copy);
-              }}
-              className="h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2"
-              placeholder="Add project name"
-            />
+            {currentSection == 1 ? (
+              <>
+                {" "}
+                <label className="text-sm">
+                  Add the name of the Abatement Project
+                </label>
+                <Input
+                  value={projectDetails[1].name}
+                  onChange={(e) => {
+                    const copy = _.cloneDeep(projectDetails);
+                    copy[1].name = e.target.value;
+                    setProjectDetails(copy);
+                  }}
+                  className="h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2"
+                  placeholder="Add project name"
+                />
+              </>
+            ) : (
+              <CardContent>
+                {values.name != "" ? (
+                  <p className="text-green-900 text-sm">{values.name}</p>
+                ) : (
+                  <p className="text-sm">
+                    Provide a short description of the project
+                  </p>
+                )}
+              </CardContent>
+            )}
           </CardContent>
           <CardFooter className="justify-end">
             <Button
@@ -141,9 +159,13 @@ const AddActivePage = () => {
         <Card>
           <CardHeader className="flex-row justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
-                2
-              </div>
+              {values.description != "" && values.estimatedCost != 0 ? (
+                <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
+                  2
+                </div>
+              ) : (
+                <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              )}
               <p className="flex-1 font-bold">Project Description*</p>
             </div>
             {values.description != "" && values.estimatedCost != 0 && (
@@ -494,7 +516,7 @@ const AddActivePage = () => {
         <div className="flex justify-end">
           <Button
             type="submit"
-            disabled
+            // disabled
             onClick={() => {
               submitForm();
             }}

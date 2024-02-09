@@ -43,13 +43,15 @@ const Page = async ({ searchParams }: { searchParams: any }) => {
           <AddFacility serialNo={facilities.length + 1 || 1} />
         )}
 
-        <Link
-          href={"/facilities?add-new=true"}
-          className="gap-1.5 text-sm font-semibold text-blue-600 rounded border-2 flex w-fit items-center ml-auto border-blue-600 px-4 py-1"
-        >
-          <Plus size={16} className="text-blue-600" />
-          Add New Facility
-        </Link>
+        {searchParams["add-new"] != "true" && (
+          <Link
+            href={"/facilities?add-new=true"}
+            className="gap-1.5 text-sm font-semibold text-blue-600 rounded border-2 flex w-fit items-center ml-auto border-blue-600 px-4 py-1"
+          >
+            <Plus size={16} className="text-blue-600" />
+            Add New Facility
+          </Link>
+        )}
       </div>
     </div>
   );

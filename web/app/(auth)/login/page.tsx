@@ -21,7 +21,11 @@ const Page = () => {
   const router = useRouter();
   const validation = z.object({
     email: z.string().email(),
-    password: z.string().min(8),
+    password: z
+      .string()
+      .min(8, {
+        message: " Password must contain minimum 8 characters atleast",
+      }),
   });
 
   const { mutate, isPending } = useMutation({
@@ -135,9 +139,9 @@ const Page = () => {
                     className="flex items-center cursor-pointer pr-2"
                   >
                     {showPassword ? (
-                      <EyeOff size={16} color="#64748B" />
-                    ) : (
                       <Eye size={16} color="#64748B" />
+                    ) : (
+                      <EyeOff size={16} color="#64748B" />
                     )}
                   </div>
                 </div>

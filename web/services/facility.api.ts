@@ -33,7 +33,7 @@ const fetchApi = async (
     .then((res) => res.data)
     .catch((err) => {
       console.log(err.response.data);
-      throw new Error(err.response?.data.message);
+      return err.response?.data;
     });
 
   return response;

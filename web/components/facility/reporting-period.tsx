@@ -59,28 +59,46 @@ const ReportingPeriod = ({
   const editMut = useMutation({
     mutationFn: editFacilityReportingPeriod,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       queryClient.invalidateQueries({
         queryKey: ["reporting-periods"],
       });
       toast.success("Reporting period updated", { style: { color: "green" } });
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
     },
   });
 
   const deleteMut = useMutation({
     mutationFn: deleteFacilityReportingPeriod,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       queryClient.invalidateQueries({
         queryKey: ["reporting-periods"],
       });
       toast.success("Reporting period Deleted.", { style: { color: "green" } });
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
     },
   });
 
   const { mutate, isPending } = useMutation({
     mutationFn: addFacilityReportingPeriod,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       queryClient.invalidateQueries({ queryKey: ["reporting-periods"] });
       setNew(false);
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
     },
   });
 
