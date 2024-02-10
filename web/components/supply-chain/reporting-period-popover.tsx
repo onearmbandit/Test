@@ -1,3 +1,4 @@
+'use client';
 import React, { ReactNode, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -31,7 +32,6 @@ const ReportingPeriodPopup = ({
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const session = useSession();
-
   const queryClient = useQueryClient();
   const organizationId = session?.data?.user.organizations[0].id!;
 
@@ -57,7 +57,7 @@ const ReportingPeriodPopup = ({
     mutationFn: editReportingPerid,
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ['reporting-periods'],
+        queryKey: ['reporting-periods', organizationId],
       });
       toast.success('Reporting period updated', { style: { color: 'green' } });
     },
@@ -65,8 +65,12 @@ const ReportingPeriodPopup = ({
   const addReportMut = useMutation({
     mutationFn: addReportingPeriod,
     onSuccess: (data) => {
-      console.log(data, 'data addd');
+      queryClient.invalidateQueries({
+        queryKey: ['reporting-periods', organizationId],
+      });
+      setNew(false);
 
+      console.log(data, 'data addd');
       toast.success('Reporting period Added.', { style: { color: 'green' } });
     },
   });
@@ -90,7 +94,6 @@ const ReportingPeriodPopup = ({
       validateOnBlur: true,
       onSubmit: (data) => {
         if (period) {
-          console.log(period, 'period id');
           editMuation.mutate({
             id: period.id,
             formData: {
@@ -131,7 +134,7 @@ const ReportingPeriodPopup = ({
       <div className='absolute left-0 z-40'>
         <section className='flex flex-col items-stretch px-6 py-7 bg-white rounded-sm  shadow-sm border border-gray-50 max-w-[456px]'>
           <form onSubmit={handleSubmit} className='flex flex-col'>
-            <div className='flex gap-3 items-stretch pr-7 pl-2 text-xs font-light leading-4 text-slate-700'>
+            <div className='flex gap-3 items-stretch pr-2 pl-2 text-xs font-light leading-4 text-slate-700'>
               <label
                 className='grow my-auto whitespace-nowrap'
                 aria-label='Start Date Label'
@@ -150,7 +153,7 @@ const ReportingPeriodPopup = ({
                   setFieldValue('reportingPeriodFrom', date)
                 }
               />
-              <label className='my-auto'>End Date</label>
+              <label className='my-auto whitespace-nowrap'>End Date</label>
               <DatePicker
                 selected={values.reportingPeriodTo}
                 customInput={
@@ -240,9 +243,10 @@ const ReportingPeriodPopup = ({
             ) : (
               <Button
                 variant={'ghost'}
-                className='self-end mt-5 mr-4 text-sm font-semibold leading-5 text-blue-600'
+                className='self-end mt-5 text-sm font-semibold leading-5 text-blue-600'
                 aria-label='Save Button'
                 role='button'
+                type='submit'
               >
                 Save
               </Button>

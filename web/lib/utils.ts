@@ -5,6 +5,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import { boolean } from "zod";
+import dayjs from "dayjs";
 import _ from "lodash";
 import { AdapterUser } from "next-auth/adapters";
 
@@ -172,4 +173,29 @@ export const formatAddress = (address: any) => {
 
 export const isSuperAdmin = (rolesArray: any, roleName: string) => {
   return rolesArray?.some((role: any) => role.name === roleName);
+};
+
+export const formatReportingPeriod = (from: string, to: string): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+  };
+  const fromFormatted = new Intl.DateTimeFormat("en-US", options).format(
+    new Date(from)
+  );
+  const toFormatted = new Intl.DateTimeFormat("en-US", options).format(
+    new Date(to)
+  );
+
+  return `${fromFormatted} - ${toFormatted}`;
+};
+
+export const converPeriodToString = (period: any) => {
+  return `${dayjs(period.reporting_period_from).format("MMM YYYY")} - ${dayjs(
+    period.reporting_period_to
+  ).format("MMM YYYY")}`;
+};
+
+export const convertDateToString = (date: any) => {
+  return dayjs(date).format("MM/DD/YYYY");
 };
