@@ -1,7 +1,7 @@
 import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { apiResponse } from 'App/helpers/response'
-import Config from '@ioc:Adonis/Core/Config';
+// import Config from '@ioc:Adonis/Core/Config';
 import ImageUploadValidator from 'App/Validators/FileUpload/ImageUploadValidator';
 import Env from '@ioc:Adonis/Core/Env'
 

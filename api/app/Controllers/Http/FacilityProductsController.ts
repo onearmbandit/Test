@@ -5,6 +5,7 @@ import AddMultipleFacilityProductsValidator from 'App/Validators/FacilityProduct
 import FacilityProduct from 'App/Models/FacilityProduct';
 import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProduct/UpdateMultipleFacilityProductValidator';
+import OrganizationFacility from 'App/Models/OrganizationFacility';
 // import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProduct/UpdateMultipleFacilityProductValidator';
 
 export default class FacilityProductsController {
@@ -14,8 +15,6 @@ export default class FacilityProductsController {
       const queryParams = request.qs();
 
       const facilityProducts = await FacilityProduct.getAllFacilityProducts(queryParams);
-
-      console.log("facilityProducts", facilityProducts)
 
       const isPaginated = !request.input('per_page') || request.input('per_page') !== 'all';
 
@@ -112,6 +111,38 @@ export default class FacilityProductsController {
       }
       else {
         return apiResponse(response, false, 400, {}, error.messages ? error.messages : error.message)
+      }
+    }
+  }
+
+  public async getAllProductNames({ response, request }: HttpContextContract) {
+    try {
+      const queryParams = request.qs();
+      //:: need to check facility emission/reporting period exist or not
+      var facilityData = await OrganizationFacility.getOrganizationFacilityData('id', queryParams.organizationFacilityId ? queryParams.organizationFacilityId : '')
+
+      if (facilityData) {
+        const allProductNamesOfFacility = await FacilityProduct.getAllProductNames(queryParams)
+        return apiResponse(response, true, 200, allProductNamesOfFacility, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'), false);
+      }
+    }
+    catch (error) {
+      if (error.status === 422) {
+        return apiResponse(
+          response,
+          false,
+          error.status,
+          error.messages,
+          Config.get('responsemessage.COMMON_RESPONSE.validationFailed')
+        )
+      } else {
+        return apiResponse(
+          response,
+          false,
+          400,
+          {},
+          error.messages ? error.messages : error.message
+        )
       }
     }
   }
