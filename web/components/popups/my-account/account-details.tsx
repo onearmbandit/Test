@@ -9,25 +9,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAccountStore } from "@/lib/stores/organisation.store";
 import { cn } from "@/lib/utils";
-import { deleteUser, getUser } from "@/services/user.api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { deleteUser, getUser, updateUser } from "@/services/user.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { ChevronRight } from "lucide-react";
 import { signOut } from "next-auth/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const AccountDetails = () => {
   const { setMyAccSection } = useAccountStore();
+  const queryClient = useQueryClient();
 
   const deleteValidation = z.object({
     email: z.string().email(),
     password: z.string().min(8),
   });
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, status } = useQuery({
     queryKey: ["account-details"],
     queryFn: () => getUser(),
   });
@@ -56,7 +57,35 @@ const AccountDetails = () => {
     },
   });
 
-  console.log(deleteAccount.errors);
+  const { mutate: changeName, isPending: changeNamePending } = useMutation({
+    mutationFn: updateUser,
+    onSuccess: (data) => {
+      // if(data)
+      queryClient.invalidateQueries({ queryKey: ["account-details"] });
+      toast.success("Profile Updated", { style: { color: "green" } });
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
+    },
+  });
+
+  const changeNameForm = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+    },
+    onSubmit: (data) => {
+      console.log(data);
+      changeName({ formBody: data });
+    },
+  });
+
+  useEffect(() => {
+    if (status == "success") {
+      changeNameForm.setFieldValue("firstName", data?.data?.first_name);
+      changeNameForm.setFieldValue("lastName", data?.data?.last_name);
+    }
+  }, [status]);
 
   return (
     <div className="justify-center items-start bg-white grow rounded-e-lg flex flex-col p-6 max-md:px-5">
@@ -64,16 +93,44 @@ const AccountDetails = () => {
         My account
       </header>
 
-      <section className="text-gray-700 text-xs font-medium leading-4 space-y-2.5 mt-6">
-        <label>Name</label>
-        <Input
-          disabled={true}
-          className="text-slate-700 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-100 
-    justify-center p-2 rounded-md self-start"
-          value={` ${data?.data?.first_name} ${data?.data?.last_name}`}
-        />
-      </section>
-      <header className="text-gray-700 text-base font-semibold leading-6 self-stretch mt-9 max-md:max-w-full max-md:mt-10 pb-3 border-b border-gray-300">
+      <form
+        onSubmit={changeNameForm.handleSubmit}
+        className="text-gray-700 text-xs font-medium w-full leading-4 mt-6"
+      >
+        <div className="flex space-x-3">
+          <div className="space-y-2.5">
+            <label>First Name</label>
+            <Input
+              name="firstName"
+              onChange={changeNameForm.handleChange}
+              className="text-slate-700 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-100 
+            justify-center p-2 rounded-md self-start"
+              value={changeNameForm.values.firstName}
+            />
+          </div>
+          <div className="space-y-2.5">
+            <label>Last Name</label>
+            <Input
+              name="lastName"
+              onChange={changeNameForm.handleChange}
+              className="text-slate-700 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-100 
+            justify-center p-2 rounded-md self-start"
+              value={changeNameForm.values.lastName}
+            />
+          </div>
+        </div>
+
+        <div className="flex w-full justify-end mt-2">
+          <Button
+            variant={"ghost"}
+            disabled={changeNamePending}
+            className="text-blue-600 hover:text-blue-500 font-semibold"
+          >
+            Save
+          </Button>
+        </div>
+      </form>
+      <header className="text-gray-700 text-base font-semibold leading-6 self-stretch mt-6 max-md:max-w-full pb-3 border-b border-gray-300">
         Account Security
       </header>
 

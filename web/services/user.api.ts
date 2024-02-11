@@ -53,7 +53,7 @@ export const getUser = () => {
   return fetchApi("/auth/user");
 };
 
-export const updatePassword = ({ formBody }: { formBody: any }) => {
+export const updateUser = ({ formBody }: { formBody: any }) => {
   return fetchApi(`/auth/user`, {
     method: "PATCH",
     body: formBody,
