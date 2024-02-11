@@ -26,7 +26,7 @@ import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import { toast } from "sonner";
 
-const AddActivePage = () => {
+const AddProposedPage = () => {
   const { data: session } = useSession();
   const organizationId = session?.user?.organizations[0]?.id;
   const userId = session?.user?.id;
@@ -61,7 +61,7 @@ const AddActivePage = () => {
       proposedBy: "",
       photoUrl: "",
       logoUrl: "",
-      status: 0,
+      status: 2,
     },
     onSubmit: (data) => {
       console.log("formdata", data);
@@ -79,8 +79,8 @@ const AddActivePage = () => {
       <div className="items-center self-stretch flex gap-2.5 pl-3 py-3 max-md:flex-wrap">
         <ChevronLeft size={24} className="text-slate-500" />
         <nav className="text-blue-700 text-sm justify-center items-stretch grow py-1.5 max-md:max-w-full">
-          <a href="/abatement-projects/active" className="text-slate-500">
-            Active Abatement Projects
+          <a href="/abatement-projects/proposed" className="text-slate-500">
+            Proposed Abatement Projects
           </a>{" "}
           &gt;{" "}
           <span className="text-blue-600 font-bold">
@@ -537,4 +537,4 @@ const AddActivePage = () => {
   );
 };
 
-export default AddActivePage;
+export default AddProposedPage;
