@@ -2,12 +2,14 @@
 import AutocompleteInput from "@/components/Autocomplete";
 import { Button } from "@/components/ui/button";
 import { setupOrganizationStep1 } from "@/services/organizations.api";
-import { useMutation } from "@tanstack/react-query";
+import { getUser } from "@/services/user.api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -15,17 +17,25 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
   const router = useRouter();
   const [disabled, setDisabled] = useState(true);
-  const { data: session, update } = useSession();
-  const organization = session?.user.organizations[0];
+
+  const queryClient = useQueryClient();
+  const userQ = useQuery({
+    queryKey: ["address-details"],
+    queryFn: () => getUser(),
+  });
+
+  const user = userQ.isSuccess ? userQ.data?.data : null;
+  console.log(user);
 
   const { mutate, isPending } = useMutation({
     mutationFn: setupOrganizationStep1,
-    onSuccess: (data) => {
-      // console.log(data);
+    onSuccess: (data: any) => {
       toast.success("Address update Successully.", {
         style: { color: "green" },
       });
-      update();
+      queryClient.invalidateQueries({
+        queryKey: ["address-details", "account-details"],
+      });
       setSection("home");
     },
   });
@@ -43,11 +53,20 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
     onSubmit: (data) => {
       // console.log(data);
       mutate({
-        id: organization?.id!,
+        id: user?.organizations[0]?.id,
         formdata: data,
       });
     },
   });
+
+  useEffect(() => {
+    if (userQ.isSuccess) {
+      addressForm.setFieldValue(
+        "companyAddress",
+        user?.organizations[0]?.company_address
+      );
+    }
+  }, [userQ.status]);
 
   return (
     <form
@@ -82,14 +101,18 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
         </div>
 
         <div>
-          <AutocompleteInput
-            isDisabled={disabled}
-            setAddress={(e: any) => {
-              console.log("todo: set address" + e);
-              addressForm.setFieldValue("companyAddress", e);
-            }}
-            address={organization?.company_address}
-          />
+          {userQ.isLoading && (
+            <Loader2 className="animate-spin text-blue-600" />
+          )}
+          {userQ.isSuccess && (
+            <AutocompleteInput
+              isDisabled={disabled}
+              setAddress={(e: any) => {
+                addressForm.setFieldValue("companyAddress", e);
+              }}
+              address={user?.organizations[0]?.company_address}
+            />
+          )}
         </div>
 
         <div className="flex justify-end">
