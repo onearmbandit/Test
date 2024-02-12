@@ -243,9 +243,9 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
                 className="flex items-center cursor-pointer"
               >
                 {showPassword ? (
-                  <EyeOff size={16} color="#64748B" />
-                ) : (
                   <Eye size={16} color="#64748B" />
+                ) : (
+                  <EyeOff size={16} color="#64748B" />
                 )}
               </div>
             </div>

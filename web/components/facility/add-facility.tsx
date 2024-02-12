@@ -13,6 +13,7 @@ import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
   const { data: session } = useSession();
@@ -27,6 +28,9 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
   const { mutate } = useMutation({
     mutationFn: createFacility,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       console.log(data);
       router.push("/facilities");
     },

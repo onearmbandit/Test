@@ -2,7 +2,7 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class AddMultipleFacilityProductsValidator {
-  constructor(protected ctx: HttpContextContract) { }
+  constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
     facilityEmissionId: schema.string({ trim: true }, [
@@ -16,7 +16,7 @@ export default class AddMultipleFacilityProductsValidator {
           rules.required(),
           rules.minLength(3),
           rules.maxLength(255),
-          rules.unique({ table: 'facility_products', column: 'name' })
+          // rules.unique({ table: 'facility_products', column: 'name' })
         ]),
         quantity: schema.number(),
         functionalUnit: schema.string({ trim: true }, [rules.maxLength(255)]),
@@ -34,6 +34,5 @@ export default class AddMultipleFacilityProductsValidator {
 
     'quantity.number': 'Quantity must be a number.',
     'functional_unit.maxLength': 'Functional unit must not exceed 255 characters.',
-
   }
 }

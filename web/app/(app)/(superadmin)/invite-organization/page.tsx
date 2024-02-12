@@ -15,7 +15,7 @@ import { z } from "zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { getRoleByName, updatePassword } from "@/services/user.api";
+import { getRoleByName, updateUser } from "@/services/user.api";
 import { toast } from "sonner";
 import {
   getAllOrganizations,

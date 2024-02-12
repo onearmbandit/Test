@@ -47,3 +47,7 @@ export const addAbatementProjects = (obj: any) => {
 export const getActiveAbatementProjects = (orgId: string) => {
   return fetchApi(`/auth/abatement-projects?organizationId=${orgId}`);
 };
+
+export const getActiveAbatementProjectById = (projectId: string) => {
+  return fetchApi(`/auth/abatement-projects/${projectId}`);
+};

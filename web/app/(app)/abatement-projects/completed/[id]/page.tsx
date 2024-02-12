@@ -11,8 +11,8 @@ import {
 import Image from "next/image";
 import React from "react";
 
-const ActiveDetailPage = async ({ params }: { params: { slug: string } }) => {
-  const res = await getActiveAbatementProjectById(params?.slug);
+const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
+  const res = await getActiveAbatementProjectById(params?.id);
   const project = res?.data;
 
   return (
@@ -20,10 +20,10 @@ const ActiveDetailPage = async ({ params }: { params: { slug: string } }) => {
       <div className="items-center self-stretch flex gap-2.5 pl-3 py-3 max-md:flex-wrap">
         <ChevronLeft size={24} className="text-slate-500" />
         <nav className="text-blue-700 text-sm justify-center items-stretch grow py-1.5 max-md:max-w-full">
-          <a href="/abatement-projects/active" className="text-slate-500">
-            Active Abatement Projects
+          <a href="/abatement-projects/completed" className="text-slate-500">
+            Completed Abatement Projects
           </a>{" "}
-          &gt; <span className="text-blue-600 font-bold">{params.slug}</span>{" "}
+          &gt; <span className="text-blue-600 font-bold">{params.id}</span>{" "}
         </nav>
       </div>
 
@@ -100,4 +100,4 @@ const ActiveDetailPage = async ({ params }: { params: { slug: string } }) => {
   );
 };
 
-export default ActiveDetailPage;
+export default CompletedDetailPage;
