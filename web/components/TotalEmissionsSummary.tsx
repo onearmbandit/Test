@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Accordion,
@@ -5,24 +7,162 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./ui/accordion";
-import { ChevronDown } from "lucide-react";
-import { Card, CardContent, CardHeader } from "./ui/card";
+import { ChevronDown, Loader2 } from "lucide-react";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import { getFacilityDashboard } from "@/services/facility.api";
+import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { Select, SelectContent, SelectItem } from "./ui/select";
+import { SelectTrigger, SelectValue } from "@radix-ui/react-select";
+import {
+  Bar,
+  ComposedChart,
+  LabelList,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 const TotalEmissionsSummary = () => {
+  const dashboardDetails = useQuery({
+    queryKey: ["dashboard"],
+    queryFn: () =>
+      getFacilityDashboard({
+        from: "2024-01-01",
+        to: "2024-06-01",
+      }),
+  });
+
+  const dashboard = dashboardDetails.isSuccess
+    ? dashboardDetails.data.data
+    : {};
+
+  const chartData = [
+    {
+      name: "Scope1",
+      scope1: dashboard?.totalScope1EmissionForAllFacilities,
+      scope2: 0,
+      scope3: 0,
+    },
+    {
+      name: "Scope2",
+      scope1: 0,
+      scope2: dashboard?.totalScope2EmissionForAllFacilities,
+      scope3: 0,
+    },
+    {
+      name: "Scope3",
+      scope1: 0,
+      scope2: 0,
+      scope3: dashboard?.totalScope3EmissionForAllFacilities,
+    },
+  ];
+
   return (
     <div className="bg-white rounded-lg w-full mt-3">
       <Accordion type="single" collapsible>
         <AccordionItem value="total-emissions" className="px-16 py-6 border-0">
-          <AccordionTrigger className="p-0 py-3 flex justify-between [&[data-state=open]>div>svg]:rotate-180">
+          <AccordionTrigger className="p-0 py-3 flex justify-between [&[data-state=open]>div>svg]:rotate-180 [&[data-state=closed]>#reporting]:hidden [&[data-state=open]>#emission-value]:hidden">
             <div className="flex items-center">
               <ChevronDown size={16} className="text-slate-600 mr-6" />
               <p className="text-xl font-semibold text-gray-700 pl-3">
                 Total Emissions Across Facilities
               </p>
             </div>
-            <p className="text-sm font-bold text-green-950">22,142.16 tCO2e</p>
+
+            <p id="emission-value" className="text-sm font-bold text-green-950">
+              {dashboard.totalEmission} tCO2e
+            </p>
+            <div id="reporting">
+              <Select defaultValue="id">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a reporting period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="id">2024-01 to 2024-06</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </AccordionTrigger>
-          <AccordionContent className="p-0">
+          <AccordionContent className="p-0 space-y-6">
+            <div className="grid grid-cols-3 gap-[10px] h-[18.18rem]">
+              <Card className="col-span-2 border-none shadow-md h-full">
+                <CardHeader>
+                  <p className="font-bold text-lg">Scope Emissions</p>
+                </CardHeader>
+                <CardContent className="h-[14rem] w-full">
+                  {dashboardDetails.isLoading && (
+                    <Loader2 className="text-blue-600 animate-spin" />
+                  )}
+                  {dashboardDetails.isSuccess && (
+                    <ResponsiveContainer>
+                      <ComposedChart
+                        layout="vertical"
+                        width={600}
+                        height={200}
+                        data={chartData}
+                        stackOffset="positive"
+                        margin={{
+                          top: 20,
+                          right: 20,
+                          bottom: 20,
+                          left: 0,
+                        }}
+                      >
+                        <XAxis
+                          // hide={true}
+                          type="number"
+                          axisLine={false}
+                          // domain={["auto", "auto"]}
+                        />
+                        <YAxis
+                          dataKey="name"
+                          type="category"
+                          axisLine={false}
+                          scale="band"
+                          padding={{ top: 0, bottom: 0 }}
+                        />
+                        <Bar
+                          dataKey="scope1"
+                          barSize={20}
+                          radius={9}
+                          fill="#BBF7D0"
+                        />
+                        <Bar
+                          dataKey="scope2"
+                          barSize={20}
+                          radius={9}
+                          fill="#BFDBFE"
+                        />
+                        <Bar
+                          dataKey="scope3"
+                          barSize={20}
+                          radius={9}
+                          fill="#FED7AA"
+                        />
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="flex flex-col border-none shadow-md">
+                <CardHeader className="py-5">
+                  <p className="text-center font-bold text-xs">
+                    Total Carbon Emissions
+                  </p>
+                </CardHeader>
+                <CardContent className="flex flex-1 justify-center items-center">
+                  <p className="text-[2.625rem] font-bold text-center leading-[5.25rem] ">
+                    {dashboard.totalEmission}
+                  </p>
+                </CardContent>
+                <CardFooter className="flex justify-end">
+                  <p className="text-sm font-bold text-neutral-700">tCO2e</p>
+                </CardFooter>
+              </Card>
+            </div>
+
             <Accordion type="single" collapsible>
               <AccordionItem
                 value="scope-emissions"
@@ -51,27 +191,23 @@ const TotalEmissionsSummary = () => {
                     <CardContent className="p-0 pt-3">
                       <div className="flex justify-between items-center font-bold py-6">
                         <p className="text-xs">TOTAL tCO2e</p>
-                        <p className="text-lg text-green-900">{}</p>
+                        <p className="text-lg text-green-900">
+                          {dashboard?.totalScope1EmissionForAllFacilities}
+                        </p>
                       </div>
 
                       <div className="space-y-3">
-                        {/* {emissions?.map((item: any) => (
-                            <div className="flex justify-between items-center">
-                              <p className="text-[10px] font-bold text-slate-700">
-                                {dayjs(item.reporting_period_from).format(
-                                  "MMM YY"
-                                )}{" "}
-                                -{" "}
-                                {dayjs(item.reporting_period_to).format(
-                                  "MMM YY"
-                                )}{" "}
-                              </p>
-                              <p className="text-green-900 text-xs">
-                                {item.scope1_total_emission || "Not Available"}
-                              </p>
-                            </div>
-                          ))}
-                          {emissions?.length > 2 && (
+                        {dashboard?.finalResults?.map((item: any) => (
+                          <div className="flex justify-between items-center">
+                            <p className="text-[10px] font-bold text-slate-700">
+                              {item.facilityName}
+                            </p>
+                            <p className="text-green-900 text-xs">
+                              {item.totalScope1TotalEmission || "Not Available"}
+                            </p>
+                          </div>
+                        ))}
+                        {/* {emissions?.length > 2 && (
                             <p className="font-bold">...</p>
                           )} */}
                       </div>
@@ -93,27 +229,23 @@ const TotalEmissionsSummary = () => {
                     <CardContent className="p-0 pt-3">
                       <div className="flex justify-between items-center font-bold py-6">
                         <p className="text-xs">TOTAL tCO2e</p>
-                        <p className="text-lg text-green-900">{}</p>
+                        <p className="text-lg text-green-900">
+                          {dashboard?.totalScope2EmissionForAllFacilities}
+                        </p>
                       </div>
 
                       <div className="space-y-3">
-                        {/* {emissions?.map((item: any) => (
-                            <div className="flex justify-between items-center">
-                              <p className="text-[10px] font-bold text-slate-700">
-                                {dayjs(item.reporting_period_from).format(
-                                  "MMM YY"
-                                )}{" "}
-                                -{" "}
-                                {dayjs(item.reporting_period_to).format(
-                                  "MMM YY"
-                                )}{" "}
-                              </p>
-                              <p className="text-green-900 text-xs">
-                                {item.scope2_total_emission || "Not Available"}
-                              </p>
-                            </div>
-                          ))}
-                          {emissions?.length > 2 && (
+                        {dashboard?.finalResults?.map((item: any) => (
+                          <div className="flex justify-between items-center">
+                            <p className="text-[10px] font-bold text-slate-700">
+                              {item.facilityName}
+                            </p>
+                            <p className="text-green-900 text-xs">
+                              {item.totalScope2TotalEmission || "Not Available"}
+                            </p>
+                          </div>
+                        ))}
+                        {/* {emissions?.length > 2 && (
                             <p className="font-bold">...</p>
                           )} */}
                       </div>
@@ -135,27 +267,23 @@ const TotalEmissionsSummary = () => {
                     <CardContent className="p-0 pt-3">
                       <div className="flex justify-between items-center font-bold py-6">
                         <p className="text-xs">TOTAL tCO2e</p>
-                        <p className="text-lg text-green-900">{}</p>
+                        <p className="text-lg text-green-900">
+                          {dashboard?.totalScope3EmissionForAllFacilities}
+                        </p>
                       </div>
 
                       <div className="space-y-3">
-                        {/* {emissions?.map((item: any) => (
-                            <div className="flex justify-between items-center">
-                              <p className="text-[10px] font-bold text-slate-700">
-                                {dayjs(item.reporting_period_from).format(
-                                  "MMM YY"
-                                )}{" "}
-                                -{" "}
-                                {dayjs(item.reporting_period_to).format(
-                                  "MMM YY"
-                                )}{" "}
-                              </p>
-                              <p className="text-green-900 text-xs">
-                                {item.scope3_total_emission || "Not Available"}
-                              </p>
-                            </div>
-                          ))}
-                          {emissions?.length > 2 && (
+                        {dashboard?.finalResults?.map((item: any) => (
+                          <div className="flex justify-between items-center">
+                            <p className="text-[10px] font-bold text-slate-700">
+                              {item.facilityName}
+                            </p>
+                            <p className="text-green-900 text-xs">
+                              {item.totalScope3TotalEmission || "Not Available"}
+                            </p>
+                          </div>
+                        ))}
+                        {/* {emissions?.length > 2 && (
                             <p className="font-bold">...</p>
                           )} */}
                       </div>
