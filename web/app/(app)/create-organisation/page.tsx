@@ -60,7 +60,7 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
   const session = useSession();
 
   const validation = z.object({
-    companyEmail: z.string().email(),
+    companyEmail: z.string().email({ message: "Please enter a valid email" }),
     profileStep: z.number().int().min(1).max(3),
   });
 
