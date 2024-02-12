@@ -70,6 +70,7 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
   createFacilityProductSuccess: "Facility products created successfully.",
   equalityCarbonEmissionSuccess: "Equality carbon emission to product line calculated successfully.",
   updateFacilityProductSuccess: "Facility product details updated successfully.",
+  dashboardCalculationFetchSuccess: "Total emission across all facility details fetched successfully.",
 }
 
 

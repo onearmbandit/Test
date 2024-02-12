@@ -95,5 +95,4 @@ export default class OrganizationFacility extends BaseModel {
     await organizationFacilityData.merge(data).save()
     return organizationFacilityData
   }
-
 }

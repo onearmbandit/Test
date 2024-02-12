@@ -57,6 +57,8 @@ Route.group(() => {
         'destroy',
       ])
 
+      Route.get('/dashboard-data', 'FacilityEmissionsController.getDashboardData')
+
       Route.resource('/facility-product', 'FacilityProductsController').only(['index', 'store'])
       Route.post(
         '/update-facility-products',
@@ -66,6 +68,8 @@ Route.group(() => {
         '/equality-emission-calculation',
         'FacilityProductsController.calculateEqualityCarbonEmission'
       )
+
+      Route.get('/facility-product-name-list', 'FacilityProductsController.getAllProductNames')
 
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier')

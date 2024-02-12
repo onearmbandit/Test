@@ -54,7 +54,9 @@ export default class FacilityProduct extends BaseModel {
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
     const order = queryParams.order ? queryParams.order.toString() : 'desc'
+    let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
     const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at'
+
     const facilityEmissionId = queryParams.facilityEmissionId
       ? queryParams.facilityEmissionId.toString()
       : ''
@@ -63,40 +65,62 @@ export default class FacilityProduct extends BaseModel {
 
     if (facilityEmissionId) {
       query = query.where('facility_emission_id', facilityEmissionId)
+        .preload('FacilityEmission', (facilityEmissionQuery) => {
+          facilityEmissionQuery.preload('FacilityEqualityAttribute');
+        })
     }
 
     query = query.orderBy(sort, order)
 
+    //::Include Relationship
+    if (includes.length > 0) {
+      includes.forEach((include: any) => query.preload(include.trim()))
+    }
+
     const facilityProducts = await query.paginate(page, perPage)
 
-    // Extracting equality_attribute values from facilityProducts
-    const equalityAttributes = facilityProducts.all().map((product) => product.equalityAttribute)
-    // console.log("equalityAttributes", equalityAttributes)
+    // // Extracting equality_attribute values from facilityProducts
+    // const equalityAttributes = facilityProducts.all().map((product) => product.equalityAttribute)
+    // // console.log("equalityAttributes", equalityAttributes)
 
-    // Checking if all equality_attribute values are the same
-    const areEqual = equalityAttributes.every((value, _, array) => value === array[0])
-    // console.log("areEqual", areEqual)
+    // // Checking if all equality_attribute values are the same
+    // const areEqual = equalityAttributes.every((value, _, array) => value === array[0])
+    // // console.log("areEqual", areEqual)
 
-    // If all equality_attribute values are the same, extract the value
-    const commonEqualityAttribute = areEqual ? equalityAttributes[0] : null
+    // // If all equality_attribute values are the same, extract the value
+    // const commonEqualityAttribute = areEqual ? equalityAttributes[0] : null
 
-    facilityProducts['equalityAttributes'] = commonEqualityAttribute
+    // facilityProducts['equalityAttributes'] = commonEqualityAttribute
 
     return facilityProducts
   }
 
   public static async createFacilityProducts(emissionData, requestData) {
-    let products: any = []
-    requestData.facilityProducts.forEach((element) => {
-      let singleData = {
-        id: uuidv4(),
+    const products: any = []
+    for (const element of requestData.facilityProducts) {
+      const productId = uuidv4();
+
+      // Create facility product
+      const productData = {
+        id: productId,
         ...element,
+      };
+
+      products.push(productData);
+    }
+
+    // save equality attribute value
+    await emissionData.related('FacilityEqualityAttribute').create(
+      {
+        id: uuidv4(),
+        facilityEmissionId: emissionData.id,
+        equalityAttribute: requestData.equalityAttribute,
       }
-      products.push(singleData)
-    })
+    )
 
     let result = await emissionData.related('FacilityProducts').createMany(products)
     return result
+
   }
 
   public static async getFacilityProductData(field, value) {
@@ -186,5 +210,41 @@ export default class FacilityProduct extends BaseModel {
       productEmissions.push(updatedProduct)
     })
     return productEmissions
+  }
+
+  public static async getAllProductNames(queryParams) {
+
+    const organizationFacilityId = queryParams.organizationFacilityId ? queryParams.organizationFacilityId.toString() : '';
+    const order = queryParams.order ? queryParams.order.toString() : 'desc';
+
+    let facilityProducts: FacilityEmission[] = [];
+    let uniqueProductNames: string[] = [];
+
+    facilityProducts = await FacilityEmission.query()
+      .where('organization_facility_id', organizationFacilityId)
+      .whereNull('deleted_at')
+      .preload('FacilityProducts');
+
+    // Extract unique product names from the loaded data
+    uniqueProductNames = Array.from(
+      new Set(
+        facilityProducts.reduce((acc, item) => {
+          return acc.concat(
+            item.FacilityProducts.map((product) => product.name as string)
+          );
+        }, [] as string[])
+      )
+    );
+
+    // Function to sort the array based on order ("asc" or "desc")
+    const sortArray = (order: 'asc' | 'desc'): Array<string> => {
+      return order === 'asc'
+        ? [...uniqueProductNames].sort() // Use spread operator to create a copy
+        : [...uniqueProductNames].sort((a, b) => b.localeCompare(a));
+    };
+
+    const sortedArray: Array<string> = sortArray(order);
+
+    return sortedArray;
   }
 }

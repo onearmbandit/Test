@@ -119,4 +119,24 @@ export default class FacilityEmissionsController {
       return apiResponse(response, false, 404, {}, error.message)
     }
   }
+
+  public async getDashboardData({ response, request }: HttpContextContract) {
+    try {
+
+      const queryParams = request.qs();
+
+      const facilityDashboardData = await FacilityEmission.getFacilitiesDashboardData(queryParams);
+
+      return apiResponse(response, true, 200, facilityDashboardData, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.dashboardCalculationFetchSuccess'));
+
+    } catch (error) {
+      return apiResponse(
+        response,
+        false,
+        400,
+        {},
+        error.messages ? error.messages : error.message
+      )
+    }
+  }
 }
