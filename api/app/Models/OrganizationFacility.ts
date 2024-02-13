@@ -39,13 +39,16 @@ export default class OrganizationFacility extends BaseModel {
   public facilityEmission: HasMany<typeof FacilityEmission>
 
 
-  public static async createFacility(facilityData) {
+  public static async createFacility(facilityData,organizationIds) {
 
     // Generate a new UUID for the id field
     const id = uuidv4();
 
     // Merge the generated id with the facilityData
-    const dataWithId = { ...facilityData, id };
+    const dataWithId = {
+      ...facilityData, id,
+      organization_id: facilityData.organization_id ? facilityData.organization_id : organizationIds
+    };
 
     const result = await OrganizationFacility.create(dataWithId)
 
@@ -54,11 +57,13 @@ export default class OrganizationFacility extends BaseModel {
 
 
   public static async getAllFacilities(queryParams: ParsedQs) {
+    let organizationFacilities: any = {}
+
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8;
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
     const order = queryParams.order ? queryParams.order.toString() : 'desc';
     const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at';
-    const organizationId = queryParams.organizationId ? queryParams.organizationId.toString() : '';
+    const organizationId = queryParams.organization_id ? queryParams.organization_id.toString() : '';
 
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
 
@@ -68,7 +73,14 @@ export default class OrganizationFacility extends BaseModel {
 
     query = query.orderBy(sort, order);
 
-    const organizationFacilities = await query.paginate(page, perPage);
+    //:: Pagination handling
+    if (queryParams.per_page && queryParams.per_page !== 'all') {
+      organizationFacilities = await query.paginate(page, perPage)
+    }
+    else {
+      organizationFacilities = await query
+    }
+
 
     return organizationFacilities
   }
