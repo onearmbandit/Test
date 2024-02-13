@@ -6,7 +6,7 @@ import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 import User from 'App/Models/User';
 
 export default class SupplyChainReportingPeriodsController {
-  public async index({ request, response,auth }: HttpContextContract) {
+  public async index({ request, response, auth }: HttpContextContract) {
     try {
 
       const queryParams = request.qs();
@@ -104,10 +104,11 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
-  public async show({ response, params }: HttpContextContract) {
+  public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)
-
+      //:: Authorization (auth user can access their reporting periods data only)
+      await bouncer.with('SupplyChainReportingPeriodPolicy').authorize('show', reportPeriodData.toJSON())
 
       return apiResponse(response, true, 200, reportPeriodData, 'Data Fetch Successfully')
     }
@@ -118,16 +119,20 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
-  public async update({ request, response, params }: HttpContextContract) {
+  public async update({ request, response, params, bouncer }: HttpContextContract) {
     try {
       let requestData = request.all()
+      const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)
+
+      //:: Authorization (auth user can update their reporting periods only)
+      await bouncer.with('SupplyChainReportingPeriodPolicy').authorize('update', reportPeriodData.toJSON())
 
       // validate facility details
       await request.validate(SupplyChainReportingPeriodValidator)
 
-      const reportPeriodData = await SupplyChainReportingPeriod.updateReportPeriod(requestData, params)
+      const updatedPeriodData = await SupplyChainReportingPeriod.updateReportPeriod(reportPeriodData, requestData)
 
-      return apiResponse(response, true, 200, reportPeriodData,
+      return apiResponse(response, true, 200, updatedPeriodData,
         Config.get('responsemessage.SUPPLIER_RESPONSE.updateSupplierReportPeriodSuccess'))
     }
     catch (error) {
@@ -152,9 +157,14 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
-  public async destroy({ response, params }: HttpContextContract) {
+  public async destroy({ response, params,bouncer }: HttpContextContract) {
     try {
-      await SupplyChainReportingPeriod.deleteReportPeriod(params);
+      const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)
+
+      //:: Authorization (auth user can delete their reporting period data only)
+      await bouncer.with('SupplyChainReportingPeriodPolicy').authorize('delete', reportPeriodData.toJSON())
+
+      await SupplyChainReportingPeriod.deleteReportPeriod(reportPeriodData);
 
       return apiResponse(response, true, 200, [],
         Config.get('responsemessage.SUPPLIER_RESPONSE.supplierReportPeriodDeleteSuccess'))

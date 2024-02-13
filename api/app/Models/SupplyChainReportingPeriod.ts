@@ -123,8 +123,7 @@ export default class SupplyChainReportingPeriod extends BaseModel {
     return reportPeriodData;
   }
 
-  public static async updateReportPeriod(requestData, params) {
-    const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)
+  public static async updateReportPeriod(reportPeriodData, requestData) {
     reportPeriodData.merge({
       reportingPeriodFrom: DateTime.fromJSDate(new Date(requestData.reportingPeriodFrom)),
       reportingPeriodTo: DateTime.fromJSDate(new Date(requestData.reportingPeriodTo))
@@ -136,8 +135,7 @@ export default class SupplyChainReportingPeriod extends BaseModel {
 
 
 
-  public static async deleteReportPeriod(params) {
-    const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)
+  public static async deleteReportPeriod(reportPeriodData) {
     await reportPeriodData.merge({ deletedAt: DateTime.now() }).save()
     return
   }
