@@ -99,7 +99,7 @@ const AddActivePage = () => {
           <CardHeader className="flex-row justify-between">
             {/* TODO : conditionally render blue tick after save */}
             <div className="flex items-center space-x-2.5">
-              {values.name != "" ? (
+              {values.name === "" ? (
                 <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
                   1
                 </div>
@@ -108,7 +108,7 @@ const AddActivePage = () => {
               )}
               <p className="flex-1 font-bold">Project Name*</p>
             </div>
-            {values.name != "" && (
+            {values.name !== "" && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(1)}
@@ -118,9 +118,9 @@ const AddActivePage = () => {
               </Button>
             )}
           </CardHeader>
-          <CardContent className="space-y-6">
-            {currentSection == 1 ? (
-              <>
+          {currentSection == 1 ? (
+            <>
+              <CardContent className="space-y-6">
                 {" "}
                 <label className="text-sm">
                   Add the name of the Abatement Project
@@ -135,32 +135,32 @@ const AddActivePage = () => {
                   className="h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2"
                   placeholder="Add project name"
                 />
-              </>
-            ) : (
-              <CardContent>
-                {values.name != "" ? (
-                  <p className="text-green-900 text-sm">{values.name}</p>
-                ) : (
-                  <p className="text-sm">
-                    Provide a short description of the project
-                  </p>
-                )}
               </CardContent>
-            )}
-          </CardContent>
-          <CardFooter className="justify-end">
-            <Button
-              type="button"
-              variant={"outline"}
-              onClick={() => {
-                setFieldValue("name", projectDetails[1].name);
-                setCurrentSection(2);
-              }}
-              className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
-            >
-              Save
-            </Button>
-          </CardFooter>
+              <CardFooter className="justify-end">
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => {
+                    setFieldValue("name", projectDetails[1].name);
+                    setCurrentSection(2);
+                  }}
+                  className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
+                >
+                  Save
+                </Button>
+              </CardFooter>
+            </>
+          ) : (
+            <CardContent>
+              {values.name != "" ? (
+                <p className="text-green-900 text-sm">{values.name}</p>
+              ) : (
+                <p className="text-sm">
+                  Provide a short description of the project
+                </p>
+              )}
+            </CardContent>
+          )}
         </Card>
 
         {/* Project Descripton */}

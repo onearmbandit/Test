@@ -27,7 +27,7 @@ const ActivePage = async () => {
     <div className="px-8">
       <Header />
       {projects.length == 0 ? (
-        <EmptyState link="/abatement-project/active" />
+        <EmptyState link="/abatement-projects/active/add" />
       ) : (
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
           <div className="flex items-center space-x-2">
