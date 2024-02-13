@@ -14,7 +14,7 @@ export default class FacilitiesController {
 
       const facilities = await OrganizationFacility.getAllFacilities(queryParams);
 
-      const isPaginated = !request.input('per_page') || request.input('per_page') !== 'all';
+      const isPaginated = request.input('per_page') && request.input('per_page') !== 'all'
 
       return apiResponse(response, true, 200, facilities, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.dataFetchSuccess'), isPaginated);
 
@@ -61,9 +61,12 @@ export default class FacilitiesController {
     }
   }
 
-  public async show({ response, params }: HttpContextContract) {
+  public async show({ response, params,bouncer }: HttpContextContract) {
     try {
       const organizationFacility = await OrganizationFacility.getOrganizationFacilityData('id', params.id)
+
+      //:: Authorization (auth user can access their organization-facility only)
+      await bouncer.with('OrganizationFacilityPolicy').authorize('view', organizationFacility)
 
       return apiResponse(response, true, 200, organizationFacility, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'))
     }
@@ -74,10 +77,13 @@ export default class FacilitiesController {
     }
   }
 
-  public async update({ request, response }: HttpContextContract) {
+  public async update({ request, response ,bouncer}: HttpContextContract) {
     try {
 
       const organizationFacilityData = await OrganizationFacility.getOrganizationFacilityData('id', request.param('id'))
+
+      //:: Authorization (auth user can update their organization's facility only)
+      await bouncer.with('OrganizationFacilityPolicy').authorize('update', organizationFacilityData)
 
       const payload = await request.validate(UpdateFacilityValidator);
 
@@ -96,9 +102,12 @@ export default class FacilitiesController {
     }
   }
 
-  public async destroy({ request, response }: HttpContextContract) {
+  public async destroy({ request, response,bouncer }: HttpContextContract) {
     try {
       const organizationFacilityData = await OrganizationFacility.getOrganizationFacilityData('id', request.param('id'))
+
+       //:: Authorization (auth user can delete only their organization's facility not other)
+       await bouncer.with('OrganizationFacilityPolicy').authorize('delete', organizationFacilityData)
 
       if (organizationFacilityData) {
         organizationFacilityData.deleted_at = DateTime.local()
