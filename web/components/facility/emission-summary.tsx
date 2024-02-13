@@ -8,6 +8,8 @@ import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import dayjs from "dayjs";
 
+/**TODO : delete this file */
+
 const EmissionSummary = () => {
   const searchParams = useSearchParams();
   const facilityId = searchParams.get("facilityId");
