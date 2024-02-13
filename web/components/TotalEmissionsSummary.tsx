@@ -197,16 +197,22 @@ const TotalEmissionsSummary = () => {
                       </div>
 
                       <div className="space-y-3">
-                        {dashboard?.finalResults?.map((item: any) => (
-                          <div className="flex justify-between items-center">
-                            <p className="text-[10px] font-bold text-slate-700">
-                              {item.facilityName}
-                            </p>
-                            <p className="text-green-900 text-xs">
-                              {item.totalScope1TotalEmission || "Not Available"}
-                            </p>
-                          </div>
-                        ))}
+                        {dashboard?.finalResults?.map(
+                          (item: any, i: number) => (
+                            <div
+                              key={i}
+                              className="flex justify-between items-center"
+                            >
+                              <p className="text-[10px] font-bold text-slate-700">
+                                {item.facilityName}
+                              </p>
+                              <p className="text-green-900 text-xs">
+                                {item.totalScope1TotalEmission ||
+                                  "Not Available"}
+                              </p>
+                            </div>
+                          )
+                        )}
                         {/* {emissions?.length > 2 && (
                             <p className="font-bold">...</p>
                           )} */}
@@ -235,16 +241,22 @@ const TotalEmissionsSummary = () => {
                       </div>
 
                       <div className="space-y-3">
-                        {dashboard?.finalResults?.map((item: any) => (
-                          <div className="flex justify-between items-center">
-                            <p className="text-[10px] font-bold text-slate-700">
-                              {item.facilityName}
-                            </p>
-                            <p className="text-green-900 text-xs">
-                              {item.totalScope2TotalEmission || "Not Available"}
-                            </p>
-                          </div>
-                        ))}
+                        {dashboard?.finalResults?.map(
+                          (item: any, i: number) => (
+                            <div
+                              key={i}
+                              className="flex justify-between items-center"
+                            >
+                              <p className="text-[10px] font-bold text-slate-700">
+                                {item.facilityName}
+                              </p>
+                              <p className="text-green-900 text-xs">
+                                {item.totalScope2TotalEmission ||
+                                  "Not Available"}
+                              </p>
+                            </div>
+                          )
+                        )}
                         {/* {emissions?.length > 2 && (
                             <p className="font-bold">...</p>
                           )} */}
@@ -273,16 +285,22 @@ const TotalEmissionsSummary = () => {
                       </div>
 
                       <div className="space-y-3">
-                        {dashboard?.finalResults?.map((item: any) => (
-                          <div className="flex justify-between items-center">
-                            <p className="text-[10px] font-bold text-slate-700">
-                              {item.facilityName}
-                            </p>
-                            <p className="text-green-900 text-xs">
-                              {item.totalScope3TotalEmission || "Not Available"}
-                            </p>
-                          </div>
-                        ))}
+                        {dashboard?.finalResults?.map(
+                          (item: any, i: number) => (
+                            <div
+                              key={i}
+                              className="flex justify-between items-center"
+                            >
+                              <p className="text-[10px] font-bold text-slate-700">
+                                {item.facilityName}
+                              </p>
+                              <p className="text-green-900 text-xs">
+                                {item.totalScope3TotalEmission ||
+                                  "Not Available"}
+                              </p>
+                            </div>
+                          )
+                        )}
                         {/* {emissions?.length > 2 && (
                             <p className="font-bold">...</p>
                           )} */}

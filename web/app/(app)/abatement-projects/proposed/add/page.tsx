@@ -44,6 +44,9 @@ const AddProposedPage = () => {
     mutationFn: addAbatementProjects,
     onSuccess: (data) => {
       console.log(data);
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
     },
     onError(error, variables, context) {
       toast.error(error.message, { style: { color: "red" } });

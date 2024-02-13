@@ -67,8 +67,11 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: setupOrganizationStep1,
-    onSuccess: (organization) => {
+    onSuccess: (organization: any) => {
       // setUserId(organization.data.id);
+      if (organization.errors) {
+        throw new Error(organization.errors[0].message);
+      }
       toast.success("Your organization profile has been updated", {
         style: { color: "green" },
       });
@@ -193,7 +196,10 @@ const Step2 = ({ setStep }: any) => {
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: setupOrganizationStep2,
-    onSuccess: (organization) => {
+    onSuccess: (organization: any) => {
+      if (organization.errors) {
+        throw new Error(organization.errors[0].message);
+      }
       toast.success("Your organization profile has been updated", {
         style: { color: "green" },
       });
@@ -247,7 +253,7 @@ const Step2 = ({ setStep }: any) => {
         <div className="actions-container justify-between items-center flex w-full gap-5 mt-6 px-2.5 py-5 max-md:max-w-full max-md:flex-wrap">
           <p
             onClick={() => setStep(1)}
-            className="back-button text-blue-600 text-center text-sm font-bold leading-4 my-auto"
+            className="back-button text-blue-600 text-center text-sm font-bold cursor-pointer leading-4 my-auto"
           >
             Back
           </p>
@@ -283,16 +289,17 @@ const Step2 = ({ setStep }: any) => {
 const Step3 = ({ setStep }: any) => {
   const session = useSession();
   const validation = z.object({
-    naicsCode: z
-      .string()
-      .regex(/^[0-9]{4,5}$/, "Please enter a valid NAICS code"),
+    naicsCode: z.string().regex(/^[0-9]{4,5}$/, "NAICS codes are 4-5 digits"),
     profileStep: z.number().int().min(1).max(3),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
-    mutationKey: ["step1"],
+    mutationKey: ["step3"],
     mutationFn: setupOrganizationStep3,
     onSuccess: (organization) => {
+      if (organization.errors) {
+        throw new Error(organization.errors[0].message);
+      }
       toast.success("Your organization profile has been updated", {
         style: { color: "green" },
       });
@@ -390,9 +397,6 @@ const Step3 = ({ setStep }: any) => {
   );
 };
 
-/**
- * TODO: the character limit here will be 20-30
- */
 const Step4 = ({ setStep }: any) => {
   const router = useRouter();
   const session = useSession();
@@ -420,6 +424,9 @@ const Step4 = ({ setStep }: any) => {
     mutationKey: ["step1"],
     mutationFn: setupOrganizationStep4,
     onSuccess: (organization) => {
+      if (organization.errors) {
+        throw new Error(organization.errors[0].message);
+      }
       toast.success("Your organization profile has been updated", {
         style: { color: "green" },
       });
@@ -439,10 +446,13 @@ const Step4 = ({ setStep }: any) => {
     onSubmit: (data: any) => {
       const organizationId: string | undefined =
         session.data?.user?.organizations[0]?.id;
+
+      const newTargets =
+        currentTarget != "" ? [...targets, currentTarget] : targets;
       if (organizationId) {
         mutate({
           id: organizationId,
-          formdata: { ...data, climateTargets: targets },
+          formdata: { ...data, climateTargets: newTargets },
         });
       }
 
@@ -547,7 +557,7 @@ const Step4 = ({ setStep }: any) => {
                 <Loader2 size={30} className="text-slate-400 animate-spin" />
               )}
               <Button
-                disabled={isPending}
+                disabled={currentTarget.length > 50 || isPending}
                 className="save-button text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
                 type="submit"
               >
