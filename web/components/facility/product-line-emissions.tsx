@@ -29,6 +29,7 @@ import { Product } from "@/lib/types/product.type";
 import _ from "lodash";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
+import { z } from "zod";
 
 const ProductLineEmissions = ({ period }: { period: string }) => {
   const queryClient = useQueryClient();
@@ -48,12 +49,12 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
     queryKey: ["product-emissions", period],
     queryFn: () => getProductLines(period!),
   });
-  const productLines = prodLines.isSuccess ? prodLines.data : [];
+  const productLines = prodLines.isSuccess ? prodLines.data.data : {};
 
   const equality = useQuery({
     queryKey: ["equality", period],
     queryFn: () => getEqualityData(period!),
-    enabled: false,
+    enabled: isEqual,
   });
   const equalEmission = equality.isSuccess ? equality.data : {};
 
@@ -90,6 +91,7 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
     });
     const formData = {
       facilityEmissionId: period,
+      equalityAttribute: isEqual,
       facilityProducts: emissionCopy,
     };
     mutate(formData);
@@ -106,18 +108,25 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
 
     await queryClient.prefetchQuery({
       queryKey: ["equality", period],
-      queryFn: () => getEqualityData(period),
+      queryFn: () => getEqualityData(period!),
     });
+    setIsEqual(true);
   };
 
   useEffect(() => {
     if (prodLines.isSuccess) {
-      setEmissions(productLines.data);
+      setEmissions(productLines.FacilityProducts);
+      setIsEqual(
+        productLines?.FacilityEqualityAttribute?.equality_attribute == 0
+          ? false
+          : true
+      );
     }
   }, [prodLines.status]);
 
   useEffect(() => {
     if (equality.isSuccess) {
+      // console.log(equalEmission);
       setEmissions(equalEmission.data);
       setIsEqual(true);
     }
@@ -160,12 +169,18 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
                       <TableCell className="w-1/4">{item.quantity}</TableCell>
                       <TableCell>
                         <Input
-                          type={isEqual ? "text" : "number"}
                           disabled={!isEdit}
                           value={item.scope1_carbon_emission!}
                           className="bg-gray-50 w-1/2"
                           onChange={(e) => {
                             const copy = _.cloneDeep(emissions);
+                            const result = z
+                              .object({ emission: z.number() })
+                              .safeParse({ emission: Number(e.target.value) });
+
+                            if (!result.success) {
+                              return;
+                            }
                             copy[i].scope1CarbonEmission = e.target.value;
                             copy[i].scope1_carbon_emission = e.target.value;
                             setEmissions(copy);
@@ -174,11 +189,17 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
                       </TableCell>
                       <TableCell>
                         <Input
-                          type={isEqual ? "text" : "number"}
                           disabled={!isEdit}
                           value={item.scope2_carbon_emission!}
                           onChange={(e) => {
                             const copy = _.cloneDeep(emissions);
+                            const result = z
+                              .object({ emission: z.number() })
+                              .safeParse({ emission: Number(e.target.value) });
+
+                            if (!result.success) {
+                              return;
+                            }
                             copy[i].scope2CarbonEmission = e.target.value;
                             copy[i].scope2_carbon_emission = e.target.value;
                             setEmissions(copy);
@@ -188,11 +209,17 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
                       </TableCell>
                       <TableCell>
                         <Input
-                          type={isEqual ? "text" : "number"}
                           disabled={!isEdit}
                           value={item.scope3_carbon_emission!}
                           onChange={(e) => {
                             const copy = _.cloneDeep(emissions);
+                            const result = z
+                              .object({ emission: z.number() })
+                              .safeParse({ emission: Number(e.target.value) });
+
+                            if (!result.success) {
+                              return;
+                            }
                             copy[i].scope3CarbonEmission = e.target.value;
                             copy[i].scope3_carbon_emission = e.target.value;
                             setEmissions(copy);

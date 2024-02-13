@@ -50,6 +50,9 @@ export const authOptions: NextAuthOptions = {
           socialLoginToken: tokens.id_token,
         };
       },
+      httpOptions: {
+        timeout: 10000,
+      },
     }),
     Credentials({
       name: "Credentials",

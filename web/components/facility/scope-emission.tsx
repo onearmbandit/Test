@@ -24,9 +24,9 @@ const ScopeEmissions = ({ period }: { period: any }) => {
   });
   const isScopeEmissionsNull =
     isSuccess &&
-    periodDetails?.data.scope1_total_emission == null &&
-    periodDetails?.data.scope2_total_emission == null &&
-    periodDetails?.data.scope3_total_emission == null;
+    periodDetails?.data?.scope1_total_emission == null &&
+    periodDetails?.data?.scope2_total_emission == null &&
+    periodDetails?.data?.scope3_total_emission == null;
   const [editMode, setEditMode] = useState(isScopeEmissionsNull ? true : false);
 
   const addScopeMut = useMutation({

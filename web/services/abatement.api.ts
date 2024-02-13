@@ -34,7 +34,7 @@ const fetchApi = async (
     .then((res) => res.data)
     .catch((err) => {
       console.log(err.response.data);
-      throw new Error(err.response?.data.message);
+      return err.response?.data;
     });
 
   return response;
@@ -46,4 +46,8 @@ export const addAbatementProjects = (obj: any) => {
 
 export const getActiveAbatementProjects = (orgId: string) => {
   return fetchApi(`/auth/abatement-projects?organizationId=${orgId}`);
+};
+
+export const getActiveAbatementProjectById = (projectId: string) => {
+  return fetchApi(`/auth/abatement-projects/${projectId}`);
 };

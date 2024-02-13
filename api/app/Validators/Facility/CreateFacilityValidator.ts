@@ -1,11 +1,12 @@
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-export default class CreateFacilityValidator {
+export default  class  CreateFacilityValidator {
   constructor(protected ctx: HttpContextContract) {}
 
+
   public schema = schema.create({
-    organization_id: schema.string({ trim: true }, [
+    organization_id: schema.string.optional({ trim: true }, [
       rules.uuid(),
       rules.exists({ table: 'organizations', column: 'id' }),
     ]),

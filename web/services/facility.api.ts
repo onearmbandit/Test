@@ -33,7 +33,7 @@ const fetchApi = async (
     .then((res) => res.data)
     .catch((err) => {
       console.log(err.response.data);
-      throw new Error(err.response?.data.message);
+      return err.response?.data;
     });
 
   return response;
@@ -98,8 +98,8 @@ export const editProductLines = (formData: any) => {
   });
 };
 
-export const getProductLines = (facilityId: string) => {
-  return fetchApi(`/auth/facility-product?facilityEmissionId=${facilityId}`);
+export const getProductLines = (emissionId: string) => {
+  return fetchApi(`/auth/facility-emission/${emissionId}`);
 };
 
 export const facilityDetails = (id: string) => {
@@ -109,5 +109,17 @@ export const facilityDetails = (id: string) => {
 export const getEqualityData = (id: string) => {
   return fetchApi(
     `/auth/equality-emission-calculation?facilityEmissionId=${id}`
+  );
+};
+
+export const getFacilityDashboard = ({
+  from,
+  to,
+}: {
+  from: string;
+  to: string;
+}) => {
+  return fetchApi(
+    `/auth/dashboard-data?reportingPeriodFrom=${from}&reportingPeriodTo=${to}`
   );
 };

@@ -50,6 +50,7 @@ const ReportingPeriod = ({
   const router = useRouter();
   const facilityId = searchParams.get("facilityId");
   const queryClient = useQueryClient();
+  const [isEdit, setEdit] = useState(false);
 
   const validation = z.object({
     reportingPeriodFrom: z.date(),
@@ -59,28 +60,46 @@ const ReportingPeriod = ({
   const editMut = useMutation({
     mutationFn: editFacilityReportingPeriod,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       queryClient.invalidateQueries({
         queryKey: ["reporting-periods"],
       });
       toast.success("Reporting period updated", { style: { color: "green" } });
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
     },
   });
 
   const deleteMut = useMutation({
     mutationFn: deleteFacilityReportingPeriod,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       queryClient.invalidateQueries({
         queryKey: ["reporting-periods"],
       });
       toast.success("Reporting period Deleted.", { style: { color: "green" } });
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
     },
   });
 
   const { mutate, isPending } = useMutation({
     mutationFn: addFacilityReportingPeriod,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       queryClient.invalidateQueries({ queryKey: ["reporting-periods"] });
       setNew(false);
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
     },
   });
 
@@ -152,6 +171,7 @@ const ReportingPeriod = ({
                 className="w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700"
               />
             }
+            disabled={!isEdit}
             renderMonthContent={renderMonthContent}
             showMonthYearPicker
             dateFormat="yyyy/MM"
@@ -163,13 +183,14 @@ const ReportingPeriod = ({
             customInput={
               <Input className="w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700" />
             }
+            disabled={!isEdit}
             renderMonthContent={renderMonthContent}
             showMonthYearPicker
             dateFormat="yyyy/MM"
             onChange={(date) => setFieldValue("reportingPeriodTo", date)}
           />
         </div>
-        {period ? (
+        {!isEdit ? (
           <div className="flex justify-between items-center mt-5">
             <Dialog>
               <DialogTrigger>
@@ -233,7 +254,7 @@ const ReportingPeriod = ({
                   <Button
                     type="button"
                     variant={"outline"}
-                    onClick={() => submitForm()}
+                    onClick={() => setEdit(true)}
                     className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
                   >
                     Yes, continue

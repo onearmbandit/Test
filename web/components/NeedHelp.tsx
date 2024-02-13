@@ -10,7 +10,7 @@ import { Check, ChevronDown } from "lucide-react";
 import Image from "next/image";
 
 const NeedHelp = () => {
-  const [open, setOpen] = useState<string>("item-0");
+  const [open, setOpen] = useState<string>("item-1");
   return (
     <div className="w-full mt-[0.625rem]">
       <Accordion type="single" value={open} collapsible>

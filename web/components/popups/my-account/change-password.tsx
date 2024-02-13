@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAccountStore } from "@/lib/stores/organisation.store";
 import { cn } from "@/lib/utils";
-import { updatePassword } from "@/services/user.api";
+import { updateUser } from "@/services/user.api";
 import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import React, { useState } from "react";
@@ -54,7 +54,7 @@ const ChangePassword = () => {
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["user-details"],
-    mutationFn: updatePassword,
+    mutationFn: updateUser,
     onSuccess: (data) => {
       console.log("after update : ", data);
       toast.success("Password updated successfully", {
