@@ -62,11 +62,15 @@ export default class AuthController {
           role
         )
         if (requestData.invitedUser) {
-          let organizationUserData = await OrganizationUser.getOrganizationUserDetails('email', requestData.email);
-          organizationUserData?.merge({
-            user_id: userData.id,
-
-          }).save()
+          let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
+            'email',
+            requestData.email
+          )
+          organizationUserData
+            ?.merge({
+              user_id: userData.id,
+            })
+            .save()
         }
 
         return apiResponse(
@@ -121,7 +125,7 @@ export default class AuthController {
           url: `${WEB_BASE_URL}`,
         }
 
-        await sendMail(userData.email, 'Welcome to C3insets.ai!', 'emails/user_welcome', emailData)
+        await sendMail(userData.email, 'Welcome to Terralab!', 'emails/user_welcome', emailData)
         if (requestData.invitedUser && !requestData.isSupplier) {
           const token = await auth.use('api').generate(userData, {
             expiresIn: '1day',
@@ -149,7 +153,12 @@ export default class AuthController {
           url: `${WEB_BASE_URL}/verify-email?token=${userData.emailVerifyToken}`,
         }
 
-        await sendMail(userData.email, 'Verify Your Email for C3', 'emails/verify_email', emailData)
+        await sendMail(
+          userData.email,
+          'Verify Your Email for Terralab',
+          'emails/verify_email',
+          emailData
+        )
       }
       return apiResponse(
         response,
@@ -204,12 +213,12 @@ export default class AuthController {
       })
 
       if (requestData.isSupplier) {
-        let supplierData = await Supplier.getSupplierDetails('email', userData.email);
-        await SupplierOrganization.query().where('supplier_id', supplierData.id)
+        let supplierData = await Supplier.getSupplierDetails('email', userData.email)
+        await SupplierOrganization.query()
+          .where('supplier_id', supplierData.id)
           .update({
-            "supplier_organization_id": organizationData?.id
-          });
-
+            supplier_organization_id: organizationData?.id,
+          })
       }
 
       const user = await User.getUserDetails('id', userData.id)
@@ -221,7 +230,7 @@ export default class AuthController {
 
       await sendMail(
         user.email,
-        'Your C3 Account Has Been Created!',
+        'Your Terralab Account Has Been Created!',
         'emails/user_new_account',
         emailData
       )
@@ -572,32 +581,44 @@ export default class AuthController {
             loginType: requestData.loginType,
             firstName: requestData.firstName ? requestData.firstName : null,
             lastName: requestData.lastName ? requestData.lastName : null,
+            emailVerifiedAt: DateTime.now(),
+            emailVerifyToken: '',
+            userStatus: activeStatus,
           },
           role
         )
+
+        const token = await auth.use('api').generate(userData as User, {
+          expiresIn: '1day',
+        })
 
         return apiResponse(
           response,
           true,
           201,
-          userData,
+          { token, user: userData },
           Config.get('responsemessage.AUTH_RESPONSE.userCreated')
         )
       } else {
-        userExist
-          ?.merge({
-            firstName: requestData.firstName ? requestData.firstName : null,
-            lastName: requestData.lastName ? requestData.lastName : null,
-            socialLoginToken: requestData.socialLoginToken,
-            loginType: requestData.loginType,
-          })
-          .save()
+        // userExist
+        //   ?.merge({
+        //     firstName: requestData.firstName ? requestData.firstName : null,
+        //     lastName: requestData.lastName ? requestData.lastName : null,
+        //     socialLoginToken: requestData.socialLoginToken,
+        //     loginType: requestData.loginType,
+        //   })
+        //   .save()
 
         //:: Update organization user table entry
-        let organizationUserData = await OrganizationUser.getOrganizationUserDetails('email', requestData.email);
-        organizationUserData?.merge({
-          user_id: userExist?.id,
-        }).save()
+        let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
+          'email',
+          requestData.email
+        )
+        organizationUserData
+          ?.merge({
+            user_id: userExist?.id,
+          })
+          .save()
 
         // const emailData = {
         //     user: userExist,
@@ -613,7 +634,7 @@ export default class AuthController {
           response,
           true,
           200,
-          { token, userExist },
+          { token, user: userExist },
           Config.get('responsemessage.AUTH_RESPONSE.loginSuccess')
         )
 

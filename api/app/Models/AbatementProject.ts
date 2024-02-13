@@ -23,6 +23,9 @@ export default class AbatementProject extends BaseModel {
   public description: string
 
   @column()
+  public estimatedCost: number
+
+  @column()
   public websiteUrl: string
 
   @column()
@@ -80,7 +83,51 @@ export default class AbatementProject extends BaseModel {
   //::_____Relationships End_____:://
 
 
+  public static async getAllProjects(queryParams: ParsedQs) {
+    let allProjectData: any = {}
 
+    let perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
+    let page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
+    let order = queryParams.order ? queryParams.order.toString() : 'desc'
+    let sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at'
+    let organizationId = queryParams.organizationId
+      ? queryParams.organizationId.toString()
+      : ''
+    let filters: any = queryParams.filters ? queryParams.filters : {};
+    let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
+
+    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
+    if (organizationId) {
+      query = query.where('organizationId', organizationId)
+    }
+
+    query = query.orderBy(sort, order)
+
+    //::Filter Query
+    if (typeof filters === 'object' && Object.keys(filters).length > 0) {
+      //::filter as per collection status
+      if (('status' in filters) && filters['status'].length > 0) {
+        query.where('status', filters['status'])
+      }
+    }
+
+    //::Include Relationship
+    if (includes.length > 0) {
+      includes.forEach((include: any) => query.preload(include.trim()))
+    }
+
+    //:: Pagination handling
+    if (queryParams.perPage && queryParams.perPage !== 'all') {
+      allProjectData = await query.paginate(page, perPage)
+    }
+    else {
+      allProjectData = await query
+    }
+
+
+    return allProjectData
+
+  }
 
   public static async createNewProject(requestData, auth, organizationData) {
     const projectData = await organizationData.related('abatementProjects').create(
@@ -89,6 +136,7 @@ export default class AbatementProject extends BaseModel {
         // supplierId: requestData.proposedBy,
         name: requestData.name,
         description: requestData.description,
+        estimatedCost: requestData.estimatedCost,
         websiteUrl: requestData.websiteUrl,
         emissionReductions: requestData.emissionReductions,
         emissionUnit: requestData.emissionUnit,
@@ -115,52 +163,9 @@ export default class AbatementProject extends BaseModel {
     return supplierData
   }
 
-
-  public static async getAllProjects(queryParams: ParsedQs) {
-    let allProjectData: any = {}
-
-    let perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
-    let page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
-    let order = queryParams.order ? queryParams.order.toString() : 'desc'
-    let sort = queryParams.sort ? queryParams.sort.toString() : 'updated_at'
-    let organizationId = queryParams.organizationId
-      ? queryParams.organizationId.toString()
-      : ''
-    let filters: any = queryParams.filters ? queryParams.filters : {};
-    let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
-
-    let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
-    if (organizationId) {
-      query = query.where('organizationId', organizationId)
-    }
-
-    query = query.orderBy(sort, order)
-
-    //::Filter Query
-    if (typeof filters === 'object' && Object.keys(filters).length > 0) {
-      //::filter as per collection status 
-      if (('status' in filters) && filters['status'].length > 0) {
-        query.where('status', filters['status'])
-      }
-    }
-
-    //::Include Relationship
-    if (includes.length > 0) {
-      includes.forEach((include: any) => query.preload(include.trim()))
-    }
-
-    //:: Pagination handling
-    if (queryParams.perPage && queryParams.perPage !== 'all') {
-      allProjectData = await query.paginate(page, perPage)
-    }
-    else {
-      allProjectData = await query
-    }
-
-
-    return allProjectData
-
+  public static async updateProjectDetails(project, requestData) {
+    await project.merge(requestData).save()
+    const projectData = await this.getProjectDetails('id', project.id)
+    return projectData
   }
-
-
 }

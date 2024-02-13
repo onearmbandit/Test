@@ -70,6 +70,7 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
   createFacilityProductSuccess: "Facility products created successfully.",
   equalityCarbonEmissionSuccess: "Equality carbon emission to product line calculated successfully.",
   updateFacilityProductSuccess: "Facility product details updated successfully.",
+  dashboardCalculationFetchSuccess: "Total emission across all facility details fetched successfully.",
 }
 
 
@@ -80,5 +81,8 @@ export const FILE_UPLOAD_RESPONSE = {
 
 
 export const ABATEMENT_PROJECT_RESPONSE = {
-  projectCreateSuccess: "Abatement project created successfully."
+  projectCreateSuccess: "Abatement project created successfully.",
+  projectUpdateSuccess: "Abatement project updated successfully.",
+  projectDeleteSuccess: "Abatement project deleted successfully.",
+  projectNotFound: "Abatement project didn't found."
 }

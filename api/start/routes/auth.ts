@@ -57,6 +57,8 @@ Route.group(() => {
         'destroy',
       ])
 
+      Route.get('/dashboard-data', 'FacilityEmissionsController.getDashboardData')
+
       Route.resource('/facility-product', 'FacilityProductsController').only(['index', 'store'])
       Route.post(
         '/update-facility-products',
@@ -66,6 +68,8 @@ Route.group(() => {
         '/equality-emission-calculation',
         'FacilityProductsController.calculateEqualityCarbonEmission'
       )
+
+      Route.get('/facility-product-name-list', 'FacilityProductsController.getAllProductNames')
 
       //:: Supplier APIs
       Route.post('/supplier-csv-upload', 'SuppliersController.bulkCreationOfSupplier')
@@ -83,12 +87,16 @@ Route.group(() => {
       Route.get('/supplier-product-type', 'SupplierProductsController.getAllProductTypes')
       Route.get('/supplier-product-name', 'SupplierProductsController.getAllProductNames')
 
-
       //;: AbatementProjects APIs
       Route.resource('/abatement-projects', 'AbatementProjectsController').only([
-        'index', 'store', 'show', 'update', 'destroy',
+        'index',
+        'store',
+        'show',
+        'update',
+        'destroy',
       ])
 
+      Route.resource('/supplier-organizations', 'SupplierOrganizationsController').only(['index'])
 
       //Invite organization api
       Route.post('/invite-organization', 'OrganizationUsersController.inviteOrganization')

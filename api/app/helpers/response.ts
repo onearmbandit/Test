@@ -18,10 +18,11 @@ export const apiResponse = (
 
   if (code >= 200 && code < 300) {
     if (isPaginated) {
-      let finalData=jsonStatus ? data :data.toJSON()
+      let finalData = jsonStatus ? data : data.toJSON()
       // let finalData = data.toJSON()
       response.meta = finalData.meta
       response.data = finalData.data
+
     } else {
       response.data = data
     }

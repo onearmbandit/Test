@@ -10,6 +10,7 @@ import {
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 const ScopeEmissions = ({ period }: { period: any }) => {
   const {
@@ -23,9 +24,9 @@ const ScopeEmissions = ({ period }: { period: any }) => {
   });
   const isScopeEmissionsNull =
     isSuccess &&
-    periodDetails?.data.scope1_total_emission == null &&
-    periodDetails?.data.scope2_total_emission == null &&
-    periodDetails?.data.scope3_total_emission == null;
+    periodDetails?.data?.scope1_total_emission == null &&
+    periodDetails?.data?.scope2_total_emission == null &&
+    periodDetails?.data?.scope3_total_emission == null;
   const [editMode, setEditMode] = useState(isScopeEmissionsNull ? true : false);
 
   const addScopeMut = useMutation({
@@ -196,35 +197,71 @@ const ScopeEmissions = ({ period }: { period: any }) => {
             </div>
 
             <div className="bg-sky-50/50 grow rounded-md p-6 space-y-6">
-              <div className="flex gap-3">
-                <div className="flex gap-3 justify-center items-stretch px-3 py-2 my-auto bg-blue-100 bg-opacity-50 rounded-[999px]">
-                  <div className="flex flex-col bg-blue-800 shrink-0 my-auto w-3 h-3 rounded-full" />
-                  <p className="text-xs font-semibold leading-4 text-center text-blue-800">
-                    SCOPE 1
+              <Tabs defaultValue="scope-1">
+                <TabsList className="flex gap-3">
+                  <TabsTrigger
+                    value="scope-1"
+                    className="flex gap-3 data-[state=active]:border-2 justify-center items-stretch px-3 data-[state=active]:px-5 py-2 my-auto bg-blue-100 bg-opacity-50 rounded-[999px]"
+                  >
+                    <div className="flex flex-col bg-blue-800 shrink-0 my-auto w-3 h-3 rounded-full" />
+                    <p className="text-xs font-semibold leading-4 text-center text-blue-800">
+                      SCOPE 1
+                    </p>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="scope-2"
+                    className="flex gap-3 data-[state=active]:border-2 data-[state=active]:border-red-500 data-[state=active]:px-5 justify-center items-stretch px-3 py-2 my-auto bg-red-100 bg-opacity-50 rounded-[999px]"
+                  >
+                    <div className="flex flex-col bg-red-800 shrink-0 my-auto w-3 h-3 rounded-full" />
+                    <p className="text-xs font-semibold leading-4 text-center text-red-800">
+                      SCOPE 2
+                    </p>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="scope-3"
+                    className="flex gap-3 data-[state=active]:border-2 data-[state=active]:border-green-700 data-[state=active]:px-5 justify-center items-stretch px-3 py-2 my-auto bg-green-100 bg-opacity-50 rounded-[999px]"
+                  >
+                    <div className="flex flex-col bg-green-800 shrink-0 my-auto w-3 h-3 rounded-full" />
+                    <p className="text-xs font-semibold leading-4 text-center text-green-800">
+                      SCOPE 3
+                    </p>
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="scope-1" className="py-6 space-y-6">
+                  <p className="text-lg font-bold text-slate-800 ">
+                    Scope 1 Emissions
                   </p>
-                </div>
-                <div className="flex gap-3 justify-center items-stretch px-3 py-2 my-auto bg-red-100 bg-opacity-50 rounded-[999px]">
-                  <div className="flex flex-col bg-red-800 shrink-0 my-auto w-3 h-3 rounded-full" />
-                  <p className="text-xs font-semibold leading-4 text-center text-red-800">
-                    SCOPE 2
+                  <p className="leading-6 w-[25rem]">
+                    Scope 1 emissions are direct greenhouse gas (GHG) emissions
+                    that a company generates while performing its business
+                    activities. These emissions come from sources that are owned
+                    or controlled by an organization.
                   </p>
-                </div>
-                <div className="flex gap-3 justify-center items-stretch px-3 py-2 my-auto bg-green-100 bg-opacity-50 rounded-[999px]">
-                  <div className="flex flex-col bg-green-800 shrink-0 my-auto w-3 h-3 rounded-full" />
-                  <p className="text-xs font-semibold leading-4 text-center text-green-800">
-                    SCOPE 3
+                </TabsContent>
+                <TabsContent value="scope-2" className="py-6 space-y-6">
+                  <p className="text-lg font-bold text-slate-800 ">
+                    Scope 2 Emissions
                   </p>
-                </div>
-              </div>
-              <p className="text-lg font-bold text-slate-800 ">
-                Scope 1 Emissions
-              </p>
-              <p className="leading-6 w-[25rem]">
-                Scope 1 emissions are direct greenhouse gas (GHG) emissions that
-                a company generates while performing its business activities.
-                These emissions come from sources that are owned or controlled
-                by an organization.
-              </p>
+                  <p className="leading-6 w-[25rem]">
+                    Scope 2 emissions are direct greenhouse gas (GHG) emissions
+                    that a company generates while performing its business
+                    activities. These emissions come from sources that are owned
+                    or controlled by an organization.
+                  </p>
+                </TabsContent>
+                <TabsContent value="scope-3" className="py-6 space-y-6">
+                  <p className="text-lg font-bold text-slate-800 ">
+                    Scope 3 Emissions
+                  </p>
+                  <p className="leading-6 w-[25rem]">
+                    Scope 3 emissions are direct greenhouse gas (GHG) emissions
+                    that a company generates while performing its business
+                    activities. These emissions come from sources that are owned
+                    or controlled by an organization.
+                  </p>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
           <div className="flex justify-end">

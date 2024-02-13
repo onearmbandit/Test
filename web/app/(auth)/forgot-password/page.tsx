@@ -12,7 +12,6 @@ import * as React from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import email from "next-auth/providers/email";
 
 function Page() {
   const { data: session } = useSession();
@@ -124,6 +123,16 @@ function Page() {
               >
                 Send reset link
               </Button>
+
+              <Link href={"/login"} className="pt-6">
+                <Button
+                  type="button"
+                  variant={"ghost"}
+                  className="text-blue-700 hover:text-blue-700 font-bold"
+                >
+                  Back to login
+                </Button>
+              </Link>
             </div>
           </div>
         </form>

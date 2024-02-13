@@ -37,14 +37,14 @@ export default class UpdateUserValidator {
     // ]),
 
     newPassword: schema.string.optional({}, [
-			rules.minLength(8),
-			rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
-			rules.confirmed('confirmPassword'), // This ensures that confirmPassword is equal to newPassword
-		]),
-		confirmPassword: schema.string.optional({}, [
-			rules.minLength(8),
-			rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
-		]),
+      rules.minLength(8),
+      rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
+      rules.confirmed('confirmPassword'), // This ensures that confirmPassword is equal to newPassword
+    ]),
+    confirmPassword: schema.string.optional({}, [
+      rules.minLength(8),
+      rules.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/),
+    ]),
 
     email: schema.string.optional({}, [
       rules.email(),

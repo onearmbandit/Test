@@ -26,7 +26,7 @@ const fetchApi = async (
 
   const session = await getServerSession(authOptions);
 
-  const token: any = session?.token.token;
+  const token: any = session?.token?.token;
   const authHeader = {
     Authorization: `bearer ${token}`,
   };
@@ -38,7 +38,7 @@ const fetchApi = async (
     data: body,
   })
     .then((res) => {
-      console.log("res", res);
+      // console.log("res", res);
       return res.data;
     })
     .catch((err) => {
@@ -53,7 +53,7 @@ export const getUser = () => {
   return fetchApi("/auth/user");
 };
 
-export const updatePassword = ({ formBody }: { formBody: any }) => {
+export const updateUser = ({ formBody }: { formBody: any }) => {
   return fetchApi(`/auth/user`, {
     method: "PATCH",
     body: formBody,
