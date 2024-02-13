@@ -56,6 +56,9 @@ const UploadCsvModal = ({
   const downloadCsvMUt = useMutation({
     mutationFn: downloadCsvTemplate,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       download(data?.data.download_url);
       toast.success('csv downloaded Successfully.', {
         style: { color: 'green' },
