@@ -58,7 +58,7 @@ const ActivePage = async () => {
                     <Image
                       height={102}
                       width={300}
-                      src={item.photo_url}
+                      src={"/" + item.photo_url}
                       alt="project image"
                     />
                   )}
