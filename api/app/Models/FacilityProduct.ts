@@ -159,6 +159,14 @@ export default class FacilityProduct extends BaseModel {
       })
     }
 
+    // save equality attribute value
+    await facilityEmissionData.related('FacilityEqualityAttribute').update(
+      {
+        facilityEmissionId: facilityEmissionData.id,
+        equalityAttribute: requestData.equalityAttribute,
+      }
+    )
+
     //:: this manage create or update using id as unique key
     const result = await facilityEmissionData
       .related('FacilityProducts', (query) => {

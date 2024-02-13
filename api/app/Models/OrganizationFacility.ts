@@ -39,13 +39,16 @@ export default class OrganizationFacility extends BaseModel {
   public facilityEmission: HasMany<typeof FacilityEmission>
 
 
-  public static async createFacility(facilityData) {
+  public static async createFacility(facilityData,organizationIds) {
 
     // Generate a new UUID for the id field
     const id = uuidv4();
 
     // Merge the generated id with the facilityData
-    const dataWithId = { ...facilityData, id };
+    const dataWithId = {
+      ...facilityData, id,
+      organization_id: facilityData.organization_id ? facilityData.organization_id : organizationIds
+    };
 
     const result = await OrganizationFacility.create(dataWithId)
 
@@ -70,15 +73,15 @@ export default class OrganizationFacility extends BaseModel {
 
     query = query.orderBy(sort, order);
 
-      //:: Pagination handling
-      if (queryParams.per_page && queryParams.per_page !== 'all') {
-        organizationFacilities = await query.paginate(page, perPage)
-      }
-      else {
-        organizationFacilities = await query
-      }
+    //:: Pagination handling
+    if (queryParams.per_page && queryParams.per_page !== 'all') {
+      organizationFacilities = await query.paginate(page, perPage)
+    }
+    else {
+      organizationFacilities = await query
+    }
 
-      
+
     return organizationFacilities
   }
 
