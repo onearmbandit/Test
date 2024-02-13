@@ -54,10 +54,12 @@ const EditClimateConditions = ({
     },
     onSubmit: (data: any) => {
       const organizationId = session?.user?.organizations[0]?.id!;
+      const newTargets =
+        currentTarget.length > 0 ? [...targets, currentTarget] : targets;
       if (organizationId) {
         mutate({
           id: organizationId,
-          formdata: { ...data, climateTargets: targets },
+          formdata: { ...data, climateTargets: newTargets },
         });
       }
     },
