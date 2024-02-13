@@ -89,7 +89,7 @@ export default class FacilitiesController {
     }
   }
 
-  public async show({ response, params, bouncer, auth }: HttpContextContract) {
+  public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       const organizationFacility = await OrganizationFacility.getOrganizationFacilityData('id', params.id)
 

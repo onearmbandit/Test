@@ -22,6 +22,5 @@ export default class OrganizationFacilityPolicy extends BasePolicy {
         return userIds.includes(user.id)
     }
 
-    public async create(user: User) {
-    }
+   
 }
