@@ -14,11 +14,12 @@ import z from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { cn } from "@/lib/utils";
 import Tick from "@/components/icons/Tick";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Check, Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import AutocompleteInput from "@/components/Autocomplete";
+import Image from "next/image";
 
 export default function Page() {
   const searchParams = useSearchParams();
@@ -77,17 +78,39 @@ export default function Page() {
           <header className="header flex justify-end mb-[6px]">
             <img
               loading="lazy"
-              src="https://cdn.builder.io/api/v1/image/assets/TEMP/016980bf7cc1c4d078e3f7a80bdae9db28bcd1f4fc12c0dde3b4f3f84f917e53?apiKey=011554aff43544e6af46800a427fd184&"
-              className="aspect-[6.81] object-contain object-center w-[177px] overflow-hidden max-w-full"
+              src="/assets/images/Logo.png"
+              className="w-[177px] overflow-hidden max-w-full"
               alt=""
             />
           </header>
-          <img
-            loading="lazy"
-            srcSet="https://cdn.builder.io/api/v1/image/assets/TEMP/2617de5a-f3cc-40b2-95cc-1b4a8d1167e4?apiKey=011554aff43544e6af46800a427fd184&width=100 100w, https://cdn.builder.io/api/v1/image/assets/TEMP/2617de5a-f3cc-40b2-95cc-1b4a8d1167e4?apiKey=011554aff43544e6af46800a427fd184&width=200 200w, https://cdn.builder.io/api/v1/image/assets/TEMP/2617de5a-f3cc-40b2-95cc-1b4a8d1167e4?apiKey=011554aff43544e6af46800a427fd184&width=400 400w, https://cdn.builder.io/api/v1/image/assets/TEMP/2617de5a-f3cc-40b2-95cc-1b4a8d1167e4?apiKey=011554aff43544e6af46800a427fd184&width=800 800w, https://cdn.builder.io/api/v1/image/assets/TEMP/2617de5a-f3cc-40b2-95cc-1b4a8d1167e4?apiKey=011554aff43544e6af46800a427fd184&width=1200 1200w, https://cdn.builder.io/api/v1/image/assets/TEMP/2617de5a-f3cc-40b2-95cc-1b4a8d1167e4?apiKey=011554aff43544e6af46800a427fd184&width=1600 1600w, https://cdn.builder.io/api/v1/image/assets/TEMP/2617de5a-f3cc-40b2-95cc-1b4a8d1167e4?apiKey=011554aff43544e6af46800a427fd184&width=2000 2000w, https://cdn.builder.io/api/v1/image/assets/TEMP/2617de5a-f3cc-40b2-95cc-1b4a8d1167e4?apiKey=011554aff43544e6af46800a427fd184&"
-            className="aspect-[0.73] object-contain object-center w-full overflow-hidden max-w-xl"
-            alt=""
-          />
+          <div
+            style={{
+              background: "url(/assets/images/gradient.png)",
+            }}
+            className="bg-gray-700/50 bg-blend-screen w-[579px] h-[787.951px] bg-cover rounded-md flex flex-col items-center pt-[5.28rem]"
+          >
+            <Image
+              src={"/assets/images/gradient-inside.png"}
+              alt="signup image"
+              width={540}
+              height={406.6}
+              className="shadow-lg"
+            />
+            <div className="pt-[4.23rem] space-y-4">
+              <div className="gap-3 flex items-center text-sm text-white">
+                <Check size={16} className="text-white" /> Quantify your supply
+                chain emissions by product line
+              </div>
+              <div className="gap-3 flex items-center text-sm text-white">
+                <Check size={16} className="text-white" /> Collaboratively
+                engage in carbon abatement projects
+              </div>
+              <div className="gap-3 flex items-center text-sm text-white">
+                <Check size={16} className="text-white" /> Provide buyers with
+                transparent carbon emissions insights
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
@@ -132,7 +155,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     mutationKey: ["step1"],
     mutationFn: register,
     onSuccess: (user) => {
-      console.log(user);
+      // console.log(user);
       if (user.errors) {
         throw new Error(user.errors[0].message);
       }
@@ -166,14 +189,12 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   console.log(errors);
 
   const handleSignIn = async (provider: string) => {
-    const res = await signIn(provider, { redirect: false });
+    const res = await signIn(provider, { redirect: false, callbackUrl: "/" });
   };
 
   if (session) {
     router.push("/");
   }
-
-  // console.log("errors", errors);
 
   return (
     <div className="items-center flex flex-1 max-w-[840px] w-full flex-col px-20 py-12 max-md:px-5">
@@ -418,12 +439,20 @@ const Step2 = ({
   const router = useRouter();
 
   const validation = z.object({
-    firstName: z.string().refine((val) => /^[a-zA-Z ]*$/.test(val), {
-      message: "Name should contain only alphabets",
-    }),
-    lastName: z.string().refine((val) => /^[a-zA-Z ]*$/.test(val), {
-      message: "Name should contain only alphabets",
-    }),
+    firstName: z
+      .string()
+      .min(2)
+      .max(30)
+      .refine((val) => /^[a-zA-Z ]*$/.test(val), {
+        message: "Name should contain only alphabets",
+      }),
+    lastName: z
+      .string()
+      .min(2)
+      .max(30)
+      .refine((val) => /^[a-zA-Z ]*$/.test(val), {
+        message: "Name should contain only alphabets",
+      }),
   });
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step2"],
@@ -468,7 +497,12 @@ const Step2 = ({
           >
             First Name
           </label>
-          <div className="text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full">
+          <div
+            className={cn(
+              "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+              step2Form.errors.firstName && "border border-red-500"
+            )}
+          >
             <Input
               type="text"
               id="firstNameInput"
@@ -478,6 +512,7 @@ const Step2 = ({
               className="bg-transparent"
             />
           </div>
+          <p className="text-xs text-red-500">{step2Form.errors.firstName}</p>
         </div>
         <div>
           <label
@@ -486,7 +521,12 @@ const Step2 = ({
           >
             Last Name
           </label>
-          <div className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full">
+          <div
+            className={cn(
+              "text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
+              step2Form.errors.lastName && "border border-red-500"
+            )}
+          >
             <Input
               type="text"
               id="lastNameInput"
@@ -496,6 +536,7 @@ const Step2 = ({
               placeholder="Last Name"
             />
           </div>
+          <p className="text-xs text-red-500">{step2Form.errors.lastName}</p>
         </div>
 
         <div className="justify-end flex pl-16 pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
@@ -618,7 +659,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             )}
           </div>
 
-          <div>
+          <div className="max-w-[582px]">
             <AutocompleteInput
               isDisabled={addressDisabled}
               setAddress={(e: any) => {

@@ -40,6 +40,7 @@ const FacilityDetails = () => {
     queryFn: () => getReportingPeriods(facilityId as string),
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
+  console.log(reportingPeriods);
   // const newReporting = searchParams.get("new");
   // const reporting = searchParams.get("reporting");
   // const reportingPeriod = reporting != null ? reporting : reportingPeriods[0];
