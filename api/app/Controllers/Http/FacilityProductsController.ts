@@ -7,6 +7,8 @@ import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProduct/UpdateMultipleFacilityProductValidator';
 import OrganizationFacility from 'App/Models/OrganizationFacility';
 // import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProduct/UpdateMultipleFacilityProductValidator';
+import Database from '@ioc:Adonis/Lucid/Database'
+
 
 export default class FacilityProductsController {
 
@@ -69,20 +71,32 @@ export default class FacilityProductsController {
     }
   }
 
-  public async updateFacilityMultipleProducts({ request, response }) {
+  public async updateFacilityMultipleProducts({ request, response, bouncer }) {
+    //::Initialize database transaction
+    const trx = await Database.transaction()
+
     try {
 
       let requestData = request.all()
 
       const facilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', requestData.facilityEmissionId)
 
+
+      //:: Authorization (auth user can update their facility's emissions data only)
+      await bouncer.with('FacilityEmissionPolicy').authorize('update', facilityEmissionData)
+
       await request.validate(UpdateMultipleFacilityProductValidator);
 
-      const updateFacilityProducts = await FacilityProduct.updateOrCreateFacilityProducts(facilityEmissionData, requestData)
+      const updateFacilityProducts = await FacilityProduct.updateOrCreateFacilityProducts(facilityEmissionData, requestData,trx)
+
+      //::commit database transaction
+      await trx.commit()
 
       return apiResponse(response, true, 200, updateFacilityProducts,
         Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.updateFacilityProductSuccess'))
     } catch (error) {
+      //::database transaction rollback if transaction failed
+      await trx.rollback()
 
       if (error.status === 422) {
         return apiResponse(response, false, error.status, error.messages, Config.get('responsemessage.COMMON_RESPONSE.validationFailed'))

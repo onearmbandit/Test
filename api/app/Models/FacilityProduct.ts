@@ -131,7 +131,7 @@ export default class FacilityProduct extends BaseModel {
     return facilityProductDetails
   }
 
-  public static async updateOrCreateFacilityProducts(facilityEmissionData, requestData) {
+  public static async updateOrCreateFacilityProducts(facilityEmissionData, requestData, trx: any = undefined) {
     let products: any = []
     let updateProductIds: any = []
 
@@ -159,12 +159,23 @@ export default class FacilityProduct extends BaseModel {
       })
     }
 
+    // save equality attribute value
+    await facilityEmissionData.related('FacilityEqualityAttribute').updateOrCreate(
+      {
+        facilityEmissionId: facilityEmissionData.id
+      },
+      {
+        equalityAttribute: requestData.equalityAttribute,
+      },
+      { client: trx }
+    )
+
     //:: this manage create or update using id as unique key
     const result = await facilityEmissionData
       .related('FacilityProducts', (query) => {
         query.whereNull('deleted_at') // Exclude soft-deleted records
       })
-      .updateOrCreateMany(products, 'id')
+      .updateOrCreateMany(products, 'id',{ client: trx })
     return result
   }
 
