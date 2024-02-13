@@ -399,7 +399,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
           </div>
           <div
             role="button"
-            onClick={() => handleSignIn("microsoft")}
+            onClick={() => handleSignIn("azure-ad")}
             className="justify-start items-stretch border-slate-200 flex gap-4 mt-6 py-4 px-11  rounded-full border-2 border-solid"
           >
             <img
