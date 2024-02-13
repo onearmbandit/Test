@@ -91,7 +91,7 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
     });
     const formData = {
       facilityEmissionId: period,
-      equality: isEqual,
+      equalityAttribute: isEqual,
       facilityProducts: emissionCopy,
     };
     mutate(formData);
