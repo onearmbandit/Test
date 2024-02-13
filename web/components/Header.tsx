@@ -17,7 +17,7 @@ const Header = () => {
       <div className="justify-center flex flex-col pl-16 py-6 items-end max-md:max-w-full max-md:pl-5">
         <div className="text-gray-900 text-xs font-medium leading-4 whitespace-nowrap justify-center items-stretch bg-gray-50 p-2 rounded-md">
           {data?.data?.organizations[0]?.naics_code && (
-            <>NACIS: {data?.data?.organizations[0]?.naics_code}</>
+            <>NAICS: {data?.data?.organizations[0]?.naics_code}</>
           )}
         </div>
       </div>
