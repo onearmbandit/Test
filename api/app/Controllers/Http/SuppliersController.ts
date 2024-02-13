@@ -53,7 +53,10 @@ export default class SuppliersController {
     }
   }
 
-  public async store({ request, response, auth }: HttpContextContract) {
+  public async store({ request, response, auth, bouncer }: HttpContextContract) {
+    //::Initialize database transaction
+    const trx = await Database.transaction()
+
     try {
       let requestData = request.all()
 
@@ -62,9 +65,11 @@ export default class SuppliersController {
         'id',
         requestData.supplyChainReportingPeriodId
       )
+      //:: Authorization (auth user can create suppliers for their reporting periods only)
+      await bouncer.with('SuppliersPolicy').authorize('create', reportPeriodData.toJSON())
 
       requestData = { ...requestData, id: uuidv4() }
-      var supplierData = await Supplier.createSupplier(reportPeriodData, requestData, auth)
+      var supplierData = await Supplier.createSupplier(reportPeriodData, requestData, auth, trx)
 
       const emailData = {
         initials: (auth.user?.firstName && auth.user?.lastName) ? auth.user?.firstName[0] + auth.user?.lastName[0] : '',
@@ -87,9 +92,13 @@ export default class SuppliersController {
         [reportPeriodData.organization?.toJSON().id]: {
           id: uuidv4(),
           supplier_id: [supplierData.id],
-          supplier_organization_id:[null]
+          supplier_organization_id: [null]
         },
-      })
+      },trx)
+
+      //::commit database transaction
+      await trx.commit()
+
       return apiResponse(
         response,
         true,
@@ -98,6 +107,9 @@ export default class SuppliersController {
         Config.get('responsemessage.SUPPLIER_RESPONSE.supplierCreateSuccess')
       )
     } catch (error) {
+      //::database transaction rollback if transaction failed
+      await trx.rollback()
+
       console.log('error', error)
       if (error.status === 422) {
         return apiResponse(
@@ -119,9 +131,12 @@ export default class SuppliersController {
     }
   }
 
-  public async show({ response, params }: HttpContextContract) {
+  public async show({ response, params,bouncer }: HttpContextContract) {
     try {
       var supplierData = await Supplier.getSupplierDetails('id', params.id)
+
+       //:: Authorization (auth user can access only their supplier data)
+       await bouncer.with('SuppliersPolicy').authorize('show', supplierData.toJSON())
 
       //;: Calculate total value of scope3Contribution
       let totalOfScopeContribution = 0
@@ -163,13 +178,16 @@ export default class SuppliersController {
     }
   }
 
-  public async update({ request, response, params, auth }: HttpContextContract) {
+  public async update({ request, response, params, auth ,bouncer}: HttpContextContract) {
     try {
       let requestData = request.all()
 
       var supplierData = await Supplier.getSupplierDetails('id', params.id)
 
       if (supplierData) {
+         //:: Authorization (auth user can update only their supplier data)
+       await bouncer.with('SuppliersPolicy').authorize('update', supplierData.toJSON())
+
         await request.validate(UpdateSupplierDatumValidator)
 
         await Supplier.updateSupplier(supplierData, requestData, auth)
@@ -207,7 +225,7 @@ export default class SuppliersController {
   public async destroy({ }: HttpContextContract) { }
 
   //:: Create supplier data using csv file
-  public async bulkCreationOfSupplier({ request, response, auth }: HttpContextContract) {
+  public async bulkCreationOfSupplier({ request, response, auth, bouncer }: HttpContextContract) {
     //::Initialize database transaction
     const trx = await Database.transaction()
 
@@ -236,6 +254,13 @@ export default class SuppliersController {
       await request.validate({ schema: schemaRules, messages: messages })
 
       let requestData = request.all()
+      //:: Fetch details of reporting period.
+      var reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails(
+        'id',
+        requestData.supplyChainReportingPeriodId
+      )
+      //:: Authorization (auth user can create suppliers for their reporting periods only)
+      await bouncer.with('SuppliersPolicy').authorize('create', reportPeriodData.toJSON())
 
       const csvFile: any = request.file('supplierCSV')
       const csvFilePath = csvFile ? csvFile.tmpPath : ''
@@ -264,10 +289,6 @@ export default class SuppliersController {
 
       //::Read sheet rows one by one
       let suppliers: any = []
-      var reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails(
-        'id',
-        requestData.supplyChainReportingPeriodId
-      )
 
       await worksheet?.eachRow(async function (row, rowNumber) {
         if (rowNumber !== 1) {
@@ -354,20 +375,20 @@ export default class SuppliersController {
             email: elementData.email,
             url: `${WEB_BASE_URL}?isSupplier=true`,   // isSupplier required to know invited user is supplier 
           }
-    
+
           await sendMail(
             emailData.email,
             `You’ve been invited to Terralab Insets  by ${emailData.organizationName}`,
             'emails/invite_organization',
             emailData
           )
-    
+
           //:: Add data in pivot table supplier_organizations
           await supplierData.related('organizations').attach({
             [reportPeriodData.organization?.toJSON().id]: {
               id: uuidv4(),
               supplier_id: [supplierData.id],
-              supplier_organization_id:[null]
+              supplier_organization_id: [null]
             },
           })
 
