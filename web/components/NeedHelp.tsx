@@ -125,7 +125,9 @@ const NeedHelp = () => {
                   </div>
                   <div className="gap-5 grid grid-cols-3 mt-[0.62rem] place-items-center items-start">
                     <Image
-                      src={"/assets/images/welcome-step-1.png"}
+                      src={
+                        "https://diw3xy9w4etxp.cloudfront.net/40feb0879e28e2b8137e851a93be7f93.png"
+                      }
                       alt="welcome guide step-1"
                       width={195}
                       height={97}

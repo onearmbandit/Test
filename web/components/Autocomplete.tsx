@@ -81,7 +81,7 @@ const AutocompleteInput = ({
       return (
         <li
           key={place_id}
-          className="hover:bg-black/5 p-1"
+          className="hover:bg-black/5 p-1 break-words"
           onClick={handleSelect(suggestion)}
         >
           <strong>{main_text}</strong> <small>{secondary_text}</small>
@@ -116,7 +116,7 @@ const AutocompleteInput = ({
       )}
 
       {status == "OK" && (
-        <ul className="absolte bottom-0 mt-1  rounded-md border p-3">
+        <ul className="absolte bottom-0 mt-1 max-w-full rounded-md border p-3">
           {renderSuggestions()}
         </ul>
       )}
