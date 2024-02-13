@@ -72,7 +72,7 @@ const AddActivePage = () => {
   const validation = z.object({
     name: z.string().min(3, { message: "length" }),
     description: z.string().min(3, { message: "length" }),
-    estimatedCost: z.string().email({ message: "Please enter valid email" }),
+    estimatedCost: z.number().min(0, { message: "must be greater than 0" }),
     websiteUrl: z.string(),
     emissionReductions: z
       .number()
@@ -81,35 +81,41 @@ const AddActivePage = () => {
     proposedBy: z.string().min(3, { message: "length" }),
     photoUrl: z.string().min(3, { message: "length" }),
     logoUrl: z.string().min(3, { message: "length" }),
-    status: z.boolean(),
+    status: z.number().min(0, { message: "must be greater than 0" }),
   });
 
-  const { values, setFieldValue, handleSubmit, submitForm, errors } = useFormik(
-    {
-      initialValues: {
-        name: "",
-        description: "",
-        estimatedCost: 0,
-        websiteUrl: "",
-        emissionReductions: 0,
-        emissionUnit: "",
-        proposedBy: "",
-        photoUrl: "",
-        logoUrl: "",
-        status: 0,
-      },
-      validateOnChange: true,
-      validationSchema: toFormikValidationSchema(validation),
-      onSubmit: (data) => {
-        console.log("formdata", data);
-        const modified = {
-          ...data,
-          organizationId,
-        };
-        mutate(modified);
-      },
-    }
-  );
+  const {
+    values,
+    setFieldValue,
+    handleSubmit,
+    setFieldError,
+    submitForm,
+    errors,
+  } = useFormik({
+    initialValues: {
+      name: "",
+      description: "",
+      estimatedCost: 0,
+      websiteUrl: "",
+      emissionReductions: 0,
+      emissionUnit: "",
+      proposedBy: "",
+      photoUrl: "",
+      logoUrl: "",
+      status: 0,
+    },
+    validateOnChange: true,
+    validateOnBlur: true,
+    validationSchema: toFormikValidationSchema(validation),
+    onSubmit: (data) => {
+      console.log("formdata", data);
+      const modified = {
+        ...data,
+        organizationId,
+      };
+      mutate(modified);
+    },
+  });
 
   console.log(Object.keys(projectDetails[5].photoUrl).includes("name"));
   console.log("errors:", errors);
@@ -164,20 +170,23 @@ const AddActivePage = () => {
                 <label className="text-sm">
                   Add the name of the Abatement Project
                 </label>
-                <Input
-                  name="name"
-                  value={projectDetails[1].name}
-                  onChange={(e) => {
-                    const copy = _.cloneDeep(projectDetails);
-                    copy[1].name = e.target.value;
-                    setProjectDetails(copy);
-                  }}
-                  className={cn(
-                    "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
-                    errors.name && "border border-red-600"
-                  )}
-                  placeholder="Add project name"
-                />
+                <div>
+                  <Input
+                    name="name"
+                    value={projectDetails[1].name}
+                    onChange={(e) => {
+                      const copy = _.cloneDeep(projectDetails);
+                      copy[1].name = e.target.value;
+                      setProjectDetails(copy);
+                    }}
+                    className={cn(
+                      "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
+                      errors.name && "border border-red-600"
+                    )}
+                    placeholder="Add project name"
+                  />
+                  <p className="text-xs text-red-500 mt-0.5">{errors.name}</p>
+                </div>
               </CardContent>
               <CardFooter className="justify-end">
                 <Button
@@ -186,8 +195,18 @@ const AddActivePage = () => {
                   variant={"outline"}
                   onClick={() => {
                     setFieldValue("name", projectDetails[1].name);
-                    if (Object.keys(errors).includes("name")) {
+                    const res = z
+                      .object({
+                        name: z
+                          .string()
+                          .min(3, { message: "must be at least 3 characters" }),
+                      })
+                      .safeParse(values.name);
+
+                    if (res.success) {
                       setCurrentSection(2);
+                    } else {
+                      setFieldError("name", res.error.message);
                     }
                   }}
                   className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
@@ -242,13 +261,17 @@ const AddActivePage = () => {
                   </label>
 
                   <textarea
+                    name="description"
                     onChange={(e) => {
                       const copy = _.cloneDeep(projectDetails);
                       copy[2].description = e.target.value;
                       setProjectDetails(copy);
                     }}
                     value={projectDetails[2].description}
-                    className="min-h-20 px-2 py-3 rounded-md resize-none bg-gray-50 w-full text-slate-700 text-sm font-light"
+                    className={cn(
+                      "min-h-20 px-2 py-3 rounded-md resize-none bg-gray-50 w-full text-slate-700 text-sm font-light",
+                      errors.description && "border border-red-600"
+                    )}
                     placeholder="Add description"
                   />
                 </div>
@@ -258,6 +281,7 @@ const AddActivePage = () => {
                   </label>
 
                   <Input
+                    name="estimatedCost"
                     type="number"
                     onChange={(e) => {
                       const copy = _.cloneDeep(projectDetails);
@@ -265,7 +289,10 @@ const AddActivePage = () => {
                       setProjectDetails(copy);
                     }}
                     value={projectDetails[2].estimatedCost}
-                    className="h-16 bg-gray-50 w-1/2 text-slate-700 text-sm font-light"
+                    className={cn(
+                      "h-16 bg-gray-50 w-1/2 text-slate-700 text-sm font-light",
+                      errors.estimatedCost && "border border-red-600"
+                    )}
                     placeholder="Add description"
                   />
                 </div>
@@ -273,13 +300,17 @@ const AddActivePage = () => {
                   <label className="text-sm">Add a website if available</label>
 
                   <Input
+                    name="websiteUrl"
                     onChange={(e) => {
                       const copy = _.cloneDeep(projectDetails);
                       copy[2].websiteUrl = e.target.value;
                       setProjectDetails(copy);
                     }}
                     value={projectDetails[2].websiteUrl}
-                    className="h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2"
+                    className={cn(
+                      "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
+                      errors.websiteUrl && "border border-red-600"
+                    )}
                     placeholder="Add website"
                   />
                 </div>
@@ -295,7 +326,10 @@ const AddActivePage = () => {
                       projectDetails[2].estimatedCost
                     );
                     setFieldValue("websiteUrl", projectDetails[2].websiteUrl);
-                    setCurrentSection(3);
+
+                    if (!Object.keys(errors).includes("name")) {
+                      setCurrentSection(3);
+                    }
                   }}
                   className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
                 >
@@ -358,12 +392,16 @@ const AddActivePage = () => {
                   </label>
 
                   <Input
+                    name="emissionReductions"
                     onChange={(e) => {
                       const copy = _.cloneDeep(projectDetails);
                       copy[3].emissionReductions = Number(e.target.value);
                       setProjectDetails(copy);
                     }}
-                    className="h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2"
+                    className={cn(
+                      "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
+                      errors.emissionReductions && "border border-red-600"
+                    )}
                     placeholder="Add emission reduction"
                   />
                 </div>
