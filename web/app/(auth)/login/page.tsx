@@ -13,6 +13,7 @@ import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { signIn, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const Page = () => {
   const { data: session } = useSession();
@@ -21,11 +22,9 @@ const Page = () => {
   const router = useRouter();
   const validation = z.object({
     email: z.string().email(),
-    password: z
-      .string()
-      .min(8, {
-        message: " Password must contain minimum 8 characters atleast",
-      }),
+    password: z.string().min(8, {
+      message: " Password must contain minimum 8 characters atleast",
+    }),
   });
 
   const { mutate, isPending } = useMutation({
@@ -70,14 +69,16 @@ const Page = () => {
   return (
     <div className="h-screen flex justify-center items-center">
       <div className="justify-center items-center border border-[color:var(--Color-Gray-50,#F9FAFB)] shadow-sm flex w-full max-w-[828px] flex-col py-12 rounded-lg border-solid">
-        <div className="items-stretch self-center flex w-[367px] max-w-full gap-3 mt-1 px-5 py-9">
+        <div className="items-center self-center flex w-[367px] max-w-full gap-3 mt-1 px-5 py-9">
           <header className="text-neutral-900 text-3xl whitespace-nowrap">
             Welcome to
           </header>
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/fad84bb1bb10d8cc468caba5945178e2d8abaf83567f17527647c040641eff01?apiKey=011554aff43544e6af46800a427fd184&"
-            className="aspect-[6.81] object-contain object-center w-full overflow-hidden shrink-0 flex-1 my-auto"
+          <Image
+            src={"/assets/images/Logo.png"}
+            width={177}
+            height={38.5}
+            alt="logo"
+            className="mix-blend-darken"
           />
         </div>
         <div className="text-neutral-500 text-center text-lg leading-7 max-w-[257px] self-center mt-6">

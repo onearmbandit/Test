@@ -106,11 +106,7 @@ const FacilityDetails = () => {
                   "MMM YYYY"
                 )} - ${dayjs(item.reporting_period_to).format("MMM YYYY")}`;
                 return (
-                  <TabsTrigger
-                    key={i}
-                    value={item.id}
-                    onClick={() => setCurrentTab(item.id)}
-                  >
+                  <TabsTrigger key={i} value={item.id}>
                     <HoverCard key={i}>
                       <HoverCardTrigger asChild>
                         <p className="text-blue-600">{reporting}</p>
