@@ -73,11 +73,11 @@ function Page() {
           <img
             loading="lazy"
             src={"/assets/images/Logo.png"}
-            className="aspect-[0.95] object-contain object-center w-[107px] fill-[linear-gradient(180deg,#39775F_81.94%,#3A9B8C_105.47%)] overflow-hidden self-center max-w-full mt-16 max-md:mt-10"
+            className="aspect-[0.95] object-contain object-center w-[177px] fill-[linear-gradient(180deg,#39775F_81.94%,#3A9B8C_105.47%)] overflow-hidden self-center max-w-full mt-2 max-md:mt-2"
             alt="Password Reset Logo"
           />
 
-          <header className="text-neutral-900 text-3xl self-center whitespace-nowrap mt-14 max-md:mt-10">
+          <header className="text-neutral-900 text-3xl self-center whitespace-nowrap mt-8 max-md:mt-8">
             Forgot your password?
           </header>
 
