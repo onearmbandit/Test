@@ -1,18 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import AutocompleteInput from "../Autocomplete";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useFormik } from "formik";
 import { useMutation } from "@tanstack/react-query";
-import { createFacility } from "@/services/facility.api";
+import { createFacility, updateFacility } from "@/services/facility.api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 const EditFacility = ({
   serialNo = 1,
@@ -25,19 +26,31 @@ const EditFacility = ({
   const router = useRouter();
   const orgId = session?.user?.organizations[0].id;
 
+  const [isEdit, setEdit] = useState(false);
+
   const validation = z.object({
-    name: z.string(),
-    address: z.string(),
+    name: z
+      .string()
+      .min(5, { message: "Name should be minimum of 5 characters" })
+      .max(255, { message: "Name should be less than 255 characters" }),
+    address: z
+      .string()
+      .min(5, { message: "Address should be minimum of 5 characters" })
+      .max(500, { message: "Address should be less than 500 characters" }),
   });
 
   const { mutate } = useMutation({
-    mutationFn: createFacility,
+    mutationFn: updateFacility,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       console.log(data);
+      toast.success("Facility updated", { style: { color: "green" } });
       router.push("/facilities");
+      // revalidatePath("/facilities");
     },
     onError: (err) => {
-      console.log(err);
       toast.error(err.message, { style: { color: "red" } });
     },
   });
@@ -52,9 +65,11 @@ const EditFacility = ({
       validateOnChange: false,
       validationSchema: toFormikValidationSchema(validation),
       onSubmit: (data) => {
-        mutate({ ...data, organization_id: orgId });
+        mutate({ id: facility.id, obj: data });
       },
     });
+
+  // console.log(facility);
 
   return (
     <section className="justify-center items-stretch self-stretch border border-[color:var(--Slate-200,#E2E8F0)] bg-white flex flex-col p-6 rounded-lg border-solid max-md:px-5">
@@ -98,7 +113,7 @@ const EditFacility = ({
             <p className="text-xs text-red-500">{errors.name as string}</p>
           </div>
         </div>
-        <div className="flex justify-between items-end">
+        <div className="flex justify-between items-end mb-3 py-3">
           <p
             className="justify-center self-center text-slate-700 text-xs font-medium leading-4 mt-10 max-md:max-w-full"
             aria-label="Facility Location"
@@ -109,6 +124,7 @@ const EditFacility = ({
 
           <p
             role="button"
+            onClick={() => setEdit(true)}
             className="text-sm font-semibold text-blue-600 leading-4"
           >
             Edit
@@ -116,16 +132,12 @@ const EditFacility = ({
         </div>
         <div>
           <AutocompleteInput
+            isDisabled={!isEdit}
             setAddress={(e: any) => {
               // console.log(e);
               setFieldValue("address", e);
             }}
-
-            // id="facility-location"
-            // type="text"
-            // className="text-slate-700 text-sm font-light leading-5 items-stretch self-center rounded-3xl shadow-sm bg-gray-50 w-full max-w-[972px] justify-center mt-6 px-2 py-3 max-md:max-w-full"
-            // placeholder="East"
-            // aria-label="facility-location"
+            address={values.address}
           />
           <p className="text-xs text-red-500">{errors.address as string}</p>
         </div>
