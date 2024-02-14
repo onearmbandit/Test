@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -22,6 +24,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
     queryKey: ["specific-period", period],
     queryFn: () => getReportingPeriodById(period),
   });
+
   const isScopeEmissionsNull =
     isSuccess &&
     periodDetails?.data?.scope1_total_emission == null &&
@@ -60,7 +63,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
       };
       setValues(emissionValues);
     }
-  }, [status]);
+  }, [status, periodDetails]);
   return (
     <div className="mt-5 max-md:max-w-full">
       {isLoading && <Loader2 className="text-blue-600 animate-spin" />}

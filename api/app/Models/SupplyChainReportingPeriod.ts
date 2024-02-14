@@ -50,6 +50,8 @@ export default class SupplyChainReportingPeriod extends BaseModel {
 
 
   public static async getAllReportingPeriod(queryParams: ParsedQs) {
+    let organizationReportingPeriods: any = {}
+
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 10;
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
     const order = queryParams.order ? queryParams.order.toString() : 'desc';
@@ -64,34 +66,38 @@ export default class SupplyChainReportingPeriod extends BaseModel {
 
     query = query.orderBy(sort, order);
 
-    const organizationReportingPeriods = await query.preload('supplier')
-    .paginate(page, perPage);
+    //:: Pagination handling
+    if (queryParams.per_page && queryParams.per_page !== 'all') {
+      organizationReportingPeriods = await query.preload('supplier').paginate(page, perPage)
+    }
+    else {
+      organizationReportingPeriods = await query.preload('supplier')
+    }
 
+    // Format reportingPeriodFrom and reportingPeriodTo
+    //  const formattedReportingPeriods = organizationReportingPeriods.map((period) => {
+    //   return {
+    //     ...period,
+    //     reportingPeriodFrom: period.reportingPeriodFrom.toFormat("LLL yyyy"),
+    //     reportingPeriodTo: period.reportingPeriodTo.toFormat("LLL yyyy"),
+    //   };
+    // });
+    // console.log("formattedReportingPeriods",formattedReportingPeriods)
 
-       // Format reportingPeriodFrom and reportingPeriodTo
-      //  const formattedReportingPeriods = organizationReportingPeriods.map((period) => {
-      //   return {
-      //     ...period,
-      //     reportingPeriodFrom: period.reportingPeriodFrom.toFormat("LLL yyyy"),
-      //     reportingPeriodTo: period.reportingPeriodTo.toFormat("LLL yyyy"),
-      //   };
-      // });
-      // console.log("formattedReportingPeriods",formattedReportingPeriods)
-  
-      // return formattedReportingPeriods;
+    // return formattedReportingPeriods;
 
     return organizationReportingPeriods
   }
-  
 
 
-  public static async createReportPeriod(requestData, auth) {
+
+  public static async createReportPeriod(requestData, organizationIds) {
     var organizationData;
     if (requestData.organizationId) {
       organizationData = await Organization.getOrganizationDetails('id', requestData.organizationId)
     }
     else {
-      organizationData = await Organization.getOrganizationDetails('id', auth?.user.organizations[0]?.id)
+      organizationData = await Organization.getOrganizationDetails('id', organizationIds)
     }
     const reportPeriodData = await organizationData.related('supplyChainReportingPeriod').create({
       id: uuidv4(),
@@ -104,34 +110,32 @@ export default class SupplyChainReportingPeriod extends BaseModel {
 
   public static async getReportPeriodDetails(field, value) {
     const reportPeriodData = await SupplyChainReportingPeriod.query()
-    .where(field, value)
-    .andWhereNull('deletedAt')
-    .preload('organization')
-    // .preload('organization',(query)=>{
-    //   query.preload('users')
-    // })
-    .preload('supplier',(query) => {
-      query.preload('supplierProducts')
-    })
-    .firstOrFail();
+      .where(field, value)
+      .andWhereNull('deletedAt')
+      .preload('organization')
+      // .preload('organization',(query)=>{
+      //   query.preload('users')
+      // })
+      .preload('supplier', (query) => {
+        query.preload('supplierProducts')
+      })
+      .firstOrFail();
     return reportPeriodData;
   }
 
-  public static async updateReportPeriod(requestData, params) {
-    const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id',params.id)
+  public static async updateReportPeriod(reportPeriodData, requestData) {
     reportPeriodData.merge({
-      reportingPeriodFrom:DateTime.fromJSDate(new Date(requestData.reportingPeriodFrom)),
+      reportingPeriodFrom: DateTime.fromJSDate(new Date(requestData.reportingPeriodFrom)),
       reportingPeriodTo: DateTime.fromJSDate(new Date(requestData.reportingPeriodTo))
     }).save();
 
     return reportPeriodData;
   }
-  
 
 
 
-  public static async deleteReportPeriod(params) {
-    const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id',params.id)
+
+  public static async deleteReportPeriod(reportPeriodData) {
     await reportPeriodData.merge({ deletedAt: DateTime.now() }).save()
     return
   }
