@@ -58,6 +58,7 @@ export const AddSupplierManualy = () => {
 
   const [editSupplier, setEditSupplier] = useState(false);
   const [editProductTable, setEditProductTable] = useState(false);
+  const [completeStep, setCompleteStep] = useState(false);
   const [supplier, setSupplier] = useState<any>(null);
   const [productList, setProductList] = useState<any>([
     {
@@ -345,6 +346,7 @@ export const AddSupplierManualy = () => {
                     name='name'
                     value={values.name}
                     onChange={handleChange}
+                    placeholder='Supplier'
                     className={cn(
                       'grow justify-center bg-gray-50 text-slate-700 max-md:pr-5 max-w-[337px]',
                       errors?.name && 'border border-red-500'
@@ -360,6 +362,7 @@ export const AddSupplierManualy = () => {
                     name='email'
                     value={values.email}
                     onChange={handleChange}
+                    placeholder='Email'
                     className={cn(
                       'grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 max-w-[337px] rounded-md text-slate-700 max-md:pr-5',
                       errors?.email && 'border border-red-500'
@@ -372,7 +375,7 @@ export const AddSupplierManualy = () => {
                     Relationship <br />
                     to organization
                   </div>
-                  <div className='flex gap-2 justify-between whitespace-nowrap  text-slate-700 h-[44px]'>
+                  <div className='flex gap-2 justify-between whitespace-nowrap  text-slate-700 h-[44px] min-w-[153px]'>
                     <Select
                       value={values.organizationRelationship}
                       onValueChange={(e) => {
@@ -386,7 +389,7 @@ export const AddSupplierManualy = () => {
                           errors?.organizationRelationship && ' border-red-500'
                         )}
                       >
-                        <SelectValue placeholder='Select relation to organization' />
+                        <SelectValue placeholder='Relationship' />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup className='text-sm'>
@@ -405,9 +408,6 @@ export const AddSupplierManualy = () => {
                   <div className='grow text-xs font-medium leading-4 text-slate-700 max-md:max-w-full'>
                     Supplier Address
                   </div>
-                  <div className='my-auto text-sm font-semibold leading-4 text-center text-blue-600'>
-                    Edit
-                  </div>
                 </div>
                 <div className='max-w-[768px]'>
                   <AutocompleteInput
@@ -424,6 +424,7 @@ export const AddSupplierManualy = () => {
                   <Button
                     variant='outline'
                     type='submit'
+                    onClick={() => setEditProductTable(true)}
                     className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)] max-md:mr-2.5'
                   >
                     Save
@@ -436,28 +437,44 @@ export const AddSupplierManualy = () => {
       </div>
 
       <div className='flex flex-col self-stretch p-6 rounded border mt-6 mx-10 border-solid border-[color:var(--Gray-200,#E5E7EB)] max-md:px-5'>
-        <div className='flex gap-2.5 mb-6 justify-between items-center max-md:flex-wrap max-md:max-w-full'>
-          {!editProductTable && (
-            <div className='flex justify-center items-center px-0.5 w-5 h-5 bg-blue-600 rounded-[100px]'>
-              <img
-                loading='lazy'
-                src='https://cdn.builder.io/api/v1/image/assets/TEMP/b2283a52b7c418fce477d355fd576ce8654d424c746c4d454e724c05c7236019?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                className='w-full aspect-square'
-              />
+        <div className='flex gap-2.5 mb-6 justify-between  items-center max-md:flex-wrap max-md:max-w-full'>
+          <div className='flex flex-col'>
+            <div className='flex items-center'>
+              {completeStep && (
+                <div className='flex justify-center items-center px-0.5 w-5 mr-2 h-5 bg-blue-600 rounded-[100px]'>
+                  <img
+                    loading='lazy'
+                    src='https://cdn.builder.io/api/v1/image/assets/TEMP/b2283a52b7c418fce477d355fd576ce8654d424c746c4d454e724c05c7236019?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                    className='w-full aspect-square'
+                  />
+                </div>
+              )}
+              {!completeStep && (
+                <div className='flex justify-center items-center px-1.5 my-auto mr-2 h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]'>
+                  2
+                </div>
+              )}
+
+              <div className='flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full'>
+                Product & Product Level Contribution
+              </div>
             </div>
-          )}
-          {editProductTable && (
-            <div className='flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]'>
-              2
+
+            <div className='text-sm mt-2 leading-5 text-slate-800 max-md:max-w-full'>
+              Enter the product type, product name, units created each year, and
+              the functional unit associated with the product. If you know the
+              total Scope 3 contributions for the given quantity of each
+              product, enter it here
             </div>
-          )}
-          <div className='flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full'>
-            Product & Product Level Contribution
           </div>
-          {!editProductTable && (
+
+          {completeStep && (
             <Button
               variant={'ghost'}
-              onClick={() => setEditProductTable(true)}
+              onClick={() => {
+                setEditProductTable(true);
+                setCompleteStep(false);
+              }}
               className='text-blue-600 hover:text-blue-600 font-semibold'
             >
               Edit
@@ -465,14 +482,8 @@ export const AddSupplierManualy = () => {
           )}
         </div>
 
-        {editProductTable ? (
+        {!completeStep && editProductTable ? (
           <>
-            <div className='text-sm leading-5 text-slate-800 max-md:max-w-full'>
-              Enter the product type, product name, units created each year, and
-              the functional unit associated with the product. If you know the
-              total Scope 3 contributions for the given quantity of each
-              product, enter it here
-            </div>
             <Table className=''>
               <TableHeader className='border-b'>
                 <TableHead className='text-xs pl-0 pr-4'>
@@ -658,7 +669,9 @@ export const AddSupplierManualy = () => {
                   supplierId: supplier?.data?.id,
                   supplierProducts: productList,
                 };
+                console.log(productList, 'productList');
                 addSupplierProductsMut(data);
+                setCompleteStep(true);
               }}
               className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]'
             >
