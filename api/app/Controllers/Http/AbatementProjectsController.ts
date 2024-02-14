@@ -6,11 +6,25 @@ import UpdateAbatementProjectValidator from 'App/Validators/AbatementProjects/Up
 import AbatementProject from 'App/Models/AbatementProject'
 import Organization from 'App/Models/Organization'
 import { DateTime } from 'luxon'
+import User from 'App/Models/User'
 
 export default class AbatementProjectsController {
-  public async index({ request, response }: HttpContextContract) {
+  public async index({ request, response, auth }: HttpContextContract) {
     try {
       const queryParams = request.qs()
+
+      //:: Check organization id is same for auth user or not
+      const userFound = await User.getUserDetails('id', auth.user?.id)
+      let organizationIds = (await userFound.organizations).map((item) => item.id)
+      if (queryParams.organizationId && !organizationIds.includes(queryParams.organizationId)) {
+        return apiResponse(
+          response,
+          false,
+          403,
+          {},
+          "The provided organization ID does not belongs to you."
+        )
+      }
 
       const allProjectData: any = await AbatementProject.getAllProjects(queryParams);
       const isPaginated = request.input('perPage') && request.input('perPage') !== 'all'
@@ -64,8 +78,22 @@ export default class AbatementProjectsController {
       let requestData = request.all()
       await request.validate(CreateAbatementProjectValidator)
 
+      //:: Check organization id is same for auth user or not
+      const userFound = await User.getUserDetails('id', auth.user?.id)
+      let organizationIds = (await userFound.organizations).map((item) => item.id)
+      if (requestData.organizationId && !organizationIds.includes(requestData.organizationId)) {
+        return apiResponse(
+          response,
+          false,
+          403,
+          {},
+          "The provided organization ID does not belongs to you."
+        )
+      }
+
+
       var organizationData: any = await Organization.getOrganizationDetails(
-        'id', requestData.organizationId
+        'id', requestData.organizationId ? requestData.organizationId : organizationIds[0]
       )
 
       let createdProjectData = await AbatementProject.createNewProject(requestData, auth, organizationData)
@@ -99,9 +127,12 @@ export default class AbatementProjectsController {
     }
   }
 
-  public async show({ response, params }: HttpContextContract) {
+  public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       let projectData = await AbatementProject.getProjectDetails('id', params.id)
+
+      //:: Authorization (auth user can access their project data only)
+      await bouncer.with('AbatementProjectsPolicy').authorize('show', projectData.toJSON())
 
       return apiResponse(
         response,
@@ -132,10 +163,13 @@ export default class AbatementProjectsController {
     }
   }
 
-  public async update({ request, response }: HttpContextContract) {
+  public async update({ request, response, bouncer }: HttpContextContract) {
     try {
 
       const projectData = await AbatementProject.getProjectDetails('id', request.param('id'))
+
+      //:: Authorization (auth user can update their project data only)
+      await bouncer.with('AbatementProjectsPolicy').authorize('update', projectData.toJSON())
 
       const payload = await request.validate(UpdateAbatementProjectValidator)
 
@@ -169,9 +203,12 @@ export default class AbatementProjectsController {
     }
   }
 
-  public async destroy({ request, response }: HttpContextContract) {
+  public async destroy({ request, response, bouncer }: HttpContextContract) {
     try {
       const projectData = await AbatementProject.getProjectDetails('id', request.param('id'))
+
+      //:: Authorization (auth user can update their project data only)
+      await bouncer.with('AbatementProjectsPolicy').authorize('delete', projectData.toJSON())
 
       if (projectData) {
         projectData.deletedAt = DateTime.local()
