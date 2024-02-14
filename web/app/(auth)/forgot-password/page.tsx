@@ -12,6 +12,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { Mail } from "lucide-react";
 
 function Page() {
   const { data: session } = useSession();
@@ -71,7 +72,7 @@ function Page() {
         >
           <img
             loading="lazy"
-            src="/assets/images/C3Logo.svg"
+            src={"/assets/images/Logo.png"}
             className="aspect-[0.95] object-contain object-center w-[107px] fill-[linear-gradient(180deg,#39775F_81.94%,#3A9B8C_105.47%)] overflow-hidden self-center max-w-full mt-16 max-md:mt-10"
             alt="Password Reset Logo"
           />
@@ -140,23 +141,17 @@ function Page() {
         <form className="items-center border border-[color:var(--Gray-200,#E5E7EB)] flex max-w-[733px] flex-col px-20 py-12 rounded-md border-solid max-md:px-5">
           <img
             loading="lazy"
-            src="/assets/images/C3Logo.svg"
-            className="aspect-[0.95] object-contain object-center w-[107px] fill-[linear-gradient(180deg,#39775F_81.94%,#3A9B8C_105.47%)] overflow-hidden self-center max-w-full mt-3.5"
+            src={"/assets/images/Logo.png"}
+            className="aspect-[0.95] object-contain object-center w-[177px] fill-[linear-gradient(180deg,#39775F_81.94%,#3A9B8C_105.47%)] overflow-hidden self-center max-w-full mt-3.5"
             role="img"
             aria-label="Account Logo"
           />
 
-          <h1 className="text-neutral-500 text-center text-3xl font-bold leading-8 self-center whitespace-nowrap mt-10">
+          <h1 className="text-neutral-500 text-center text-3xl font-bold leading-8 self-center whitespace-nowrap">
             Account Recovery
           </h1>
 
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/65546e78bc1c56d1655225438ad5c3958c9fd13b0f5100ba608326af0166120c?apiKey=011554aff43544e6af46800a427fd184&"
-            className="aspect-square object-contain object-center w-6 overflow-hidden self-center max-w-full mt-10"
-            role="img"
-            aria-label="Key Logo"
-          />
+          <Mail width={24} height={24} className="text-slate-700 mt-6" />
 
           <p className="self-center text-slate-700 text-base leading-6 mt-6 max-md:max-w-full">
             We sent a password reset link to:{" "}
@@ -165,7 +160,7 @@ function Page() {
             </span>
           </p>
 
-          <hr className="bg-gray-200 self-center w-[425px] shrink-0 max-w-full h-px mt-6" />
+          <hr className="bg-gray-200 self-center w-[425px] shrink-0 max-w-full h-px mt-4" />
 
           <p className="text-slate-700 text-center text-xs font-medium leading-5 self-stretch mt-6 max-md:max-w-full">
             Didn&apos;t receive the email?
