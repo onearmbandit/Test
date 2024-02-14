@@ -89,7 +89,7 @@ export default function Page() {
             }}
             className="bg-gray-700/50 bg-blend-screen w-[579px] h-[787.951px] bg-cover rounded-md flex flex-col items-center pt-[5.28rem]"
           >
-            <Image
+            <img
               src={"/assets/images/gradient-inside.png"}
               alt="signup image"
               width={540}

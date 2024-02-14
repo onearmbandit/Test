@@ -59,7 +59,7 @@ const FacilityDetails = () => {
         setShowNew(true);
       }
     }
-  }, [periodsQ.isSuccess]);
+  }, [periodsQ.isSuccess, reportingPeriods]);
 
   return (
     <div className="mt-5">
