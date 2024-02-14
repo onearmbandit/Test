@@ -49,6 +49,7 @@ import {
 } from '../ui/table';
 import _, { set } from 'lodash';
 import { Button } from '../ui/button';
+import Link from 'next/link';
 
 export const AddSupplierManualy = () => {
   const router = useRouter();
@@ -204,12 +205,21 @@ export const AddSupplierManualy = () => {
       ...provided,
       border: 'none',
       background: '#F9FAFB',
+      borderColor: 'none', // Hide border color when menu is open
       borderRadius: '6px',
     }),
     indicatorSeparator: () => ({
       display: 'none',
     }),
   };
+  const productNamelist = productList.map((item: any) => ({
+    label: item.name,
+    value: item.name,
+  }));
+  const productTypelist = productList.map((item: any) => ({
+    label: item.type,
+    value: item.type,
+  }));
   const handleCreateType = (inputValue: string, i: number) => {
     const newOption = {
       name: '',
@@ -227,12 +237,18 @@ export const AddSupplierManualy = () => {
   return (
     <div className='flex flex-col flex-start p-6 w-full'>
       <header className='flex gap-2.5 self-stretch p-3 text-sm items-center leading-5 text-blue-600 max-md:flex-wrap'>
-        <ChevronLeft size={24} className='text-slate-500' />
+        <ChevronLeft
+          onClick={() => {
+            router.back();
+          }}
+          size={24}
+          className='text-slate-500 cursor-pointer'
+        />
         <div className='flex-auto max-md:max-w-full'>
-          <p className='text-slate-500'>
+          <Link href={'/supply-chain'} className='text-slate-500'>
             Supply Chain &gt;
             <span className='font-bold text-blue-600 ml-2'>Add Supplier</span>
-          </p>
+          </Link>
         </div>
       </header>
 
@@ -494,75 +510,114 @@ export const AddSupplierManualy = () => {
               <TableBody>
                 {productList.map((item: any, i: number) => (
                   <TableRow key={i} className='mt-4 border-0'>
-                    <TableCell className='max-w-[16rem] py-3 px-3 pl-0 pr-4'>
-                      <CreatableSelect
-                        // isClearable
-                        styles={customDropdownStyles}
-                        getOptionLabel={(option) => option.name}
-                        getOptionValue={(option) => option.name}
-                        onChange={(newValue) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].name = newValue.name;
-                          console.log(newValue, 'new value');
-                          setProductList(newCopy);
-                        }}
-                        onCreateOption={(e) => handleCreate(e, i)}
-                        options={productList}
-                        value={item}
-                      />
+                    <TableCell className='py-3 px-3 pl-0 pr-4'>
+                      <div className='2xl:w-[303px] w-[163px]'>
+                        {/* <CreatableSelect
+                          isClearable
+                          styles={customDropdownStyles}
+                          placeholder={'Add product name'}
+                          getOptionLabel={(option) => option.name}
+                          getOptionValue={(option) => option.name}
+                          onChange={(newValue) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].name = newValue.name;
+                            console.log(newValue, 'new value');
+                            setProductList(newCopy);
+                          }}
+                          onCreateOption={(e) => handleCreate(e, i)}
+                          options={productList}
+                          value={item}
+                        /> */}
+                        <CreatableSelect
+                          // isClearable
+                          options={productNamelist}
+                          styles={customDropdownStyles}
+                          onChange={(newValue) => {
+                            const copy = _.cloneDeep(productList);
+                            copy[i].name = newValue?.value;
+                            setProductList(copy);
+                          }}
+                          onCreateOption={(e) => handleCreate(e, i)}
+                          value={{ label: item.name, value: item.name }}
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='max-w-[16rem] pl-0 py-3 pr-4'>
-                      <CreatableSelect
-                        className='border-0'
-                        // isClearable
-                        styles={customDropdownStyles}
-                        getOptionLabel={(option) => option.type}
-                        getOptionValue={(option) => option.type}
-                        onChange={(newValue) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].type = newValue.type;
-                          console.log(newValue, 'new value');
-                          setProductList(newCopy);
-                        }}
-                        onCreateOption={(e) => handleCreateType(e, i)}
-                        options={productList}
-                        value={item}
-                      />
+                    <TableCell className='pl-0 py-3 pr-4'>
+                      <div className='2xl:w-[303px] w-[163px]'>
+                        {/* <CreatableSelect
+                          className='border-0'
+                          // isClearable
+                          styles={customDropdownStyles}
+                          placeholder={'Add product type'}
+                          getOptionLabel={(option) => option.type}
+                          getOptionValue={(option) => option.type}
+                          onChange={(newValue) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].type = newValue.type;
+                            console.log(newValue, 'new value');
+                            setProductList(newCopy);
+                          }}
+                          onCreateOption={(e) => handleCreateType(e, i)}
+                          options={productList}
+                          value={item}
+                        /> */}
+                        <CreatableSelect
+                          // isClearable
+                          options={productTypelist}
+                          styles={customDropdownStyles}
+                          onChange={(newValue) => {
+                            const copy = _.cloneDeep(productList);
+                            copy[i].name = newValue?.value;
+                            setProductList(copy);
+                          }}
+                          onCreateOption={(e) => handleCreateType(e, i)}
+                          value={{ label: item.type, value: item.type }}
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='w-12 pl-0 pr-4 py-3'>
-                      <Input
-                        value={item.quantity}
-                        onChange={(e) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].quantity = e.target.value;
-                          setProductList(newCopy);
-                        }}
-                        className='bg-[#F9FAFB] rounded-md'
-                      />
+                    <TableCell className='pl-0 pr-4 py-3'>
+                      <div className='2xl:w-[303px] w-[163px]'>
+                        <Input
+                          value={item.quantity}
+                          placeholder='unit'
+                          onChange={(e) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].quantity = e.target.value;
+                            setProductList(newCopy);
+                          }}
+                          className='bg-[#F9FAFB] rounded-md'
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='pl-0 pr-4 w-[12rem] py-3'>
-                      <Input
-                        value={item.functionalUnit}
-                        onChange={(e) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].functionalUnit = e.target.value;
-                          setProductList(newCopy);
-                        }}
-                        className='bg-[#F9FAFB] rounded-md'
-                      />
+                    <TableCell className='pl-0 pr-4 py-3'>
+                      <div className='2xl:w-[225px] w-[125px]'>
+                        <Input
+                          value={item.functionalUnit}
+                          placeholder='kilowatt/hr'
+                          onChange={(e) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].functionalUnit = e.target.value;
+                            setProductList(newCopy);
+                          }}
+                          className='bg-[#F9FAFB] rounded-md'
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='pl-0 pr-4 max-w-[12rem] py-3'>
-                      <Input
-                        value={item.scope_3Contribution}
-                        onChange={(e) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].scope_3Contribution = e.target.value;
-                          setProductList(newCopy);
-                        }}
-                        className='bg-[#F9FAFB] rounded-md'
-                      />
+                    <TableCell className='pl-0 pr-4 py-3'>
+                      <div className='2xl:w-[215px] w-[125px]'>
+                        <Input
+                          value={item.scope_3Contribution}
+                          placeholder='kgCO2'
+                          onChange={(e) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].scope_3Contribution = e.target.value;
+                            setProductList(newCopy);
+                          }}
+                          className='bg-[#F9FAFB] rounded-md'
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='pl-0 pr-4 max-w-[12rem] py-3'>
+                    <TableCell className='pl-0 pr-4  py-3'>
                       {productList.length - 1 == i ? (
                         <Plus
                           size={16}

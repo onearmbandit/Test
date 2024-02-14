@@ -29,10 +29,9 @@ const ReportingPeriodPopup = ({
   setNew: React.Dispatch<React.SetStateAction<boolean>>;
   period?: any;
 }) => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
   const session = useSession();
   const queryClient = useQueryClient();
+  const [isDateEdit, setIsDateEdit] = useState(false);
   const organizationId = session?.data?.user.organizations[0].id!;
 
   const renderMonthContent = (
@@ -49,6 +48,7 @@ const ReportingPeriodPopup = ({
       </p>
     );
   };
+  console.log(period, 'period');
   const validation = z.object({
     reportingPeriodFrom: z.date(),
     reportingPeriodTo: z.date(),
@@ -56,15 +56,19 @@ const ReportingPeriodPopup = ({
   const editMuation = useMutation({
     mutationFn: editReportingPerid,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: ['reporting-periods', organizationId],
-      });
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
+
       toast.success('Reporting period updated', { style: { color: 'green' } });
     },
   });
   const addReportMut = useMutation({
     mutationFn: addReportingPeriod,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       queryClient.invalidateQueries({
         queryKey: ['reporting-periods', organizationId],
       });
@@ -77,10 +81,16 @@ const ReportingPeriodPopup = ({
   const deleteMutation = useMutation({
     mutationFn: deleteReportingPerid,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       queryClient.invalidateQueries({
-        queryKey: ['reporting-periods'],
+        queryKey: ['reporting-periods', organizationId],
       });
-      toast.success('Reporting period Deleted.', { style: { color: 'green' } });
+
+      toast.success('Reporting period Deleted.', {
+        style: { color: 'green' },
+      });
     },
   });
   const { values, setFieldValue, errors, handleSubmit, submitForm } = useFormik(
@@ -130,131 +140,131 @@ const ReportingPeriodPopup = ({
     }
   }, []);
   return (
-    <div className='relative'>
-      <div className='absolute left-0 z-40'>
-        <section className='flex flex-col items-stretch px-6 py-7 bg-white rounded-sm  shadow-sm border border-gray-50 max-w-[456px]'>
-          <form onSubmit={handleSubmit} className='flex flex-col'>
-            <div className='flex gap-3 items-stretch pr-2 pl-2 text-xs font-light leading-4 text-slate-700'>
-              <label
-                className='grow my-auto whitespace-nowrap'
-                aria-label='Start Date Label'
-              >
-                Start Date
-              </label>
-              <DatePicker
-                selected={values.reportingPeriodFrom}
-                customInput={
-                  <Input className='w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700' />
-                }
-                renderMonthContent={renderMonthContent}
-                showMonthYearPicker
-                dateFormat='yyyy/MM'
-                onChange={(date: any) =>
-                  setFieldValue('reportingPeriodFrom', date)
-                }
-              />
-              <label className='my-auto whitespace-nowrap'>End Date</label>
-              <DatePicker
-                selected={values.reportingPeriodTo}
-                customInput={
-                  <Input className='w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700' />
-                }
-                renderMonthContent={renderMonthContent}
-                showMonthYearPicker
-                dateFormat='yyyy/MM'
-                onChange={(date: any) =>
-                  setFieldValue('reportingPeriodTo', date)
-                }
-              />
+    // <div className='relative'>
+    <div className='absolute left-0 z-1000 top-0'>
+      <section className='flex flex-col items-stretch px-6 py-7 bg-white rounded-sm  shadow-sm border border-gray-50 max-w-[456px]'>
+        <form onSubmit={handleSubmit} className='flex flex-col'>
+          <div className='flex gap-3 items-stretch pr-2 pl-2 text-xs font-light leading-4 text-slate-700'>
+            <label
+              className='grow my-auto whitespace-nowrap'
+              aria-label='Start Date Label'
+            >
+              Start Date
+            </label>
+            <DatePicker
+              selected={values.reportingPeriodFrom}
+              customInput={
+                <Input className='w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700' />
+              }
+              renderMonthContent={renderMonthContent}
+              showMonthYearPicker
+              disabled={!isDateEdit}
+              dateFormat='yyyy/MM'
+              onChange={(date: any) =>
+                setFieldValue('reportingPeriodFrom', date)
+              }
+            />
+            <label className='my-auto whitespace-nowrap'>End Date</label>
+            <DatePicker
+              selected={values.reportingPeriodTo}
+              customInput={
+                <Input className='w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700' />
+              }
+              renderMonthContent={renderMonthContent}
+              disabled={!isDateEdit}
+              showMonthYearPicker
+              dateFormat='yyyy/MM'
+              onChange={(date: any) => setFieldValue('reportingPeriodTo', date)}
+            />
+          </div>
+          {!isDateEdit ? (
+            <div className='flex justify-between items-center mt-5'>
+              <Dialog>
+                <DialogTrigger>
+                  <Button
+                    type='button'
+                    variant={'ghost'}
+                    className='text-red-500 text-sm font-semibold leading-5 border-0'
+                  >
+                    Delete
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className='p-6 space-y-5'>
+                  <p className='text text-center'>
+                    Are you sure you want to delete the reporting period?
+                  </p>
+                  <DialogClose asChild>
+                    <Button
+                      type='button'
+                      variant={'outline'}
+                      className='border-2 border-red-500 w-full font-semibold text-red-500 hover:bg-red-50 hover:text-red-600'
+                    >
+                      No, don&apos;t delete the reporting period
+                    </Button>
+                  </DialogClose>
+                  <DialogClose>
+                    <Button
+                      type='button'
+                      variant={'outline'}
+                      onClick={() => deleteMutation.mutate(period.id)}
+                      className='border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600'
+                    >
+                      Yes, continue
+                    </Button>
+                  </DialogClose>
+                </DialogContent>
+              </Dialog>
+              <Dialog>
+                <DialogTrigger>
+                  <Button
+                    type='button'
+                    variant={'ghost'}
+                    className='text-blue-600 text-sm font-semibold leading-5 hover:text-blue-600'
+                  >
+                    Edit
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className='p-6 space-y-5'>
+                  <p className='text text-center'>
+                    Are you sure you want to update the reporting period?
+                  </p>
+                  <DialogClose asChild>
+                    <Button
+                      type='button'
+                      variant={'outline'}
+                      className='border-2 border-blue-600 w-full font-semibold text-blue-600 hover:bg-blue-50 hover:text-blue-700'
+                    >
+                      No, don&apos;t update the reporting period
+                    </Button>
+                  </DialogClose>
+                  <DialogClose>
+                    <Button
+                      type='button'
+                      variant={'outline'}
+                      onClick={() => setIsDateEdit(true)}
+                      className='border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600'
+                    >
+                      Yes, continue
+                    </Button>
+                  </DialogClose>
+                </DialogContent>
+              </Dialog>
             </div>
-            {period ? (
-              <div className='flex justify-between items-center mt-5'>
-                <Dialog>
-                  <DialogTrigger>
-                    <Button
-                      type='button'
-                      variant={'ghost'}
-                      className='text-red-500 text-sm font-semibold leading-5 hover:text-red-500'
-                    >
-                      Delete
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className='p-6 space-y-5'>
-                    <p className='text text-center'>
-                      Are you sure you want to delete the reporting period?
-                    </p>
-                    <DialogClose asChild>
-                      <Button
-                        type='button'
-                        variant={'outline'}
-                        className='border-2 border-red-500 w-full font-semibold text-red-500 hover:bg-red-50 hover:text-red-600'
-                      >
-                        No, don&apos;t delete the reporting period
-                      </Button>
-                    </DialogClose>
-                    <DialogClose>
-                      <Button
-                        type='button'
-                        variant={'outline'}
-                        onClick={() => deleteMutation.mutate(period.id)}
-                        className='border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600'
-                      >
-                        Yes, continue
-                      </Button>
-                    </DialogClose>
-                  </DialogContent>
-                </Dialog>
-                <Dialog>
-                  <DialogTrigger>
-                    <Button
-                      type='button'
-                      variant={'ghost'}
-                      className='text-blue-600 text-sm font-semibold leading-5 hover:text-blue-600'
-                    >
-                      Edit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className='p-6 space-y-5'>
-                    <p className='text text-center'>
-                      Are you sure you want to update the reporting period?
-                    </p>
-                    <DialogClose asChild>
-                      <Button
-                        type='button'
-                        variant={'outline'}
-                        className='border-2 border-blue-600 w-full font-semibold text-blue-600 hover:bg-blue-50 hover:text-blue-700'
-                      >
-                        No, don&apos;t update the reporting period
-                      </Button>
-                    </DialogClose>
-                    <DialogClose>
-                      <Button
-                        type='button'
-                        variant={'outline'}
-                        onClick={() => submitForm()}
-                        className='border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600'
-                      >
-                        Yes, continue
-                      </Button>
-                    </DialogClose>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            ) : (
-              <Button
-                variant={'ghost'}
-                className='self-end mt-5 text-sm font-semibold leading-5 text-blue-600'
-                aria-label='Save Button'
-                role='button'
-                type='submit'
-              >
-                Save
-              </Button>
-            )}
-          </form>
-        </section>
-      </div>
+          ) : (
+            <Button
+              variant={'ghost'}
+              className='self-end mt-5 text-sm font-semibold leading-5 text-blue-600'
+              aria-label='Save Button'
+              role='button'
+              type='submit'
+            >
+              Save
+            </Button>
+          )}
+        </form>
+      </section>
     </div>
+    // </div>
   );
 };
 
