@@ -441,15 +441,15 @@ const Step2 = ({
   const validation = z.object({
     firstName: z
       .string()
-      .min(2)
-      .max(30)
+      .min(2, "First Name should contain at least 2 characters")
+      .max(30, "First Name should contain at most 30 characters")
       .refine((val) => /^[a-zA-Z ]*$/.test(val), {
         message: "Name should contain only alphabets",
       }),
     lastName: z
       .string()
-      .min(2)
-      .max(30)
+      .min(2, "Last Name should contain at least 2 characters")
+      .max(30, "Last Name should contain at most 30 characters")
       .refine((val) => /^[a-zA-Z ]*$/.test(val), {
         message: "Name should contain only alphabets",
       }),
