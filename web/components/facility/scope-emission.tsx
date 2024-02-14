@@ -251,7 +251,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                     consumption of purchased electricity, steam, heating, and
                     cooling. They result from energy produced elsewhere but used
                     by a company, highlighting the carbon footprint of the
-                    company's purchased energy.
+                    company&apos;s purchased energy.
                   </p>
                 </TabsContent>
                 <TabsContent value="scope-3" className="py-6 space-y-6">
@@ -260,7 +260,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                   </p>
                   <p className="leading-6 w-[25rem]">
                     Scope 3 emissions are all indirect emissions that occur in a
-                    company’s value chain, including both upstream and
+                    company&apos;s value chain, including both upstream and
                     downstream emissions. These can include the production of
                     purchased goods, transportation of purchased fuels, and use
                     of sold products and services.
