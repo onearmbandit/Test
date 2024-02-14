@@ -3,17 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  getOrganizationDetails,
   setupOrganizationStep1,
   setupOrganizationStep2,
   setupOrganizationStep3,
   setupOrganizationStep4,
 } from "@/services/organizations.api";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useFormik } from "formik";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -188,6 +189,14 @@ const Step2 = ({ setStep }: any) => {
     "10,000+",
   ];
 
+  const orgDetail = useQuery({
+    queryKey: ["org-capacity"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+  console.log(organization);
+
   const validation = z.object({
     companySize: z.string(),
     profileStep: z.number().int().min(1).max(3),
@@ -224,6 +233,17 @@ const Step2 = ({ setStep }: any) => {
       }
     },
   });
+
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep2Form.setFieldValue(
+        "companySize",
+        organization?.company_size
+      );
+      const index = sizes.indexOf(organization?.company_size);
+      setSelected(index);
+    }
+  }, [orgDetail.data]);
 
   return (
     <form onSubmit={setupOrganizationStep2Form.handleSubmit}>
@@ -293,6 +313,13 @@ const Step3 = ({ setStep }: any) => {
     profileStep: z.number().int().min(1).max(3),
   });
 
+  const orgDetail = useQuery({
+    queryKey: ["org-naics"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step3"],
     mutationFn: setupOrganizationStep3,
@@ -316,6 +343,7 @@ const Step3 = ({ setStep }: any) => {
       profileStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
+    validateOnChange: false,
     onSubmit: (data: any) => {
       const organizationId: string | undefined =
         session.data?.user?.organizations[0]?.id;
@@ -324,6 +352,15 @@ const Step3 = ({ setStep }: any) => {
       }
     },
   });
+
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep3Form.setFieldValue(
+        "naicsCode",
+        organization?.naics_code
+      );
+    }
+  }, [orgDetail.data]);
 
   return (
     <form onSubmit={setupOrganizationStep3Form.handleSubmit}>
@@ -346,6 +383,7 @@ const Step3 = ({ setStep }: any) => {
         <Input
           name="naicsCode"
           id="naicsCode"
+          value={setupOrganizationStep3Form.values?.naicsCode}
           placeholder="Add NAICS code"
           onChange={setupOrganizationStep3Form.handleChange}
           className={cn(
@@ -420,6 +458,13 @@ const Step4 = ({ setStep }: any) => {
     profileStep: z.number().int().min(1).max(3),
   });
 
+  const orgDetail = useQuery({
+    queryKey: ["org-targets"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: setupOrganizationStep4,
@@ -465,6 +510,21 @@ const Step4 = ({ setStep }: any) => {
   };
   // console.log("Form Errors : ", setupOrganizationStep4Form.errors);
 
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep4Form.setFieldValue(
+        "climateTargets",
+        organization?.climate_targets
+      );
+
+      setTargets(
+        organization?.climate_targets == null
+          ? []
+          : organization?.climate_targets
+      );
+    }
+  }, [orgDetail.data]);
+
   return (
     <form onSubmit={setupOrganizationStep4Form.handleSubmit}>
       <div className="justify-center items-start flex max-w-[814px] w-full flex-col">
@@ -477,7 +537,7 @@ const Step4 = ({ setStep }: any) => {
             For example, Science Based Target initiatives or commitments that
             are climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
           </p>
-          {targets.length > 0 && (
+          {targets?.length > 0 && (
             <div className="items-stretch self-stretch rounded bg-gray-50 flex max-w-[814px] gap-x-4 gap-y-2.5 w-full mx-auto p-2.5 flex-wrap max-h-[128px] overflow-auto">
               {targets.map((target, index) => (
                 <div
