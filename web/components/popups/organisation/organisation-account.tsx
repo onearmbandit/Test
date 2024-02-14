@@ -92,10 +92,18 @@ const OrganisationAccount = ({
           Edit
         </p>
       </div>
-      <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
-        Climate Commitments
+      <div className="flex items-end justify-between w-full">
+        <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
+          Climate Commitments
+        </div>
+        <p
+          onClick={() => setSection("climate")}
+          className="text-blue-600 text-center text-xs font-bold leading-4 cursor-pointer"
+        >
+          Edit
+        </p>
       </div>
-      <div className="justify-between items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-md:max-w-full max-md:flex-wrap">
+      <div className="justify-between items-stretch self-stretch flex gap-5 mt-2.5 py-2  max-w-full flex-wrap max-h-[4rem] overflow-auto">
         {user?.data?.organizations[0]?.climate_targets?.map(
           (target: string, i: number) => (
             <div
@@ -106,13 +114,6 @@ const OrganisationAccount = ({
             </div>
           )
         )}
-
-        <p
-          onClick={() => setSection("climate")}
-          className="text-blue-600 text-center text-xs font-bold leading-4 cursor-pointer"
-        >
-          Edit
-        </p>
       </div>
     </section>
   );

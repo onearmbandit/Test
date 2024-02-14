@@ -122,6 +122,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
+  const invitedEmail = searchParams.get("email");
   const social = searchParams.get("social");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
@@ -192,6 +193,12 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     const res = await signIn(provider, { redirect: false, callbackUrl: "/" });
   };
 
+  useEffect(() => {
+    if (invitedEmail) {
+      registerForm.setFieldValue("email", invitedEmail);
+    }
+  }, []);
+
   if (session) {
     router.push("/");
   }
@@ -217,9 +224,11 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               )}
             >
               <Input
-                className={"w-full bg-transparent"}
+                className={"w-full bg-transparent disabled:text-slate-900"}
                 id="email"
                 name="email"
+                disabled={!!invitedEmail}
+                value={registerForm.values.email}
                 onBlur={() => registerForm.validateField("email")}
                 onChange={registerForm.handleChange}
                 placeholder="Email"
@@ -441,15 +450,15 @@ const Step2 = ({
   const validation = z.object({
     firstName: z
       .string()
-      .min(2)
-      .max(30)
+      .min(2, "First Name should contain at least 2 characters")
+      .max(30, "First Name should contain at most 30 characters")
       .refine((val) => /^[a-zA-Z ]*$/.test(val), {
         message: "Name should contain only alphabets",
       }),
     lastName: z
       .string()
-      .min(2)
-      .max(30)
+      .min(2, "Last Name should contain at least 2 characters")
+      .max(30, "Last Name should contain at most 30 characters")
       .refine((val) => /^[a-zA-Z ]*$/.test(val), {
         message: "Name should contain only alphabets",
       }),
@@ -559,12 +568,18 @@ const Step2 = ({
 const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const router = useRouter();
   const { data: session, update } = useSession();
-  const [addressDisabled, setAddressDisabled] = useState(true);
+  const [isEdit, setEdit] = useState(false);
   const [address, setAddress] = useState("");
 
   const validation = z.object({
-    companyName: z.string(),
-    companyAddress: z.string(),
+    companyName: z
+      .string()
+      .min(3, "Company Name should contain at least 3 characters")
+      .max(255, "Company Name should contain at most 255 characters"),
+
+    companyAddress: z
+      .string()
+      .max(500, "Address should contain at most 255 characters"),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
@@ -592,7 +607,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
       registrationStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
-    validateOnChange: false,
+    validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (data) => {
       console.log(data, userSlug);
@@ -651,7 +666,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             {step3Form.values.companyAddress != "" && (
               <p
                 role="button"
-                onClick={() => setAddressDisabled(false)}
+                onClick={() => setEdit(true)}
                 className="text-sm font-semibold leading-4 text-blue-600"
               >
                 Edit
@@ -661,7 +676,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
 
           <div className="max-w-[582px]">
             <AutocompleteInput
-              isDisabled={addressDisabled}
+              isDisabled={!isEdit}
               setAddress={(e: any) => {
                 step3Form.setFieldValue("companyAddress", e);
               }}

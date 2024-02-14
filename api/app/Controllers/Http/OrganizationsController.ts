@@ -101,7 +101,7 @@ export default class OrganizationsController {
           //:: Only uninvited user
           const emailData = {
             user: auth.user,
-            url: `${WEB_BASE_URL}?email=${requestData.companyEmail}`,
+            url: `${WEB_BASE_URL}/register?email=${requestData.companyEmail}`,
             organizationName: organizationData?.companyName,
           }
 
