@@ -101,6 +101,7 @@ export default class OrganizationsController {
           const emailData = {
             user: auth.user,
             url: `${WEB_BASE_URL}?email=${requestData.companyEmail}`,
+            organizationName: organizationData?.companyName,
           }
 
           // let userEmail = auth.user ? auth.user.email : ''
@@ -108,7 +109,7 @@ export default class OrganizationsController {
 
           await sendMail(
             requestData.companyEmail,
-            `${userName} invited you to join C3 Insets`,
+            `${userName} invited you to join Terralab Insets`,
             'emails/invite_sub_user',
             emailData
           )
