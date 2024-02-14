@@ -33,10 +33,10 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
   console.log(periodId, 'periodId');
 
   const supplierDataQ = useQuery({
-    queryKey: ['reporting-period', periodId],
+    queryKey: ['supplier-data', periodId],
     queryFn: () => getAllEmissioScopeData(periodId ? periodId : ''),
   });
-
+  console.log(supplierDataQ, 'supplierDataQ');
   const supplierData = supplierDataQ.isSuccess ? supplierDataQ.data.data : null;
   const chartData = supplierData?.productWise;
   console.log(supplierData, 'supplierData');
@@ -51,9 +51,10 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
     );
   };
   console.log('supplier data: ', supplierData);
+
   return (
     <div className='relative'>
-      {!supplierData && (
+      {supplierDataQ.isLoading && (
         <div className='absolute top-0 left-0 h-full w-full z-10  flex items-center bg-white justify-center'>
           <Loader2
             height={50}

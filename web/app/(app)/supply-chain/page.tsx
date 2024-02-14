@@ -53,10 +53,15 @@ import { authOptions, convertDateToString } from '@/lib/utils';
 import { exportSupplierDataCsv, getUser } from '@/services/user.api';
 import UploadCsvModal from '@/components/supply-chain/UploadCsvModal';
 import { getServerSession } from 'next-auth';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@radix-ui/react-hover-card';
 
 const Page = () => {
   const queryClient = useQueryClient();
-  const [showNew, setShowNew] = useState(false);
+  const [showNew, setShowNew] = useState(true);
   const session = useSession();
   const [currentTab, setCurrentTab] = useState<string | null>(null);
   const [showCsvUploadModal, setShowCsvUploadModal] = useState(false);
@@ -272,20 +277,20 @@ const Page = () => {
                         setSelectedProductIds([]);
                       }}
                     >
-                      <Popover>
-                        <PopoverTrigger className=''>
-                          {reporting}
-                        </PopoverTrigger>
-                        <PopoverContent
+                      <HoverCard key={i}>
+                        <HoverCardTrigger asChild>
+                          <p>{reporting}</p>
+                        </HoverCardTrigger>
+                        <HoverCardContent
                           align='start'
-                          className='w-full left-0 p-0 -ml-4'
+                          className='w-full left-0 p-0 -ml-4 z-50'
                         >
                           <ReportingPeriodPopup
                             setNew={setShowNew}
                             period={item}
                           />
-                        </PopoverContent>
-                      </Popover>
+                        </HoverCardContent>
+                      </HoverCard>
                     </TabsTrigger>
                   );
                 })}
