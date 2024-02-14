@@ -48,6 +48,7 @@ const AddActivePage = () => {
     logoUrl?: string;
   }>({});
 
+  const [uploading, setUploading] = useState(false);
   const [currentSection, setCurrentSection] = useState(1);
   const [projectDetails, setProjectDetails] = useState({
     1: { name: "" },
@@ -79,7 +80,7 @@ const AddActivePage = () => {
       toast.success("Project Created Successfully.", {
         style: { color: "green" },
       });
-      router.push("/abatement-project/active");
+      router.push("/abatement-projects/active");
       console.log(data);
     },
     onError(error, variables, context) {
@@ -774,25 +775,52 @@ const AddActivePage = () => {
                   </Dropzone>
                 </div>
               </CardContent>
+
               <CardFooter className="justify-end">
                 <Button
                   type="button"
                   // disabled={}
                   variant={"outline"}
                   onClick={async () => {
-                    // TODO: change this to URL
                     const photo = new FormData();
+                    const logo = new FormData();
                     photo.append(
                       "image",
                       projectDetails[5].photoUrl.file as Blob
                     );
-                    const res1 = await uploadImage(photo);
-                    console.log(res1);
-                    // const res2 = await uploadImage(
-                    //   projectDetails[5].logoUrl.file
-                    // );
-                    // const logo = res1.data.url;
-                    // console.log(res1);
+                    logo.append(
+                      "image",
+                      projectDetails[5].logoUrl.file as Blob
+                    );
+                    setUploading(true);
+                    let res1 = null;
+                    let res2 = null;
+                    if (projectDetails[5].photoUrl.name != "") {
+                      res1 = await uploadImage(photo);
+                      if (res1.errors) {
+                        return toast.error(
+                          "Something went wrong while uploading the photo ",
+                          { style: { color: "red" } }
+                        );
+                      }
+                      setFieldValue("photoUrl", res1.data);
+                    }
+                    if (projectDetails[5].logoUrl.name != "") {
+                      res2 = await uploadImage(logo);
+
+                      if (res2.errors) {
+                        return toast.error(
+                          "Something went wrong while uploading the logo",
+                          { style: { color: "red" } }
+                        );
+                      }
+                      setFieldValue("logoUrl", res2.data);
+                    }
+
+                    if (res1 == null && res2 == null) {
+                      return;
+                    }
+                    setUploading(false);
 
                     setCurrentSection(0);
                   }}
