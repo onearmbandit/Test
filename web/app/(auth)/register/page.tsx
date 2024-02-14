@@ -563,8 +563,14 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const [address, setAddress] = useState("");
 
   const validation = z.object({
-    companyName: z.string(),
-    companyAddress: z.string(),
+    companyName: z
+      .string()
+      .min(3, "Company Name should contain at least 3 characters")
+      .max(255, "Company Name should contain at most 255 characters"),
+
+    companyAddress: z
+      .string()
+      .max(500, "Address should contain at most 255 characters"),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
@@ -592,7 +598,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
       registrationStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
-    validateOnChange: false,
+    validateOnChange: true,
     validateOnBlur: true,
     onSubmit: (data) => {
       console.log(data, userSlug);
