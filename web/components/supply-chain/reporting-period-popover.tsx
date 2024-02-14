@@ -142,7 +142,7 @@ const ReportingPeriodPopup = ({
   return (
     // <div className='relative'>
     <div className='absolute left-0 z-1000 top-0'>
-      <section className='flex flex-col items-stretch px-6 py-7 bg-white rounded-sm  shadow-sm border border-gray-50 max-w-[456px]'>
+      <section className='flex flex-col items-stretch px-6 py-7 bg-white rounded-sm  shadow-md border border-gray-50 max-w-[456px]'>
         <form onSubmit={handleSubmit} className='flex flex-col'>
           <div className='flex gap-3 items-stretch pr-2 pl-2 text-xs font-light leading-4 text-slate-700'>
             <label
@@ -158,7 +158,7 @@ const ReportingPeriodPopup = ({
               }
               renderMonthContent={renderMonthContent}
               showMonthYearPicker
-              disabled={!isDateEdit}
+              disabled={period && !isDateEdit}
               dateFormat='yyyy/MM'
               onChange={(date: any) =>
                 setFieldValue('reportingPeriodFrom', date)
@@ -171,13 +171,13 @@ const ReportingPeriodPopup = ({
                 <Input className='w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700' />
               }
               renderMonthContent={renderMonthContent}
-              disabled={!isDateEdit}
+              disabled={period && !isDateEdit}
               showMonthYearPicker
               dateFormat='yyyy/MM'
               onChange={(date: any) => setFieldValue('reportingPeriodTo', date)}
             />
           </div>
-          {!isDateEdit ? (
+          {period != undefined && !isDateEdit ? (
             <div className='flex justify-between items-center mt-5'>
               <Dialog>
                 <DialogTrigger>
@@ -253,7 +253,7 @@ const ReportingPeriodPopup = ({
           ) : (
             <Button
               variant={'ghost'}
-              className='self-end mt-5 text-sm font-semibold leading-5 text-blue-600'
+              className='self-end mt-5 text-sm font-semibold leading-5 text-blue-600 focus:border-0'
               aria-label='Save Button'
               role='button'
               type='submit'
