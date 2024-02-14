@@ -4,6 +4,7 @@ import { DateTime } from 'luxon'
 // import Database from '@ioc:Adonis/Lucid/Database';
 // import { isValidReportingPeriod } from './IsValidReportingPeriod';
 
+
 export default class ReportingPeriodValidator {
   constructor(protected ctx: HttpContextContract) {
   }
@@ -35,7 +36,11 @@ export default class ReportingPeriodValidator {
     ]),
     reportingPeriodFrom: schema.date({ format: 'yyyy-MM' }),
     reportingPeriodTo: schema.date({ format: 'yyyy-MM' }, [
-      rules.after(this.refs.allowedDate)
+      rules.after(this.refs.allowedDate),
+      // async (value, { parent, pointer }) => {
+      //   const reportingPeriodFrom = parent['reportingPeriodFrom'];
+      //   await this.reportingPeriodExists(value, { organizationFacilityId: parent['organizationFacilityId'], reportingPeriodFrom });
+      // }
     ]),
   })
 
@@ -48,4 +53,5 @@ export default class ReportingPeriodValidator {
     'reporting_period_to.date': 'Invalid date format for reporting period to. Use YYYY-MM.',
     'reporting_period_to.before':'Reporting period to must be greater than reporting period from.'
   }
+
 }

@@ -66,6 +66,7 @@
     "@aws-sdk/client-s3": "^3.504.0",
     "@japa/preset-adonis": "^1.2.0",
     "@japa/runner": "^2.5.1",
+    "dayjs": "^1.11.10",
     "exceljs": "^4.4.0",
     "luxon": "^3.4.4",
     "moment": "^2.30.1",
