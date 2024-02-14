@@ -5,6 +5,7 @@ import ReportingPeriodValidator from 'App/Validators/FacilityEmission/ReportingP
 import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateFacilityEmissionValidator from 'App/Validators/FacilityEmission/UpdateFacilityEmissionValidator';
 import { DateTime } from 'luxon';
+import User from 'App/Models/User';
 
 export default class FacilityEmissionsController {
 
@@ -108,7 +109,7 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async destroy({ request, response,bouncer }: HttpContextContract) {
+  public async destroy({ request, response, bouncer }: HttpContextContract) {
     try {
       const FacilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', request.param('id'))
 
@@ -129,12 +130,15 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async getDashboardData({ response, request }: HttpContextContract) {
+  public async getDashboardData({ response, request, auth }: HttpContextContract) {
     try {
 
       const queryParams = request.qs();
+      //:: Check organization id is same for auth user or not
+      const userFound = await User.getUserDetails('id', auth.user?.id)
+      let organizationIds = (await userFound.organizations).map((item) => item.id)
 
-      const facilityDashboardData = await FacilityEmission.getFacilitiesDashboardData(queryParams);
+      const facilityDashboardData = await FacilityEmission.getFacilitiesDashboardData(queryParams,organizationIds[0]);
 
       return apiResponse(response, true, 200, facilityDashboardData, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.dashboardCalculationFetchSuccess'));
 
