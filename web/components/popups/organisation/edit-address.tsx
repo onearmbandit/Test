@@ -1,22 +1,72 @@
 "use client";
+import AutocompleteInput from "@/components/Autocomplete";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { setupOrganizationStep1 } from "@/services/organizations.api";
+import { getUser } from "@/services/user.api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
+import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
   const router = useRouter();
+  const [disabled, setDisabled] = useState(true);
 
-  const addressForm = useFormik({
-    initialValues: {
-      address: "",
-    },
-    onSubmit: (data) => {
-      console.log(data);
+  const queryClient = useQueryClient();
+  const userQ = useQuery({
+    queryKey: ["address-details"],
+    queryFn: () => getUser(),
+  });
+
+  const user = userQ.isSuccess ? userQ.data?.data : null;
+  console.log(user);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: setupOrganizationStep1,
+    onSuccess: (data: any) => {
+      toast.success("Address update Successully.", {
+        style: { color: "green" },
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["address-details", "account-details"],
+      });
       setSection("home");
     },
   });
+
+  const addressForm = useFormik({
+    initialValues: {
+      companyAddress: "",
+    },
+    validationSchema: toFormikValidationSchema(
+      z.object({
+        companyAddress: z.string(),
+      })
+    ),
+    validateOnBlur: true,
+    onSubmit: (data) => {
+      // console.log(data);
+      mutate({
+        id: user?.organizations[0]?.id,
+        formdata: data,
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (userQ.isSuccess) {
+      addressForm.setFieldValue(
+        "companyAddress",
+        user?.organizations[0]?.company_address
+      );
+    }
+  }, [userQ.status]);
 
   return (
     <form
@@ -35,46 +85,40 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
       <hr className="bg-gray-300 self-stretch shrink-0 h-px mt-2 max-md:max-w-full" />
 
       <div className="w-full space-y-6">
-        <h2 className="text-slate-700 text-base font-semibold leading-6 self-stretch mt-6 max-md:max-w-full">
-          Company Address
-        </h2>
-        <Input
-          className="py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700"
-          placeholder="New york"
-        />
-        <Input
-          className="py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700"
-          placeholder="8th floor"
-        />
-        <div className="items-stretch self-stretch flex flex-wrap justify-between gap-5 mt-6 pr-2.5 max-md:max-w-full">
-          <a
-            href="#"
-            className="text-slate-700 text-xs font-light leading-4 whitespace-nowrap items-stretch bg-gray-50 grow justify-center px-2 py-3.5 rounded-md"
-          >
-            New York
-          </a>
-          <a
-            href="#"
-            className="items-stretch bg-gray-50 flex justify-between gap-2 px-2 py-3.5 rounded-md"
-          >
-            <div className="text-slate-700 text-xs font-light leading-4 grow whitespace-nowrap">
-              New York
-            </div>
-            <img
-              loading="lazy"
-              className="aspect-square object-contain object-center w-4 overflow-hidden shrink-0 max-w-full"
-              alt="Address Image"
-            />
-          </a>
-          <a
-            href="#"
-            className="text-slate-700 text-xs font-light leading-4 whitespace-nowrap items-stretch bg-gray-50 grow justify-center px-2 py-3.5 rounded-md"
-          >
-            10001-5748
-          </a>
+        <div className="flex justify-between items-end">
+          <h2 className="text-slate-700 text-base font-semibold leading-6 self-stretch mt-6 max-md:max-w-full">
+            Company Address
+          </h2>
+          {addressForm.values.companyAddress != "" && (
+            <p
+              role="button"
+              onClick={() => setDisabled(false)}
+              className="text-sm font-semibold leading-4 text-blue-600"
+            >
+              Edit
+            </p>
+          )}
         </div>
+
+        <div>
+          {userQ.isLoading && (
+            <Loader2 className="animate-spin text-blue-600" />
+          )}
+          {userQ.isSuccess && (
+            <AutocompleteInput
+              isDisabled={disabled}
+              setAddress={(e: any) => {
+                addressForm.setFieldValue("companyAddress", e);
+              }}
+              address={user?.organizations[0]?.company_address}
+            />
+          )}
+        </div>
+
         <div className="flex justify-end">
+          {isPending && <Loader2 className="animate-spin text-blue-600" />}
           <Button
+            disabled={isPending}
             className="text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
             type="submit"
           >

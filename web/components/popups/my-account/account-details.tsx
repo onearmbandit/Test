@@ -8,34 +8,137 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useAccountStore } from "@/lib/stores/organisation.store";
+import { cn } from "@/lib/utils";
+import { deleteUser, getUser, updateUser } from "@/services/user.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useFormik } from "formik";
 import { ChevronRight } from "lucide-react";
-import React from "react";
+import { signOut } from "next-auth/react";
+import React, { useEffect } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const AccountDetails = () => {
   const { setMyAccSection } = useAccountStore();
+  const queryClient = useQueryClient();
+
+  const deleteValidation = z.object({
+    email: z.string().email(),
+    password: z.string().min(8),
+  });
+
+  const { data, isLoading, status } = useQuery({
+    queryKey: ["account-details"],
+    queryFn: () => getUser(),
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: (data) => {
+      signOut();
+      toast.success("Account Deleted.", { style: { color: "green" } });
+    },
+    onError: (err) => {
+      toast.error(err.message, { style: { color: "red" } });
+    },
+  });
+
+  const deleteAccount = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validateOnChange: false,
+    validateOnBlur: true,
+    validationSchema: toFormikValidationSchema(deleteValidation),
+    onSubmit: (data) => {
+      mutate({ obj: data });
+    },
+  });
+
+  const { mutate: changeName, isPending: changeNamePending } = useMutation({
+    mutationFn: updateUser,
+    onSuccess: (data) => {
+      // if(data)
+      queryClient.invalidateQueries({ queryKey: ["account-details"] });
+      toast.success("Profile Updated", { style: { color: "green" } });
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
+    },
+  });
+
+  const changeNameForm = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+    },
+    onSubmit: (data) => {
+      console.log(data);
+      changeName({ formBody: data });
+    },
+  });
+
+  useEffect(() => {
+    if (status == "success") {
+      changeNameForm.setFieldValue("firstName", data?.data?.first_name);
+      changeNameForm.setFieldValue("lastName", data?.data?.last_name);
+    }
+  }, [status]);
+
   return (
-    <form className="justify-center items-start bg-white grow rounded-e-lg flex flex-col p-6 max-md:px-5">
+    <div className="justify-center items-start bg-white grow rounded-e-lg flex flex-col p-6 max-md:px-5">
       <header className="text-gray-700 border-b border-gray-300 pb-3 text-lg font-bold leading-7 self-stretch max-md:max-w-full">
         My account
       </header>
 
-      <section className="text-gray-700 text-xs font-medium leading-4 space-y-2.5 mt-6">
-        <label>Name</label>
-        <Input
-          disabled={true}
-          className="text-slate-700 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-100 
-    justify-center p-2 rounded-md self-start"
-          value="John Smith"
-        />
-      </section>
-      <header className="text-gray-700 text-base font-semibold leading-6 self-stretch mt-9 max-md:max-w-full max-md:mt-10 pb-3 border-b border-gray-300">
+      <form
+        onSubmit={changeNameForm.handleSubmit}
+        className="text-gray-700 text-xs font-medium w-full leading-4 mt-6"
+      >
+        <div className="flex space-x-3">
+          <div className="space-y-2.5">
+            <label>First Name</label>
+            <Input
+              name="firstName"
+              onChange={changeNameForm.handleChange}
+              className="text-slate-700 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-100 
+            justify-center p-2 rounded-md self-start"
+              value={changeNameForm.values.firstName}
+            />
+          </div>
+          <div className="space-y-2.5">
+            <label>Last Name</label>
+            <Input
+              name="lastName"
+              onChange={changeNameForm.handleChange}
+              className="text-slate-700 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-100 
+            justify-center p-2 rounded-md self-start"
+              value={changeNameForm.values.lastName}
+            />
+          </div>
+        </div>
+
+        <div className="flex w-full justify-end mt-2">
+          <Button
+            variant={"ghost"}
+            disabled={changeNamePending}
+            className="text-blue-600 hover:text-blue-500 font-semibold"
+          >
+            Save
+          </Button>
+        </div>
+      </form>
+      <header className="text-gray-700 text-base font-semibold leading-6 self-stretch mt-6 max-md:max-w-full pb-3 border-b border-gray-300">
         Account Security
       </header>
 
       <section className="text-black text-sm leading-5 self-stretch space-y-2.5 mt-2.5 max-md:max-w-full">
         <label>Email</label>
         <Input
-          value={"johnsmith@pepsico.com"}
+          disabled
+          value={`${data?.data?.email}`}
           className="text-gray-500 text-xs leading-4 self-stretch px-0 max-md:max-w-full"
         />
       </section>
@@ -80,45 +183,62 @@ const AccountDetails = () => {
             </p>
           </div>
         </DialogTrigger>
-        <DialogContent className="space-y-6">
-          <h1 className="text-gray-700 text-base leading-6">
-            This action cannot be undone. This will permanently delete your
-            entire account. Please type in your email and password to confirm.
-          </h1>
-          <section className="input-container w-full">
-            <Input
-              type="email"
-              placeholder="johnsmith@pepsico.com"
-              className="text-gray-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md"
-            />
-          </section>
-          <section className="input-container w-full">
-            <Input
-              type="password"
-              id="password"
-              className="text-gray-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md"
-              value={"Pass@123"}
-            />
-          </section>
-          <Button
-            type="button"
-            variant={"outline"}
-            className="border-2 border-red-500 font-semibold text-red-500 hover:bg-red-50 hover:text-red-500"
-          >
-            Permanently delete account
-          </Button>
-          <DialogClose>
+        <DialogContent>
+          <form onSubmit={deleteAccount.handleSubmit} className="space-y-6">
+            <h1 className="text-gray-700 text-base leading-6 pb-6">
+              This action cannot be undone. This will permanently delete your
+              entire account. Please type in your email and password to confirm.
+            </h1>
+            <section className="input-container w-full">
+              <Input
+                name="email"
+                onChange={deleteAccount.handleChange}
+                placeholder="johnsmith@pepsico.com"
+                className={cn(
+                  "text-gray-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md",
+                  deleteAccount.errors?.email && "border border-red-500"
+                )}
+              />
+              <p className="text-xs text-red-500 py-[10px]">
+                {deleteAccount.errors?.email}
+              </p>
+            </section>
+            <section className="input-container w-full">
+              <Input
+                type="password"
+                id="password"
+                name="password"
+                onChange={deleteAccount.handleChange}
+                className={cn(
+                  "text-gray-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md",
+                  deleteAccount.errors?.password && "border border-red-500"
+                )}
+                placeholder={"Pass@123"}
+              />
+              <p className="text-xs text-red-500 py-[10px]">
+                {deleteAccount.errors?.password}
+              </p>
+            </section>
             <Button
-              type="button"
+              type="submit"
               variant={"outline"}
-              className="w-full border-2 border-gray-300 text-gray-500 hover:text-gray-600"
+              className="border-2 w-full border-red-500 font-semibold text-red-500 hover:bg-red-50 hover:text-red-500"
             >
-              Cancel
+              Permanently delete account
             </Button>
-          </DialogClose>
+            <DialogClose className="block w-full">
+              <Button
+                type="button"
+                variant={"outline"}
+                className="w-full border-2 border-gray-300 text-gray-500 hover:text-gray-600"
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+          </form>
         </DialogContent>
       </Dialog>
-    </form>
+    </div>
   );
 };
 

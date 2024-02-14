@@ -1,14 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
-  <div style="border:1">
-  <h1>Join the Pepsi Co team on C3insets.ai?</h1>
-  <h4> {{ user.firstName }} {{user.lastName }} invited you</h4>
-    <p> With our platform, you can provide buyers with transparent carbon emissions insights, 
-        showcase your journey in reducing emissions, and collaboratively engage in carbon abatement projects 
-        for a shared mission towards a greener future.
-    </p>
-    <a href={{url}}><button>Accept Invite</button></a>
-  </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Invite</title>
+</head>
+<body style="background-color: #f1f5f9; margin: 0; padding: 0; -webkit-text-size-adjust: none; -ms-text-size-adjust: none; width: 100% !important;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; width: 100%; margin: 0; padding: 48px 0;">
+    <tr>
+      <td align="center">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 640px; margin: 0 auto;">
+          <tr>
+            <td align="left" style="padding: 24px; text-align: left;">
+              <!-- Replace with your actual logo image path -->
+              <img src="https://diw3xy9w4etxp.cloudfront.net/terralab_logo.png" height="39" width="177"/>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #ffffff; padding: 32px; border-radius: 0.375rem; text-align: center;">
+              <h1 style="color: #374151; font-size: 24px; font-weight: 600; line-height: 32px; margin: 0 0 16px 0;">
+                Join the {{ organizationName }} team on Terralab.ai?
+              </h1>
+              
+              
+                    <!-- This is a placeholder for the initials circle -->
+                    <div style="background-color: #dbeafe; color: #1d4ed8; width: 63px; height: 63px; line-height: 63px; display: inline-block; border-radius: 50%; font-size: 12px; font-weight: 600; margin: 10px">
+                    {{ user.firstName[0] }} {{ user.lastName[0] }}
+                    </div>
+               
+              
+              <p style="color: #374151; font-size: 16px; line-height: 20px; margin-top: 10px;">
+                
+                <b>{{ user.firstName }} {{ user.lastName }} invited you </b><br>
+              </p>
+              
+                 <p style="color: #374151; font-size: 16px; line-height: 24px; margin: 0;">
+                
+              With our platform, you can
+          provide buyers with transparent carbon emissions insights, showcase
+          your journey in reducing emissions, and collaboratively engage in
+          carbon abatement projects for a shared mission towards a greener
+          future.<br><br>
+              </p>
+              <!-- Replace # with your actual invite link -->
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-top: 24px;">
+                <tr>
+                  <td align="center">
+                    <a href="{{ url }}" style="background-color: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 0.375rem; font-size: 16px; font-weight: 600; text-align: center; text-decoration: none; display: inline-block; margin: 0;">
+                      Accept Invite
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color: #f9fafb; padding: 32px; border-radius: 0.375rem; text-align: left;">
+              <p style="color: #6b7280; font-size: 16px; line-height: 24px; margin: 0;">
+                Questions? Email us at <a href="mailto:support@terralab.ai" style="color: #2563eb; text-decoration: none;">support@terralab.ai</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
+
+
+

@@ -13,6 +13,7 @@ import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { signIn, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const Page = () => {
   const { data: session } = useSession();
@@ -21,7 +22,9 @@ const Page = () => {
   const router = useRouter();
   const validation = z.object({
     email: z.string().email(),
-    password: z.string().min(8),
+    password: z.string().min(8, {
+      message: " Password must contain minimum 8 characters atleast",
+    }),
   });
 
   const { mutate, isPending } = useMutation({
@@ -55,6 +58,10 @@ const Page = () => {
 
   const socialParam = params.get("social");
 
+  const handleSignIn = async (provider: string) => {
+    const res = await signIn(provider, { redirect: false });
+  };
+
   if (session) {
     router.push("/");
   }
@@ -62,14 +69,15 @@ const Page = () => {
   return (
     <div className="h-screen flex justify-center items-center">
       <div className="justify-center items-center border border-[color:var(--Color-Gray-50,#F9FAFB)] shadow-sm flex w-full max-w-[828px] flex-col py-12 rounded-lg border-solid">
-        <div className="items-stretch self-center flex w-[367px] max-w-full gap-3 mt-1 px-5 py-9">
+        <div className="items-center self-center flex w-[367px] max-w-full gap-3 mt-1 px-5 py-9">
           <header className="text-neutral-900 text-3xl whitespace-nowrap">
             Welcome to
           </header>
           <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/fad84bb1bb10d8cc468caba5945178e2d8abaf83567f17527647c040641eff01?apiKey=011554aff43544e6af46800a427fd184&"
-            className="aspect-[6.81] object-contain object-center w-full overflow-hidden shrink-0 flex-1 my-auto"
+            src={"/assets/images/Logo.png"}
+            width={177}
+            height={38.5}
+            alt="logo"
           />
         </div>
         <div className="text-neutral-500 text-center text-lg leading-7 max-w-[257px] self-center mt-6">
@@ -131,9 +139,9 @@ const Page = () => {
                     className="flex items-center cursor-pointer pr-2"
                   >
                     {showPassword ? (
-                      <EyeOff size={16} color="#64748B" />
-                    ) : (
                       <Eye size={16} color="#64748B" />
+                    ) : (
+                      <EyeOff size={16} color="#64748B" />
                     )}
                   </div>
                 </div>
@@ -141,12 +149,12 @@ const Page = () => {
                   {loginForm.errors.password}
                 </p>
               </div>
-              <a
-                href="#"
+              <Link
+                href="/forgot-password"
                 className="text-blue-700 text-sm font-bold leading-5 self-stretch mt-3 max-md:max-w-full"
               >
                 Forgot Password?
-              </a>
+              </Link>
               <div className="w-fit mx-auto flex items-center space-x-2">
                 {isPending && (
                   <Loader2 size={30} className="text-slate-400 animate-spin" />
@@ -176,7 +184,7 @@ const Page = () => {
           <div className="items-stretch bg-white flex max-w-[408px] flex-col px-16 py-12 rounded-lg">
             <div
               role="button"
-              onClick={() => signIn("google", { callbackUrl: "/" })}
+              onClick={() => handleSignIn("google")}
               className="justify-start items-stretch border-slate-200 flex gap-4 mt-3.5 py-4 px-11 rounded-full border-2 border-solid"
             >
               <img
@@ -189,8 +197,8 @@ const Page = () => {
               </div>
             </div>
             <div
-              // role="button"
-              // onClick={() => signIn("microsoft")}
+              role="button"
+              onClick={() => handleSignIn("azure-ad")}
               className="justify-start items-stretch border-slate-200 flex gap-4 mt-6 py-4 px-11  rounded-full border-2 border-solid"
             >
               <img

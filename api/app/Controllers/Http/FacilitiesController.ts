@@ -5,16 +5,30 @@ import CreateFacilityValidator from 'App/Validators/Facility/CreateFacilityValid
 import OrganizationFacility from 'App/Models/OrganizationFacility'
 import UpdateFacilityValidator from 'App/Validators/Facility/UpdateFacilityValidator'
 import { DateTime } from 'luxon'
+import User from 'App/Models/User'
 
 export default class FacilitiesController {
 
-  public async index({response, request}: HttpContextContract) {
+  public async index({ response, request ,auth}: HttpContextContract) {
     try {
       const queryParams = request.qs();
 
+      //:: Check organization id is same for auth user or not
+      const userFound = await User.getUserDetails('id', auth.user?.id)
+      let organizationIds = (await userFound.organizations).map((item) => item.id)
+      if (queryParams.organization_id && !organizationIds.includes(queryParams.organization_id)) {
+        return apiResponse(
+          response,
+          false,
+          403,
+          {},
+          "The provided organization ID does not belongs to you."
+        )
+      }
+
       const facilities = await OrganizationFacility.getAllFacilities(queryParams);
 
-      const isPaginated = !request.input('per_page') || request.input('per_page') !== 'all';
+      const isPaginated = request.input('per_page') && request.input('per_page') !== 'all'
 
       return apiResponse(response, true, 200, facilities, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.dataFetchSuccess'), isPaginated);
 
@@ -29,15 +43,29 @@ export default class FacilitiesController {
     }
   }
 
-  public async store({ request, response }: HttpContextContract) {
+  public async store({ request, response, auth }: HttpContextContract) {
     try {
       let requestData = request.all()
 
       // validate facility details
       await request.validate(CreateFacilityValidator)
 
+
+      //:: Check organization id is same for auth user or not
+      const userFound = await User.getUserDetails('id', auth.user?.id)
+      let organizationIds = (await userFound.organizations).map((item) => item.id)
+      if (requestData.organization_id && !organizationIds.includes(requestData.organization_id)) {
+        return apiResponse(
+          response,
+          false,
+          403,
+          {},
+          "The provided organization ID does not belongs to you."
+        )
+      }
+
       // create facility
-      const result = await OrganizationFacility.createFacility(requestData)
+      const result = await OrganizationFacility.createFacility(requestData, organizationIds[0])
 
       return apiResponse(response, true, 200, result, 'Data saved successfully')
     } catch (error) {
@@ -61,9 +89,12 @@ export default class FacilitiesController {
     }
   }
 
-  public async show({response, params}: HttpContextContract) {
+  public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       const organizationFacility = await OrganizationFacility.getOrganizationFacilityData('id', params.id)
+
+      //:: Authorization (auth user can access their organization-facility only)
+      await bouncer.with('OrganizationFacilityPolicy').authorize('view', organizationFacility)
 
       return apiResponse(response, true, 200, organizationFacility, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'))
     }
@@ -74,10 +105,13 @@ export default class FacilitiesController {
     }
   }
 
-  public async update({request, response}: HttpContextContract) {
+  public async update({ request, response, bouncer }: HttpContextContract) {
     try {
 
       const organizationFacilityData = await OrganizationFacility.getOrganizationFacilityData('id', request.param('id'))
+
+      //:: Authorization (auth user can update their organization's facility only)
+      await bouncer.with('OrganizationFacilityPolicy').authorize('update', organizationFacilityData)
 
       const payload = await request.validate(UpdateFacilityValidator);
 
@@ -96,12 +130,15 @@ export default class FacilitiesController {
     }
   }
 
-  public async destroy({request, response}: HttpContextContract) {
+  public async destroy({ request, response, bouncer }: HttpContextContract) {
     try {
       const organizationFacilityData = await OrganizationFacility.getOrganizationFacilityData('id', request.param('id'))
 
+      //:: Authorization (auth user can delete only their organization's facility not other)
+      await bouncer.with('OrganizationFacilityPolicy').authorize('delete', organizationFacilityData)
+
       if (organizationFacilityData) {
-        organizationFacilityData.deletedAt = DateTime.local()
+        organizationFacilityData.deleted_at = DateTime.local()
         await organizationFacilityData.save()
 
         return apiResponse(response, true, 200, {}, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.deleteFacilitySuccess'))

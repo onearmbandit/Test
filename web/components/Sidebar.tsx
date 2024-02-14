@@ -9,28 +9,103 @@ import {
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import Accounts from "./popups/accounts/accounts";
 import { signOut, useSession } from "next-auth/react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MailPlus } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn, isSuperAdmin } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import { exportSupplierDataCsv } from "@/services/user.api";
+import { toast } from "sonner";
 
 const Sidebar = () => {
+  const pathname = usePathname();
   const session = useSession();
+
+  const firstName = session?.data?.user?.first_name || "";
+  const lastName = session?.data?.user?.last_name || "";
+
+  const firstLetterOfFirstName = firstName.charAt(0);
+  const firstLetterOfLastName = lastName.charAt(0);
+
+  const organizationLinks = ["/facilities"];
+
+  function urlContainsElements(url: string, elements: string[]) {
+    for (const element of elements) {
+      if (url.includes(element)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  const superAdmin: Boolean = isSuperAdmin(
+    session?.data?.user?.roles,
+    "super-admin"
+  );
+
+  const { mutate, isSuccess, isPending } = useMutation({
+    mutationKey: ["supplier-data-csv"],
+    mutationFn: exportSupplierDataCsv,
+    onSuccess: (data: any) => {
+      // Create a Blob from the response data
+      if (data) {
+        // Extract the filename from the response
+        const fileName = data.fileName || "suppliers.csv";
+
+        // Decode the base64-encoded CSV data
+        const csvData = atob(data.csv);
+
+        // Create a Blob from the decoded CSV data
+        const blob = new Blob([csvData], { type: "application/csv" });
+
+        // Create a link element to trigger the download
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
+
+        // Append the link to the document and trigger the download
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up by removing the link element
+        document.body.removeChild(link);
+
+        toast.success("Data exported successfully");
+      }
+      toast.success("Data exported successfully");
+    },
+    onError: (error) => {
+      toast.error("Error exporting data:" + error.message);
+    },
+  });
+
   return (
-    <div className="flex flex-col justify-between w-full h-screen max-w-[240px] px-4 py-5">
+    <div className="flex flex-col sticky top-0 bg-gray-50 border-r border-gray-200 justify-between w-full h-screen max-w-[240px] px-4 py-5">
       <nav>
         <header className="items-center border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-2 pl-4 pr-10 py-3.5 border-b border-solid">
           <div className="text-blue-700 text-xs font-semibold leading-4 whitespace-nowrap flex justify-center items-center bg-blue-100 aspect-square h-8 my-auto px-2.5 rounded-md">
-            JS
+            {firstLetterOfFirstName}
+            {firstLetterOfLastName}
           </div>
           <div className="justify-center items-stretch self-stretch flex grow basis-[0%] flex-col">
             <h1 className="overflow-hidden text-slate-800 text-ellipsis text-sm font-semibold leading-5 whitespace-nowrap">
-              {session.data?.user?.name}
+              {session.data?.user?.first_name} {session.data?.user?.last_name}
             </h1>
             <div className="overflow-hidden text-slate-500 text-ellipsis text-xs leading-4 whitespace-nowrap">
-              Pepsi Co
+              {session.data?.user?.organizations[0]?.company_name}
             </div>
           </div>
         </header>
 
-        <div className="items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md">
+        <Link
+          href={"/"}
+          className={cn(
+            "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
+            urlContainsElements(pathname, organizationLinks) ||
+              (pathname == "/" &&
+                "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500")
+          )}
+        >
           <svg
             width="16"
             height="16"
@@ -52,7 +127,7 @@ const Sidebar = () => {
           <h2 className=" text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
             Organization Profile
           </h2>
-        </div>
+        </Link>
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1" className="border-none">
             <AccordionTrigger className="hover:bg-blue-100 group hover:text-blue-700 rounded-md mt-2 text-slate-800 py-1.5 pr-2">
@@ -79,22 +154,48 @@ const Sidebar = () => {
               <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200" />
             </AccordionTrigger>
             <AccordionContent>
-              <div className="flex flex-col items-stretch mt-2 pl-11 space-y-2">
-                <div className="text-slate-800 hover:bg-blue-100 hover:text-blue-700  text-xs font-medium leading-5 whitespace-nowrap px-2 py-1.5 rounded-md">
+              <div className="flex flex-col items-stretch mt-2 space-y-2">
+                <Link
+                  href={"/abatement-projects/active"}
+                  className={cn(
+                    "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700  text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                    urlContainsElements(pathname, ["active"]) &&
+                      "bg-blue-100 text-blue-700 pl-9"
+                  )}
+                >
                   Active
-                </div>
-                <div className="text-slate-800 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap px-2 py-1.5 rounded-md">
-                  Completed
-                </div>
-                <div className="text-slate-800 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap px-2 py-1.5 rounded-md">
-                  Proposed
-                </div>
+                </Link>
+                <Link href="/abatement-projects/completed">
+                  <div
+                    className={cn(
+                      "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                      urlContainsElements(pathname, ["completed"]) &&
+                        "bg-blue-100 text-blue-700"
+                    )}
+                  >
+                    Completed
+                  </div>
+                </Link>
+                <Link href="/abatement-projects/proposed">
+                  <div
+                    className={cn(
+                      "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                      urlContainsElements(pathname, ["proposed"]) &&
+                        "bg-blue-100 text-blue-700"
+                    )}
+                  >
+                    Proposed
+                  </div>
+                </Link>
               </div>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
 
-        <div className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md">
+        <Link
+          href={"/supply-chain"}
+          className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
+        >
           <svg
             width="16"
             height="16"
@@ -114,7 +215,33 @@ const Sidebar = () => {
           <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
             Supply Chain
           </h2>
-        </div>
+        </Link>
+        {superAdmin && (
+          <>
+            <Link
+              href={"/invite-organization"}
+              className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
+            >
+              <MailPlus />
+
+              <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
+                Invite Organization (For test)
+              </h2>
+            </Link>
+            <span
+              role="button"
+              onClick={() =>
+                mutate({
+                  organizationId: session.data?.user?.organizations[0]?.id,
+                  supplyChainReportingPeriodId:
+                    "e9e5112f-cd18-45ad-bf8e-fefb9dc63a76",
+                })
+              }
+            >
+              Export Supplier data
+            </span>
+          </>
+        )}
       </nav>
       <footer>
         <Dialog>

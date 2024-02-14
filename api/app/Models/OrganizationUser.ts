@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { v4 as uuidv4 } from 'uuid'
 
 export default class OrganizationUser extends BaseModel {
   @column({ isPrimary: true })
@@ -20,6 +21,12 @@ export default class OrganizationUser extends BaseModel {
   @column()
   public email: string
 
+  @column()
+  public firstName: string
+
+  @column()
+  public lastName: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
@@ -27,6 +34,27 @@ export default class OrganizationUser extends BaseModel {
   public updatedAt: DateTime
 
   public static findByUserId(userId: number) {
-    return this.query().where('user_id', userId).first();
+    return this.query().where('user_id', userId).first()
+  }
+
+  public static async createInvite(organizationInvite: any) {
+    // Generate a new UUID for the id field
+    const id = uuidv4()
+
+    // Merge the generated id with the organization invitation data
+    const dataWithId = { ...organizationInvite, id }
+
+    const result = await OrganizationUser.create(dataWithId)
+
+    return result
+  }
+
+
+  public static async getOrganizationUserDetails(field, value) {
+    var data = await OrganizationUser.query()
+      .where(field, value)
+      .first()
+
+    return data
   }
 }

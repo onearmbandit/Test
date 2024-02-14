@@ -1,18 +1,6 @@
 "use server";
 
-import { authOptions } from "@/lib/utils";
-import axios, {
-  AxiosHeaders,
-  AxiosRequestConfig,
-  RawAxiosRequestHeaders,
-} from "axios";
-import { getServerSession } from "next-auth";
-type CreateAPIMethod = <TInput extends Record<string, string>, TOutput>(opts: {
-  url: string;
-  method: "GET" | "POST" | "PATCH" | "PUT";
-}) => (input: TInput) => Promise<TOutput>;
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+import axios, { AxiosHeaders, RawAxiosRequestHeaders } from "axios";
 
 type Options = {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -24,6 +12,7 @@ const fetchApi = async (
   url: string,
   options = { method: "GET" } as Options
 ) => {
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const { headers, method, body } = options;
 
   // const session = await getServerSession(authOptions);
@@ -40,8 +29,14 @@ const fetchApi = async (
   })
     .then((res) => res.data)
     .catch((err) => {
-      // console.log(err.response.data);
-      throw new Error(err.response.data.message);
+      console.log("error : ", err.response.data);
+      if (err.response.data.errors) {
+        // throw new Error(err.response.data.errors[0].message);
+        return err.response.data;
+      } else {
+        // throw new Error(err.response.data.message);
+        return err.response.data;
+      }
     });
 
   return response;
@@ -80,4 +75,25 @@ export const login = (body: any) => {
   formbody.append("password", body.password);
 
   return fetchApi("/login", { method: "POST", body: formbody });
+};
+
+export const forgotPassword = (body: any) => {
+  const formBody = new FormData();
+  formBody.append("email", body.email);
+  return fetchApi("/forgot-password", { method: "POST", body: formBody });
+};
+
+export const resetPassword = (body: any) => {
+  const formbody = new FormData();
+  formbody.append("newPassword", body.newPassword);
+  formbody.append("confirmPassword", body.confirmPassword);
+  formbody.append("email", body.email);
+  formbody.append("token", body.token);
+  return fetchApi("/reset-password", { method: "POST", body: formbody });
+};
+
+export const verifyEmail = (token: string) => {
+  const formDetails = new FormData();
+  formDetails.append("token", token);
+  return fetchApi(`/verify-email`, { method: "POST", body: formDetails });
 };
