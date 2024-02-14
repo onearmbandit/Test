@@ -110,7 +110,7 @@ const AutocompleteInput = ({
           disabled={isDisabled}
           onChange={(e) => {
             setVal(e.target.value);
-            // setAddress(e.target.value);
+            setValue(e.target.value);
           }}
         />
       )}
