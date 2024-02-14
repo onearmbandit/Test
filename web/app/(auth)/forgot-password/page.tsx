@@ -25,7 +25,7 @@ function Page() {
   const { mutate, isPending } = useMutation({
     mutationFn: forgotPassword,
     onSuccess: (data) => {
-      toast.success(data.message, { style: { color: "red" } });
+      toast.success(data.message, { style: { color: "green" } });
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
