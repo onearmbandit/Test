@@ -73,12 +73,11 @@ const Page = () => {
           <header className="text-neutral-900 text-3xl whitespace-nowrap">
             Welcome to
           </header>
-          <Image
+          <img
             src={"/assets/images/Logo.png"}
             width={177}
             height={38.5}
             alt="logo"
-            className="mix-blend-darken"
           />
         </div>
         <div className="text-neutral-500 text-center text-lg leading-7 max-w-[257px] self-center mt-6">

@@ -1,5 +1,6 @@
 import FacilityEmissionsSummary from "@/components/FacilityEmissionsSummary";
 import FacilityDetails from "@/components/facility/facility-detail";
+import FacilityHeader from "@/components/facility/facility-header";
 import { authOptions } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { getServerSession } from "next-auth/next";
@@ -27,6 +28,8 @@ const Page = async ({ params }: { params: any }) => {
           </span>
         </nav>
       </div>
+
+      <FacilityHeader />
 
       <FacilityEmissionsSummary />
 
