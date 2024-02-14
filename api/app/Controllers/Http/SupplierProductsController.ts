@@ -7,12 +7,29 @@ import Supplier from 'App/Models/Supplier';
 import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 import { DateTime } from 'luxon'
 // import DeleteMultipleSupplierProductValidator from 'App/Validators/Supplier/DeleteMultipleSupplierProductValidator';
-
+import User from 'App/Models/User';
 
 export default class SupplierProductsController {
-  public async index({ request, response }: HttpContextContract) {
+  public async index({ request, response, auth }: HttpContextContract) {
     try {
       const queryParams = request.qs();
+
+
+      //:: Check organization id is same for auth user or not
+      if (queryParams.supplyChainReportingPeriodId) {
+        const userFound = await User.getUserDetails('id', auth.user?.id)
+        const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', queryParams.supplyChainReportingPeriodId)
+        let organizationIds = (await userFound.organizations).map((item) => item.id)
+        if (!organizationIds.includes(reportPeriodData.organization.id)) {
+          return apiResponse(
+            response,
+            false,
+            403,
+            {},
+            "The provided supply chain reporting ID does not belongs to you."
+          )
+        }
+      }
 
       const allSupplierProductsData = await SupplierProduct.getAllSupplierProductsForSpecificPeriod(queryParams);
 
@@ -92,8 +109,8 @@ export default class SupplierProductsController {
         await SupplierProduct.deleteMultipleSupplierProducts(requestData)
         return apiResponse(response, true, 200, {}, Config.get('responsemessage.SUPPLIER_RESPONSE.multipleProductDeleteSuccess'))
       }
-      return apiResponse(response, true, 200, {}, Config.get('responsemessage.SUPPLIER_RESPONSE.multipleProductDeleteSuccess')) 
-   }
+      return apiResponse(response, true, 200, {}, Config.get('responsemessage.SUPPLIER_RESPONSE.multipleProductDeleteSuccess'))
+    }
     catch (error) {
       if (error.status === 422) {
         return apiResponse(
@@ -115,9 +132,12 @@ export default class SupplierProductsController {
     }
   }
 
-  public async destroy({ response, request }: HttpContextContract) {
+  public async destroy({ response, request, bouncer }: HttpContextContract) {
     try {
-      const productDetailsData = await SupplierProduct.getProductDetailsData('id', request.param('id'))
+      const productDetailsData = await SupplierProduct.getProductDetailsData('id', request.param('id'));
+
+      //:: Authorization (auth user can access only their supplier data)
+      await bouncer.with('SupplierProductsPolicy').authorize('delete', productDetailsData.toJSON())
 
       if (productDetailsData) {
         productDetailsData.deletedAt = DateTime.local()
