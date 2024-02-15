@@ -7,7 +7,7 @@ import AbatementProject from 'App/Models/AbatementProject'
 import Organization from 'App/Models/Organization'
 import { DateTime } from 'luxon'
 import User from 'App/Models/User'
-// import { sendMail } from 'App/helpers/sendEmail'
+import { sendMail } from 'App/helpers/sendEmail'
 import SupplierOrganization from 'App/Models/SupplierOrganization'
 
 
@@ -179,7 +179,7 @@ export default class AbatementProjectsController {
 
       const projectData = await AbatementProject.getProjectData('id', request.param('id'))
 
-      // let projectPreviousStatus = projectData.toJSON().status;
+      let projectPreviousStatus = projectData.toJSON().status;
 
       //:: Authorization (auth user can update their project data only)
       // await bouncer.with('AbatementProjectsPolicy').authorize('update', projectData.toJSON())
@@ -188,23 +188,25 @@ export default class AbatementProjectsController {
 
       const updateProject = await AbatementProject.updateProjectDetails(projectData, payload)
 
-    //   const emailData = {
-    //     projectName: updateProject.name,
-    //     updatedStatus: updateProject.status == 1 ? 'active' : (updateProject.status == 0 ? 'proposed' : 'completed'),
-    //     previousStatus: projectPreviousStatus == 1 ? 'active' : (projectPreviousStatus == 0 ? 'proposed' : 'completed'),
-    //     organizationName: updateProject.organization?.company_name,
-    //     userName: updateProject.proposed_type == "supplier" ? updateProject.proposedSupplier?.name : updateProject.proposedOrganization?.name,
-    // // userMail:
-    //   }
+      const emailData = {
+        projectName: updateProject.name,
+        updatedStatus: updateProject.status == 1 ? 'active' : (updateProject.status == 0 ? 'proposed' : 'completed'),
+        previousStatus: projectPreviousStatus == 1 ? 'active' : (projectPreviousStatus == 0 ? 'proposed' : 'completed'),
+        organizationName: updateProject.organization?.company_name,
+        userName: updateProject.proposed_type == "supplier" ? updateProject.proposedSupplier?.name :
+          `${updateProject.proposedOrganization?.users[0]?.firstName} ${updateProject.proposedOrganization?.users[0]?.lastName}`,
+        userMail: updateProject.proposed_type == "supplier" ? updateProject.proposedSupplier?.email :
+          `${updateProject.proposedOrganization?.users[0]?.email}`
+      }
 
-    //   if (updateProject.status !== projectPreviousStatus) {
-    //     await sendMail(
-    //       updateProject.proposedSupplier?.email,
-    //       `${emailData.organizationName} has updated the project status`,
-    //       'emails/update_project_status',
-    //       emailData
-    //     )
-    //   }
+      if (updateProject.status !== projectPreviousStatus) {
+        await sendMail(
+          emailData.userMail,
+          `${emailData.organizationName} has updated the project status`,
+          'emails/update_project_status',
+          emailData
+        )
+      }
 
       return apiResponse(
         response,
