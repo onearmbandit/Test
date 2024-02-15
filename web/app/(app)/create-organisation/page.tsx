@@ -118,7 +118,7 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
             id="companyEmail"
             onChange={setupOrganizationStep1Form.handleChange}
             className={cn(
-              "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
+              "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md lg:max-w-[367px] w-full",
               setupOrganizationStep1Form.touched.companyEmail &&
                 setupOrganizationStep1Form.errors.companyEmail &&
                 "border border-red-500"
@@ -263,7 +263,7 @@ const Step2 = ({ setStep }: any) => {
               className={`company-size-option  text-lg font-bold leading-7 whitespace-nowrap justify-center items-center grow px-7 py-4 rounded-2xl border-solid max-md:px-5 ${
                 selected == i
                   ? "bg-blue-200 border-2 border-blue-500 text-blue-700"
-                  : "border border-slate-500 text-slate-800"
+                  : "border-2 border-[#64748B] text-slate-800"
               }`}
             >
               {item}
@@ -528,7 +528,7 @@ const Step4 = ({ setStep }: any) => {
   return (
     <form onSubmit={setupOrganizationStep4Form.handleSubmit}>
       <div className="justify-center items-start flex max-w-[814px] w-full flex-col">
-        <div role="group" className="mt-6">
+        <div role="group" className="mt-6 flex flex-col">
           <label className="text-slate-700 text-base font-medium leading-6">
             Do you have goals or targets to reduce greenhouse gas emissions
             and/or energy?
@@ -548,7 +548,10 @@ const Step4 = ({ setStep }: any) => {
                     {target}
                   </div>
 
-                  <button onClick={() => removeTarget(index)}>
+                  <button
+                    onClick={() => removeTarget(index)}
+                    className="self-end"
+                  >
                     {" "}
                     <X size={12} className="text-green-800" />{" "}
                   </button>
@@ -566,8 +569,23 @@ const Step4 = ({ setStep }: any) => {
               onChange={(e) => {
                 setCurrentTarget(e.target.value);
               }}
+              // onFocus={() => {
+              //   if (!currentTarget) {
+              //     setCurrentTarget("Add another climate target");
+              //   }
+              // }}
+              // onBlur={() => {
+              //   if (!currentTarget) {
+              //     setCurrentTarget("ex: Carbon neutral by 2030");
+              //   }
+              // }}
               className="text-slate-500 text-xs font-light leading-4 bg-gray-50 self-stretch mt-2 px-2 py-6 rounded-md"
-              placeholder="ex: Carbon neutral by 2030"
+              // placeholder="ex: Carbon neutral by 2030"
+              placeholder={
+                targets?.length > 0
+                  ? "Add another climate target"
+                  : "ex: Carbon neutral by 2030"
+              }
             />
 
             <p

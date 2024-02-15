@@ -168,8 +168,8 @@ const ChangePassword = () => {
         </div>
         <div>
           <p className="text-xs text-slate-700 w-[82%]">
-            Requirements: One lowercase character, one number, one uppercase
-            character, 8 characters minimum, one special character
+            <b>Requirements:</b> One lowercase character, one number, one
+            uppercase character, 8 characters minimum, one special character
           </p>
         </div>
 
