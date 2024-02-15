@@ -14,7 +14,7 @@ const ClimateCommitments = ({ climateTargets }: { climateTargets: any }) => {
     <div className="items-stretch bg-[#14532D0D] w-full flex flex-col rounded-lg">
       <Accordion type="single" collapsible>
         <AccordionItem value="item-1" className="rounded-lg">
-          <AccordionTrigger className="items-center bg-[#E3ECEC] flex w-full justify-between gap-5 px-4 py-3 rounded-md max-md:max-w-full max-md:flex-wrap">
+          <AccordionTrigger className="items-center bg-[#E3ECEC] flex w-full justify-between gap-5 px-4 py-3 rounded-md">
             <div className="flex items-stretch justify-between gap-2">
               <Globe />
               <div className="text-green-950 text-xs font-medium leading-5 self-center grow whitespace-nowrap my-auto">
@@ -24,7 +24,7 @@ const ClimateCommitments = ({ climateTargets }: { climateTargets: any }) => {
             <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200" />
           </AccordionTrigger>
           <AccordionContent className="pb-0">
-            <div className="backdrop-blur-[2px] flex gap-5 mt-2 mb-1.5 px-8 py-3 rounded-lg max-md:max-w-full max-md:flex-wrap max-md:px-5">
+            <div className="backdrop-blur-[2px] flex gap-5 mt-2 mb-1.5 px-8 py-3 rounded-lg max-w-full flex-wrap max-md:px-5">
               {climateTargets?.length > 0 &&
                 climateTargets?.map((target: any, targetIndex: number) => (
                   <div
