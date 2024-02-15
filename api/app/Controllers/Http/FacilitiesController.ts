@@ -9,7 +9,7 @@ import User from 'App/Models/User'
 
 export default class FacilitiesController {
 
-  public async index({ response, request ,auth}: HttpContextContract) {
+  public async index({ response, request, auth }: HttpContextContract) {
     try {
       const queryParams = request.qs();
 
@@ -62,6 +62,25 @@ export default class FacilitiesController {
           {},
           "The provided organization ID does not belongs to you."
         )
+      }
+
+      //:: check if facility name already exists for same organization
+      if (requestData.organization_id) {
+        const existingRecord = await OrganizationFacility.query()
+          .where('name', requestData.name)
+          .where('organization_id', requestData.organization_id)
+          .first();
+
+        if (existingRecord) {
+          return apiResponse(
+            response,
+            false,
+            422,
+            {},
+            Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityAlreadyExists')
+          )
+        }
+
       }
 
       // create facility
