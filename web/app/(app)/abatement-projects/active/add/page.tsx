@@ -11,7 +11,9 @@ import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -19,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { addAbatementProjects } from "@/services/abatement.api";
 import { uploadImage } from "@/services/auth.api";
 import { getAllSuppliers } from "@/services/supply.chain";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import _ from "lodash";
 import { CheckCircle2, ChevronLeft, Loader2, Upload, X } from "lucide-react";
@@ -33,6 +35,7 @@ import { object, z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const AddActivePage = () => {
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const router = useRouter();
   const organizationId = session?.user?.organizations[0]?.id;
@@ -53,7 +56,7 @@ const AddActivePage = () => {
   const [projectDetails, setProjectDetails] = useState({
     1: { name: "" },
     2: { description: "", estimatedCost: 0, websiteUrl: "" },
-    3: { emissionReductions: 0 },
+    3: { emissionReductions: 0, emissionUnit: "" },
     4: { organizationId: { id: "", name: "" } },
     5: {
       photoUrl: {
@@ -63,6 +66,8 @@ const AddActivePage = () => {
       logoUrl: { name: "", file: {} },
     },
   });
+
+  const units = ["tCO2e", "Gallons of water", "Metric tonnes of waste"];
 
   const suppliers = useQuery({
     queryKey: ["supplier-list"],
@@ -80,6 +85,7 @@ const AddActivePage = () => {
       toast.success("Project Created Successfully.", {
         style: { color: "green" },
       });
+      queryClient.invalidateQueries();
       router.push("/abatement-projects/active");
       console.log(data);
     },
@@ -121,7 +127,7 @@ const AddActivePage = () => {
       proposedBy: "",
       photoUrl: "",
       logoUrl: "",
-      status: 0,
+      status: 1,
     },
 
     onSubmit: (data) => {
@@ -445,7 +451,7 @@ const AddActivePage = () => {
                   <label className="text-sm">
                     What is the estimated emission reductions?
                   </label>
-                  <div>
+                  <div className="flex">
                     <Input
                       name="emissionReductions"
                       onChange={(e) => {
@@ -453,12 +459,42 @@ const AddActivePage = () => {
                         copy[3].emissionReductions = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
+                      value={projectDetails[3].emissionReductions}
                       className={cn(
                         "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
                         err.emissionReductions && "border border-red-600"
                       )}
                       placeholder="Add emission reduction"
                     />
+
+                    <Select
+                      name="emissionUnit"
+                      value={values.emissionUnit}
+                      onValueChange={(e) => {
+                        setFieldValue("emissionUnit", e);
+                      }}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "text-slate-500 text-sm w-28 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          errors?.emissionUnit && "border border-red-500"
+                        )}
+                      >
+                        <SelectValue placeholder="Unit" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Select a unit</SelectLabel>
+
+                          {units?.map((unit: any, index: number) => (
+                            <SelectItem key={index} value={unit}>
+                              {unit}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+
                     <p className="text-xs text-red-500 mt-0.5">
                       {err.emissionReductions}
                     </p>
@@ -513,7 +549,7 @@ const AddActivePage = () => {
                 </p>
               ) : (
                 <p className="text-sm text-green-900">
-                  {projectDetails[3].emissionReductions}
+                  {projectDetails[3].emissionReductions} {values.emissionUnit}
                 </p>
               )}
             </CardContent>

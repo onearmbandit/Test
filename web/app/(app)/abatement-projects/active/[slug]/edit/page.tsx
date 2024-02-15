@@ -18,7 +18,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -29,7 +31,7 @@ import {
 } from "@/services/abatement.api";
 import { uploadImage } from "@/services/auth.api";
 import { getAllSuppliers } from "@/services/supply.chain";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
 import _ from "lodash";
@@ -51,6 +53,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const router = useRouter();
   const organizationId = session?.user?.organizations[0]?.id;
@@ -71,7 +74,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
   const [projectDetails, setProjectDetails] = useState({
     1: { name: "" },
     2: { description: "", estimatedCost: 0, websiteUrl: "" },
-    3: { emissionReductions: 0 },
+    3: { emissionReductions: 0, emissionUnit: "" },
     4: { organizationId: { id: "", name: "" } },
     5: {
       photoUrl: {
@@ -81,6 +84,8 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
       logoUrl: { name: "", file: {} },
     },
   });
+
+  const units = ["tCO2e", "Gallons of water", "Metric tonnes of waste"];
 
   const abatementProject = useQuery({
     queryKey: ["activeProject"],
@@ -100,6 +105,8 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
+
+      queryClient.invalidateQueries();
 
       toast.success("Project Created Successfully.", {
         style: { color: "green" },
@@ -148,7 +155,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
         estimatedCost: project?.estimated_cost,
         websiteUrl: project.website_url,
         emissionReductions: project.emission_reductions,
-        emissionUnit: project.emission_unit,
+        emissionUnit: project?.emission_unit,
         proposedBy: project?.proposed_by,
         photoUrl: project?.photo_url,
         logoUrl: project?.logo_url,
@@ -162,7 +169,10 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
           estimatedCost: project.estimated_cost,
           websiteUrl: project.website_url,
         },
-        3: { emissionReductions: project.emission_reductions },
+        3: {
+          emissionReductions: project.emission_reductions,
+          emissionUnit: project?.emission_unit,
+        },
         4: {
           organizationId: {
             id: project.proposed_by,
@@ -506,6 +516,34 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                       )}
                       placeholder="Add emission reduction"
                     />
+
+                    <Select
+                      name="emissionUnit"
+                      value={values.emissionUnit}
+                      onValueChange={(e) => {
+                        setFieldValue("emissionUnit", e);
+                      }}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "text-slate-500 text-sm w-28 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          errors?.emissionUnit && "border border-red-500"
+                        )}
+                      >
+                        <SelectValue placeholder="Unit" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Select a unit</SelectLabel>
+
+                          {units?.map((unit: any, index: number) => (
+                            <SelectItem key={index} value={unit}>
+                              {unit}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                     <p className="text-xs text-red-500 mt-0.5">
                       {err.emissionReductions}
                     </p>

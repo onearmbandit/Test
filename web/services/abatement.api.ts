@@ -58,9 +58,22 @@ export const editAbatementProjects = ({
 };
 
 export const getActiveAbatementProjects = (orgId: string) => {
-  return fetchApi(`/auth/abatement-projects?organizationId=${orgId}`);
+  return fetchApi(
+    `/auth/abatement-projects?organizationId=${orgId}&include=organization,proposedSupplier&filters[status]=1`
+  );
 };
 
 export const getActiveAbatementProjectById = (projectId: string) => {
   return fetchApi(`/auth/abatement-projects/${projectId}`);
+};
+
+export const getCompletedAbatementProjects = (orgId: string) => {
+  return fetchApi(
+    `/auth/abatement-projects?organizationId=${orgId}&include=organization,proposedSupplier&filters[status]=2`
+  );
+};
+export const getProposedAbatementProjects = (orgId: string) => {
+  return fetchApi(
+    `/auth/abatement-projects?organizationId=${orgId}&include=organization,proposedSupplier&filters[status]=0`
+  );
 };

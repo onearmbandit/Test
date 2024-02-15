@@ -1,13 +1,7 @@
 import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { authOptions } from "@/lib/utils";
 import { getActiveAbatementProjects } from "@/services/abatement.api";
 import { Plus } from "lucide-react";
@@ -22,6 +16,8 @@ const ActivePage = async () => {
     session?.user?.organizations[0].id!
   );
   const projects = res?.data;
+
+  console.log("projects: ", projects);
 
   return (
     <div className="px-8">
@@ -42,6 +38,7 @@ const ActivePage = async () => {
             </p>
           </div>
 
+          {/* todo: make it dynamic */}
           <p className="text-slate-800 font-semibold">
             Total Abatement to date:{" "}
             <span className="font-normal">128,441 tCO2e / year</span>
