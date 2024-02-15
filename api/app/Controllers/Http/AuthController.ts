@@ -34,7 +34,11 @@ export default class AuthController {
 
       let requestData = request.all()
       const userExist = await User.getUserDetailsWithFirst('email', requestData.email)
-      const role: any = await Role.getRoleByName(UserRoles.ADMIN)
+      let role: any = await Role.getRoleByName(UserRoles.ADMIN)
+
+      if (requestData.isSupplier) {
+        role = await Role.getRoleByName(UserRoles.SUPPLIER)
+      }
 
       if (userExist) {
         return apiResponse(

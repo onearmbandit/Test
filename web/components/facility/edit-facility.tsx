@@ -105,7 +105,7 @@ const EditFacility = ({
               value={values.name}
               onChange={handleChange}
               className={cn(
-                "text-slate-500 text-xs font-light leading-4 whitespace-nowrap max-w-[18.5rem] bg-gray-50  justify-center pl-2 pr-8 py-3.5 rounded-md max-md:pr-5",
+                "text-slate-500 text-sm font-light leading-4 whitespace-nowrap max-w-[18.5rem] bg-gray-50  justify-center pl-2 pr-8 py-3.5 rounded-md max-md:pr-5",
                 errors.name && "border border-red-500"
               )}
               placeholder="Add facility name"

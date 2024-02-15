@@ -3,7 +3,7 @@ import { BaseModel, column, belongsTo, BelongsTo, hasMany, HasMany, manyToMany, 
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod'
 import SupplierProduct from './SupplierProduct'
 import { ParsedQs } from 'qs'
-import AbatementProject from './AbatementProject'
+// import AbatementProject from './AbatementProject'
 import Organization from './Organization'
 
 export default class Supplier extends BaseModel {
@@ -54,10 +54,10 @@ export default class Supplier extends BaseModel {
   // })
   // public abatementProjects: HasMany<typeof AbatementProject>
 
-  @hasMany(() => AbatementProject, {
-    foreignKey: 'proposedBy',
-  })
-  public proposedProject: HasMany<typeof AbatementProject>
+  // @hasMany(() => AbatementProject, {
+  //   foreignKey: 'proposedTo',
+  // })
+  // public proposedProject: HasMany<typeof AbatementProject>
 
 
   @manyToMany(() => Organization, {
