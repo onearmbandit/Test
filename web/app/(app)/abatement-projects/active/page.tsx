@@ -51,14 +51,14 @@ const ActivePage = async () => {
             {projects.map((item: any) => (
               <Card key={item.id} className="px-4 py-3 space-y-4 h-fit">
                 <Link href={`/abatement-projects/active/${item.id}`}>
-                  <CardTitle className="text-xs font-medium text-slate-800">
+                  <CardTitle className="text-xs leading-5 pb-4 font-medium text-slate-800">
                     {item.name}
                   </CardTitle>
                   {item.photo_url && (
                     <Image
                       height={102}
                       width={300}
-                      src={"/" + item.photo_url}
+                      src={item.photo_url}
                       alt="project image"
                     />
                   )}
