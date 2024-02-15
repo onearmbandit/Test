@@ -7,6 +7,12 @@ export enum UserRoles {
     SUB_ADMIN = 'sub-admin',
     SUPPLIER='supplier'
   }
+
+  export enum ProjectStatus {
+    PROPOSED = 'proposed',
+    ACTIVE = 'active',
+    COMPLETED='completed'
+  }
   
   
   
