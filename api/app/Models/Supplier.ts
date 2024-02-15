@@ -92,9 +92,11 @@ export default class Supplier extends BaseModel {
       .where(field, value)
       .andWhereNull('deletedAt')
       .preload('supplyChainReportingPeriod', (query) => {
-        query.select('id', 'reporting_period_from', 'reporting_period_to')
+        query.select('id','organization_id', 'reporting_period_from', 'reporting_period_to')
       })
-      .preload('supplierProducts')
+      .preload('supplierProducts',(query)=>{
+        query.whereNull('deleted_at')
+      })
       .firstOrFail()
 
     return supplierData

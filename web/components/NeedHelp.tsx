@@ -124,19 +124,21 @@ const NeedHelp = () => {
                     </div>
                   </div>
                   <div className="gap-5 grid grid-cols-3 mt-[0.62rem] place-items-center items-start">
-                    <Image
-                      src={"/assets/images/welcome-step-1.png"}
+                    <img
+                      src={
+                        "https://diw3xy9w4etxp.cloudfront.net/40feb0879e28e2b8137e851a93be7f93.png"
+                      }
                       alt="welcome guide step-1"
                       width={195}
                       height={97}
                     />
-                    <Image
+                    <img
                       width={190}
                       height={153}
                       src={"/assets/images/welcome-step-2.png"}
                       alt="welcome guide step-2"
                     />
-                    <Image
+                    <img
                       width={241}
                       height={112}
                       src={"/assets/images/welcome-step-3.png"}

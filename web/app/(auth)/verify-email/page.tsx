@@ -18,7 +18,7 @@ const Page = async ({ searchParams }: { searchParams: any }) => {
     return (
       <div className="grid place-items-center h-screen">
         <div className="border rounded-lg p-16 flex flex-col w-[729px]">
-          <Image
+          <img
             width={177}
             height={39}
             alt="logo"
@@ -39,7 +39,7 @@ const Page = async ({ searchParams }: { searchParams: any }) => {
     return (
       <div className="grid place-items-center h-screen">
         <div className="border rounded-lg p-16 flex flex-col w-[729px]">
-          <Image
+          <img
             width={177}
             height={39}
             alt="logo"

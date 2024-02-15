@@ -43,6 +43,10 @@ export const createFacility = (obj: any) => {
   return fetchApi("/auth/facility", { method: "POST", body: obj });
 };
 
+export const updateFacility = ({ id, obj }: { id: string; obj: any }) => {
+  return fetchApi(`/auth/facility/${id}`, { method: "PATCH", body: obj });
+};
+
 export const getFacilities = async () => {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizations[0].id;

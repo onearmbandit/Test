@@ -22,6 +22,7 @@ import OrganizationUser from 'App/Models/OrganizationUser'
 import CreateOrganizationValidator from 'App/Validators/Organization/CreateOrganizationValidator'
 import Supplier from 'App/Models/Supplier'
 import SupplierOrganization from 'App/Models/SupplierOrganization'
+import UpdateUserValidator from 'App/Validators/User/UpdateUserValidator'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
@@ -108,6 +109,8 @@ export default class AuthController {
       let requestData = request.all()
 
       const userData = await User.getUserDetails('id', params.id)
+      await request.validate(UpdateUserValidator)
+
 
       await userData
         .merge({

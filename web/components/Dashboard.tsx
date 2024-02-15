@@ -12,11 +12,17 @@ import FacilityTable from "./FacilityTable";
 import { getUser } from "@/services/user.api";
 import { useQuery } from "@tanstack/react-query";
 import TotalEmissionsSummary from "./TotalEmissionsSummary";
+import { getFacilities } from "@/services/facility.api";
 
 const Dashboard = () => {
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: ["climate-commitments"],
     queryFn: () => getUser(),
+  });
+
+  const { data: facility } = useQuery({
+    queryKey: ["facilities-list"],
+    queryFn: () => getFacilities(),
   });
 
   return (
@@ -28,7 +34,7 @@ const Dashboard = () => {
         <div className="justify-center flex flex-col pl-16 py-6 items-end max-md:max-w-full max-md:pl-5">
           <div className="text-gray-900 text-xs font-medium leading-4 whitespace-nowrap justify-center items-stretch bg-gray-50 p-2 rounded-md">
             {data?.data?.organizations[0]?.naics_code && (
-              <>NACIS: {data?.data?.organizations[0]?.naics_code}</>
+              <>NAICS: {data?.data?.organizations[0]?.naics_code}</>
             )}
           </div>
         </div>
@@ -40,7 +46,7 @@ const Dashboard = () => {
             <ClimateCommitments
               climateTargets={data?.data?.organizations[0]?.climate_targets}
             />
-            <NeedHelp />
+            {facility?.data?.length == 0 && <NeedHelp />}
             <TotalEmissionsSummary />
             <FacilityTable />
           </>

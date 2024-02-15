@@ -21,4 +21,10 @@ export default class OrganizationPolicy extends BasePolicy {
 
     return userFound.roles?.some((role: any) => role.name === UserRoles.SUPER_ADMIN)
   }
+
+  public async index(user: User) {
+    //:: Only super admin can access all organizations
+    const userFound = await User.getUserDetails('id', user.id)
+    return userFound?.roles?.some((role: any) => role.name === UserRoles.SUPER_ADMIN)
+  }
 }
