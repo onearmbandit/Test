@@ -87,7 +87,7 @@ export default class FacilityProductsController {
 
       await request.validate(UpdateMultipleFacilityProductValidator);
 
-      const updateFacilityProducts = await FacilityProduct.updateOrCreateFacilityProducts(facilityEmissionData, requestData,trx)
+      const updateFacilityProducts = await FacilityProduct.updateOrCreateFacilityProducts(facilityEmissionData, requestData, trx)
 
       //::commit database transaction
       await trx.commit()
