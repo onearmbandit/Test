@@ -91,12 +91,12 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
     <div className="h-screen grid place-items-center">
       <form
         onSubmit={resetPasswordForm.handleSubmit}
-        className="justify-center items-center border w-full border-[#E5E7EB] shadow-sm flex max-w-[828px] flex-col py-12 rounded-lg border-solid"
+        className="justify-center items-center border w-full border-[#E5E7EB] shadow-sm flex max-w-[828px] flex-col py-4 rounded-lg border-solid"
       >
         <img
           loading="lazy"
-          src="/assets/images/C3Logo.svg"
-          className="aspect-[0.95] object-contain object-center w-[107px] fill-[linear-gradient(180deg,#39775F_81.94%,#3A9B8C_105.47%)] overflow-hidden self-center max-w-full mt-7"
+          src={"/assets/images/Logo.png"}
+          className="aspect-[0.95] object-contain object-center w-[177px] fill-[linear-gradient(180deg,#39775F_81.94%,#3A9B8C_105.47%)] overflow-hidden self-center max-w-full"
           alt="Logo"
         />
         <header className="header text-neutral-500 text-center text-3xl font-semibold leading-9 self-center whitespace-nowrap mt-6">
