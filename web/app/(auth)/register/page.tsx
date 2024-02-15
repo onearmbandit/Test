@@ -733,8 +733,8 @@ const RegistrationComplete = ({ userEmail }: any) => {
         </h1>
       </header>
       <p className="mt-6 py-8 max-w-[581px]">
-        We sent an email to <strong>{userEmail}</strong>. Check your inbox to
-        activate your account.
+        We sent you an email to <strong>{userEmail}</strong>. Check your inbox
+        to activate your account.
       </p>
       <Link
         href={"/login"}
