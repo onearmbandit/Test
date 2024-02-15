@@ -35,7 +35,10 @@ export default class AbatementProject extends BaseModel {
   public emissionUnit: string
 
   @column()
-  public proposedBy: string
+  public proposedType: string
+
+  @column()
+  public proposedTo: string
 
   @column()
   public photoUrl: string
@@ -75,17 +78,16 @@ export default class AbatementProject extends BaseModel {
   })
   public organization: BelongsTo<typeof Organization>
 
-  @belongsTo(() => Supplier, {
-    foreignKey: 'proposedBy',
-  })
-  public proposedSupplier: BelongsTo<typeof Supplier>
+  // @belongsTo(() => Supplier, {
+  //   foreignKey: 'proposedTo',
+  // })
+  // public proposedSupplier: BelongsTo<typeof Supplier>
 
   //::_____Relationships End_____:://
 
 
-  public static async getAllProjects(queryParams: ParsedQs) {
+  public static async getAllProjects(queryParams: ParsedQs, supplierOrganizationData: any) {
     let allProjectData: any = {}
-
     let perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
     let page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
     let order = queryParams.order ? queryParams.order.toString() : 'desc'
@@ -95,12 +97,17 @@ export default class AbatementProject extends BaseModel {
       : ''
     let filters: any = queryParams.filters ? queryParams.filters : {};
     let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
+    let proposedToId = supplierOrganizationData?.supplier_id
 
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
-    if (organizationId) {
-      query = query.where('organizationId', organizationId)
+    if (proposedToId) {
+      query = query.where('proposedTo', proposedToId)
     }
-
+    else {
+      if (organizationId) {
+        query = query.where('organizationId', organizationId)
+      }
+    }
     query = query.orderBy(sort, order)
 
     //::Filter Query
@@ -140,7 +147,8 @@ export default class AbatementProject extends BaseModel {
         websiteUrl: requestData.websiteUrl,
         emissionReductions: requestData.emissionReductions,
         emissionUnit: requestData.emissionUnit,
-        proposedBy: requestData.proposedBy,
+        proposedType: requestData.proposedType ? requestData.proposedType : '',
+        proposedTo: requestData.proposedTo,
         photoUrl: requestData.photoUrl,
         logoUrl: requestData.logoUrl,
         // contactEmail: requestData.contactEmail,
@@ -157,15 +165,50 @@ export default class AbatementProject extends BaseModel {
       .where(field, value)
       .andWhereNull('deletedAt')
       .preload('organization')
-      .preload('proposedSupplier')
+      // .preload('proposedSupplier')
       .firstOrFail()
 
-    return supplierData
+    let supplierDataJSON = supplierData.toJSON();
+    if (supplierDataJSON.proposed_type == "supplier") {
+      supplierDataJSON.proposedSupplier = await Supplier.query()
+        .where('id', supplierDataJSON.proposed_to)
+        .andWhereNull('deletedAt')
+        .select('id', 'name', 'email', 'supply_chain_reporting_period_id')
+        .firstOrFail()
+
+      supplierDataJSON.proposedOrganization = {}
+    }
+    else if (supplierDataJSON.proposed_type == "organization") {
+      supplierDataJSON.proposedOrganization = await Organization.query()
+        .where('id', supplierDataJSON.proposed_to)
+        .andWhereNull('deletedAt')
+        .select('id', 'company_name')
+        .preload('users')
+        .firstOrFail()
+      supplierDataJSON.proposedSupplier = {}
+    }
+
+
+
+    return supplierDataJSON
   }
 
+  public static async getProjectData(field, value) {
+    var supplierData = await AbatementProject.query()
+      .where(field, value)
+      .andWhereNull('deletedAt')
+      .preload('organization')
+      // .preload('proposedSupplier')
+      .firstOrFail()
+
+    return supplierData;
+  }
+
+  
   public static async updateProjectDetails(project, requestData) {
     await project.merge(requestData).save()
-    const projectData = await this.getProjectDetails('id', project.id)
+    // const projectData = await this.getProjectData('id', project.id)
+    let projectData = await AbatementProject.getProjectDetails('id', project.id)
     return projectData
   }
 }

@@ -103,7 +103,7 @@ const Page = () => {
                   name={"email"}
                   onChange={loginForm.handleChange}
                   className={cn(
-                    "text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
+                    "text-slate-500  font-light leading-4 text-sm items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
                     loginForm.errors.email && "border border-red-500"
                   )}
                   placeholder="Enter your email"
@@ -129,7 +129,7 @@ const Page = () => {
                   <Input
                     type={showPassword ? "text" : "password"}
                     id="passwordInput"
-                    className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full"
+                    className="text-slate-500 text-sm font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full"
                     placeholder="Enter your password"
                     name={"password"}
                     onChange={loginForm.handleChange}
@@ -169,8 +169,10 @@ const Page = () => {
               >
                 or login with SSO
               </Link>
-              <div className="text-blue-700 text-center text-xs font-medium leading-5 self-stretch mt-6 max-md:max-w-full">
-                Don&apos;t have an account?{" "}
+              <div className="flex justify-center gap-1 text-blue-700 text-center text-xs font-medium leading-5 self-stretch mt-6 max-md:max-w-full">
+                <div className="text-link-btn">
+                  Don&apos;t have an account?{" "}
+                </div>
                 <Link
                   href={"/register"}
                   className="font-bold text-sm text-blue-700"
@@ -216,8 +218,8 @@ const Page = () => {
             >
               Sign in without SSO
             </Link>
-            <div className="text-blue-700 text-center text-xs font-medium leading-5 self-stretch mt-6 max-md:max-w-full">
-              Don&apos;t have an account?{" "}
+            <div className=" flex justify-center gap-1 text-blue-700 text-center text-xs font-medium leading-5 self-stretch mt-6 max-md:max-w-full">
+              <div className="text-link-btn">Don&apos;t have an account? </div>
               <Link
                 href={"/register"}
                 className="font-bold text-sm text-blue-700"

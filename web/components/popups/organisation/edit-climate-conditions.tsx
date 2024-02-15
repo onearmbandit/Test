@@ -132,7 +132,7 @@ const EditClimateConditions = ({
           onChange={(e) => {
             setCurrentTarget(e.target.value);
           }}
-          className="py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700"
+          className="py-2 h-11 rounded-md bg-gray-50 text-sm leading-4 font-light text-slate-700"
           placeholder="ex: Carbon neutral by 2030"
         />
         <p
