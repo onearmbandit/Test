@@ -14,6 +14,7 @@ export default class OrganizationsController {
     try {
       const queryParams = request.qs()
 
+      // await bouncer.with('OrganizationPolicy').authorize('index')
       const organizations = await Organization.getAllOrganizations(queryParams)
 
       const isPaginated = !request.input('per_page') || request.input('per_page') !== 'all'
@@ -100,15 +101,15 @@ export default class OrganizationsController {
           //:: Only uninvited user
           const emailData = {
             user: auth.user,
-            url: `${WEB_BASE_URL}?email=${requestData.companyEmail}`,
+            url: `${WEB_BASE_URL}/register?email=${requestData.companyEmail}`,
+            organizationName: organizationData?.companyName,
           }
 
-          // let userEmail = auth.user ? auth.user.email : ''
           let userName = auth.user ? `${auth.user.firstName} ${auth.user.lastName}` : ''
 
           await sendMail(
             requestData.companyEmail,
-            `${userName} invited you to join C3 Insets`,
+            `${userName} invited you to join Terralab Insets`,
             'emails/invite_sub_user',
             emailData
           )

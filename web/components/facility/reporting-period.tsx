@@ -171,7 +171,7 @@ const ReportingPeriod = ({
                 className="w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700"
               />
             }
-            disabled={!isEdit}
+            disabled={period && !isEdit}
             renderMonthContent={renderMonthContent}
             showMonthYearPicker
             dateFormat="yyyy/MM"
@@ -183,14 +183,14 @@ const ReportingPeriod = ({
             customInput={
               <Input className="w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700" />
             }
-            disabled={!isEdit}
+            disabled={period && !isEdit}
             renderMonthContent={renderMonthContent}
             showMonthYearPicker
             dateFormat="yyyy/MM"
             onChange={(date) => setFieldValue("reportingPeriodTo", date)}
           />
         </div>
-        {!isEdit ? (
+        {period != undefined && !isEdit ? (
           <div className="flex justify-between items-center mt-5">
             <Dialog>
               <DialogTrigger>

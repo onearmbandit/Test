@@ -60,5 +60,14 @@ export default class UpdateUserValidator {
     'newPassword.regex': 'New password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
     'confirmPassword.regex': 'Confirm password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
     'confirmPassword.confirmed': 'Confirm password mismatch.',
+
+
+    'firstName.required': 'First Name is required.',
+    'firstName.minLength': 'First Name must be at least 2 characters long.',
+    'firstName.maxLength': 'First Name must not exceed 30 characters.',
+
+    'lastName.required': 'Last Name is required.',
+    'lastName.minLength': 'Last Name must be at least 2 characters long.',
+    'lastName.maxLength': 'Last Name must not exceed 30 characters.',
   };
 }

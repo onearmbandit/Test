@@ -109,7 +109,10 @@ export default class FacilityEmission extends BaseModel {
     const facilityDetails = await this.query()
       .where(field, value)
       .whereNull('deleted_at') // Exclude soft-deleted records
-      .preload('FacilityProducts')
+      .preload('FacilityEqualityAttribute')
+      .preload('FacilityProducts',(query)=>{
+        query.whereNull('deleted_at')
+      })
       .preload('FacilityEqualityAttribute')
       .firstOrFail()
 
@@ -147,7 +150,7 @@ export default class FacilityEmission extends BaseModel {
     return facilityEmission
   }
 
-  public static async getFacilitiesDashboardData(queryParams) {
+  public static async getFacilitiesDashboardData(queryParams, organizationId) {
     const reportingPeriodFrom = queryParams.reportingPeriodFrom
       ? queryParams.reportingPeriodFrom.toString()
       : ''
@@ -155,7 +158,10 @@ export default class FacilityEmission extends BaseModel {
       ? queryParams.reportingPeriodTo.toString()
       : ''
 
-    let query = this.query().whereNull('deleted_at').preload('OrganizationFacility')
+    let query =  this.query().whereNull('deleted_at')
+      .whereHas('OrganizationFacility', (builder) => {
+        builder.where('organization_id', organizationId); // Customize this based on your condition
+      })
 
     if (reportingPeriodFrom && reportingPeriodTo) {
       query = query
@@ -163,29 +169,44 @@ export default class FacilityEmission extends BaseModel {
         .orWhereBetween('reportingPeriodTo', [reportingPeriodFrom, reportingPeriodTo])
     }
 
+    // Check if the query is empty before proceeding with calculations
+    const queryResults = await query.whereHas('OrganizationFacility', (builder) => {
+      builder.where('organization_id', organizationId); 
+    })
+
+    if (queryResults.length === 0) {
+      return {
+        finalResults: [],
+        totalScope1EmissionForAllFacilities: 0,
+        totalScope2EmissionForAllFacilities: 0,
+        totalScope3EmissionForAllFacilities: 0,
+        totalEmission: 0,
+      };
+    }
+
     const summedResults = {}
     let totalScope1ForAllFacilities = 0
     let totalScope2ForAllFacilities = 0
     let totalScope3ForAllFacilities = 0
 
-    ;(await query).forEach((item) => {
-      const facilityId = item.organizationFacilityId
+      ; (await query).forEach((item) => {
+        const facilityId = item.organizationFacilityId
 
-      summedResults[facilityId] ||= {
-        facilityName: item.OrganizationFacility.name,
-        totalScope1: 0,
-        totalScope2: 0,
-        totalScope3: 0,
-      }
+        summedResults[facilityId] ||= {
+          facilityName: item.OrganizationFacility?.name,
+          totalScope1: 0,
+          totalScope2: 0,
+          totalScope3: 0,
+        }
 
-      summedResults[facilityId].totalScope1 += item.scope1TotalEmission
-      summedResults[facilityId].totalScope2 += item.scope2TotalEmission
-      summedResults[facilityId].totalScope3 += item.scope3TotalEmission
+        summedResults[facilityId].totalScope1 += item.scope1TotalEmission
+        summedResults[facilityId].totalScope2 += item.scope2TotalEmission
+        summedResults[facilityId].totalScope3 += item.scope3TotalEmission
 
-      totalScope1ForAllFacilities += item.scope1TotalEmission
-      totalScope2ForAllFacilities += item.scope2TotalEmission
-      totalScope3ForAllFacilities += item.scope3TotalEmission
-    })
+        totalScope1ForAllFacilities += item.scope1TotalEmission
+        totalScope2ForAllFacilities += item.scope2TotalEmission
+        totalScope3ForAllFacilities += item.scope3TotalEmission
+      })
 
     const finalResults = Object.keys(summedResults).map((facilityId) => ({
       facilityOrganizationId: facilityId,

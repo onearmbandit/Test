@@ -109,14 +109,16 @@ export default class FacilityProduct extends BaseModel {
       products.push(productData);
     }
 
-    // save equality attribute value
-    await emissionData.related('FacilityEqualityAttribute').create(
-      {
-        id: uuidv4(),
-        facilityEmissionId: emissionData.id,
-        equalityAttribute: requestData.equalityAttribute,
-      }
-    )
+    if (requestData.equalityAttribute) {
+      // save equality attribute value
+      await emissionData.related('FacilityEqualityAttribute').create(
+        {
+          id: uuidv4(),
+          facilityEmissionId: emissionData.id,
+          equalityAttribute: requestData.equalityAttribute,
+        }
+      )
+    }
 
     let result = await emissionData.related('FacilityProducts').createMany(products)
     return result
@@ -160,22 +162,24 @@ export default class FacilityProduct extends BaseModel {
     }
 
     // save equality attribute value
-    await facilityEmissionData.related('FacilityEqualityAttribute').updateOrCreate(
-      {
-        facilityEmissionId: facilityEmissionData.id
-      },
-      {
-        equalityAttribute: requestData.equalityAttribute,
-      },
-      { client: trx }
-    )
+    if (requestData.equalityAttribute) {
+      await facilityEmissionData.related('FacilityEqualityAttribute').updateOrCreate(
+        {
+          facilityEmissionId: facilityEmissionData.id
+        },
+        {
+          equalityAttribute: requestData.equalityAttribute,
+        },
+        { client: trx }
+      )
+    }
 
     //:: this manage create or update using id as unique key
     const result = await facilityEmissionData
       .related('FacilityProducts', (query) => {
         query.whereNull('deleted_at') // Exclude soft-deleted records
       })
-      .updateOrCreateMany(products, 'id',{ client: trx })
+      .updateOrCreateMany(products, 'id', { client: trx })
     return result
   }
 

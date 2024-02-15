@@ -12,7 +12,7 @@ export default class SupplyChainReportingPeriodValidator {
   
 
   public schema = schema.create({
-    organizationId: schema.string({ trim: true }, [
+    organizationId: schema.string.optional({ trim: true }, [
       rules.uuid(),
       rules.exists({ table: 'organizations', column: 'id' }),
     ]),

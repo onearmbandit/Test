@@ -54,6 +54,7 @@ export const getUser = () => {
 };
 
 export const updateUser = ({ formBody }: { formBody: any }) => {
+  console.log("Formbody: ", formBody);
   return fetchApi(`/auth/user`, {
     method: "PATCH",
     body: formBody,

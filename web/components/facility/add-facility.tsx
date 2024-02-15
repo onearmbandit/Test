@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import AutocompleteInput from "../Autocomplete";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -13,12 +13,12 @@ import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { revalidatePath } from "next/cache";
 
 const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const orgId = session?.user?.organizations[0].id;
+  const [isEdit, setEdit] = useState(false);
 
   const validation = z.object({
     name: z.string(),
@@ -31,7 +31,10 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      console.log(data);
+
+      toast.success("Success \n Your facility is saved!", {
+        style: { color: "green" },
+      });
       router.push("/facilities");
     },
     onError: (err) => {
@@ -100,7 +103,7 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
             <p className="text-xs text-red-500">{errors.name}</p>
           </div>
         </div>
-        <div className="flex justify-between items-end">
+        <div className="flex justify-between items-end py-3 mb-3">
           <p
             className="justify-center self-center text-slate-700 text-xs font-medium leading-4 mt-10 max-md:max-w-full"
             aria-label="Facility Location"
@@ -109,25 +112,24 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
             Facility Location
           </p>
 
-          <p
-            role="button"
-            className="text-sm font-semibold text-blue-600 leading-4"
-          >
-            Edit
-          </p>
+          {facility.address != "" && (
+            <p
+              role="button"
+              onClick={() => setEdit(true)}
+              className="text-sm font-semibold text-blue-600 leading-4"
+            >
+              Edit
+            </p>
+          )}
         </div>
         <div>
           <AutocompleteInput
+            isDisabled={!isEdit}
             setAddress={(e: any) => {
               // console.log(e);
               setFieldValue("address", e);
             }}
-
-            // id="facility-location"
-            // type="text"
-            // className="text-slate-700 text-sm font-light leading-5 items-stretch self-center rounded-3xl shadow-sm bg-gray-50 w-full max-w-[972px] justify-center mt-6 px-2 py-3 max-md:max-w-full"
-            // placeholder="East"
-            // aria-label="facility-location"
+            address={facility.address}
           />
           <p className="text-xs text-red-500">{errors.address}</p>
         </div>
