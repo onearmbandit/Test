@@ -609,6 +609,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
     validationSchema: toFormikValidationSchema(validation),
     validateOnChange: true,
     validateOnBlur: true,
+    validateOnMount: false,
     onSubmit: (data) => {
       console.log(data, userSlug);
       if (userSlug == null) {
@@ -647,12 +648,16 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
               placeholder="Company"
               className={cn(
                 "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
-                step3Form.errors.companyName && "border border-red-500"
+                step3Form.touched.companyName &&
+                  step3Form.errors.companyName &&
+                  "border border-red-500"
               )}
             />
-            <p className="text-xs text-red-500 mt-0.5">
-              {step3Form.errors.companyName}
-            </p>
+            {step3Form.touched.companyName && (
+              <p className="text-xs text-red-500 mt-0.5">
+                {step3Form.errors.companyName}
+              </p>
+            )}
           </div>
         </div>
         <div className="mt-6">
@@ -681,9 +686,11 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
                 step3Form.setFieldValue("companyAddress", e);
               }}
             />
-            <p className="text-red-500 text-xs">
-              {step3Form.errors?.companyAddress}
-            </p>
+            {step3Form.touched.companyAddress && (
+              <p className="text-red-500 text-xs">
+                {step3Form.errors?.companyAddress}
+              </p>
+            )}
           </div>
         </div>
 
