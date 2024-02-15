@@ -115,7 +115,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
               </div>
               {chartData?.length > 0 && (
                 <div className='flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full'>
-                  <div className='h-[342px] flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
+                  <div className='h-[342px] overflow-auto flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
                     <div className='flex gap-5 justify-between mt-1.5 font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)]'>
                       <div className='flex-auto text-2xl leading-7 text-slate-800 '>
                         Scope 3 Emissions by Product Name
@@ -126,7 +126,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                     </div>
                     <div className='overflow-auto h-full'>
                       {/* <div className='h-full'> */}
-                      <ResponsiveContainer className='w-full h-full'>
+                      <ResponsiveContainer className='!w-[90%] !h-[500px]'>
                         <ComposedChart
                           layout='vertical'
                           width={500}
