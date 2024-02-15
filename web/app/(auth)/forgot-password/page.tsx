@@ -105,7 +105,7 @@ function Page() {
                 onChange={forgotPasswordForm.handleChange}
                 // className="text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 self-stretch justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full"
                 className={cn(
-                  "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
+                  "text-slate-500 text-sm font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
                   forgotPasswordForm.touched.email &&
                     forgotPasswordForm.errors.email &&
                     "border border-red-500"
@@ -113,7 +113,7 @@ function Page() {
                 placeholder="Enter your email"
               />
 
-              <p className="text-red-500 text-xs mt-[10px]">
+              <p className="text-red-500 text-xs mt-[10px] text-left w-full">
                 {forgotPasswordForm.errors.email as React.ReactNode}
               </p>
 

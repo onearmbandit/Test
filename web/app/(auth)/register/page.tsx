@@ -224,7 +224,9 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               )}
             >
               <Input
-                className={"w-full bg-transparent disabled:text-slate-900"}
+                className={
+                  "w-full bg-transparent disabled:text-slate-900 px-0 "
+                }
                 id="email"
                 name="email"
                 disabled={!!invitedEmail}
@@ -251,7 +253,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                className="w-full bg-transparent"
+                className="w-full bg-transparent px-0 "
                 name="password"
                 onChange={(e) => {
                   registerForm.handleChange(e);
@@ -644,7 +646,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
               id="companyName"
               name="companyName"
               onChange={step3Form.handleChange}
-              placeholder="Company"
+              placeholder="Company Name"
               className={cn(
                 "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
                 step3Form.errors.companyName && "border border-red-500"
