@@ -118,7 +118,9 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
             id="companyEmail"
             onChange={setupOrganizationStep1Form.handleChange}
             className={cn(
+
               "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md lg:max-w-[367px] w-full",
+
               setupOrganizationStep1Form.touched.companyEmail &&
                 setupOrganizationStep1Form.errors.companyEmail &&
                 "border border-red-500"
@@ -387,7 +389,7 @@ const Step3 = ({ setStep }: any) => {
           placeholder="Add NAICS code"
           onChange={setupOrganizationStep3Form.handleChange}
           className={cn(
-            "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
+            "text-slate-500 text-sm font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
             setupOrganizationStep3Form.touched.naicsCode &&
               setupOrganizationStep3Form.errors.naicsCode &&
               "border border-red-500"
@@ -586,6 +588,7 @@ const Step4 = ({ setStep }: any) => {
                   ? "Add another climate target"
                   : "ex: Carbon neutral by 2030"
               }
+
             />
 
             <p

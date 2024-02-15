@@ -96,7 +96,7 @@ const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
           name="naicsCode"
           value={naicsForm.values.naicsCode}
           className={cn(
-            "py-2 h-11 rounded-md bg-gray-50 text-xs w-1/2 leading-4 font-light text-slate-700",
+            "py-2 h-11 rounded-md bg-gray-50 text-sm w-1/2 leading-4 font-light text-slate-700",
             naicsForm.errors.naicsCode && "border border-red-500"
           )}
           placeholder="3241"
