@@ -22,25 +22,43 @@ const ChangePassword = () => {
     .object({
       oldPassword: z
         .string()
-        .min(8, { message: "length" })
-        .regex(/[A-Z]/, { message: "uppercase" })
-        .regex(/[a-z]/, { message: "lowercase" })
-        .regex(/[0-9]/, { message: "number" })
-        .regex(/[^A-Za-z0-9]/, { message: "special" }),
+        .min(8, { message: "Password must be at least 8 characters long" })
+        .regex(/[A-Z]/, {
+          message: "Password must have at one uppercase character",
+        })
+        .regex(/[a-z]/, {
+          message: "Password must have at one lowercase character",
+        })
+        .regex(/[0-9]/, { message: "Password must have at one number" })
+        .regex(/[^A-Za-z0-9]/, {
+          message: "Password must have at one special character",
+        }),
       newPassword: z
         .string()
-        .min(8, { message: "length" })
-        .regex(/[A-Z]/, { message: "uppercase" })
-        .regex(/[a-z]/, { message: "lowercase" })
-        .regex(/[0-9]/, { message: "number" })
-        .regex(/[^A-Za-z0-9]/, { message: "special" }),
+        .min(8, { message: "Password must be at least 8 characters long" })
+        .regex(/[A-Z]/, {
+          message: "Password must have at one uppercase character",
+        })
+        .regex(/[a-z]/, {
+          message: "Password must have at one lowercase character",
+        })
+        .regex(/[0-9]/, { message: "Password must have at one number" })
+        .regex(/[^A-Za-z0-9]/, {
+          message: "Password must have at one special character",
+        }),
       confirmPassword: z
         .string()
-        .min(8, { message: "length" })
-        .regex(/[A-Z]/, { message: "uppercase" })
-        .regex(/[a-z]/, { message: "lowercase" })
-        .regex(/[0-9]/, { message: "number" })
-        .regex(/[^A-Za-z0-9]/, { message: "special" }),
+        .min(8, { message: "Password must be at least 8 characters long" })
+        .regex(/[A-Z]/, {
+          message: "Password must have at one uppercase character",
+        })
+        .regex(/[a-z]/, {
+          message: "Password must have at one lowercase character",
+        })
+        .regex(/[0-9]/, { message: "Password must have at one number" })
+        .regex(/[^A-Za-z0-9]/, {
+          message: "Password must have at one special character",
+        }),
     })
     .superRefine((val, ctx) => {
       if (val.confirmPassword != val.newPassword) {
@@ -73,11 +91,12 @@ const ChangePassword = () => {
       newPassword: "",
       confirmPassword: "",
     },
-    validateOnChange: false,
+    validateOnChange: true,
     validationSchema: toFormikValidationSchema(validation),
 
     onSubmit: (data: any) => {
-      mutate(data);
+      console.log("Update pass data: ", data);
+      mutate({ formBody: data });
     },
   });
 
@@ -116,9 +135,15 @@ const ChangePassword = () => {
             name={"newPassword"}
             onChange={updatePasswordForm.handleChange}
             type="password"
-            className="py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700"
+            className={cn(
+              "py-2 h-11 rounded-md bg-gray-50 text-xs leading-4 font-light text-slate-700",
+              updatePasswordForm.errors?.newPassword && "border border-red-500"
+            )}
             placeholder="New password"
           />
+          <p className="text-xs text-red-500 mt-0.5">
+            {updatePasswordForm.errors?.newPassword as string}
+          </p>
         </div>
         <div className="space-y-3">
           <label className="text-slate-700 text-base font-semibold leading-6 self-stretch max-md:max-w-full">

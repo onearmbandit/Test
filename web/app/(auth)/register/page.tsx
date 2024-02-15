@@ -122,6 +122,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
+  const invitedEmail = searchParams.get("email");
   const social = searchParams.get("social");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
@@ -192,6 +193,12 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
     const res = await signIn(provider, { redirect: false, callbackUrl: "/" });
   };
 
+  useEffect(() => {
+    if (invitedEmail) {
+      registerForm.setFieldValue("email", invitedEmail);
+    }
+  }, []);
+
   if (session) {
     router.push("/");
   }
@@ -217,9 +224,11 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               )}
             >
               <Input
-                className={"w-full bg-transparent"}
+                className={"w-full bg-transparent disabled:text-slate-900"}
                 id="email"
                 name="email"
+                disabled={!!invitedEmail}
+                value={registerForm.values.email}
                 onBlur={() => registerForm.validateField("email")}
                 onChange={registerForm.handleChange}
                 placeholder="Email"

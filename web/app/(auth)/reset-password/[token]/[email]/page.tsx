@@ -41,15 +41,28 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
         });
       }
     });
-  const passwordValidation = z.object({
-    password: z
-      .string()
-      .min(8, { message: "length" })
-      .regex(/[A-Z]/, { message: "uppercase" })
-      .regex(/[a-z]/, { message: "lowercase" })
-      .regex(/[0-9]/, { message: "number" })
-      .regex(/[^A-Za-z0-9]/, { message: "special" }),
-  });
+  const passwordValidation = z
+    .object({
+      password: z.string(),
+    })
+    .superRefine((val, ctx) => {
+      if (val.password.length < 8) {
+        ctx.addIssue({ code: "custom", message: "length" });
+      }
+      if (!/[A-Z]/.test(val.password)) {
+        ctx.addIssue({ code: "custom", message: "uppercase" });
+      }
+
+      if (!/[a-z]/.test(val.password)) {
+        ctx.addIssue({ code: "custom", message: "lowercase" });
+      }
+      if (!/[0-9]/.test(val.password)) {
+        ctx.addIssue({ code: "custom", message: "number" });
+      }
+      if (!/[^A-Za-z0-9]/.test(val.password)) {
+        ctx.addIssue({ code: "custom", message: "special" });
+      }
+    });
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["reset-password", email, token],
@@ -85,8 +98,6 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
     },
   });
 
-  console.log(resetPasswordForm.errors);
-
   return (
     <div className="h-screen grid place-items-center">
       <form
@@ -121,13 +132,13 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
                   const value = e.target.value;
                   const values = { password: value };
 
-                  try {
-                    passwordValidation.parse(values);
-                  } catch (error: any) {
-                    // Convert Zod error format to Formik error format
-                    setErrors(error.errors.map((err: any) => err.message));
+                  const result = passwordValidation.safeParse(values);
+
+                  if (!result.success) {
+                    setErrors(result.error.format()._errors);
+                  } else {
+                    setErrors([]);
                   }
-                  // registerForm.validateField("password");
                 }}
                 className="form-control-text text-slate-700 text-xs font-light leading-4 py-7 bg-gray-50 grow max-md:max-w-full"
               />
@@ -185,78 +196,7 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
               {resetPasswordForm.errors?.confirmPassword}
             </p>
           </div>
-          {/* <div className="form-group flex w-full max-w-[589px] mx-auto items-stretch self-stretch justify-between gap-5 mt-3 max-md:max-w-full max-md:flex-wrap">
-            <div className="form-group flex grow basis-[0%] flex-col">
-              <div className="items-stretch flex justify-between gap-2">
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/e254ea4f34e3e01ef1cc049f0bffb16d0918ac29dfbeef7fb98b0f6b9ae2bf50?apiKey=011554aff43544e6af46800a427fd184&"
-                  className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  alt=""
-                />
-                <div className="text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
-                  One lowercase character
-                </div>
-              </div>
-              <div className="items-stretch flex justify-between gap-2 mt-2.5">
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/e254ea4f34e3e01ef1cc049f0bffb16d0918ac29dfbeef7fb98b0f6b9ae2bf50?apiKey=011554aff43544e6af46800a427fd184&"
-                  className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  alt=""
-                />
-                <div className="text-zinc-950 text-opacity-30 text-sm grow whitespace-nowrap self-start">
-                  One uppercase character
-                </div>
-              </div>
-              <div className="items-stretch flex gap-2 mt-2.5">
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/e254ea4f34e3e01ef1cc049f0bffb16d0918ac29dfbeef7fb98b0f6b9ae2bf50?apiKey=011554aff43544e6af46800a427fd184&"
-                  className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  alt=""
-                />
-                <div className="text-zinc-950 text-opacity-30 text-sm">
-                  8 characters minimum
-                </div>
-              </div>
-            </div>
-            <div className="form-group flex grow basis-[0%] flex-col">
-              <div className="items-stretch flex justify-between gap-2">
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/e254ea4f34e3e01ef1cc049f0bffb16d0918ac29dfbeef7fb98b0f6b9ae2bf50?apiKey=011554aff43544e6af46800a427fd184&"
-                  className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  alt=""
-                />
-                <div className="text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
-                  One number
-                </div>
-              </div>
-              <div className="items-stretch flex justify-between gap-2 mt-2.5">
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/e254ea4f34e3e01ef1cc049f0bffb16d0918ac29dfbeef7fb98b0f6b9ae2bf50?apiKey=011554aff43544e6af46800a427fd184&"
-                  className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  alt=""
-                />
-                <div className="text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
-                  One special character
-                </div>
-              </div>
-              <div className="items-stretch flex justify-between gap-2 mt-2.5">
-                <img
-                  loading="lazy"
-                  src="https://cdn.builder.io/api/v1/image/assets/TEMP/e254ea4f34e3e01ef1cc049f0bffb16d0918ac29dfbeef7fb98b0f6b9ae2bf50?apiKey=011554aff43544e6af46800a427fd184&"
-                  className="aspect-square object-contain object-center w-[18px] overflow-hidden shrink-0 max-w-full"
-                  alt=""
-                />
-                <div className="text-zinc-950 text-opacity-30 text-sm grow shrink basis-auto self-start">
-                  Passwords match
-                </div>
-              </div>
-            </div>
-          </div> */}
+
           <div className="input-group items-stretch w-full max-w-[589px] flex justify-between gap-5 mt-10 max-md:flex-wrap">
             <div className="input-help items-stretch flex grow basis-[0%] flex-col">
               <div className="input-help-item items-stretch flex justify-between gap-2">

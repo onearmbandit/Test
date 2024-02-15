@@ -391,7 +391,7 @@ export const EditSupplier = () => {
                     Relationship <br />
                     to organization
                   </div>
-                  <div className='flex gap-2 justify-between whitespace-nowrap  text-slate-700 h-[44px]'>
+                  <div className='flex gap-2 justify-between whitespace-nowrap  text-slate-700 h-[44px] min-w-[153px]'>
                     <Select
                       value={values.organizationRelationship}
                       onValueChange={(e) => {
@@ -424,9 +424,9 @@ export const EditSupplier = () => {
                   <div className='grow text-xs font-medium leading-4 text-slate-700 max-md:max-w-full'>
                     Supplier Address
                   </div>
-                  <div className='my-auto text-sm font-semibold leading-4 text-center text-blue-600'>
+                  {/* <div className='my-auto text-sm font-semibold leading-4 text-center text-blue-600'>
                     Edit
-                  </div>
+                  </div> */}
                 </div>
                 <div className='max-w-[768px]'>
                   <AutocompleteInput

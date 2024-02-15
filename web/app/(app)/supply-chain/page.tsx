@@ -61,7 +61,7 @@ import {
 
 const Page = () => {
   const queryClient = useQueryClient();
-  const [showNew, setShowNew] = useState(true);
+  const [showNew, setShowNew] = useState(false);
   const session = useSession();
   const [currentTab, setCurrentTab] = useState<string | null>(null);
   const [showCsvUploadModal, setShowCsvUploadModal] = useState(false);
@@ -273,7 +273,7 @@ const Page = () => {
                       key={i}
                       value={item.id}
                       onClick={() => {
-                        setCurrentTab(item.id);
+                        //   setCurrentTab(item.id);
                         setSelectedProductIds([]);
                       }}
                     >
@@ -607,7 +607,9 @@ const Page = () => {
                     {product?.type}
                   </div>
                   <div className='overflow-hidden pr-4 whitespace-nowrap pl-4 py-2.5 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800 text-ellipsis flex-1 truncate text-sm leading-5'>
-                    {product?.scope_3_contribution}
+                    {product?.scope_3_contribution == null
+                      ? 'Not Available'
+                      : product?.scope_3_contribution}
                   </div>
                   <div className='overflow-hidden pr-4 pl-4 py-2.5 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800 text-ellipsis flex-1 text-sm leading-5 truncate grow whitespace-nowrap'>
                     {convertDateToString(product?.updated_at)}
@@ -618,12 +620,14 @@ const Page = () => {
             {/* supplier list end */}
             <div className='justify-center items-stretch flex gap-0 mb-12 px-5 max-md:max-w-full max-md:flex-wrap max-md:mb-10'>
               <div className='items-center flex-1 border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-2 px-4 py-2.5 border-b border-solid'>
-                <Link
-                  href={`/supply-chain/supplier?reportingId=${currentTab}`}
-                  className='overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap'
-                >
-                  + New Supplier
-                </Link>
+                {currentTab && (
+                  <Link
+                    href={`/supply-chain/supplier?reportingId=${currentTab}`}
+                    className='overflow-hidden text-slate-800 text-ellipsis text-sm leading-5 self-stretch grow whitespace-nowrap'
+                  >
+                    + New Supplier
+                  </Link>
+                )}
               </div>
               <div className='items-center flex-1 border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[235px] shrink-0 h-10 flex-col border-b border-solid' />
               <div className='items-center flex-1  border-b-[color:var(--Gray-300,#D1D5DB)] flex w-[135px] shrink-0 h-10 flex-col border-b border-solid' />

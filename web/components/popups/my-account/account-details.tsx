@@ -80,6 +80,19 @@ const AccountDetails = () => {
     },
   });
 
+  const disableSaveBtn = () => {
+    if (
+      data?.data?.first_name === changeNameForm.values.firstName &&
+      data?.data?.last_name === changeNameForm.values.lastName
+    ) {
+      console.log("No");
+      return true;
+    }
+
+    console.log("Yes");
+
+    return false;
+  };
   useEffect(() => {
     if (status == "success") {
       changeNameForm.setFieldValue("firstName", data?.data?.first_name);
@@ -123,7 +136,7 @@ const AccountDetails = () => {
         <div className="flex w-full justify-end mt-2">
           <Button
             variant={"ghost"}
-            disabled={changeNamePending}
+            disabled={disableSaveBtn() || changeNamePending}
             className="text-blue-600 hover:text-blue-500 font-semibold"
           >
             Save

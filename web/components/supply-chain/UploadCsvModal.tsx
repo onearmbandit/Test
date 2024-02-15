@@ -179,11 +179,11 @@ const UploadCsvModal = ({
                     <div className='bg-white-200 self-stretch flex relative cursor-pointer flex-col justify-center items-start mr-4 mt-4 py-8 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
                       <div className='flex gap-3'>
                         <Image
-                          height={64}
-                          width={64}
                           src={'/assets/images/file-icon.svg'}
                           alt='close-icon'
-                          className='aspect-square object-contain object-center w-6 overflow-hidden max-w-full max-md:mr-2.5'
+                          height={64}
+                          width={64}
+                          className='h-[64px] aspect-square object-contain object-center w-[64px] overflow-hidden max-w-full max-md:mr-2.5'
                         />
                         <div className='text-gray-700 text-center text-base font-semibold leading-6 self-stretch grow shrink basis-auto my-auto'>
                           {fileName}
