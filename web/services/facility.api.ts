@@ -43,6 +43,10 @@ export const createFacility = (obj: any) => {
   return fetchApi("/auth/facility", { method: "POST", body: obj });
 };
 
+export const updateFacility = ({ id, obj }: { id: string; obj: any }) => {
+  return fetchApi(`/auth/facility/${id}`, { method: "PATCH", body: obj });
+};
+
 export const getFacilities = async () => {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizations[0].id;
@@ -98,8 +102,8 @@ export const editProductLines = (formData: any) => {
   });
 };
 
-export const getProductLines = (facilityId: string) => {
-  return fetchApi(`/auth/facility-product?facilityEmissionId=${facilityId}`);
+export const getProductLines = (emissionId: string) => {
+  return fetchApi(`/auth/facility-emission/${emissionId}`);
 };
 
 export const facilityDetails = (id: string) => {
@@ -109,5 +113,17 @@ export const facilityDetails = (id: string) => {
 export const getEqualityData = (id: string) => {
   return fetchApi(
     `/auth/equality-emission-calculation?facilityEmissionId=${id}`
+  );
+};
+
+export const getFacilityDashboard = ({
+  from,
+  to,
+}: {
+  from: string;
+  to: string;
+}) => {
+  return fetchApi(
+    `/auth/dashboard-data?reportingPeriodFrom=${from}&reportingPeriodTo=${to}`
   );
 };

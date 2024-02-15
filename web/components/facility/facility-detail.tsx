@@ -20,6 +20,11 @@ import { getReportingPeriods } from "@/services/facility.api";
 import dayjs from "dayjs";
 import ScopeEmissions from "./scope-emission";
 import ProductLineEmissions from "./product-line-emissions";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
 
 const FacilityDetails = () => {
   const searchParams = useSearchParams();
@@ -35,6 +40,7 @@ const FacilityDetails = () => {
     queryFn: () => getReportingPeriods(facilityId as string),
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
+  console.log(reportingPeriods);
   // const newReporting = searchParams.get("new");
   // const reporting = searchParams.get("reporting");
   // const reportingPeriod = reporting != null ? reporting : reportingPeriods[0];
@@ -53,7 +59,7 @@ const FacilityDetails = () => {
         setShowNew(true);
       }
     }
-  }, [periodsQ.isSuccess]);
+  }, [periodsQ.isSuccess, reportingPeriods]);
 
   return (
     <div className="mt-5">
@@ -101,23 +107,19 @@ const FacilityDetails = () => {
                   "MMM YYYY"
                 )} - ${dayjs(item.reporting_period_to).format("MMM YYYY")}`;
                 return (
-                  <Popover key={i}>
-                    <TabsTrigger
-                      // key={i}
-                      value={item.id}
-                      onClick={() => setCurrentTab(reporting)}
-                    >
-                      <PopoverTrigger className="text-blue-600">
-                        {reporting}
-                      </PopoverTrigger>
-                      <PopoverContent
+                  <TabsTrigger key={i} value={item.id}>
+                    <HoverCard key={i}>
+                      <HoverCardTrigger asChild>
+                        <p className="text-blue-600">{reporting}</p>
+                      </HoverCardTrigger>
+                      <HoverCardContent
                         align="start"
                         className="w-full left-0 p-0 -ml-4"
                       >
                         <ReportingPeriod setNew={setShowNew} period={item} />
-                      </PopoverContent>
-                    </TabsTrigger>
-                  </Popover>
+                      </HoverCardContent>
+                    </HoverCard>
+                  </TabsTrigger>
                 );
               })}
             </TabsList>

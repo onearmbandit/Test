@@ -53,6 +53,9 @@ const InviteOrganization = () => {
     mutationKey: ["user-details"],
     mutationFn: inviteOrganization,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       toast.success("Invitation sent successfully", {
         style: { color: "green" },
       });

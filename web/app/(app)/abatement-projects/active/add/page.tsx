@@ -43,6 +43,9 @@ const AddActivePage = () => {
   const { mutate } = useMutation({
     mutationFn: addAbatementProjects,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       console.log(data);
     },
     onError(error, variables, context) {

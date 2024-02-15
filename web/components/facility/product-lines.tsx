@@ -29,6 +29,7 @@ const ProductLines = ({ period }: { period: string }) => {
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
+  console.log(productLines);
 
   const { mutate } = useMutation({
     mutationFn: addProductLines,
@@ -117,13 +118,14 @@ const ProductLines = ({ period }: { period: string }) => {
 
   useEffect(() => {
     if (prodLines.isSuccess) {
-      const updated = productLines.data?.map((item: Product) => ({
-        ...item,
-        functionalUnit: item?.functional_unit,
-      }));
+      const updated = productLines?.data?.FacilityProducts.map(
+        (item: Product) => ({
+          ...item,
+          functionalUnit: item?.functional_unit,
+        })
+      );
       console.log({ updated });
       setProducts(updated);
-
       if (updated.length == 0) {
         setEdit(true);
       }
@@ -250,7 +252,7 @@ const Productlist = ({
       className="flex flex-col items-stretch self-stretch pb-1.5 text-base font-light leading-6 text-teal-800 bg-white rounded-lg"
       aria-label="Product Card"
     >
-      {productLines.data?.map((item: any, i: number) => (
+      {productLines?.data?.FacilityProducts?.map((item: any, i: number) => (
         <div
           key={i}
           className="grid grid-cols-3 gap-5 justify-between py-1 w-fit pr-20 max-md:flex-wrap max-md:pr-5 max-md:max-w-full"

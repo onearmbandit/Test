@@ -54,10 +54,12 @@ const EditClimateConditions = ({
     },
     onSubmit: (data: any) => {
       const organizationId = session?.user?.organizations[0]?.id!;
+      const newTargets =
+        currentTarget.length > 0 ? [...targets, currentTarget] : targets;
       if (organizationId) {
         mutate({
           id: organizationId,
-          formdata: { ...data, climateTargets: targets },
+          formdata: { ...data, climateTargets: newTargets },
         });
       }
     },
@@ -70,8 +72,11 @@ const EditClimateConditions = ({
   useEffect(() => {
     if (userQ.isSuccess) {
       const targetArray = user?.data?.organizations[0].climate_targets;
-      climateForm.setFieldValue("climateTargets", targetArray);
-      setTargets(targetArray);
+      climateForm.setFieldValue(
+        "climateTargets",
+        targetArray == null ? [] : targetArray
+      );
+      setTargets(targetArray == null ? [] : targetArray);
     }
   }, [userQ.status]);
 
@@ -104,7 +109,7 @@ const EditClimateConditions = ({
         Climate commitments
       </h2>
       <div className="rounded bg-gray-50 self-stretch flex flex-wrap gap-4 h-[5.875rem] max-h-[128px] overflow-auto p-[0.62rem] items-start max-md:max-w-full">
-        {targets.map((target, index) => (
+        {targets?.map((target, index) => (
           <div
             key={index}
             className="justify-between items-stretch border border-green-100 bg-green-50 flex gap-0.5 px-2.5 py-2 rounded-md border-solid"

@@ -49,11 +49,12 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
     queryKey: ["product-emissions", period],
     queryFn: () => getProductLines(period!),
   });
-  const productLines = prodLines.isSuccess ? prodLines.data : [];
+  const productLines = prodLines.isSuccess ? prodLines.data.data : {};
 
   const equality = useQuery({
     queryKey: ["equality", period],
     queryFn: () => getEqualityData(period!),
+    enabled: isEqual,
   });
   const equalEmission = equality.isSuccess ? equality.data : {};
 
@@ -90,6 +91,7 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
     });
     const formData = {
       facilityEmissionId: period,
+      equalityAttribute: isEqual,
       facilityProducts: emissionCopy,
     };
     mutate(formData);
@@ -108,17 +110,23 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
       queryKey: ["equality", period],
       queryFn: () => getEqualityData(period!),
     });
+    setIsEqual(true);
   };
 
   useEffect(() => {
     if (prodLines.isSuccess) {
-      setEmissions(productLines.data);
+      setEmissions(productLines.FacilityProducts);
+      setIsEqual(
+        productLines?.FacilityEqualityAttribute?.equality_attribute == 0
+          ? false
+          : true
+      );
     }
   }, [prodLines.status]);
 
   useEffect(() => {
     if (equality.isSuccess) {
-      console.log(equalEmission);
+      // console.log(equalEmission);
       setEmissions(equalEmission.data);
       setIsEqual(true);
     }

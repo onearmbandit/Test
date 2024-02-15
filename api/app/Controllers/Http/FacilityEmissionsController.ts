@@ -5,6 +5,7 @@ import ReportingPeriodValidator from 'App/Validators/FacilityEmission/ReportingP
 import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateFacilityEmissionValidator from 'App/Validators/FacilityEmission/UpdateFacilityEmissionValidator';
 import { DateTime } from 'luxon';
+import User from 'App/Models/User';
 
 export default class FacilityEmissionsController {
 
@@ -67,9 +68,12 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async show({ response, params }: HttpContextContract) {
+  public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       const FacilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', params.id)
+
+      //:: Authorization (auth user can access their facility's emissions data only)
+      await bouncer.with('FacilityEmissionPolicy').authorize('view', FacilityEmissionData)
 
       return apiResponse(response, true, 200, FacilityEmissionData, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'))
     }
@@ -80,10 +84,13 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async update({ request, response }: HttpContextContract) {
+  public async update({ request, response, bouncer }: HttpContextContract) {
     try {
 
       const FacilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', request.param('id'))
+
+      //:: Authorization (auth user can update their facility's emissions data only)
+      await bouncer.with('FacilityEmissionPolicy').authorize('update', FacilityEmissionData)
 
       const payload = await request.validate(UpdateFacilityEmissionValidator);
 
@@ -102,9 +109,12 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async destroy({ request, response }: HttpContextContract) {
+  public async destroy({ request, response, bouncer }: HttpContextContract) {
     try {
       const FacilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', request.param('id'))
+
+      //:: Authorization (auth user can update their facility's emissions data only)
+      await bouncer.with('FacilityEmissionPolicy').authorize('delete', FacilityEmissionData)
 
       if (FacilityEmissionData) {
         FacilityEmissionData.deletedAt = DateTime.local()
@@ -120,12 +130,15 @@ export default class FacilityEmissionsController {
     }
   }
 
-  public async getDashboardData({ response, request }: HttpContextContract) {
+  public async getDashboardData({ response, request, auth }: HttpContextContract) {
     try {
 
       const queryParams = request.qs();
+      //:: Check organization id is same for auth user or not
+      const userFound = await User.getUserDetails('id', auth.user?.id)
+      let organizationIds = (await userFound.organizations).map((item) => item.id)
 
-      const facilityDashboardData = await FacilityEmission.getFacilitiesDashboardData(queryParams);
+      const facilityDashboardData = await FacilityEmission.getFacilitiesDashboardData(queryParams,organizationIds[0]);
 
       return apiResponse(response, true, 200, facilityDashboardData, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.dashboardCalculationFetchSuccess'));
 

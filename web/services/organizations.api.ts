@@ -39,7 +39,7 @@ const fetchApi = async (
     .then((res) => res.data)
     .catch((err) => {
       console.log(err.response.data);
-      throw new Error(err.response.data.errors[0].message);
+      return err.response.data;
     });
 
   return response;
@@ -106,4 +106,8 @@ export const inviteOrganization = async (formdata: any) => {
     method: "POST",
     body: formdata,
   } as Options);
+};
+
+export const getOrganizationDetails = (id: string) => {
+  return fetchApi(`/auth/organization/${id}`);
 };

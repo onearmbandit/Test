@@ -3,17 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  getOrganizationDetails,
   setupOrganizationStep1,
   setupOrganizationStep2,
   setupOrganizationStep3,
   setupOrganizationStep4,
 } from "@/services/organizations.api";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useFormik } from "formik";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -60,15 +61,18 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
   const session = useSession();
 
   const validation = z.object({
-    companyEmail: z.string().email(),
+    companyEmail: z.string().email({ message: "Please enter a valid email" }),
     profileStep: z.number().int().min(1).max(3),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: setupOrganizationStep1,
-    onSuccess: (organization) => {
+    onSuccess: (organization: any) => {
       // setUserId(organization.data.id);
+      if (organization.errors) {
+        throw new Error(organization.errors[0].message);
+      }
       toast.success("Your organization profile has been updated", {
         style: { color: "green" },
       });
@@ -185,6 +189,14 @@ const Step2 = ({ setStep }: any) => {
     "10,000+",
   ];
 
+  const orgDetail = useQuery({
+    queryKey: ["org-capacity"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+  console.log(organization);
+
   const validation = z.object({
     companySize: z.string(),
     profileStep: z.number().int().min(1).max(3),
@@ -193,7 +205,10 @@ const Step2 = ({ setStep }: any) => {
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: setupOrganizationStep2,
-    onSuccess: (organization) => {
+    onSuccess: (organization: any) => {
+      if (organization.errors) {
+        throw new Error(organization.errors[0].message);
+      }
       toast.success("Your organization profile has been updated", {
         style: { color: "green" },
       });
@@ -218,6 +233,17 @@ const Step2 = ({ setStep }: any) => {
       }
     },
   });
+
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep2Form.setFieldValue(
+        "companySize",
+        organization?.company_size
+      );
+      const index = sizes.indexOf(organization?.company_size);
+      setSelected(index);
+    }
+  }, [orgDetail.data]);
 
   return (
     <form onSubmit={setupOrganizationStep2Form.handleSubmit}>
@@ -247,7 +273,7 @@ const Step2 = ({ setStep }: any) => {
         <div className="actions-container justify-between items-center flex w-full gap-5 mt-6 px-2.5 py-5 max-md:max-w-full max-md:flex-wrap">
           <p
             onClick={() => setStep(1)}
-            className="back-button text-blue-600 text-center text-sm font-bold leading-4 my-auto"
+            className="back-button text-blue-600 text-center text-sm font-bold cursor-pointer leading-4 my-auto"
           >
             Back
           </p>
@@ -283,16 +309,24 @@ const Step2 = ({ setStep }: any) => {
 const Step3 = ({ setStep }: any) => {
   const session = useSession();
   const validation = z.object({
-    naicsCode: z
-      .string()
-      .regex(/^[0-9]{4,5}$/, "Please enter a valid NAICS code"),
+    naicsCode: z.string().regex(/^[0-9]{4,5}$/, "NAICS codes are 4-5 digits"),
     profileStep: z.number().int().min(1).max(3),
   });
 
+  const orgDetail = useQuery({
+    queryKey: ["org-naics"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+
   const { mutate, isSuccess, isPending } = useMutation({
-    mutationKey: ["step1"],
+    mutationKey: ["step3"],
     mutationFn: setupOrganizationStep3,
     onSuccess: (organization) => {
+      if (organization.errors) {
+        throw new Error(organization.errors[0].message);
+      }
       toast.success("Your organization profile has been updated", {
         style: { color: "green" },
       });
@@ -309,6 +343,7 @@ const Step3 = ({ setStep }: any) => {
       profileStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
+    validateOnChange: false,
     onSubmit: (data: any) => {
       const organizationId: string | undefined =
         session.data?.user?.organizations[0]?.id;
@@ -317,6 +352,15 @@ const Step3 = ({ setStep }: any) => {
       }
     },
   });
+
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep3Form.setFieldValue(
+        "naicsCode",
+        organization?.naics_code
+      );
+    }
+  }, [orgDetail.data]);
 
   return (
     <form onSubmit={setupOrganizationStep3Form.handleSubmit}>
@@ -339,6 +383,7 @@ const Step3 = ({ setStep }: any) => {
         <Input
           name="naicsCode"
           id="naicsCode"
+          value={setupOrganizationStep3Form.values?.naicsCode}
           placeholder="Add NAICS code"
           onChange={setupOrganizationStep3Form.handleChange}
           className={cn(
@@ -390,9 +435,6 @@ const Step3 = ({ setStep }: any) => {
   );
 };
 
-/**
- * TODO: the character limit here will be 20-30
- */
 const Step4 = ({ setStep }: any) => {
   const router = useRouter();
   const session = useSession();
@@ -416,10 +458,20 @@ const Step4 = ({ setStep }: any) => {
     profileStep: z.number().int().min(1).max(3),
   });
 
+  const orgDetail = useQuery({
+    queryKey: ["org-targets"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: setupOrganizationStep4,
     onSuccess: (organization) => {
+      if (organization.errors) {
+        throw new Error(organization.errors[0].message);
+      }
       toast.success("Your organization profile has been updated", {
         style: { color: "green" },
       });
@@ -439,10 +491,13 @@ const Step4 = ({ setStep }: any) => {
     onSubmit: (data: any) => {
       const organizationId: string | undefined =
         session.data?.user?.organizations[0]?.id;
+
+      const newTargets =
+        currentTarget != "" ? [...targets, currentTarget] : targets;
       if (organizationId) {
         mutate({
           id: organizationId,
-          formdata: { ...data, climateTargets: targets },
+          formdata: { ...data, climateTargets: newTargets },
         });
       }
 
@@ -454,6 +509,21 @@ const Step4 = ({ setStep }: any) => {
     setTargets((prevTargets) => prevTargets.filter((_, i) => i !== index));
   };
   // console.log("Form Errors : ", setupOrganizationStep4Form.errors);
+
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep4Form.setFieldValue(
+        "climateTargets",
+        organization?.climate_targets
+      );
+
+      setTargets(
+        organization?.climate_targets == null
+          ? []
+          : organization?.climate_targets
+      );
+    }
+  }, [orgDetail.data]);
 
   return (
     <form onSubmit={setupOrganizationStep4Form.handleSubmit}>
@@ -467,7 +537,7 @@ const Step4 = ({ setStep }: any) => {
             For example, Science Based Target initiatives or commitments that
             are climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
           </p>
-          {targets.length > 0 && (
+          {targets?.length > 0 && (
             <div className="items-stretch self-stretch rounded bg-gray-50 flex max-w-[814px] gap-x-4 gap-y-2.5 w-full mx-auto p-2.5 flex-wrap max-h-[128px] overflow-auto">
               {targets.map((target, index) => (
                 <div
@@ -547,7 +617,7 @@ const Step4 = ({ setStep }: any) => {
                 <Loader2 size={30} className="text-slate-400 animate-spin" />
               )}
               <Button
-                disabled={isPending}
+                disabled={currentTarget.length > 50 || isPending}
                 className="save-button text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
                 type="submit"
               >
