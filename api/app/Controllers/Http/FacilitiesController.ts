@@ -127,12 +127,34 @@ export default class FacilitiesController {
   public async update({ request, response, bouncer }: HttpContextContract) {
     try {
 
+      let requestData = request.all()
+
       const organizationFacilityData = await OrganizationFacility.getOrganizationFacilityData('id', request.param('id'))
 
       //:: Authorization (auth user can update their organization's facility only)
       await bouncer.with('OrganizationFacilityPolicy').authorize('update', organizationFacilityData)
 
       const payload = await request.validate(UpdateFacilityValidator);
+
+      //:: check if facility name already exists for same organization
+      console.log("organizationFacilityData.organization_id >>", organizationFacilityData.organization_id)
+      if (organizationFacilityData.organization_id) {
+        const existingRecord = await OrganizationFacility.query()
+          .where('name', requestData.name)
+          .where('organization_id', organizationFacilityData.organization_id)
+          .whereNot('id', request.param('id')) // Exclude the current facility being edited
+          .first();
+
+        if (existingRecord) {
+          return apiResponse(
+            response,
+            false,
+            422,
+            {},
+            Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityAlreadyExists')
+          )
+        }
+      }
 
       const updateFacility = await OrganizationFacility.updateOrganizationFacility(organizationFacilityData, payload)
 
