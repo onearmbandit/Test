@@ -1,8 +1,8 @@
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-export default  class  CreateFacilityValidator {
-  constructor(protected ctx: HttpContextContract) {}
+export default class CreateFacilityValidator {
+  constructor(protected ctx: HttpContextContract) { }
 
 
   public schema = schema.create({
@@ -11,14 +11,13 @@ export default  class  CreateFacilityValidator {
       rules.exists({ table: 'organizations', column: 'id' }),
     ]),
 
-    name:schema.string({ trim: true}, [
+    name: schema.string({ trim: true }, [
       rules.required(),
       rules.minLength(5),
-      rules.maxLength(255),
-      rules.unique({ table: 'organization_facilities', column: 'name' })
+      rules.maxLength(255)
     ]),
 
-    address:schema.string({ trim: true }, [
+    address: schema.string({ trim: true }, [
       rules.required(),
       rules.minLength(5),
       rules.maxLength(500)
@@ -32,7 +31,6 @@ export default  class  CreateFacilityValidator {
     'name.required': 'Name is required.',
     'name.minLength': 'Name must be at least 5 characters long.',
     'name.maxLength': 'Name must not exceed 255 characters.',
-    'name.unique': 'Name already exists. Please choose a different name.',
 
     'address.required': 'Address is required.',
     'address.minLength': 'Address must be at least 5 characters long.',
