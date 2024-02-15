@@ -173,7 +173,7 @@ export default class AbatementProject extends BaseModel {
       supplierDataJSON.proposedSupplier = await Supplier.query()
         .where('id', supplierDataJSON.proposed_to)
         .andWhereNull('deletedAt')
-        .select('id', 'name', 'email', 'supply_chain_reporting_period_id', 'organization_relationship', 'address')
+        .select('id', 'name', 'email', 'supply_chain_reporting_period_id')
         .firstOrFail()
 
       supplierDataJSON.proposedOrganization = {}
@@ -182,8 +182,8 @@ export default class AbatementProject extends BaseModel {
       supplierDataJSON.proposedOrganization = await Organization.query()
         .where('id', supplierDataJSON.proposed_to)
         .andWhereNull('deletedAt')
-        .select('id', 'company_name', 'company_email', 'company_address')
-        // .preload('users')
+        .select('id', 'company_name')
+        .preload('users')
         .firstOrFail()
       supplierDataJSON.proposedSupplier = {}
     }
@@ -203,6 +203,8 @@ export default class AbatementProject extends BaseModel {
 
     return supplierData;
   }
+
+  
   public static async updateProjectDetails(project, requestData) {
     await project.merge(requestData).save()
     // const projectData = await this.getProjectData('id', project.id)
