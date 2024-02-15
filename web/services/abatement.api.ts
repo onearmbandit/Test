@@ -44,6 +44,19 @@ export const addAbatementProjects = (obj: any) => {
   return fetchApi("/auth/abatement-projects", { method: "POST", body: obj });
 };
 
+export const editAbatementProjects = ({
+  id,
+  obj,
+}: {
+  id: string;
+  obj: any;
+}) => {
+  return fetchApi(`/auth/abatement-projects/${id}`, {
+    method: "PATCH",
+    body: obj,
+  });
+};
+
 export const getActiveAbatementProjects = (orgId: string) => {
   return fetchApi(`/auth/abatement-projects?organizationId=${orgId}`);
 };

@@ -7,6 +7,12 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -18,17 +24,20 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
-  addAbatementProjects,
+  editAbatementProjects,
   getActiveAbatementProjectById,
 } from "@/services/abatement.api";
+import { uploadImage } from "@/services/auth.api";
 import { getAllSuppliers } from "@/services/supply.chain";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
 import { useFormik } from "formik";
 import _ from "lodash";
 import {
   CheckCircle2,
   ChevronLeft,
   Clock3,
+  Loader2,
   Upload,
   UserCircle2,
   X,
@@ -79,8 +88,6 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
   });
   const project = abatementProject.isSuccess ? abatementProject.data.data : {};
 
-  console.log("project", project);
-
   const suppliers = useQuery({
     queryKey: ["supplier-list"],
     queryFn: () => getAllSuppliers(),
@@ -88,7 +95,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
   const supplierList = suppliers.isSuccess ? suppliers.data.data : [];
 
   const { mutate } = useMutation({
-    mutationFn: addAbatementProjects,
+    mutationFn: editAbatementProjects,
     onSuccess: (data) => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
@@ -126,17 +133,10 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
       logoUrl: "",
       status: 0,
     },
-    // validateOnChange: true,
-    // validateOnBlur: true,
-    // validationSchema: toFormikValidationSchema(validation),
-    // validate: (values) => {},
     onSubmit: (data) => {
       console.log("formdata", data);
-      const modified = {
-        ...data,
-        organizationId,
-      };
-      mutate(modified);
+
+      mutate({ id: project.id, obj: data });
     },
   });
 
@@ -152,7 +152,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
         proposedBy: project?.proposed_by,
         photoUrl: project?.photo_url,
         logoUrl: project?.logo_url,
-        status: 0,
+        status: project?.status,
       });
 
       setProjectDetails({
@@ -180,7 +180,6 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
     }
   }, [abatementProject.data]);
 
-  //   TODO: toggle edit state of a section on click to show forms
   return (
     <div className="bg-white px-8 py-6 min-h-screen">
       <div className="items-center self-stretch flex gap-2.5 pl-3 py-3 max-md:flex-wrap">
@@ -266,7 +265,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
 
                     if (res.success) {
                       setErr({});
-                      setCurrentSection(2);
+                      setCurrentSection(0);
                     } else {
                       setFieldError("name", res.error.errors[0].message);
                       setErr({ name: res.error.errors[0].message });
@@ -295,259 +294,613 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
         <Card>
           <CardHeader className="flex-row justify-between">
             <div className="flex items-center space-x-2.5">
-              {/* <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
-                2
-              </div> */}
-              <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              {(values.description == "" && values.estimatedCost == 0) ||
+              currentSection == 2 ? (
+                <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
+                  2
+                </div>
+              ) : (
+                <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              )}
               <p className="flex-1 font-bold">Project Description*</p>
             </div>
-            <Button
-              type="button"
-              variant={"ghost"}
-              className="text-blue-600 hover:text-blue-600 font-semibold px-2 text-sm"
-            >
-              Edit
-            </Button>
+            {values.description != "" && values.estimatedCost != 0 && (
+              <Button
+                variant={"ghost"}
+                onClick={() => setCurrentSection(2)}
+                className="text-blue-600 hover:text-blue-600 font-semibold"
+              >
+                Edit
+              </Button>
+            )}
           </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="text-sm text-green-900 font-light">
-              The Alfa Laval POMEVap technology offers an innovative and
-              space-efficient solution for treating palm oil mill effluent
-              (POME), an acidic and organically rich byproduct that can
-              contaminate water and emit greenhouse gases. Utilizing advanced
-              evaporation and separation techniques, POMEVap not only neutral...
-            </p>
-            <p className="text-sm text-green-900 font-light ">
-              www.alfalavalproject.com/sustainability
-            </p>
-            {/* <div className="space-y-6">
-              <label className="text-sm">
+          {currentSection == 2 ? (
+            <>
+              <CardContent className="space-y-6">
+                <div className="space-y-6">
+                  <label className="text-sm">
+                    Provide a short description of the project
+                  </label>
+
+                  <div>
+                    <textarea
+                      name="description"
+                      onChange={(e) => {
+                        const copy = _.cloneDeep(projectDetails);
+                        copy[2].description = e.target.value;
+                        setProjectDetails(copy);
+                      }}
+                      value={projectDetails[2].description}
+                      className={cn(
+                        "min-h-20 px-2 py-3 rounded-md focus:outline-none resize-none bg-gray-50 w-full text-slate-700 text-sm font-light",
+                        err.description && "border border-red-600"
+                      )}
+                      placeholder="Add description"
+                    />
+                    <p className="text-xs text-red-500 mt-0.5">
+                      {err.description}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <label className="text-sm">
+                    Add estimated project cost (USD)
+                  </label>
+
+                  <div>
+                    <Input
+                      name="estimatedCost"
+                      type="number"
+                      onChange={(e) => {
+                        const copy = _.cloneDeep(projectDetails);
+                        copy[2].estimatedCost = Number(e.target.value);
+                        setProjectDetails(copy);
+                      }}
+                      value={projectDetails[2].estimatedCost}
+                      className={cn(
+                        "h-16 bg-gray-50 w-1/2 text-slate-700 text-sm font-light",
+                        err.estimatedCost && "border border-red-600"
+                      )}
+                      placeholder="Add description"
+                    />
+                    <p className="text-xs text-red-500 mt-0.5">
+                      {err.estimatedCost}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <label className="text-sm">Add a website if available</label>
+
+                  <div>
+                    <Input
+                      name="websiteUrl"
+                      onChange={(e) => {
+                        const copy = _.cloneDeep(projectDetails);
+                        copy[2].websiteUrl = e.target.value;
+                        setProjectDetails(copy);
+                      }}
+                      value={projectDetails[2].websiteUrl}
+                      className={cn(
+                        "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
+                        err.websiteUrl && "border border-red-600"
+                      )}
+                      placeholder="Add website"
+                    />
+                    <p className="text-xs text-red-500 mt-0.5">
+                      {err.websiteUrl}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="justify-end">
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => {
+                    const res = z
+                      .object({
+                        description: z.string().min(3, {
+                          message: "description minimum lenth should be 3",
+                        }),
+                        estimatedCost: z
+                          .number()
+                          .min(1, { message: "cost must be greater than 0" }),
+                        websiteUrl: z.string().optional(),
+                      })
+                      .safeParse({
+                        description: projectDetails[2].description,
+                        estimatedCost: projectDetails[2].estimatedCost,
+                        websiteUrl: projectDetails[2].websiteUrl,
+                      });
+
+                    if (res.success) {
+                      setErr({});
+                      setFieldValue(
+                        "description",
+                        projectDetails[2].description
+                      );
+                      setFieldValue(
+                        "estimatedCost",
+                        projectDetails[2].estimatedCost
+                      );
+                      setFieldValue("websiteUrl", projectDetails[2].websiteUrl);
+                      setCurrentSection(0);
+                    } else {
+                      res.error.errors.map((item) => {
+                        // setFieldError(`${item.path[0]}`, item.message);
+                        setErr({ ...err, [`${item.path[0]}`]: item.message });
+                      });
+                    }
+                  }}
+                  className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
+                >
+                  Save
+                </Button>
+              </CardFooter>
+            </>
+          ) : values.description == "" &&
+            values.estimatedCost == 0 &&
+            values.websiteUrl == "" ? (
+            <CardContent>
+              <p className="text-sm">
                 Provide a short description of the project
-              </label>
-
-              <Input
-                className="h-16 bg-gray-50 text-slate-700 text-sm font-light"
-                placeholder="Add description"
-              />
-            </div>
-            <div className="space-y-6">
-              <label className="text-sm">Add a website if available</label>
-
-              <Input
-                className="h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2"
-                placeholder="Add website"
-              />
-            </div> */}
-          </CardContent>
-          <CardFooter className="justify-end">
-            {/* <Button
-              type="button"
-              variant={"outline"}
-              className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
-            >
-              Save
-            </Button> */}
-          </CardFooter>
+              </p>
+            </CardContent>
+          ) : (
+            <CardContent className="space-y-6">
+              <p className="text-green-900 text-sm line-clamp-2">
+                {values.description}
+              </p>
+              <p className="text-green-900 text-sm line-clamp-2">
+                {values.estimatedCost}
+              </p>
+              <p className="text-green-900 text-sm line-clamp-2">
+                {values.websiteUrl}
+              </p>
+            </CardContent>
+          )}
         </Card>
 
         {/* Estimated Emission Reduction */}
         <Card>
           <CardHeader className="flex-row justify-between">
             <div className="flex items-center space-x-2.5">
-              {/* <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
-                3
-              </div> */}
-              <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              {values.emissionReductions == 0 || currentSection == 3 ? (
+                <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
+                  3
+                </div>
+              ) : (
+                <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              )}
               <p className="flex-1 font-bold">Estimated Emission Reduction*</p>
             </div>
-            <Button
-              type="button"
-              variant={"ghost"}
-              className="text-blue-600 hover:text-blue-600 font-semibold px-2 text-sm"
-            >
-              Edit
-            </Button>
+            {values.emissionReductions != 0 && (
+              <Button
+                variant={"ghost"}
+                onClick={() => setCurrentSection(3)}
+                className="text-blue-600 hover:text-blue-600 font-semibold"
+              >
+                Edit
+              </Button>
+            )}
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* <div className="space-y-6">
-              <label className="text-sm">
-                What is the estimated emission reductions?
-              </label>
+          {currentSection == 3 ? (
+            <>
+              <CardContent className="space-y-6">
+                <div className="space-y-6">
+                  <label className="text-sm">
+                    What is the estimated emission reductions?
+                  </label>
+                  <div>
+                    <Input
+                      name="emissionReductions"
+                      onChange={(e) => {
+                        const copy = _.cloneDeep(projectDetails);
+                        copy[3].emissionReductions = Number(e.target.value);
+                        setProjectDetails(copy);
+                      }}
+                      value={projectDetails[3].emissionReductions}
+                      className={cn(
+                        "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
+                        err.emissionReductions && "border border-red-600"
+                      )}
+                      placeholder="Add emission reduction"
+                    />
+                    <p className="text-xs text-red-500 mt-0.5">
+                      {err.emissionReductions}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="justify-end">
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => {
+                    const res = z
+                      .object({
+                        emissionReductions: z
+                          .number({
+                            invalid_type_error: "Emissions should be a number",
+                          })
+                          .min(1, {
+                            message: "emissions must be greater than 0",
+                          }),
+                      })
+                      .safeParse({
+                        emissionReductions:
+                          projectDetails[3].emissionReductions,
+                      });
 
-              <Input
-                className="h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2"
-                placeholder="Add emission reduction"
-              />
-            </div> */}
-            <p className="text-sm font-light text-green-900">88,990 tCO2e</p>
-          </CardContent>
-          <CardFooter className="justify-end">
-            {/* <Button
-              type="button"
-              variant={"outline"}
-              className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
-            >
-              Save
-            </Button> */}
-          </CardFooter>
+                    if (res.success) {
+                      setErr({});
+                      setFieldValue(
+                        "emissionReductions",
+                        projectDetails[3].emissionReductions
+                      );
+                      setCurrentSection(0);
+                    } else {
+                      setFieldError("emissionReductions", res.error.message);
+                      setErr({
+                        emissionReductions: res.error.errors[0].message,
+                      });
+                    }
+                  }}
+                  className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
+                >
+                  Save
+                </Button>
+              </CardFooter>
+            </>
+          ) : (
+            <CardContent>
+              {values.emissionReductions == 0 ? (
+                <p className="text-sm">
+                  What is the estimated emission reductions?
+                </p>
+              ) : (
+                <p className="text-sm text-green-900">
+                  {projectDetails[3].emissionReductions} tCO2e
+                </p>
+              )}
+            </CardContent>
+          )}
         </Card>
 
         {/* Proposed To  */}
         <Card>
           <CardHeader className="flex-row justify-between">
             <div className="flex items-center space-x-2.5">
-              {/* <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
-                4
-              </div> */}
-              <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              {values.proposedBy == "" || currentSection == 4 ? (
+                <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
+                  4
+                </div>
+              ) : (
+                <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              )}
               <p className="flex-1 font-bold">Proposed To*</p>
             </div>
-            <Button
-              type="button"
-              variant={"ghost"}
-              className="text-blue-600 hover:text-blue-600 font-semibold px-2 text-sm"
-            >
-              Edit
-            </Button>
+            {values.proposedBy != "" && (
+              <Button
+                variant={"ghost"}
+                onClick={() => setCurrentSection(4)}
+                className="text-blue-600 hover:text-blue-600 font-semibold"
+              >
+                Edit
+              </Button>
+            )}
           </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="text-sm font-light text-green-900">88,990 tCO2e</p>
-            {/* <div className="space-y-6">
-              <label className="text-sm">
-                Which Supplier or Organization are you proposing this project
-                to?
-              </label>
+          {currentSection == 4 ? (
+            <>
+              <CardContent className="space-y-6">
+                <div className="space-y-6">
+                  <label className="text-sm">
+                    Which Supplier or Organization are you proposing this
+                    project to?
+                  </label>
 
-              <Select>
-                <SelectTrigger className="w-1/2 bg-gray-50 h-16 border-none">
-                  <SelectValue placeholder="Select supplier" />
-                </SelectTrigger>
-                <SelectContent>
-                  {selections?.map((item) => (
-                    <SelectItem key={item} value={item}>
-                      {item}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div> */}
-          </CardContent>
-          <CardFooter className="justify-end">
-            {/* <Button
-              type="button"
-              variant={"outline"}
-              className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
-            >
-              Save
-            </Button> */}
-          </CardFooter>
+                  <div>
+                    <Select
+                      onValueChange={(e: any) => {
+                        const copy = _.cloneDeep(projectDetails);
+                        copy[4].organizationId = supplierList.find(
+                          (item: any) => item.id == e
+                        );
+                        setProjectDetails(copy);
+                      }}
+                      value={projectDetails[4].organizationId.id}
+                    >
+                      <SelectTrigger className="w-1/2 bg-gray-50 h-16 border-none">
+                        <SelectValue placeholder="Select supplier" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {supplierList?.map((item: any) => (
+                          <SelectItem key={item.id} value={item.id}>
+                            {item.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-red-500 mt-0.5">
+                      {err.proposedBy}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter className="justify-end">
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => {
+                    setFieldValue(
+                      "proposedBy",
+                      projectDetails[4].organizationId.id
+                    );
+
+                    // const res = z.object({ proposedBy: z.string() }).safeParse({
+                    //   proposedBy: projectDetails[4].organizationId.id,
+                    // });
+
+                    if (projectDetails[4].organizationId.id != "") {
+                      setCurrentSection(5);
+                    } else {
+                      setFieldError(
+                        "proposedBy",
+                        projectDetails[4].organizationId.id
+                      );
+                      setErr({ proposedBy: "This field is required." });
+                    }
+                  }}
+                  className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
+                >
+                  Save
+                </Button>
+              </CardFooter>
+            </>
+          ) : (
+            <CardContent>
+              {values.proposedBy == "" ? (
+                <p className="text-sm">
+                  Which Supplier or Organization are you proposing this project
+                  to?
+                </p>
+              ) : (
+                <p className="text-sm text-green-900">
+                  {projectDetails[4].organizationId.name}
+                </p>
+              )}
+            </CardContent>
+          )}
         </Card>
 
         {/* Photo and Logo */}
         <Card>
           <CardHeader className="flex-row justify-between">
             <div className="flex items-center space-x-2.5">
-              {/* <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
-                5
-              </div> */}
-              <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              {(values.photoUrl == "" && values.logoUrl == "") ||
+              currentSection == 5 ? (
+                <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
+                  5
+                </div>
+              ) : (
+                <CheckCircle2 size={24} className="text-white fill-blue-600" />
+              )}
               <p className="flex-1 font-bold">Photo and Logo</p>
             </div>
-            <Button
-              type="button"
-              variant={"ghost"}
-              className="text-blue-600 hover:text-blue-600 font-semibold px-2 text-sm"
-            >
-              Edit
-            </Button>
+            {values.photoUrl != "" && values.logoUrl && (
+              <Button
+                variant={"ghost"}
+                onClick={() => setCurrentSection(5)}
+                className="text-blue-600 hover:text-blue-600 font-semibold"
+              >
+                Edit
+              </Button>
+            )}
           </CardHeader>
-          <CardContent className="space-y-6">
-            {/* <div className="space-y-6">
-              <label className="text-sm">
-                Upload a photo representing the project proposal
-              </label>
+          {currentSection == 5 ? (
+            <>
+              <CardContent className="space-y-6">
+                <div className="space-y-6">
+                  <label className="text-sm">
+                    Upload a photo representing the project proposal
+                  </label>
 
-              <Dropzone>
-                {({ getInputProps, getRootProps }) => (
-                  <>
-                    <div
-                      {...getRootProps()}
-                      className="flex justify-center cursor-pointer items-center space-x-3 w-1/2 h-[129px] rounded-lg bg-gray-200/60"
-                    >
-                      <input {...getInputProps()} />
-                      <Upload size={12} className="text-slate-600" />
-                      <p className="text-sm font-bold text-slate-600 uppercase">
-                        upload png, jpg, jpeg
-                      </p>
-                    </div>
-                  </>
+                  <Dropzone
+                    onDrop={(accpeted, rejected) => {
+                      const copy = _.cloneDeep(projectDetails);
+                      copy[5].photoUrl.file = accpeted[0];
+                      copy[5].photoUrl.name = accpeted[0].name;
+                      console.log(accpeted[0]);
+                      setProjectDetails(copy);
+                    }}
+                  >
+                    {({ getInputProps, getRootProps }) => (
+                      <>
+                        {projectDetails[5].photoUrl.name == "" ? (
+                          <div
+                            {...getRootProps()}
+                            className="flex justify-center cursor-pointer items-center space-x-3 w-1/2 h-[129px] rounded-lg bg-gray-200/60"
+                          >
+                            <input {...getInputProps()} />
+                            <Upload size={12} className="text-slate-600" />
+                            <p className="text-sm font-bold text-slate-600 uppercase">
+                              upload png, jpg, jpeg
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-3">
+                            <div className="bg-gray-200 h-16 w-16 rounded grid place-items-center">
+                              <Image
+                                height={24}
+                                width={24}
+                                src={"/assets/images/folder-open.svg"}
+                                alt="foler icon"
+                              />
+                            </div>
+                            <p className="font-semibold text-gray-700">
+                              {projectDetails[5].photoUrl.name}
+                            </p>
+
+                            <X
+                              size={16}
+                              role="button"
+                              className="text-slate-500"
+                              onClick={() => {
+                                const copy = _.cloneDeep(projectDetails);
+                                copy[5].photoUrl = { name: "", file: {} };
+                                setProjectDetails(copy);
+                              }}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </Dropzone>
+                </div>
+                <div className="space-y-6">
+                  <label className="text-sm">Upload your company Logo</label>
+
+                  <Dropzone
+                    onDrop={(accpeted, rejected) => {
+                      const copy = _.cloneDeep(projectDetails);
+                      console.log(accpeted);
+                      copy[5].logoUrl.file = accpeted[0];
+                      copy[5].logoUrl.name = accpeted[0].name;
+                      setProjectDetails(copy);
+                    }}
+                  >
+                    {({ getInputProps, getRootProps }) => (
+                      <>
+                        {projectDetails[5].logoUrl.name == "" ? (
+                          <div
+                            {...getRootProps()}
+                            className="flex justify-center cursor-pointer items-center space-x-3 w-1/2 h-[129px] rounded-lg bg-gray-200/60"
+                          >
+                            <input {...getInputProps()} />
+                            <Upload size={12} className="text-slate-600" />
+                            <p className="text-sm font-bold text-slate-600 uppercase">
+                              upload png, jpg, jpeg
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-3">
+                            <div className="bg-gray-200 h-16 w-16 rounded grid place-items-center">
+                              <Image
+                                height={24}
+                                width={24}
+                                src={"/assets/images/folder-open.svg"}
+                                alt="foler icon"
+                              />
+                            </div>
+                            <p className="font-semibold text-gray-700">
+                              {projectDetails[5].logoUrl.name}
+                            </p>
+
+                            <X
+                              size={16}
+                              role="button"
+                              className="text-slate-500"
+                              onClick={() => {
+                                const copy = _.cloneDeep(projectDetails);
+                                copy[5].logoUrl = { name: "", file: {} };
+                                setProjectDetails(copy);
+                              }}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </Dropzone>
+                </div>
+              </CardContent>
+
+              <CardFooter className="justify-end">
+                {uploading && (
+                  <Loader2 className="text-blue-600 animate-spin" />
                 )}
-              </Dropzone>
-            </div>
-            <div className="space-y-6">
-              <label className="text-sm">Upload your company Logo</label>
+                <Button
+                  type="button"
+                  disabled={uploading}
+                  variant={"outline"}
+                  onClick={async () => {
+                    const photo = new FormData();
+                    const logo = new FormData();
+                    photo.append(
+                      "image",
+                      projectDetails[5].photoUrl.file as Blob
+                    );
+                    logo.append(
+                      "image",
+                      projectDetails[5].logoUrl.file as Blob
+                    );
+                    setUploading(true);
+                    let res1 = null;
+                    let res2 = null;
 
-              <Dropzone>
-                {({ getInputProps, getRootProps }) => (
-                  <>
-                    <div
-                      {...getRootProps()}
-                      className="flex justify-center cursor-pointer items-center space-x-3 w-1/2 h-[129px] rounded-lg bg-gray-200/60"
-                    >
-                      <input {...getInputProps()} />
-                      <Upload size={12} className="text-slate-600" />
-                      <p className="text-sm font-bold text-slate-600 uppercase">
-                        upload png, jpg, jpeg
-                      </p>
-                    </div>
+                    if (projectDetails[5].photoUrl.name != "") {
+                      res1 = await uploadImage(photo);
+                      if (res1.errors) {
+                        return toast.error(
+                          "Something went wrong while uploading the photo ",
+                          { style: { color: "red" } }
+                        );
+                      }
+                      setFieldValue("photoUrl", res1.data);
+                    }
 
-                    <div className="flex items-center space-x-3">
-                      <div className="bg-gray-200 h-16 w-16 rounded grid place-items-center">
-                        <Image
-                          height={24}
-                          width={24}
-                          src={"/assets/images/folder-open.svg"}
-                          alt="foler icon"
-                        />
-                      </div>
-                      <p className="font-semibold text-gray-700">
-                        something new
-                      </p>
+                    if (projectDetails[5].logoUrl.name != "") {
+                      res2 = await uploadImage(logo);
 
-                      <X size={16} className="text-slate-500" />
-                    </div>
-                  </>
-                )}
-              </Dropzone>
-            </div> */}
-            <p className="text-sm font-light text-green-900">
-              image_name_here.png
-            </p>
-            <p className="text-sm font-light text-green-900">
-              image_name_here.png
-            </p>
-          </CardContent>
-          <CardFooter className="justify-end">
-            {/* <Button
-              type="button"
-              variant={"outline"}
-              className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
-            >
-              Save
-            </Button> */}
-          </CardFooter>
+                      if (res2.errors) {
+                        return toast.error(
+                          "Something went wrong while uploading the logo",
+                          { style: { color: "red" } }
+                        );
+                      }
+                      setFieldValue("logoUrl", res2.data);
+                    }
+
+                    if (res1 != null && res2 != null) {
+                      setUploading(false);
+                      setCurrentSection(0);
+                    }
+                  }}
+                  className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
+                >
+                  Save
+                </Button>
+              </CardFooter>
+            </>
+          ) : (
+            <CardContent className="space-y-6">
+              {values.photoUrl == "" && values.logoUrl ? (
+                <p className="text-sm">
+                  Upload a photo representing the project proposal
+                </p>
+              ) : (
+                <>
+                  <p className="text-sm text-green-900">
+                    {projectDetails[5].photoUrl.name}
+                  </p>
+                  <p className="text-sm text-green-900">
+                    {projectDetails[5].logoUrl.name}
+                  </p>
+                </>
+              )}
+            </CardContent>
+          )}
         </Card>
         <div className="space-y-2">
           <p className="font-semibold">Update Status</p>
           <RadioGroup
             defaultValue="default"
             value={`${values.status}`}
-            onValueChange={(e) => setFieldValue("status", e)}
+            onValueChange={(e) => setFieldValue("status", parseInt(e))}
             className="flex"
           >
             <div
               className={cn(
-                "flex items-center space-x-2 border-2 rounded px-4 py-1",
+                "flex items-center space-x-2 border-2 rounded px-4 py-1 cursor-pointer",
                 values.status == 0 && "border-blue-600"
               )}
             >
@@ -561,14 +914,14 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
               />
               <label
                 htmlFor="r1"
-                className="text-sm font-semibold text-gray-800"
+                className="text-sm font-semibold text-gray-800 cursor-pointer"
               >
                 Proposed
               </label>
             </div>
             <div
               className={cn(
-                "flex items-center space-x-2 border-2 rounded px-4 py-1",
+                "flex items-center space-x-2 border-2 rounded px-4 py-1 cursor-pointer",
                 values.status == 1 && "border-blue-600"
               )}
             >
@@ -582,14 +935,14 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
               />
               <label
                 htmlFor="r2"
-                className="text-sm font-semibold text-gray-800"
+                className="text-sm font-semibold text-gray-800 cursor-pointer"
               >
                 Active
               </label>
             </div>
             <div
               className={cn(
-                "flex items-center space-x-2 border-2 rounded px-4 py-1",
+                "flex items-center space-x-2 border-2 rounded px-4 py-1 cursor-pointer",
                 values.status == 2 && "border-blue-600"
               )}
             >
@@ -603,7 +956,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
               />
               <label
                 htmlFor="r3"
-                className="text-sm font-semibold text-gray-800"
+                className="text-sm font-semibold text-gray-800 cursor-pointer"
               >
                 Completed
               </label>
@@ -612,14 +965,49 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
         </div>
 
         <div className="flex justify-between items-center">
+          <Dialog>
+            <DialogTrigger>
+              <Button
+                variant={"ghost"}
+                type="button"
+                className="text-red-500 font-semibold hover:text-red-500"
+              >
+                DELETE
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="p-6 space-y-5">
+              <p className="text text-center">
+                Are you sure you want to delete this Emissions Abatement
+                Project? Once the project is deleted it cannot be retreived.
+              </p>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  className="border-2 border-red-500 w-full font-semibold text-red-500 hover:bg-red-50 hover:text-red-600"
+                >
+                  No, don&apos;t delete this project
+                </Button>
+              </DialogClose>
+              <DialogClose>
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  // onClick={() => deleteMut.mutate(period.id)}
+                  className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                >
+                  Yes, continue
+                </Button>
+              </DialogClose>
+            </DialogContent>
+          </Dialog>
+
           <Button
-            variant={"ghost"}
-            type="button"
-            className="text-red-500 font-semibold hover:text-red-500"
+            type="submit"
+            onClick={() => {
+              submitForm();
+            }}
           >
-            DELETE
-          </Button>
-          <Button type="submit" disabled>
             Save & Continue
           </Button>
         </div>
@@ -628,13 +1016,13 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
           <div className="flex space-x-3 items-center">
             <UserCircle2 size={16} />
             <p className="text-xs font-medium text-slate-800">
-              Updated By: John Smith
+              Updated By: {project?.updated_by}
             </p>
           </div>
           <div className="flex space-x-3 items-center">
             <Clock3 size={18} className="text-white fill-gray-400" />
             <p className="text-xs font-medium text-slate-800">
-              Last Updated: 12/20/23
+              Last Updated: {dayjs(project?.updated_at).format("DD/MM/YY")}
             </p>
           </div>
         </div>

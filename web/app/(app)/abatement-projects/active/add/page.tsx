@@ -22,7 +22,7 @@ import { getAllSuppliers } from "@/services/supply.chain";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import _ from "lodash";
-import { CheckCircle2, ChevronLeft, Upload, X } from "lucide-react";
+import { CheckCircle2, ChevronLeft, Loader2, Upload, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -123,10 +123,7 @@ const AddActivePage = () => {
       logoUrl: "",
       status: 0,
     },
-    // validateOnChange: true,
-    // validateOnBlur: true,
-    // validationSchema: toFormikValidationSchema(validation),
-    // validate: (values) => {},
+
     onSubmit: (data) => {
       console.log("formdata", data);
       const modified = {
@@ -136,21 +133,6 @@ const AddActivePage = () => {
       mutate(modified);
     },
   });
-
-  // const { mutate: upload } = useMutation({
-  //   mutationFn: uploadImage,
-  //   onSuccess: (data) => {
-  //     if (data.errors) {
-  //       throw new Error(data.errors[0].message);
-  //     }
-
-  //     console.log("image", data.data.url);
-  //     setFieldValue()
-  //   },
-  // });
-
-  // console.log(Object.keys(projectDetails[5].photoUrl).includes("name"));
-  console.log("errors:", errors.name, err);
 
   return (
     <div className="bg-white px-8 py-6 min-h-screen">
@@ -217,7 +199,7 @@ const AddActivePage = () => {
                     )}
                     placeholder="Add project name"
                   />
-                  <p className="text-xs text-red-500 mt-0.5">{errors.name}</p>
+                  <p className="text-xs text-red-500 mt-0.5">{err.name}</p>
                 </div>
               </CardContent>
               <CardFooter className="justify-end">
@@ -229,9 +211,9 @@ const AddActivePage = () => {
 
                     const res = z
                       .object({
-                        name: z
-                          .string()
-                          .min(3, { message: "must be at least 3 characters" }),
+                        name: z.string().min(3, {
+                          message: "Project name must be at least 3 characters",
+                        }),
                       })
                       .safeParse({ name: projectDetails[1].name });
 
@@ -369,20 +351,14 @@ const AddActivePage = () => {
                   type="button"
                   variant={"outline"}
                   onClick={() => {
-                    setFieldValue("description", projectDetails[2].description);
-                    setFieldValue(
-                      "estimatedCost",
-                      projectDetails[2].estimatedCost
-                    );
-                    setFieldValue("websiteUrl", projectDetails[2].websiteUrl);
                     const res = z
                       .object({
-                        description: z
-                          .string()
-                          .min(3, { message: "minimum lenth should be 3" }),
+                        description: z.string().min(3, {
+                          message: "description minimum lenth should be 3",
+                        }),
                         estimatedCost: z
                           .number()
-                          .min(1, { message: "must be greater than 0" }),
+                          .min(1, { message: "cost must be greater than 0" }),
                         websiteUrl: z.string().optional(),
                       })
                       .safeParse({
@@ -393,11 +369,19 @@ const AddActivePage = () => {
 
                     if (res.success) {
                       setErr({});
+                      setFieldValue(
+                        "description",
+                        projectDetails[2].description
+                      );
+                      setFieldValue(
+                        "estimatedCost",
+                        projectDetails[2].estimatedCost
+                      );
+                      setFieldValue("websiteUrl", projectDetails[2].websiteUrl);
                       setCurrentSection(3);
                     } else {
-                      // console.log("error", res.error.errors);
                       res.error.errors.map((item) => {
-                        setFieldError(`${item.path[0]}`, item.message);
+                        // setFieldError(`${item.path[0]}`, item.message);
                         setErr({ ...err, [`${item.path[0]}`]: item.message });
                       });
                     }
@@ -486,16 +470,15 @@ const AddActivePage = () => {
                   type="button"
                   variant={"outline"}
                   onClick={() => {
-                    setFieldValue(
-                      "emissionReductions",
-                      projectDetails[3].emissionReductions
-                    );
-
                     const res = z
                       .object({
                         emissionReductions: z
-                          .number()
-                          .min(0, { message: "must be greater than 0" }),
+                          .number({
+                            invalid_type_error: "Emissions should be a number",
+                          })
+                          .min(1, {
+                            message: "emissions must be greater than 0",
+                          }),
                       })
                       .safeParse({
                         emissionReductions:
@@ -504,6 +487,10 @@ const AddActivePage = () => {
 
                     if (res.success) {
                       setErr({});
+                      setFieldValue(
+                        "emissionReductions",
+                        projectDetails[3].emissionReductions
+                      );
                       setCurrentSection(4);
                     } else {
                       setFieldError("emissionReductions", res.error.message);
@@ -585,7 +572,7 @@ const AddActivePage = () => {
                       </SelectContent>
                     </Select>
                     <p className="text-xs text-red-500 mt-0.5">
-                      {errors.proposedBy}
+                      {err.proposedBy}
                     </p>
                   </div>
                 </div>
@@ -611,6 +598,7 @@ const AddActivePage = () => {
                         "proposedBy",
                         projectDetails[4].organizationId.id
                       );
+                      setErr({ proposedBy: "This field is required." });
                     }
                   }}
                   className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
@@ -639,7 +627,8 @@ const AddActivePage = () => {
         <Card>
           <CardHeader className="flex-row justify-between">
             <div className="flex items-center space-x-2.5">
-              {values.photoUrl == "" || currentSection == 5 ? (
+              {(values.photoUrl == "" && values.logoUrl == "") ||
+              currentSection == 5 ? (
                 <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
                   5
                 </div>
@@ -649,7 +638,7 @@ const AddActivePage = () => {
               <p className="flex-1 font-bold">Photo and Logo</p>
             </div>
 
-            {values.photoUrl != "" && (
+            {values.photoUrl != "" && values.logoUrl && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(5)}
@@ -777,9 +766,12 @@ const AddActivePage = () => {
               </CardContent>
 
               <CardFooter className="justify-end">
+                {uploading && (
+                  <Loader2 className="text-blue-600 animate-spin" />
+                )}
                 <Button
                   type="button"
-                  // disabled={}
+                  disabled={uploading}
                   variant={"outline"}
                   onClick={async () => {
                     const photo = new FormData();
@@ -795,6 +787,7 @@ const AddActivePage = () => {
                     setUploading(true);
                     let res1 = null;
                     let res2 = null;
+
                     if (projectDetails[5].photoUrl.name != "") {
                       res1 = await uploadImage(photo);
                       if (res1.errors) {
@@ -805,6 +798,7 @@ const AddActivePage = () => {
                       }
                       setFieldValue("photoUrl", res1.data);
                     }
+
                     if (projectDetails[5].logoUrl.name != "") {
                       res2 = await uploadImage(logo);
 
@@ -817,12 +811,10 @@ const AddActivePage = () => {
                       setFieldValue("logoUrl", res2.data);
                     }
 
-                    if (res1 == null && res2 == null) {
-                      return;
+                    if (res1 != null && res2 != null) {
+                      setUploading(false);
+                      setCurrentSection(0);
                     }
-                    setUploading(false);
-
-                    setCurrentSection(0);
                   }}
                   className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
                 >
