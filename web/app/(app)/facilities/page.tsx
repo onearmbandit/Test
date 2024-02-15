@@ -11,6 +11,7 @@ import { ChevronLeft, Plus } from "lucide-react";
 import { getServerSession } from "next-auth/next";
 import Link from "next/link";
 import React from "react";
+import { redirect } from "next/navigation";
 
 const Page = async ({ searchParams }: { searchParams: any }) => {
   const session = await getServerSession(authOptions);
@@ -20,7 +21,9 @@ const Page = async ({ searchParams }: { searchParams: any }) => {
     <div className="p-6 bg-white w-full">
       {/* Nav */}
       <div className="items-center self-stretch flex gap-2.5 pl-3 py-3 max-md:flex-wrap">
-        <ChevronLeft size={24} className="text-slate-500" />
+        <Link href={"/"}>
+          <ChevronLeft size={24} className="text-slate-500" />
+        </Link>
         <nav className="text-blue-700 text-sm justify-center items-stretch grow py-1.5 max-md:max-w-full">
           <a href="/" className="text-slate-500">
             Organization Profile

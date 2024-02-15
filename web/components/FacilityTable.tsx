@@ -44,7 +44,7 @@ const FacilityTable = () => {
       <Table>
         <TableHeader className="">
           <TableRow className="hover:bg-white">
-            <TableHead>Facility Name</TableHead>
+            <TableHead className="w-1/5">Facility Name</TableHead>
             <TableHead>Scope 1</TableHead>
             <TableHead>Scope 2</TableHead>
             <TableHead>Scope 3</TableHead>
@@ -63,12 +63,13 @@ const FacilityTable = () => {
                     }`
                   )
                 }
+                className="group"
               >
-                <TableCell className="flex justify-between">
-                  {item.name}
+                <TableCell className="flex h-10 justify-between items-center">
+                  <p className="whitespace-nowrap">{item.name}</p>
                   <Button
                     size={"sm"}
-                    className="bg-white shadow-md hover:bg-black/10 gap-2 text-gray-500 text-xs font-semibold p-[0.44rem] uppercase"
+                    className="bg-white hidden group-hover:flex shadow-md hover:bg-black/10 gap-2 text-gray-500 text-xs font-semibold p-[0.44rem] uppercase"
                     type="button"
                   >
                     <ArrowUpRight size={16} />

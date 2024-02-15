@@ -23,6 +23,8 @@ import { toast } from 'sonner';
 import { downloadCsvTemplate } from '@/services/supply.chain';
 import download from 'downloadjs';
 // import { DialogPortal } from '@radix-ui/react-dialog';
+import Image from 'next/image';
+
 const UploadCsvModal = ({
   periodId,
   open,
@@ -117,16 +119,18 @@ const UploadCsvModal = ({
         setProgress(100);
         await delay(1100);
         setProgress(0);
-        queryClient.invalidateQueries();
+        queryClient.invalidateQueries({
+          queryKey: ['supplier-data', periodId],
+        });
 
         toast.success('csv file uploaded Successfully.', {
           style: { color: 'green' },
         });
         setUploadStatus('done');
       })
-      .catch(async (error) => {
-        setError(error?.response?.data?.errors[0]?.message);
-        console.log(error, 'error');
+      .catch((error) => {
+        console.log(error?.response?.data?.errors.message, 'error');
+        setError(error?.response?.data?.errors.message);
       });
   };
   return (
@@ -151,9 +155,11 @@ const UploadCsvModal = ({
                   variant='ghost'
                   onClick={() => closePopover()}
                 >
-                  <img
-                    loading='lazy'
-                    src='https://cdn.builder.io/api/v1/image/assets/TEMP/d846c09ab3f4187b63077673a631850dbed6d5d8a2e8740d3dfc3f933dba7c58?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                  <Image
+                    height={24}
+                    width={24}
+                    src={'/assets/images/close-icon.svg'}
+                    alt='close-icon'
                     className='aspect-square object-contain object-center w-6 overflow-hidden max-w-full max-md:mr-2.5'
                   />
                 </Button>
@@ -172,19 +178,23 @@ const UploadCsvModal = ({
                   {selectedFile ? (
                     <div className='bg-white-200 self-stretch flex relative cursor-pointer flex-col justify-center items-start mr-4 mt-4 py-8 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
                       <div className='flex gap-3'>
-                        <img
-                          loading='lazy'
-                          src='https://cdn.builder.io/api/v1/image/assets/TEMP/76539b99402de7bbb2229a3e1b8b794f4df08d5b2955c22676d9840e4ee3a8be?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                          className='aspect-square object-contain object-center w-16 self-stretch shrink-0'
+                        <Image
+                          src={'/assets/images/file-icon.svg'}
+                          alt='close-icon'
+                          height={64}
+                          width={64}
+                          className='h-[64px] aspect-square object-contain object-center w-[64px] overflow-hidden max-w-full max-md:mr-2.5'
                         />
                         <div className='text-gray-700 text-center text-base font-semibold leading-6 self-stretch grow shrink basis-auto my-auto'>
                           {fileName}
                         </div>
-                        <img
+                        <Image
+                          height={16}
+                          width={16}
                           onClick={clearFileInput}
-                          loading='lazy'
-                          src='https://cdn.builder.io/api/v1/image/assets/TEMP/c0d4f4b0887ea5dba16339f6f1ded722874e86814a8d420ffd2db31638831bb1?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                          className='aspect-square object-contain object-center w-4 self-stretch shrink-0 my-auto'
+                          src={'/assets/images/close-icon.svg'}
+                          alt='close-icon'
+                          className='aspect-square object-contain object-center w-6 overflow-hidden max-w-full max-md:mr-2.5'
                         />
                       </div>
                     </div>
