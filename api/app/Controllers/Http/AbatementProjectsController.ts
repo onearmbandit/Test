@@ -7,7 +7,8 @@ import AbatementProject from 'App/Models/AbatementProject'
 import Organization from 'App/Models/Organization'
 import { DateTime } from 'luxon'
 import User from 'App/Models/User'
-import { sendMail } from 'App/helpers/sendEmail'
+// import { sendMail } from 'App/helpers/sendEmail'
+import SupplierOrganization from 'App/Models/SupplierOrganization'
 
 
 
@@ -17,9 +18,16 @@ export default class AbatementProjectsController {
       const queryParams = request.qs()
 
       //:: Check organization id is same for auth user or not
-      // const userFound = await User.getUserDetails('id', auth.user?.id)
-      // let organizationIds = (await userFound.organizations).map((item) => item.id)
-      // if (queryParams.organizationId && !organizationIds.includes(queryParams.organizationId)) {
+      const userFound = await User.getUserDetails('id', auth.user?.id)
+      let organizationIds = (await userFound.organizations).map((item) => item.id)
+      let supplierOrganizationData: any = {}
+
+
+      supplierOrganizationData = await (await SupplierOrganization.query()
+        .where('supplier_organization_id', organizationIds[0])
+        .first())?.toJSON()
+
+      // if (queryParams.organizationId && !organizationIds.includes(queryParams.organizationId) && supplierOrganizationData == undefined) {
       //   return apiResponse(
       //     response,
       //     false,
@@ -29,7 +37,7 @@ export default class AbatementProjectsController {
       //   )
       // }
 
-      const allProjectData: any = await AbatementProject.getAllProjects(queryParams);
+      const allProjectData: any = await AbatementProject.getAllProjects(queryParams, supplierOrganizationData);
       const isPaginated = request.input('perPage') && request.input('perPage') !== 'all'
 
 
@@ -130,19 +138,19 @@ export default class AbatementProjectsController {
     }
   }
 
-  public async show({ response, params, bouncer }: HttpContextContract) {
+  public async show({ response, params }: HttpContextContract) {
     try {
       let projectData = await AbatementProject.getProjectDetails('id', params.id)
 
       //:: Authorization (auth user can access their project data only)
-      await bouncer.with('AbatementProjectsPolicy').authorize('show', projectData.toJSON())
+      // await bouncer.with('AbatementProjectsPolicy').authorize('show', projectData)
 
       return apiResponse(
         response,
         true,
         200,
         projectData,
-        Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess')
+        Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'),
       )
     } catch (error) {
       console.log('error', error)
@@ -166,36 +174,37 @@ export default class AbatementProjectsController {
     }
   }
 
-  public async update({ request, response, bouncer }: HttpContextContract) {
+  public async update({ request, response }: HttpContextContract) {
     try {
 
-      const projectData = await AbatementProject.getProjectDetails('id', request.param('id'))
+      const projectData = await AbatementProject.getProjectData('id', request.param('id'))
 
-      let projectPreviousStatus = projectData.toJSON().status;
+      // let projectPreviousStatus = projectData.toJSON().status;
 
       //:: Authorization (auth user can update their project data only)
-      await bouncer.with('AbatementProjectsPolicy').authorize('update', projectData.toJSON())
+      // await bouncer.with('AbatementProjectsPolicy').authorize('update', projectData.toJSON())
 
       const payload = await request.validate(UpdateAbatementProjectValidator)
 
-      const updateProject = await (await AbatementProject.updateProjectDetails(projectData, payload)).toJSON()
+      const updateProject = await AbatementProject.updateProjectDetails(projectData, payload)
 
-      const emailData = {
-        projectName: updateProject.name,
-        updatedStatus: updateProject.status == 1 ? 'active' : (updateProject.status == 0 ? 'proposed' : 'completed'),
-        previousStatus: projectPreviousStatus == 1 ? 'active' : (projectPreviousStatus == 0 ? 'proposed' : 'completed'),
-        organizationName: updateProject.organization?.company_name,
-        userName: updateProject.proposedSupplier?.name
-      }
+    //   const emailData = {
+    //     projectName: updateProject.name,
+    //     updatedStatus: updateProject.status == 1 ? 'active' : (updateProject.status == 0 ? 'proposed' : 'completed'),
+    //     previousStatus: projectPreviousStatus == 1 ? 'active' : (projectPreviousStatus == 0 ? 'proposed' : 'completed'),
+    //     organizationName: updateProject.organization?.company_name,
+    //     userName: updateProject.proposed_type == "supplier" ? updateProject.proposedSupplier?.name : updateProject.proposedOrganization?.name,
+    // // userMail:
+    //   }
 
-      if (updateProject.status !== projectPreviousStatus) {
-        await sendMail(
-          updateProject.proposedSupplier?.email,
-          `${emailData.organizationName} has updated the project status`,
-          'emails/update_project_status',
-          emailData
-        )
-      }
+    //   if (updateProject.status !== projectPreviousStatus) {
+    //     await sendMail(
+    //       updateProject.proposedSupplier?.email,
+    //       `${emailData.organizationName} has updated the project status`,
+    //       'emails/update_project_status',
+    //       emailData
+    //     )
+    //   }
 
       return apiResponse(
         response,
@@ -225,12 +234,12 @@ export default class AbatementProjectsController {
     }
   }
 
-  public async destroy({ request, response, bouncer }: HttpContextContract) {
+  public async destroy({ request, response }: HttpContextContract) {
     try {
-      const projectData = await AbatementProject.getProjectDetails('id', request.param('id'))
+      const projectData = await AbatementProject.getProjectData('id', request.param('id'))
 
       //:: Authorization (auth user can update their project data only)
-      await bouncer.with('AbatementProjectsPolicy').authorize('delete', projectData.toJSON())
+      // await bouncer.with('AbatementProjectsPolicy').authorize('delete', projectData.toJSON())
 
       if (projectData) {
         projectData.deletedAt = DateTime.local()

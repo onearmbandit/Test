@@ -48,12 +48,14 @@ export default class SupplierOrganization extends BaseModel {
   public static async getAllSuppliersWithOrganization(queryParams: ParsedQs) {
     const order = queryParams.order ? queryParams.order.toString() : 'desc'
     let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
-
+    let organizationId = queryParams.organizationId
+    ? queryParams.organizationId.toString()
+    : ''
 
     // Step 1: Iterate through the array
     const mergedArray: DataObject[] = [];
 
-    let query = this.query()
+    let query = this.query().where('organization_id',organizationId)
 
     // Step 2: Include Relationship
     if (includes.length > 0) {
