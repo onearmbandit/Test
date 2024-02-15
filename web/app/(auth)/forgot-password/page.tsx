@@ -26,7 +26,11 @@ function Page() {
   const { mutate, isPending } = useMutation({
     mutationFn: forgotPassword,
     onSuccess: (data) => {
-      toast.success(data.message, { style: { color: "green" } });
+      if (!data.status) {
+        toast.error(data.message, { style: { color: "red" } });
+      } else {
+        toast.success(data.message, { style: { color: "green" } });
+      }
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -41,6 +45,7 @@ function Page() {
     validateOnBlur: true,
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: async (data) => {
+    
       setEmail(data.email);
       mutate({ email: data.email });
     },

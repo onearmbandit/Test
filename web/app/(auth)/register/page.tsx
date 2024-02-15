@@ -520,7 +520,7 @@ const Step2 = ({
               placeholder="First Name"
               name="firstName"
               onChange={step2Form.handleChange}
-              className="bg-transparent"
+              className="bg-transparent px-0"
             />
           </div>
           <p className="text-xs text-red-500">{step2Form.errors.firstName}</p>
@@ -541,7 +541,7 @@ const Step2 = ({
             <Input
               type="text"
               id="lastNameInput"
-              className="bg-transparent"
+              className="bg-transparent px-0"
               name="lastName"
               onChange={step2Form.handleChange}
               placeholder="Last Name"
@@ -681,6 +681,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
               isDisabled={!isEdit}
               setAddress={(e: any) => {
                 step3Form.setFieldValue("companyAddress", e);
+                setEdit(false);
               }}
             />
             <p className="text-red-500 text-xs">
