@@ -7,6 +7,9 @@ import AbatementProject from 'App/Models/AbatementProject'
 import Organization from 'App/Models/Organization'
 import { DateTime } from 'luxon'
 import User from 'App/Models/User'
+import { sendMail } from 'App/helpers/sendEmail'
+
+
 
 export default class AbatementProjectsController {
   public async index({ request, response, auth }: HttpContextContract) {
@@ -14,17 +17,17 @@ export default class AbatementProjectsController {
       const queryParams = request.qs()
 
       //:: Check organization id is same for auth user or not
-      const userFound = await User.getUserDetails('id', auth.user?.id)
-      let organizationIds = (await userFound.organizations).map((item) => item.id)
-      if (queryParams.organizationId && !organizationIds.includes(queryParams.organizationId)) {
-        return apiResponse(
-          response,
-          false,
-          403,
-          {},
-          "The provided organization ID does not belongs to you."
-        )
-      }
+      // const userFound = await User.getUserDetails('id', auth.user?.id)
+      // let organizationIds = (await userFound.organizations).map((item) => item.id)
+      // if (queryParams.organizationId && !organizationIds.includes(queryParams.organizationId)) {
+      //   return apiResponse(
+      //     response,
+      //     false,
+      //     403,
+      //     {},
+      //     "The provided organization ID does not belongs to you."
+      //   )
+      // }
 
       const allProjectData: any = await AbatementProject.getAllProjects(queryParams);
       const isPaginated = request.input('perPage') && request.input('perPage') !== 'all'
@@ -168,12 +171,31 @@ export default class AbatementProjectsController {
 
       const projectData = await AbatementProject.getProjectDetails('id', request.param('id'))
 
+      let projectPreviousStatus = projectData.toJSON().status;
+
       //:: Authorization (auth user can update their project data only)
       await bouncer.with('AbatementProjectsPolicy').authorize('update', projectData.toJSON())
 
       const payload = await request.validate(UpdateAbatementProjectValidator)
 
-      const updateProject = await AbatementProject.updateProjectDetails(projectData, payload)
+      const updateProject = await (await AbatementProject.updateProjectDetails(projectData, payload)).toJSON()
+
+      const emailData = {
+        projectName: updateProject.name,
+        updatedStatus: updateProject.status == 1 ? 'active' : (updateProject.status == 0 ? 'proposed' : 'completed'),
+        previousStatus: projectPreviousStatus == 1 ? 'active' : (projectPreviousStatus == 0 ? 'proposed' : 'completed'),
+        organizationName: updateProject.organization?.company_name,
+        userName: updateProject.proposedSupplier?.name
+      }
+
+      if (updateProject.status !== projectPreviousStatus) {
+        await sendMail(
+          updateProject.proposedSupplier?.email,
+          `${emailData.organizationName} has updated the project status`,
+          'emails/update_project_status',
+          emailData
+        )
+      }
 
       return apiResponse(
         response,

@@ -4,6 +4,11 @@ import { ParsedQs } from 'qs'
 import Organization from './Organization'
 import Supplier from './Supplier'
 
+interface DataObject {
+  name: string;
+  id: string;
+  type: string;
+}
 
 export default class SupplierOrganization extends BaseModel {
   @column({ isPrimary: true })
@@ -44,42 +49,76 @@ export default class SupplierOrganization extends BaseModel {
     const order = queryParams.order ? queryParams.order.toString() : 'desc'
     let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
 
+
     // Step 1: Iterate through the array
-    const mergedArray: Array<string> = [];
+    const mergedArray: DataObject[] = [];
 
     let query = this.query()
-
-    // query = query.orderBy(sort, order)
 
     // Step 2: Include Relationship
     if (includes.length > 0) {
       includes.forEach((include: any) => query.preload(include.trim()))
     }
 
+    const uniqueValuesSet = new Set(); // To store unique values
+
     (await query).forEach((item) => {
       // Step 3: Extract relevant information from supplier and organization objects
-      const supplierName = item.supplier.name;
-      const companyName = item.organization.companyName;
+      const supplierName = item.supplier?.name;
+      const companyName = item.organization?.companyName;
 
-      // Step 3: Merge supplierName and companyName into one array
-      mergedArray.push(supplierName, companyName);
+      if (item.supplier) {
+        !uniqueValuesSet.has(supplierName) && mergedArray.push({
+          name: supplierName,
+          id: item.supplier.id.toString(),
+          type: 'supplier'
+        });
+        uniqueValuesSet.add(item.supplier.name);
+      }
+
+
+      if (item.organization) {
+        !uniqueValuesSet.has(companyName) && mergedArray.push({
+          name: companyName,
+          id: item.organization.id,
+          type: 'organization'
+        });
+        uniqueValuesSet.add(item.organization.companyName);
+      }
+    });
+    // // Function to sort the array based on order ("asc" or "desc")
+    // const sortArray = (order: 'asc' | 'desc'): Array<string> => {
+    //   return order === 'asc'
+    //     ? uniqueMergedArray.slice().sort() // Use slice to create a copy and avoid modifying the original array
+    //     : uniqueMergedArray.slice().sort((a, b) => b.localeCompare(a));
+    // };
+
+    // const sortedArray: Array<string> = sortArray(order);
+
+    const sortArray = mergedArray.sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+
+      if (order == 'asc') {
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      }
+      else {
+        if (nameA > nameB) {
+          return -1;
+        }
+        if (nameA < nameB) {
+          return 1;
+        }
+        return 0;
+      }
     });
 
-    // Step 4: Convert the merged array into a unique array
-    const uniqueMergedArray = Array.from(new Set(mergedArray));
-
-    // console.log(uniqueMergedArray);
-
-    // Function to sort the array based on order ("asc" or "desc")
-    const sortArray = (order: 'asc' | 'desc'): Array<string> => {
-      return order === 'asc'
-        ? uniqueMergedArray.slice().sort() // Use slice to create a copy and avoid modifying the original array
-        : uniqueMergedArray.slice().sort((a, b) => b.localeCompare(a));
-    };
-
-    const sortedArray: Array<string> = sortArray(order);
-
-
-    return sortedArray
+    return sortArray
   }
 }
