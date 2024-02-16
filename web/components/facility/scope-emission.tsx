@@ -208,7 +208,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
               </div>
             </div>
 
-            <div className="bg-sky-50/50 grow rounded-md p-6 space-y-6">
+            <div className="bg-sky-50/50 grow rounded-md p-6 space-y-6 h-[340px]">
               <Tabs defaultValue="scope-1">
                 <TabsList className="flex gap-3">
                   <TabsTrigger
