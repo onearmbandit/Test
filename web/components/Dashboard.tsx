@@ -15,38 +15,43 @@ import TotalEmissionsSummary from "./TotalEmissionsSummary";
 import { getFacilities } from "@/services/facility.api";
 
 const Dashboard = () => {
-  const { data, isLoading, isSuccess } = useQuery({
+  const {
+    data: userDetail,
+    isLoading,
+    isSuccess,
+  } = useQuery({
     queryKey: ["climate-commitments"],
     queryFn: () => getUser(),
   });
+  const user = userDetail?.data;
 
   const { data: facility } = useQuery({
     queryKey: ["facilities-list"],
     queryFn: () => getFacilities(),
   });
 
-  console.log(facility);
-
   return (
     <div className="items-center w-full min-h-screen shadow bg-gray-50 flex flex-col px-8 pb-8 max-md:px-5">
       <div className="justify-between self-stretch gap-5 flex flex-row w-full px-8 py-2 max-md:px-5">
         <header className="text-slate-800 text-ellipsis text-base font-semibold leading-6 my-auto">
-          {data?.data?.organizations[0]?.company_name}
+          {user?.organizations.length > 0
+            ? user?.organizations[0]?.company_name
+            : "Company Name"}
         </header>
         <div className="justify-center flex flex-col pl-16 py-6 items-end max-md:max-w-full max-md:pl-5">
           <div className="text-gray-900 text-xs font-medium leading-4 whitespace-nowrap justify-center items-stretch bg-gray-50 p-2 rounded-md">
-            {data?.data?.organizations[0]?.naics_code && (
-              <>NAICS: {data?.data?.organizations[0]?.naics_code}</>
+            {user?.organizations[0]?.naics_code && (
+              <>NAICS: {user?.organizations[0]?.naics_code}</>
             )}
           </div>
         </div>
       </div>
 
       {isSuccess &&
-        (data?.data?.organizations[0]?.naics_code ? (
+        (user?.organizations[0]?.naics_code ? (
           <>
             <ClimateCommitments
-              climateTargets={data?.data?.organizations[0]?.climate_targets}
+              climateTargets={user?.organizations[0]?.climate_targets}
             />
             {facility?.data?.length == 0 && <NeedHelp />}
             <TotalEmissionsSummary />
@@ -65,7 +70,11 @@ const Dashboard = () => {
               <div className="flex flex-col space-y-3">
                 <Link
                   // as={"p"}
-                  href={"/create-organisation"}
+                  href={
+                    isSuccess && user?.organizations.length > 0
+                      ? "/create-organisation"
+                      : "/register?step=3"
+                  }
                   className="text-white text-center text-base font-bold mt-3 leading-6 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center px-6 py-4 max-md:px-5"
                   role="button"
                 >
