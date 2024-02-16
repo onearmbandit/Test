@@ -30,12 +30,6 @@ const Dashboard = () => {
     queryFn: () => getFacilities(),
   });
 
-  console.log(
-    isSuccess && user?.organizations.length > 0
-      ? "/create-organisation"
-      : "/register?step=3"
-  );
-
   return (
     <div className="items-center w-full min-h-screen shadow bg-gray-50 flex flex-col px-8 pb-8 max-md:px-5">
       <div className="justify-between self-stretch gap-5 flex flex-row w-full px-8 py-2 max-md:px-5">

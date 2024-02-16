@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useFormik } from "formik";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addScopeEmissions,
   getReportingPeriodById,
@@ -13,8 +13,13 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { useSearchParams } from "next/navigation";
 
 const ScopeEmissions = ({ period }: { period: any }) => {
+  const searchParams = useSearchParams();
+  const facilityId = searchParams.get("facilityId");
+  const queryClient = useQueryClient();
+
   const {
     data: periodDetails,
     isLoading,
@@ -35,6 +40,10 @@ const ScopeEmissions = ({ period }: { period: any }) => {
   const addScopeMut = useMutation({
     mutationFn: addScopeEmissions,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["facility-details", facilityId],
+      });
+
       toast.success("Scope Emissions updated", { style: { color: "green" } });
       setEditMode(false);
     },

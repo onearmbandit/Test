@@ -1,25 +1,24 @@
-import { schema, rules } from '@ioc:Adonis/Core/Validator';
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class UpdateUserValidator {
-  constructor(protected ctx: HttpContextContract) {
-  }
+  constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
     firstName: schema.string.optional({}, [
       rules.minLength(2),
       rules.maxLength(30),
-      rules.alpha(),
+      // rules.alpha(),
       rules.trim(),
-      rules.escape()
+      rules.escape(),
     ]),
 
     lastName: schema.string.optional({}, [
       rules.minLength(2),
       rules.maxLength(30),
-      rules.alpha(),
+      // rules.alpha(),
       rules.trim(),
-      rules.escape()
+      rules.escape(),
     ]),
 
     // oldPassword: schema.string.optional({}, [
@@ -51,16 +50,17 @@ export default class UpdateUserValidator {
       rules.unique({ table: 'users', column: 'email' }),
       // rules.unique({ table: 'users', column: 'email' ,whereNot: { id: this.ctx.params.id } }),
     ]),
-
   })
 
   public messages = {
     'email.unique': 'Email already exists in our DB.',
-    'oldPassword.regex': 'Old password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
-    'newPassword.regex': 'New password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
-    'confirmPassword.regex': 'Confirm password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
+    'oldPassword.regex':
+      'Old password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
+    'newPassword.regex':
+      'New password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
+    'confirmPassword.regex':
+      'Confirm password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
     'confirmPassword.confirmed': 'Confirm password mismatch.',
-
 
     'firstName.required': 'First Name is required.',
     'firstName.minLength': 'First Name must be at least 2 characters long.',
@@ -69,5 +69,5 @@ export default class UpdateUserValidator {
     'lastName.required': 'Last Name is required.',
     'lastName.minLength': 'Last Name must be at least 2 characters long.',
     'lastName.maxLength': 'Last Name must not exceed 30 characters.',
-  };
+  }
 }
