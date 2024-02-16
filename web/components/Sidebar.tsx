@@ -31,8 +31,6 @@ const Sidebar = () => {
   const supplychainLinks = ['/supply-chain'];
 
   function urlContainsElements(url: string, elements: string[]) {
-    console.log(pathname, 'pathname');
-    console.log(url, 'url');
     for (const element of elements) {
       if (url.includes(element)) {
         return true;

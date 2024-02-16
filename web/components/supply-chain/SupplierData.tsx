@@ -104,7 +104,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                     <div className='text-sm leading-4 text-gray-500'>tCO2e</div>
                   </div>
                   <div className='flex flex-col items-center px-11 mt-3 py-7 bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:px-5'>
-                    <div className='text-base leading-4 text-slate-800'>
+                    <div className='text-base leading-5 text-slate-800 whitespace-pre-wrap'>
                       % of missing Product Carbon Footprint
                     </div>
                     <div className='mt-1.5 text-4xl text-teal-800 leading-[84px]'>
@@ -117,7 +117,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                 <div className='flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full'>
                   <div className='h-[342px] overflow-auto flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
                     <div className='flex gap-5 justify-between mt-1.5 font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)]'>
-                      <div className='flex-auto text-2xl leading-7 text-slate-800 '>
+                      <div className='flex-auto text-2xl leading-5 text-slate-800 '>
                         Scope 3 Emissions by Product Name
                       </div>
                       <div className='flex-auto self-start mt-3 text-sm leading-4 text-center text-gray-500'>
