@@ -14,6 +14,12 @@ import {
   getProductLines,
 } from "@/services/facility.api";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip";
 
 const ProductLines = ({ period }: { period: string }) => {
   const searchParams = useSearchParams();
@@ -143,7 +149,25 @@ const ProductLines = ({ period }: { period: string }) => {
               <div className="flex-auto my-auto">Quantity (unit)</div>
               <div className="flex gap-3 self-start pr-3">
                 <div>Functional Unit</div>
-                <HelpCircle size={16} className="text-white fill-slate-600" />
+
+                <TooltipProvider delayDuration={800}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle
+                        size={16}
+                        className="text-white fill-slate-600"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-slate-800 max-w-[246px]">
+                      <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">
+                        A functional unit in sustainability is a measure of
+                        performance that quantifies the environmental impacts of
+                        a system, used to compare different products or
+                        processes within a defined context.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </header>
 
