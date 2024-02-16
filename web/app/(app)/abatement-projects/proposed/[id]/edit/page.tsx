@@ -26,12 +26,14 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
+  deleteAbatementProject,
   editAbatementProjects,
   getActiveAbatementProjectById,
+  getSupplierOrganization,
 } from "@/services/abatement.api";
 import { uploadImage } from "@/services/auth.api";
 import { getAllSuppliers } from "@/services/supply.chain";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
 import _ from "lodash";
@@ -53,6 +55,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const router = useRouter();
   const organizationId = session?.user?.organizations[0]?.id;
@@ -63,7 +66,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
     estimatedCost?: string;
     websiteUrl?: string;
     emissionReductions?: string;
-    proposedBy?: string;
+    proposedTo?: string;
     photoUrl?: string;
     logoUrl?: string;
   }>({});
@@ -74,7 +77,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
     1: { name: "" },
     2: { description: "", estimatedCost: 0, websiteUrl: "" },
     3: { emissionReductions: 0, emissionUnit: "" },
-    4: { organizationId: { id: "", name: "" } },
+    4: { organizationId: { id: "", name: "", type: "" } },
     5: {
       photoUrl: {
         name: "",
@@ -94,9 +97,29 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
 
   const suppliers = useQuery({
     queryKey: ["supplier-list"],
-    queryFn: () => getAllSuppliers(),
+    queryFn: () =>
+      getSupplierOrganization(organizationId ? organizationId : ""),
   });
   const supplierList = suppliers.isSuccess ? suppliers.data.data : [];
+
+  const deleteProjectMut = useMutation({
+    mutationFn: deleteAbatementProject,
+    onSuccess: (data: any) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
+      toast.success("Project Deleted Successfully.", {
+        style: { color: "green" },
+      });
+
+      queryClient.invalidateQueries();
+      router.push("/abatement-projects/proposed");
+      console.log(data);
+    },
+    onError(error, variables, context) {
+      toast.error(error.message, { style: { color: "red" } });
+    },
+  });
 
   const { mutate } = useMutation({
     mutationFn: editAbatementProjects,
@@ -108,6 +131,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
       toast.success("Project Updated Successfully.", {
         style: { color: "green" },
       });
+      queryClient.invalidateQueries();
       router.push("/abatement-projects/proposed");
       console.log(data);
     },
@@ -132,7 +156,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
       websiteUrl: "",
       emissionReductions: 0,
       emissionUnit: "",
-      proposedBy: "",
+      proposedTo: "",
       photoUrl: "",
       logoUrl: "",
       status: 0,
@@ -153,7 +177,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
         websiteUrl: project.website_url,
         emissionReductions: project.emission_reductions,
         emissionUnit: project?.emission_unit,
-        proposedBy: project?.proposed_by,
+        proposedTo: project?.proposed_to,
         photoUrl: project?.photo_url,
         logoUrl: project?.logo_url,
         status: project?.status,
@@ -172,8 +196,9 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
         },
         4: {
           organizationId: {
-            id: project.proposed_by,
+            id: project.proposed_to,
             name: project.proposedSupplier?.name,
+            type: project.proposed_type,
           },
         },
         5: {
@@ -606,7 +631,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
         <Card>
           <CardHeader className="flex-row justify-between">
             <div className="flex items-center space-x-2.5">
-              {values.proposedBy == "" || currentSection == 4 ? (
+              {values.proposedTo == "" || currentSection == 4 ? (
                 <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
                   4
                 </div>
@@ -615,7 +640,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
               )}
               <p className="flex-1 font-bold">Proposed To*</p>
             </div>
-            {values.proposedBy != "" && (
+            {values.proposedTo != "" && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(4)}
@@ -657,7 +682,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       </SelectContent>
                     </Select>
                     <p className="text-xs text-red-500 mt-0.5">
-                      {err.proposedBy}
+                      {err.proposedTo}
                     </p>
                   </div>
                 </div>
@@ -668,8 +693,12 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                   variant={"outline"}
                   onClick={() => {
                     setFieldValue(
-                      "proposedBy",
+                      "proposedTo",
                       projectDetails[4].organizationId.id
+                    );
+                    setFieldValue(
+                      "proposedType",
+                      projectDetails[4].organizationId.type
                     );
 
                     // const res = z.object({ proposedBy: z.string() }).safeParse({
@@ -680,10 +709,10 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       setCurrentSection(5);
                     } else {
                       setFieldError(
-                        "proposedBy",
+                        "proposedTo",
                         projectDetails[4].organizationId.id
                       );
-                      setErr({ proposedBy: "This field is required." });
+                      setErr({ proposedTo: "This field is required." });
                     }
                   }}
                   className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
@@ -694,7 +723,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
             </>
           ) : (
             <CardContent>
-              {values.proposedBy == "" ? (
+              {values.proposedTo == "" ? (
                 <p className="text-sm">
                   Which Supplier or Organization are you proposing this project
                   to?
@@ -1028,7 +1057,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                 <Button
                   type="button"
                   variant={"outline"}
-                  // onClick={() => deleteMut.mutate(period.id)}
+                  onClick={() => deleteProjectMut.mutate(params.id)}
                   className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
                 >
                   Yes, continue

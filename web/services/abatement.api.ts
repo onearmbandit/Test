@@ -59,7 +59,7 @@ export const editAbatementProjects = ({
 
 export const getActiveAbatementProjects = (orgId: string) => {
   return fetchApi(
-    `/auth/abatement-projects?organizationId=${orgId}&include=organization,proposedSupplier&filters[status]=1`
+    `/auth/abatement-projects?organizationId=${orgId}&filters[status]=1`
   );
 };
 
@@ -69,11 +69,23 @@ export const getActiveAbatementProjectById = (projectId: string) => {
 
 export const getCompletedAbatementProjects = (orgId: string) => {
   return fetchApi(
-    `/auth/abatement-projects?organizationId=${orgId}&include=organization,proposedSupplier&filters[status]=2`
+    `/auth/abatement-projects?organizationId=${orgId}&filters[status]=2`
   );
 };
 export const getProposedAbatementProjects = (orgId: string) => {
   return fetchApi(
-    `/auth/abatement-projects?organizationId=${orgId}&include=organization,proposedSupplier&filters[status]=0`
+    `/auth/abatement-projects?organizationId=${orgId}&filters[status]=0`
   );
+};
+
+export const getSupplierOrganization = (orgId: string) => {
+  return fetchApi(
+    `/auth/supplier-organizations?order=desc&include=supplier,organization&organizationId=${orgId}`
+  );
+};
+
+export const deleteAbatementProject = (projectId: string) => {
+  return fetchApi(`/auth/abatement-projects/${projectId}`, {
+    method: "DELETE",
+  });
 };

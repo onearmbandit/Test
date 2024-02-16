@@ -18,7 +18,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { addAbatementProjects } from "@/services/abatement.api";
+import {
+  addAbatementProjects,
+  getSupplierOrganization,
+} from "@/services/abatement.api";
 import { uploadImage } from "@/services/auth.api";
 import { getAllSuppliers } from "@/services/supply.chain";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -32,7 +35,6 @@ import React, { useState } from "react";
 import Dropzone from "react-dropzone";
 import { toast } from "sonner";
 import { object, z } from "zod";
-import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const AddProposedPage = () => {
   const queryClient = useQueryClient();
@@ -46,7 +48,7 @@ const AddProposedPage = () => {
     estimatedCost?: string;
     websiteUrl?: string;
     emissionReductions?: string;
-    proposedBy?: string;
+    proposedTo?: string;
     photoUrl?: string;
     logoUrl?: string;
   }>({});
@@ -57,7 +59,7 @@ const AddProposedPage = () => {
     1: { name: "" },
     2: { description: "", estimatedCost: 0, websiteUrl: "" },
     3: { emissionReductions: 0, emissionUnit: "" },
-    4: { organizationId: { id: "", name: "" } },
+    4: { organizationId: { id: "", name: "", type: "" } },
     5: {
       photoUrl: {
         name: "",
@@ -71,7 +73,8 @@ const AddProposedPage = () => {
 
   const suppliers = useQuery({
     queryKey: ["supplier-list"],
-    queryFn: () => getAllSuppliers(),
+    queryFn: () =>
+      getSupplierOrganization(organizationId ? organizationId : ""),
   });
   const supplierList = suppliers.isSuccess ? suppliers.data.data : [];
 
@@ -86,7 +89,7 @@ const AddProposedPage = () => {
         style: { color: "green" },
       });
       queryClient.invalidateQueries();
-      router.push("/abatement-projects/active");
+      router.push("/abatement-projects/proposed");
       console.log(data);
     },
     onError(error, variables, context) {
@@ -103,7 +106,7 @@ const AddProposedPage = () => {
       .number()
       .min(0, { message: "must be greater than 0" }),
     emissionUnit: z.string().min(3, { message: "length" }),
-    proposedBy: z.string().min(3, { message: "length" }),
+    proposedTo: z.string().min(3, { message: "length" }),
     photoUrl: z.string().min(3, { message: "length" }),
     logoUrl: z.string().min(3, { message: "length" }),
     status: z.number().min(0, { message: "must be greater than 0" }),
@@ -124,7 +127,8 @@ const AddProposedPage = () => {
       websiteUrl: "",
       emissionReductions: 0,
       emissionUnit: "",
-      proposedBy: "",
+      proposedTo: "",
+      proposedType: "",
       photoUrl: "",
       logoUrl: "",
       status: 0,
@@ -145,7 +149,7 @@ const AddProposedPage = () => {
       <div className="items-center self-stretch flex gap-2.5 pl-3 py-3 max-md:flex-wrap">
         <ChevronLeft size={24} className="text-slate-500" />
         <nav className="text-blue-700 text-sm justify-center items-stretch grow py-1.5 max-md:max-w-full">
-          <a href="/abatement-projects/active" className="text-slate-500">
+          <a href="/abatement-projects/proposed" className="text-slate-500">
             Active Abatement Projects
           </a>{" "}
           &gt;{" "}
@@ -560,7 +564,7 @@ const AddProposedPage = () => {
         <Card>
           <CardHeader className="flex-row justify-between">
             <div className="flex items-center space-x-2.5">
-              {values.proposedBy == "" || currentSection == 4 ? (
+              {values.proposedTo == "" || currentSection == 4 ? (
                 <div className="bg-slate-200 h-5 w-5 rounded-full grid place-items-center text-xs">
                   4
                 </div>
@@ -569,7 +573,7 @@ const AddProposedPage = () => {
               )}
               <p className="flex-1 font-bold">Proposed To*</p>
             </div>
-            {values.proposedBy != "" && (
+            {values.proposedTo != "" && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(4)}
@@ -591,6 +595,7 @@ const AddProposedPage = () => {
                   <div>
                     <Select
                       onValueChange={(e: any) => {
+                        console.log("on value change: ", e);
                         const copy = _.cloneDeep(projectDetails);
                         copy[4].organizationId = e;
                         setProjectDetails(copy);
@@ -608,7 +613,7 @@ const AddProposedPage = () => {
                       </SelectContent>
                     </Select>
                     <p className="text-xs text-red-500 mt-0.5">
-                      {err.proposedBy}
+                      {err.proposedTo}
                     </p>
                   </div>
                 </div>
@@ -619,8 +624,12 @@ const AddProposedPage = () => {
                   variant={"outline"}
                   onClick={() => {
                     setFieldValue(
-                      "proposedBy",
+                      "proposedTo",
                       projectDetails[4].organizationId.id
+                    );
+                    setFieldValue(
+                      "proposedType",
+                      projectDetails[4].organizationId.type
                     );
 
                     // const res = z.object({ proposedBy: z.string() }).safeParse({
@@ -631,10 +640,10 @@ const AddProposedPage = () => {
                       setCurrentSection(5);
                     } else {
                       setFieldError(
-                        "proposedBy",
+                        "proposedTo",
                         projectDetails[4].organizationId.id
                       );
-                      setErr({ proposedBy: "This field is required." });
+                      setErr({ proposedTo: "This field is required." });
                     }
                   }}
                   className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
@@ -645,7 +654,7 @@ const AddProposedPage = () => {
             </>
           ) : (
             <CardContent>
-              {values.proposedBy == "" ? (
+              {values.proposedTo == "" ? (
                 <p className="text-sm">
                   Which Supplier or Organization are you proposing this project
                   to?

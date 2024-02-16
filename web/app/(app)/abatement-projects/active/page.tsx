@@ -1,7 +1,13 @@
 import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { authOptions } from "@/lib/utils";
 import { getActiveAbatementProjects } from "@/services/abatement.api";
 import { Plus } from "lucide-react";
@@ -41,7 +47,7 @@ const ActivePage = async () => {
           {/* todo: make it dynamic */}
           <p className="text-slate-800 font-semibold">
             Total Abatement to date:{" "}
-            <span className="font-normal">128,441 tCO2e / year</span>
+            <span className="font-normal">NA NA / year</span>
           </p>
 
           <div className="grid grid-cols-3 gap-6">
@@ -70,7 +76,9 @@ const ActivePage = async () => {
                         alt="briefcase icon"
                       />
                       <p className="text-xs font-medium text-slate-800">
-                        Agropalma Group
+                        {item.proposed_type == "supplier"
+                          ? `${item?.proposedSupplier?.name}`
+                          : `${item?.proposedOrganization?.name}`}
                       </p>
                     </div>
                   </Link>

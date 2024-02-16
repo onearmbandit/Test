@@ -9,6 +9,7 @@ import {
   TrendingDown,
 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
