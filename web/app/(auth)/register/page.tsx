@@ -502,6 +502,7 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
       });
     },
   });
+
   return (
     <form
       onSubmit={step2Form.handleSubmit}
@@ -565,7 +566,11 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
             <Loader2 size={30} className="text-slate-400 animate-spin" />
           )}
           <Button
-            disabled={isPending}
+            disabled={
+              Object.values(step2Form.values.firstName).length === 0 ||
+              Object.values(step2Form.values.lastName).length === 0 ||
+              isPending
+            }
             className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center px-6 py-4 max-md:px-5"
             type="submit"
           >
@@ -729,7 +734,11 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
             <Button
               size={"lg"}
               type="submit"
-              disabled={isPending}
+              disabled={
+                Object.values(step3Form.values.companyName).length === 0 ||
+                Object.values(step3Form.values.companyAddress).length === 0 ||
+                isPending
+              }
               className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap items-stretch rounded self-stretch justify-center px-6 py-4 max-md:px-5"
             >
               Continue
