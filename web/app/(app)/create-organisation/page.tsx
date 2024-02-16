@@ -578,6 +578,16 @@ const Step4 = ({ setStep }: any) => {
             >
               {currentTarget.length}/50 Characters
             </p>
+            {currentTarget.length > 0 && currentTarget.length < 3 && (
+              <p
+                className={cn(
+                  "text-slate-500 text-xs font-light",
+                  "text-red-500"
+                )}
+              >
+                Target should have atleast 2 characters
+              </p>
+            )}
           </div>
           <button
             onClick={() => {
@@ -589,7 +599,7 @@ const Step4 = ({ setStep }: any) => {
             }}
             className="text-blue-600 text-end text-sm font-bold leading-4 whitespace-nowrap mt-4 disabled:cursor-not-allowed "
             type="button"
-            disabled={currentTarget.length > 50}
+            disabled={currentTarget.length > 50 || currentTarget.length < 3}
           >
             + Add another target
           </button>
@@ -617,7 +627,11 @@ const Step4 = ({ setStep }: any) => {
                 <Loader2 size={30} className="text-slate-400 animate-spin" />
               )}
               <Button
-                disabled={currentTarget.length > 50 || isPending}
+                disabled={
+                  currentTarget.length > 50 ||
+                  currentTarget.length < 3 ||
+                  isPending
+                }
                 className="save-button text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
                 type="submit"
               >

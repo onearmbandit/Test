@@ -590,8 +590,8 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
   const validation = z.object({
     companyName: z
       .string()
-      .min(3, "Company Name should contain at least 3 characters")
-      .max(255, "Company Name should contain at most 255 characters"),
+      .min(2, "Company Name should contain at least 2 characters")
+      .max(50, "Company Name should contain at most 50 characters"),
 
     companyAddress: z
       .string()
