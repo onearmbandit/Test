@@ -76,7 +76,7 @@ export default class SuppliersController {
         fullName: `${auth.user?.firstName} ${auth.user?.lastName}`,
         organizationName: reportPeriodData.organization?.toJSON().company_name,
         email: requestData.email,
-        url: `${WEB_BASE_URL}?isSupplier=true`,   // isSupplier required to know invited user is supplier 
+        url: `${WEB_BASE_URL}/register?email=${requestData.email}&isSupplier=true`,   // isSupplier required to know invited user is supplier 
       }
 
 

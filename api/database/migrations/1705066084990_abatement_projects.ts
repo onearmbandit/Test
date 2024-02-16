@@ -20,9 +20,10 @@ export default class extends BaseSchema {
       table.text('website_url')
       table.integer('emission_reductions')
       table.string('emission_unit').comment('e.g., tCO2e, Gallons of water, Metric tonnes of waste')
-      table.uuid('proposed_by').nullable()
-        .references('suppliers.id')
-        .onDelete('CASCADE')
+      table.string('proposed_type')
+      table.uuid('proposed_to').nullable()
+        // .references('suppliers.id')
+        // .onDelete('CASCADE')
       table.text('photo_url')
       table.text('logo_url')
       // table.string('contact_email') as per requirement

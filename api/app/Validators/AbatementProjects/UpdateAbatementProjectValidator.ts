@@ -16,9 +16,9 @@ export default class CreateAbatementProjectValidator {
       rules.email(),
     ]),
     status: schema.enum.optional([0, 1, 2] as const),
-    proposedBy: schema.string.optional({ trim: true }, [
+    proposedTo: schema.string.optional({ trim: true }, [
       rules.uuid(),
-      rules.exists({ table: 'suppliers', column: 'id' }),
+      // rules.exists({ table: 'suppliers', column: 'id' }),
     ]),
   })
 
@@ -31,6 +31,6 @@ export default class CreateAbatementProjectValidator {
     'contactEmail.required': 'Email field is required.',
     'contactEmail.email': 'Please enter a valid email.',
     'status.enum': 'The value must be one of {{ options.choices }}',
-    'proposedBy.exists': 'Supplier with this ID does not exist.'
+    'proposedTo.exists': 'Supplier with this ID does not exist.'
   }
 }

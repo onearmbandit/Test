@@ -154,7 +154,7 @@ const ReportingPeriodPopup = ({
             <DatePicker
               selected={values.reportingPeriodFrom}
               customInput={
-                <Input className='w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700' />
+                <Input className='w-[6.125rem] px-2 bg-gray-50 text-sm font-light text-slate-700' />
               }
               renderMonthContent={renderMonthContent}
               showMonthYearPicker
@@ -168,7 +168,7 @@ const ReportingPeriodPopup = ({
             <DatePicker
               selected={values.reportingPeriodTo}
               customInput={
-                <Input className='w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700' />
+                <Input className='w-[6.125rem] px-2 bg-gray-50 text-sm font-light text-slate-700' />
               }
               renderMonthContent={renderMonthContent}
               disabled={period && !isDateEdit}

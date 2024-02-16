@@ -43,6 +43,44 @@ export default class FacilityProductsController {
 
       var emissionData = await FacilityEmission.getFacilityEmissionData('id', requestData.facilityEmissionId);
 
+      // Get the FacilityEmission data with loaded relationships with OrganizationFacility
+      const emissionDataWithFacility = await FacilityEmission.query()
+        .preload('OrganizationFacility')
+        .where('id', requestData.facilityEmissionId)
+        .first();
+
+      const organizationId = emissionDataWithFacility?.OrganizationFacility?.organization_id;
+      const productNames = requestData.facilityProducts.map(product => product.name);
+
+      const existingProducts = await FacilityProduct.query()
+        .where('facilityEmissionId', requestData.facilityEmissionId)
+        .whereIn('name', productNames)
+        .whereHas('FacilityEmission', (query) => {
+          if (organizationId) {
+            query.whereHas('OrganizationFacility', (orgQuery) => {
+              orgQuery.where('organization_id', organizationId);
+            });
+          }
+        })
+        .first();
+
+      if (existingProducts) {
+        return apiResponse(
+          response,
+          false,
+          422,
+          {
+            errors: [
+              {
+                field: 'name',
+                message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityProductNameAlreadyExists'),
+              },
+            ],
+          },
+          Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+        )
+      }
+
       // Assuming payload is an array of product data
       const createdFacilityProducts = await FacilityProduct.createFacilityProducts(emissionData, requestData);
 
@@ -78,6 +116,8 @@ export default class FacilityProductsController {
     try {
 
       let requestData = request.all()
+      const facilityProducts = requestData.facilityProducts || [];
+      const facilityEmissionId = requestData.facilityEmissionId;
 
       const facilityEmissionData = await FacilityEmission.getFacilityEmissionData('id', requestData.facilityEmissionId)
 
@@ -87,7 +127,51 @@ export default class FacilityProductsController {
 
       await request.validate(UpdateMultipleFacilityProductValidator);
 
-      const updateFacilityProducts = await FacilityProduct.updateOrCreateFacilityProducts(facilityEmissionData, requestData,trx)
+      // Get the FacilityEmission data with loaded relationships with OrganizationFacility
+      const emissionDataWithFacility = await FacilityEmission.query()
+        .preload('OrganizationFacility')
+        .where('id', requestData.facilityEmissionId)
+        .first();
+
+      const organizationId = emissionDataWithFacility?.OrganizationFacility?.organization_id;
+
+      // Check uniqueness for each product (updated and newly added)
+      for (const product of facilityProducts) {
+        const existingProducts = await FacilityProduct.query()
+          .where('facilityEmissionId', facilityEmissionId)
+          .where((query) => {
+            if (organizationId) {
+              query.whereHas('FacilityEmission', (orgQuery) => {
+                orgQuery.whereHas('OrganizationFacility', (orgFacQuery) => {
+                  orgFacQuery.where('organization_id', organizationId);
+                });
+              });
+            }
+            if (product.id) {
+              query.where('id', '!=', product.id); // Exclude the current product being updated
+            }
+            query.where('name', product.name); // Check if the name matches any existing product
+          })
+          .first();
+
+        if (existingProducts) {
+          return apiResponse(
+            response,
+            false,
+            422,
+            {
+              errors: [
+                {
+                  field: 'name',
+                  message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityProductNameAlreadyExists'),
+                },
+              ],
+            },
+            Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+          )
+        }
+      }
+      const updateFacilityProducts = await FacilityProduct.updateOrCreateFacilityProducts(facilityEmissionData, requestData, trx)
 
       //::commit database transaction
       await trx.commit()

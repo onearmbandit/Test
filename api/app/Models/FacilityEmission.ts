@@ -110,7 +110,9 @@ export default class FacilityEmission extends BaseModel {
       .where(field, value)
       .whereNull('deleted_at') // Exclude soft-deleted records
       .preload('FacilityEqualityAttribute')
-      .preload('FacilityProducts')
+      .preload('FacilityProducts',(query)=>{
+        query.whereNull('deleted_at')
+      })
       .preload('FacilityEqualityAttribute')
       .firstOrFail()
 
