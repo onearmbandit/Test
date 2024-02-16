@@ -104,7 +104,10 @@ const FacilityDetails = () => {
         {periodsQ.isSuccess && (
           <Tabs
             value={showNew ? "new" : currentTab!}
-            onValueChange={setCurrentTab}
+            onValueChange={(e) => {
+              setShowNew(false);
+              setCurrentTab(e);
+            }}
           >
             <TabsList className="border-b border-gray-200 w-full">
               <Carousel opts={{ align: "start" }} setApi={setApi}>

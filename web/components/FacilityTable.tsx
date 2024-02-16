@@ -39,8 +39,6 @@ const FacilityTable = () => {
     };
   });
 
-  console.log(emissions);
-
   return (
     <div className="bg-white rounded-lg w-full mt-7">
       <div className="bg-gray-100 px-4 py-3 flex justify-between items-center rounded-t-lg">
