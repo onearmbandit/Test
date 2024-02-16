@@ -35,7 +35,7 @@ const ProductLines = ({ period }: { period: string }) => {
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
-  console.log(productLines);
+  // console.log(productLines);
 
   const { mutate } = useMutation({
     mutationFn: addProductLines,
@@ -115,25 +115,26 @@ const ProductLines = ({ period }: { period: string }) => {
       facilityProducts: copy,
     };
     if (productLines.data?.FacilityProducts?.length == 0) {
-      console.log("add", formData);
+      // console.log("add", formData);
       mutate(formData);
     } else {
-      console.log("edit ", formData);
+      // console.log("edit ", formData);
       editMutate(formData);
     }
   };
 
   useEffect(() => {
     if (prodLines.isSuccess) {
-      const updated = productLines?.data?.FacilityProducts.map(
-        (item: Product) => ({
-          ...item,
-          functionalUnit: item?.functional_unit,
-        })
-      );
-      console.log({ updated });
+      const updated =
+        productLines?.data?.FacilityProducts.length > 0
+          ? productLines?.data?.FacilityProducts.map((item: Product) => ({
+              ...item,
+              functionalUnit: item?.functional_unit,
+            }))
+          : [{ name: "", quantity: 0, functionalUnit: "" }];
+      // console.log({ updated });
       setProducts(updated);
-      if (updated.length == 0) {
+      if (updated.length == 1) {
         setEdit(true);
       }
     }
@@ -272,6 +273,7 @@ const Productlist = ({
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
+
   return (
     <section
       className="flex flex-col items-stretch self-stretch pb-1.5 text-base font-light leading-6 text-teal-800 bg-white rounded-lg"
@@ -286,7 +288,7 @@ const Productlist = ({
             {item.name}
           </h1>
           <p className="w-[9.75rem]">{item.quantity} units</p>
-          <p className="grow">{item.functionalUnit}</p>
+          <p className="grow">{item.functional_unit}</p>
         </div>
       ))}
       <div className="self-end mt-5 mr-4 text-sm font-semibold leading-5 text-blue-600 max-md:mr-2.5">
