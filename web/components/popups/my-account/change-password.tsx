@@ -141,7 +141,7 @@ const ChangePassword = () => {
             )}
             placeholder="New password"
           />
-          <p className="text-xs text-red-500 mt-0.5">
+          <p className="text-xs text-red-500 !mt-[10px]">
             {updatePasswordForm.errors?.newPassword as string}
           </p>
         </div>
@@ -161,7 +161,7 @@ const ChangePassword = () => {
               )}
               placeholder="New password"
             />
-            <p className="text-xs text-red-500 mt-0.5">
+            <p className="text-xs text-red-500 mt-[10px]">
               {updatePasswordForm.errors?.confirmPassword as string}
             </p>
           </div>

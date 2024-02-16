@@ -139,7 +139,7 @@ const ProductLines = ({ period }: { period: string }) => {
       <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
         {isEdit ? (
           <div className="flex flex-col items-stretch self-stretch text-xs leading-4 bg-white rounded-lg">
-            <header className="grid grid-cols-3 gap-5  px-5 py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 max-md:flex-wrap max-md:max-w-full">
+            <header className="grid grid-cols-3 gap-5   py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 md:flex-wrap md:max-w-full">
               <div className="flex-auto">Product Name</div>
               <div className="flex-auto my-auto">Quantity (unit)</div>
               <div className="flex gap-3 self-start pr-3">
@@ -155,7 +155,7 @@ const ProductLines = ({ period }: { period: string }) => {
               >
                 <div>
                   <Input
-                    className="justify-center items-stretch text-xs p-2 max-w-[14.75rem] bg-gray-50 rounded-md"
+                    className="justify-center items-stretch text-xs p-2 max-w-[14.75rem] 2xl:max-w-[70%] bg-gray-50 rounded-md"
                     type="text"
                     id="product-name"
                     value={item.name}
@@ -172,7 +172,7 @@ const ProductLines = ({ period }: { period: string }) => {
 
                 <div>
                   <Input
-                    className="justify-center items-stretch text-xs p-2 max-w-[8.175rem] bg-gray-50 rounded-md"
+                    className="justify-center items-stretch text-xs p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
                     type="number"
                     id="quantity"
                     value={item.quantity}
@@ -188,7 +188,7 @@ const ProductLines = ({ period }: { period: string }) => {
                 </div>
                 <div className="flex space-x-3 items-center">
                   <Input
-                    className="justify-center items-stretch text-xs p-2 max-w-[8.125rem] bg-gray-50 rounded-md"
+                    className="justify-center items-stretch text-xs p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
                     type="text"
                     id="unit"
                     name="functionalUnit"
