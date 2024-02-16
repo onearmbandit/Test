@@ -244,7 +244,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                   <p className="text-lg font-bold text-slate-800 ">
                     Scope 1 Emissions
                   </p>
-                  <p className="leading-6 w-[25rem]">
+                  <p className="text-base leading-6 w-[25rem] font-[300]">
                     Scope 1 emissions are direct greenhouse gas (GHG) emissions
                     that a company generates while performing its business
                     activities. These emissions come from sources that are owned
@@ -255,7 +255,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                   <p className="text-lg font-bold text-slate-800 ">
                     Scope 2 Emissions
                   </p>
-                  <p className="leading-6 w-[25rem]">
+                  <p className="text-base leading-6 w-[25rem] font-[300]">
                     Scope 2 emissions are indirect emissions from the
                     consumption of purchased electricity, steam, heating, and
                     cooling. They result from energy produced elsewhere but used
@@ -267,7 +267,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                   <p className="text-lg font-bold text-slate-800 ">
                     Scope 3 Emissions
                   </p>
-                  <p className="leading-6 w-[25rem]">
+                  <p className="text-base leading-6 w-[25rem] font-[300]">
                     Scope 3 emissions are all indirect emissions that occur in a
                     company&apos;s value chain, including both upstream and
                     downstream emissions. These can include the production of

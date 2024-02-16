@@ -165,7 +165,7 @@ const ProductLines = ({ period }: { period: string }) => {
                     }}
                     name="product-name"
                     required
-                    placeholder="product name"
+                    placeholder="Add product name "
                   />
                 </div>
 
