@@ -118,7 +118,6 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
             id="companyEmail"
             onChange={setupOrganizationStep1Form.handleChange}
             className={cn(
-
               "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md lg:max-w-[367px] w-full",
 
               setupOrganizationStep1Form.touched.companyEmail &&
@@ -540,7 +539,7 @@ const Step4 = ({ setStep }: any) => {
             are climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
           </p>
           {targets?.length > 0 && (
-            <div className="items-stretch self-stretch rounded bg-gray-50 flex max-w-[814px] gap-x-4 gap-y-2.5 w-full mx-auto p-2.5 flex-wrap max-h-[128px] overflow-auto">
+            <div className="items-stretch self-stretch rounded  flex max-w-[814px] gap-x-4 gap-y-2.5 w-full mx-auto p-2.5 flex-wrap max-h-[128px] overflow-auto">
               {targets.map((target, index) => (
                 <div
                   key={index}
@@ -588,7 +587,6 @@ const Step4 = ({ setStep }: any) => {
                   ? "Add another climate target"
                   : "ex: Carbon neutral by 2030"
               }
-
             />
 
             <p
