@@ -4,6 +4,7 @@ import FacilityHeader from "@/components/facility/facility-header";
 import { authOptions } from "@/lib/utils";
 import { ChevronLeft } from "lucide-react";
 import { getServerSession } from "next-auth/next";
+import Link from "next/link";
 import React from "react";
 
 const Page = async ({ params }: { params: any }) => {
@@ -13,7 +14,9 @@ const Page = async ({ params }: { params: any }) => {
     <div className="p-6 bg-white w-full">
       {/* Nav */}
       <div className="items-center self-stretch flex gap-2.5 pl-3 py-3 max-md:flex-wrap">
-        <ChevronLeft size={24} className="text-slate-500" />
+        <Link href={"/"}>
+          <ChevronLeft size={24} className="text-slate-500" />
+        </Link>
         <nav className="text-blue-700 text-sm leading-5 justify-center items-stretch grow py-1.5 max-md:max-w-full">
           <a href="/" className="text-slate-500">
             Organization Profile
