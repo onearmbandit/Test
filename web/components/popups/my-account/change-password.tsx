@@ -74,7 +74,9 @@ const ChangePassword = () => {
     mutationKey: ["user-details"],
     mutationFn: updateUser,
     onSuccess: (data) => {
-      console.log("after update : ", data);
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       toast.success("Password updated successfully", {
         style: { color: "green" },
       });
