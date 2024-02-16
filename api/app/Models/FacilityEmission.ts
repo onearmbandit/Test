@@ -75,11 +75,13 @@ export default class FacilityEmission extends BaseModel {
   //::_____Relationships End_____:://
 
   public static async getAllFacilityEmissions(queryParams: ParsedQs) {
-    const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8;
-    const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
-    const order = queryParams.order ? queryParams.order.toString() : 'desc';
-    const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at';
-    const organizationFacilityId = queryParams.organization_facility_id ? queryParams.organization_facility_id.toString() : '';
+    const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8
+    const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
+    const order = queryParams.order ? queryParams.order.toString() : 'desc'
+    const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at'
+    const organizationFacilityId = queryParams.organization_facility_id
+      ? queryParams.organization_facility_id.toString()
+      : ''
 
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
 
@@ -110,7 +112,7 @@ export default class FacilityEmission extends BaseModel {
       .where(field, value)
       .whereNull('deleted_at') // Exclude soft-deleted records
       .preload('FacilityEqualityAttribute')
-      .preload('FacilityProducts',(query)=>{
+      .preload('FacilityProducts', (query) => {
         query.whereNull('deleted_at')
       })
       .preload('FacilityEqualityAttribute')
@@ -158,10 +160,12 @@ export default class FacilityEmission extends BaseModel {
       ? queryParams.reportingPeriodTo.toString()
       : ''
 
-    let query =  this.query().whereNull('deleted_at')
+    let query = this.query()
+      .whereNull('deleted_at')
       .whereHas('OrganizationFacility', (builder) => {
-        builder.where('organization_id', organizationId); // Customize this based on your condition
+        builder.where('organization_id', organizationId) // Customize this based on your condition
       })
+      .preload('OrganizationFacility')
 
     if (reportingPeriodFrom && reportingPeriodTo) {
       query = query
@@ -171,7 +175,7 @@ export default class FacilityEmission extends BaseModel {
 
     // Check if the query is empty before proceeding with calculations
     const queryResults = await query.whereHas('OrganizationFacility', (builder) => {
-      builder.where('organization_id', organizationId); 
+      builder.where('organization_id', organizationId)
     })
 
     if (queryResults.length === 0) {
@@ -181,7 +185,7 @@ export default class FacilityEmission extends BaseModel {
         totalScope2EmissionForAllFacilities: 0,
         totalScope3EmissionForAllFacilities: 0,
         totalEmission: 0,
-      };
+      }
     }
 
     const summedResults = {}
@@ -189,24 +193,24 @@ export default class FacilityEmission extends BaseModel {
     let totalScope2ForAllFacilities = 0
     let totalScope3ForAllFacilities = 0
 
-      ; (await query).forEach((item) => {
-        const facilityId = item.organizationFacilityId
+    ;(await query).forEach((item) => {
+      const facilityId = item.organizationFacilityId
 
-        summedResults[facilityId] ||= {
-          facilityName: item.OrganizationFacility?.name,
-          totalScope1: 0,
-          totalScope2: 0,
-          totalScope3: 0,
-        }
+      summedResults[facilityId] ||= {
+        facilityName: item.OrganizationFacility?.name,
+        totalScope1: 0,
+        totalScope2: 0,
+        totalScope3: 0,
+      }
 
-        summedResults[facilityId].totalScope1 += item.scope1TotalEmission
-        summedResults[facilityId].totalScope2 += item.scope2TotalEmission
-        summedResults[facilityId].totalScope3 += item.scope3TotalEmission
+      summedResults[facilityId].totalScope1 += item.scope1TotalEmission
+      summedResults[facilityId].totalScope2 += item.scope2TotalEmission
+      summedResults[facilityId].totalScope3 += item.scope3TotalEmission
 
-        totalScope1ForAllFacilities += item.scope1TotalEmission
-        totalScope2ForAllFacilities += item.scope2TotalEmission
-        totalScope3ForAllFacilities += item.scope3TotalEmission
-      })
+      totalScope1ForAllFacilities += item.scope1TotalEmission
+      totalScope2ForAllFacilities += item.scope2TotalEmission
+      totalScope3ForAllFacilities += item.scope3TotalEmission
+    })
 
     const finalResults = Object.keys(summedResults).map((facilityId) => ({
       facilityOrganizationId: facilityId,

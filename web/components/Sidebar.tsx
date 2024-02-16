@@ -275,7 +275,7 @@ const Sidebar = () => {
               </h2>
             </div>
           </DialogTrigger>
-          <DialogContent className="shadow w-full max-w-[857px] rounded-lg h-full max-h-[551px] p-0">
+          <DialogContent className="shadow w-full max-w-[857px] rounded-lg  min-h-[551px] p-0">
             <Accounts />
           </DialogContent>
         </Dialog>
