@@ -30,9 +30,9 @@ export default async function RootLayout({
   if (!session) {
     redirect("/login");
   }
-  if (session && session.user.organizations.length == 0) {
-    redirect("/register?step=3");
-  }
+  // if (session && session.user.organizations.length == 0) {
+  //   redirect("/register?step=3");
+  // }
   return (
     <html lang="en">
       <body className={cn(inter.className, "flex")}>
