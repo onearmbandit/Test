@@ -82,6 +82,14 @@ const FacilityTable = () => {
                 <TableCell>N/A</TableCell>
               </TableRow>
             ))}
+          {facilities?.data?.length == 0 && (
+            <TableRow
+              onClick={() => router.push(`/facilities?add-new=true`)}
+              className="group cursor-pointer"
+            >
+              <TableCell className="h-10">+ New Facility</TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>

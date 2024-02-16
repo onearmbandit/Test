@@ -49,6 +49,9 @@ export default function Page() {
     case "complete":
       RegistrationSteps = RegistrationComplete;
       break;
+    case "setup-done":
+      RegistrationSteps = AccountSetupComplete;
+      break;
     default:
       RegistrationSteps = Step1;
   }
@@ -163,7 +166,11 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
         throw new Error(user.errors[0].message);
       }
       setUserId(user.data?.id);
-      router.push("/register?step=2");
+      if (invitedEmail) {
+        router.push("/register?step=2&invited=true");
+      } else {
+        router.push("/register?step=2");
+      }
       // setCurrentStep(2);
     },
     onError: (err) => {
@@ -185,11 +192,9 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       if (errors.length > 0) {
         return;
       }
-      mutate(data);
+      mutate({ ...data, inviedUser: invitedEmail ? true : false });
     },
   });
-
-  console.log(errors);
 
   const handleSignIn = async (provider: string) => {
     const res = await signIn(provider, { redirect: false, callbackUrl: "/" });
@@ -444,6 +449,8 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
 
 const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isInvited = searchParams.get("invited");
 
   const validation = z.object({
     firstName: z
@@ -470,8 +477,12 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
       }
       setUserSlug(data.data.slug);
       // setCurrentStep(3);
-      console.log(data.data.slug);
-      router.push("/register?step=3");
+      console.log(isInvited == "true");
+      if (isInvited == "true") {
+        router.push("/register?step=setup-done");
+      } else {
+        router.push("/register?step=3");
+      }
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -485,7 +496,10 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      mutate({ id: userId, formdata: data });
+      mutate({
+        id: userId,
+        formdata: { ...data, invitedUser: isInvited == "true" ? true : false },
+      });
     },
   });
   return (
@@ -572,8 +586,8 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
   const validation = z.object({
     companyName: z
       .string()
-      .min(3, "Company Name should contain at least 3 characters")
-      .max(255, "Company Name should contain at most 255 characters"),
+      .min(2, "Company Name should contain at least 2 characters")
+      .max(50, "Company Name should contain at most 50 characters"),
 
     companyAddress: z
       .string()
@@ -589,9 +603,13 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
 
       setUserEmail(data.data.email);
       // setCurrentStep(4);
-      console.log("data", data.data.organizations);
+      // console.log("data", data.data.organizations);
       update({ orgs: data.data.organizations });
-      router.push("/register?step=complete");
+      if (session) {
+        router.push("/create-organisation");
+      } else {
+        router.push("/register?step=complete");
+      }
     },
     onError: (error) => {
       toast.error(error.message, { style: { color: "red" } });
@@ -737,6 +755,27 @@ const RegistrationComplete = ({ userEmail }: any) => {
       </p>
       <Link
         href={"/login"}
+        className="rounded bg-blue-600 hover:bg-blue-600/90 px-4 py-1 text-white text-sm font-semibold"
+      >
+        Back to Login
+      </Link>
+    </div>
+  );
+};
+
+const AccountSetupComplete = ({ userEmail }: any) => {
+  return (
+    <div className="items-center flex max-w-[840px] flex-col justify-center px-16 py-12 max-md:px-5">
+      <header className="flex w-full max-w-[581px] flex-col mt-5 max-md:max-w-full max-md:mb-10">
+        <h1 className="justify-center text-neutral-900 text-center text-[3.5rem] font-semibold self-stretch max-md:max-w-full max-md:text-4xl">
+          Your account has been set up
+        </h1>
+      </header>
+      <p className="mt-6 py-8 max-w-[581px] text-center">
+        Tap continue to head to the Terralab platform
+      </p>
+      <Link
+        href={"/"}
         className="rounded bg-blue-600 hover:bg-blue-600/90 px-4 py-1 text-white text-sm font-semibold"
       >
         Back to Login

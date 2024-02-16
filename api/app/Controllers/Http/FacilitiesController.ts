@@ -76,8 +76,15 @@ export default class FacilitiesController {
             response,
             false,
             422,
-            {},
-            Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityAlreadyExists')
+            {
+              errors: [
+                {
+                  field: 'name',
+                  message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityAlreadyExists'),
+                },
+              ],
+            },
+            Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
           )
         }
 
@@ -146,12 +153,20 @@ export default class FacilitiesController {
           .first();
 
         if (existingRecord) {
+
           return apiResponse(
             response,
             false,
             422,
-            {},
-            Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityAlreadyExists')
+            {
+              errors: [
+                {
+                  field: 'name',
+                  message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityAlreadyExists'),
+                },
+              ],
+            },
+            Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
           )
         }
       }

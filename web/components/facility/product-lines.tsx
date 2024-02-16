@@ -108,10 +108,11 @@ const ProductLines = ({ period }: { period: string }) => {
       facilityEmissionId: period,
       facilityProducts: copy,
     };
-    if (productLines.data.length == 0) {
+    if (productLines.data?.FacilityProducts?.length == 0) {
+      console.log("add", formData);
       mutate(formData);
     } else {
-      console.log(formData);
+      console.log("edit ", formData);
       editMutate(formData);
     }
   };
@@ -164,7 +165,7 @@ const ProductLines = ({ period }: { period: string }) => {
                     }}
                     name="product-name"
                     required
-                    placeholder="product name"
+                    placeholder="Add product name "
                   />
                 </div>
 

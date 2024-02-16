@@ -132,7 +132,7 @@ const FacilityDetails = () => {
                 <AccordionItem value="1" className="border rounded-lg p-6">
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         1
                       </div>
                       <a
@@ -159,7 +159,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         2
                       </div>
                       <a
@@ -186,7 +186,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         3
                       </div>
                       <a
@@ -198,7 +198,7 @@ const FacilityDetails = () => {
                     </section>
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
-                  <p className="text-xs font-light text-slate-700 mt-[1.88rem]">
+                  <p className="text-sm leading-5 font-light text-slate-700 mt-[1.88rem]">
                     Assign Scope 1, 2, and 3 emissions directly to specific
                     product lines within your facility by functional unit.
                   </p>
@@ -213,7 +213,7 @@ const FacilityDetails = () => {
                 <AccordionItem value="1" className="border rounded-lg p-6">
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         1
                       </div>
                       <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
@@ -223,7 +223,7 @@ const FacilityDetails = () => {
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
 
-                  <p className="text-xs font-light text-slate-700 mt-4 [&[data-state=open]]:hidden">
+                  <p className="text-sm leading-5 font-light text-slate-700 mt-4 [&[data-state=open]]:hidden">
                     Enter your reporting above. Then fill your scope 1, 2, and
                     3, emissions for this facility within the reporting period.
                   </p>
@@ -235,7 +235,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         2
                       </div>
                       <a
@@ -245,10 +245,10 @@ const FacilityDetails = () => {
                         Add product lines to your facility
                       </a>
                     </section>
-                    <ChevronDown size={16} className="text-slate-700" />
+                    <ChevronDown size={16} className="text-slate-700 " />
                   </AccordionTrigger>
 
-                  <p className="text-xs font-light text-slate-700 mt-[1.88rem]">
+                  <p className="text-sm leading-5 font-light text-slate-700 mt-[1.88rem]">
                     Add product lines associated with this facilities reporting
                     period
                   </p>
@@ -259,7 +259,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         3
                       </div>
                       <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
@@ -268,7 +268,7 @@ const FacilityDetails = () => {
                     </section>
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
-                  <p className="text-xs font-light text-slate-700 mt-[1.88rem]">
+                  <p className="text-sm leading-5 font-light text-slate-700 mt-[1.88rem]">
                     Assign Scope 1, 2, and 3 emissions directly to specific
                     product lines within your facility by functional unit.
                   </p>
