@@ -23,11 +23,11 @@ import Image from "next/image";
 
 export default function Page() {
   const searchParams = useSearchParams();
-  const [currentStep, setCurrentStep] = useState(1);
   const [userId, setUserId] = useState<string | null>(null);
   const [userSlug, setUserSlug] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isSSOregistration, setiSSOregistration] = useState(false);
+  const currentStep = searchParams.get("step");
 
   const steps: {
     [key: number]: ({ setCurrentStep, setUserId, userId }: any) => JSX.Element;
@@ -39,7 +39,7 @@ export default function Page() {
   };
 
   let RegistrationSteps = Step1;
-  switch (searchParams.get("step")) {
+  switch (currentStep) {
     case "2":
       RegistrationSteps = Step2;
       break;
@@ -53,16 +53,18 @@ export default function Page() {
       RegistrationSteps = Step1;
   }
 
+  const stepper =
+    currentStep == ("complete" || "setup-done") ? "4" : currentStep;
+
   return (
     <>
       <div
         className={`h-3 absolute top-0 left-0 z-30 rounded-r-full bg-[#598E69]`}
-        style={{ width: `${(currentStep / 4) * 100}vw` }}
+        style={{ width: `${(parseInt(stepper!) / 4) * 100}vw` }}
       />
       <div className="flex container justify-between h-screen w-full">
         <div>
           <RegistrationSteps
-            setCurrentStep={setCurrentStep}
             ssoReg={isSSOregistration}
             setSSOReg={setiSSOregistration}
             setUserId={setUserId}
@@ -117,7 +119,7 @@ export default function Page() {
   );
 }
 
-const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
+const Step1 = ({ setSSOReg, setUserId }: any) => {
   const router = useRouter();
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -440,13 +442,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   );
 };
 
-const Step2 = ({
-  setCurrentStep,
-  ssoReg,
-  setSSOReg,
-  userId,
-  setUserSlug,
-}: any) => {
+const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
   const router = useRouter();
 
   const validation = z.object({
@@ -567,7 +563,7 @@ const Step2 = ({
   );
 };
 
-const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
+const Step3 = ({ userSlug, setUserEmail }: any) => {
   const router = useRouter();
   const { data: session, update } = useSession();
   const [isEdit, setEdit] = useState(false);
