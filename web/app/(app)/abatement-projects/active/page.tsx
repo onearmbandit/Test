@@ -23,11 +23,13 @@ const ActivePage = async () => {
   );
   const projects = res?.data;
 
+  console.log("projects: ", projects);
+
   return (
     <div className="px-8">
       <Header />
       {projects.length == 0 ? (
-        <EmptyState link="/abatement-project/active" />
+        <EmptyState link="/abatement-projects/active/add" />
       ) : (
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
           <div className="flex items-center space-x-2">
@@ -42,16 +44,17 @@ const ActivePage = async () => {
             </p>
           </div>
 
+          {/* todo: make it dynamic */}
           <p className="text-slate-800 font-semibold">
             Total Abatement to date:{" "}
-            <span className="font-normal">128,441 tCO2e / year</span>
+            <span className="font-normal">NA NA / year</span>
           </p>
 
           <div className="grid grid-cols-3 gap-6">
             {projects.map((item: any) => (
               <Card key={item.id} className="px-4 py-3 space-y-4 h-fit">
                 <Link href={`/abatement-projects/active/${item.id}`}>
-                  <CardTitle className="text-xs font-medium text-slate-800">
+                  <CardTitle className="text-xs leading-5 pb-4 font-medium text-slate-800">
                     {item.name}
                   </CardTitle>
                   {item.photo_url && (
@@ -73,7 +76,9 @@ const ActivePage = async () => {
                         alt="briefcase icon"
                       />
                       <p className="text-xs font-medium text-slate-800">
-                        Agropalma Group
+                        {item.proposed_type == "supplier"
+                          ? `${item?.proposedSupplier?.name}`
+                          : `${item?.proposedOrganization?.name}`}
                       </p>
                     </div>
                   </Link>

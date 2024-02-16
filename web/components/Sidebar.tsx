@@ -102,9 +102,9 @@ const Sidebar = () => {
           href={"/"}
           className={cn(
             "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
-            urlContainsElements(pathname, organizationLinks) ||
-              (pathname == "/" &&
-                "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500")
+            (urlContainsElements(pathname, organizationLinks) ||
+              pathname == "/") &&
+              "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
           )}
         >
           <svg
