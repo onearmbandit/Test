@@ -68,8 +68,6 @@ const FacilityDetails = () => {
     }
 
     api.on("select", () => {
-      console.log(periodList[api.selectedScrollSnap()][0], "dasdf");
-
       setCurrentTab(periodList[api.selectedScrollSnap()][0].id);
     });
   }, [api]);
@@ -143,7 +141,7 @@ const FacilityDetails = () => {
                               <HoverCardPortal>
                                 <HoverCardContent
                                   align="start"
-                                  className="w-full left-0 p-0 -ml-4 z-[123233]"
+                                  className="w-full left-0 p-0 -ml-4"
                                 >
                                   <ReportingPeriod
                                     setNew={setShowNew}
