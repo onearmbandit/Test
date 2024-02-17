@@ -6,7 +6,7 @@ import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateFacilityEmissionValidator from 'App/Validators/FacilityEmission/UpdateFacilityEmissionValidator';
 import { DateTime } from 'luxon';
 import User from 'App/Models/User';
-import moment from 'moment';
+// import moment from 'moment';
 import Database from '@ioc:Adonis/Lucid/Database';
 
 export default class FacilityEmissionsController {
@@ -39,13 +39,9 @@ export default class FacilityEmissionsController {
       // validate facility details
       await request.validate(ReportingPeriodValidator)
 
-
       // Convert year-month to yyyy-mm-dd for database storage
       const reportingPeriodFrom = DateTime.fromFormat(requestData.reportingPeriodFrom, 'yyyy-MM').toISODate();
       const reportingPeriodTo = DateTime.fromFormat(requestData.reportingPeriodTo, 'yyyy-MM').toISODate();
-
-      // console.log("reportingPeriodFrom >>", reportingPeriodFrom)
-      // console.log("reportingPeriodTo >>", reportingPeriodTo)
 
       if (!reportingPeriodFrom || !reportingPeriodTo) {
         return apiResponse(
@@ -97,10 +93,6 @@ export default class FacilityEmissionsController {
       }
 
       const reportingPeriodData = await FacilityEmission.createReportingPeriod(requestData)
-
-      // Format dates before sending the response
-      reportingPeriodData.reportingPeriodFrom = reportingPeriodData.reportingPeriodFrom.toFormat('yyyy-MM');
-      reportingPeriodData.reportingPeriodTo = reportingPeriodData.reportingPeriodTo.toFormat('yyyy-MM');
 
       return apiResponse(response, true, 201, reportingPeriodData,
         Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.createFacilityReportPeriodSuccess'))
