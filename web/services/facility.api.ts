@@ -117,11 +117,11 @@ export const getEqualityData = (id: string) => {
 };
 
 export const getFacilityDashboard = ({
-  from,
-  to,
+  from = "",
+  to = "",
 }: {
-  from: string;
-  to: string;
+  from?: string;
+  to?: string;
 }) => {
   return fetchApi(
     `/auth/dashboard-data?reportingPeriodFrom=${from}&reportingPeriodTo=${to}`

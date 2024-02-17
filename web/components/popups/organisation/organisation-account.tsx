@@ -115,7 +115,7 @@ const OrganisationAccount = ({
           )
         )}
       </div> */}
-      <div className="items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-w-full flex-wrap max-h-[4rem] overflow-auto">
+      <div className="items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-w-full flex-wrap max-h-[44px] overflow-auto">
         {user?.data?.organizations[0]?.climate_targets && (
           <div className="text-slate-700 text-xs font-light leading-[18px] md:max-w-[424px] w-full">
             {user.data.organizations[0].climate_targets.map(

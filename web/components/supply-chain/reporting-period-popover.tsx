@@ -75,6 +75,9 @@ const ReportingPeriodPopup = ({
       console.log(data, 'data addd');
       toast.success('Reporting period Added.', { style: { color: 'green' } });
     },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: 'red' } });
+    },
   });
   const deleteMutation = useMutation({
     mutationFn: deleteReportingPerid,
@@ -137,7 +140,7 @@ const ReportingPeriodPopup = ({
   }, []);
   return (
     // <div className='relative'>
-    <div className='absolute left-0 z-1000 top-0'>
+    <div className='absolut left- z-1000 top'>
       <section className='flex flex-col items-stretch px-6 py-7 bg-white rounded-sm  shadow-md border border-gray-50 max-w-[456px]'>
         <form onSubmit={handleSubmit} className='flex flex-col'>
           <div className='flex gap-3 items-stretch pr-2 pl-2 text-xs font-light leading-4 text-slate-700'>

@@ -2,6 +2,7 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
   ArrowUpRight,
   ChevronDown,
@@ -11,11 +12,6 @@ import {
 } from 'lucide-react';
 import download from 'downloadjs';
 
-import axios, {
-  AxiosHeaders,
-  AxiosRequestConfig,
-  RawAxiosRequestHeaders,
-} from 'axios';
 import {
   addReportingPeriod,
   deleteMultipleSupplierProducts,
@@ -36,6 +32,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
+import { Badge } from '@/components/ui/badge';
+
 import {
   Popover,
   PopoverContent,
@@ -47,14 +45,27 @@ import dayjs from 'dayjs';
 import SupplierData from '@/components/supply-chain/SupplierData';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import {
+  authOptions,
+  convertDateToString,
+  separateIntoChunks,
+} from '@/lib/utils';
 import { exportSupplierDataCsv, getUser } from '@/services/user.api';
 import UploadCsvModal from '@/components/supply-chain/UploadCsvModal';
-import { getServerSession } from 'next-auth';
 import {
   HoverCard,
   HoverCardContent,
+  HoverCardPortal,
   HoverCardTrigger,
 } from '@radix-ui/react-hover-card';
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
 const Page = () => {
   const queryClient = useQueryClient();
@@ -64,6 +75,7 @@ const Page = () => {
   const [showCsvUploadModal, setShowCsvUploadModal] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('select');
   const [selectedProductIds, setSelectedProductIds] = useState<any>([]);
+  const [api, setApi] = useState<CarouselApi>();
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
   const userQ = useQuery({
     queryKey: ['user-data'],
@@ -78,6 +90,37 @@ const Page = () => {
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
 
+  // const { mutate, isPending } = useMutation({
+  //   mutationFn: importFile,
+  //   onSuccess: (data) => {},
+  //   onError: (err) => {
+  //     toast.error(err.message, { style: { color: "red" } });
+  //   },
+  // });
+
+  const supplierProductsQ = useQuery({
+    queryKey: ['supplier-products', currentTab!],
+    queryFn: () => getAllSuppliersByPeriodId(currentTab!),
+  });
+  const supplierProducts = supplierProductsQ.isSuccess
+    ? supplierProductsQ.data.data
+    : [];
+
+  const periodList =
+    reportingPeriods.length > 0
+      ? separateIntoChunks(reportingPeriods, showNew ? 5 : 6)
+      : [[]];
+
+  React.useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    api.on('select', () => {
+      setCurrentTab(periodList[api.selectedScrollSnap()][0].id);
+    });
+  }, [api]);
+
   useEffect(() => {
     if (periodsQ.isSuccess) {
       console.log(reportingPeriods, 'reportingPeriods');
@@ -91,7 +134,6 @@ const Page = () => {
       setCurrentTab(reportingPeriods[0]?.id);
     }
   }, [periodsQ.isSuccess, reportingPeriods]);
-  console.log(currentTab, 'curenttab');
   return (
     <>
       {showCsvUploadModal && (
@@ -128,55 +170,74 @@ const Page = () => {
           )}
           {periodsQ.isSuccess && (
             <Tabs
-              className='w-full'
               value={showNew ? 'new' : currentTab!}
               onValueChange={setCurrentTab}
             >
-              <TabsList>
-                {showNew && (
-                  <TabsTrigger value='new'>
-                    <Popover defaultOpen={true}>
-                      <PopoverTrigger> Add Reporting Period</PopoverTrigger>
-                      <PopoverContent
-                        align='start'
-                        className='w-full left-0 p-0 -ml-4'
-                      >
-                        <ReportingPeriodPopup setNew={setShowNew} />
-                      </PopoverContent>
-                    </Popover>
-                  </TabsTrigger>
-                )}
+              <TabsList className='border-b border-gray-200 w-full'>
+                <Carousel
+                  opts={{ align: 'start' }}
+                  setApi={setApi}
+                  className='w-full'
+                >
+                  <CarouselContent className='max-w-full w-full'>
+                    {periodList.map((item: any, i: number) => (
+                      <CarouselItem key={i}>
+                        {showNew && (
+                          <TabsTrigger value='new'>
+                            <Popover defaultOpen={true}>
+                              <PopoverTrigger className='text-blue-600'>
+                                Add Reporting Period
+                              </PopoverTrigger>
+                              <PopoverContent
+                                align='start'
+                                className='w-full left-0 p-0 -ml-4'
+                              >
+                                <ReportingPeriodPopup setNew={setShowNew} />
+                              </PopoverContent>
+                            </Popover>
+                          </TabsTrigger>
+                        )}
 
-                {reportingPeriods?.map((item: any, i: number) => {
-                  const reporting = `${dayjs(item.reporting_period_from).format(
-                    'MMM YYYY'
-                  )} - ${dayjs(item.reporting_period_to).format('MMM YYYY')}`;
-                  return (
-                    <TabsTrigger
-                      key={i}
-                      value={item.id}
-                      onClick={() => {
-                        //   setCurrentTab(item.id);
-                        setSelectedProductIds([]);
-                      }}
-                    >
-                      <HoverCard key={i}>
-                        <HoverCardTrigger asChild>
-                          <p>{reporting}</p>
-                        </HoverCardTrigger>
-                        <HoverCardContent
-                          align='start'
-                          className='w-full left-0 p-0 -ml-4 z-50'
-                        >
-                          <ReportingPeriodPopup
-                            setNew={setShowNew}
-                            period={item}
-                          />
-                        </HoverCardContent>
-                      </HoverCard>
-                    </TabsTrigger>
-                  );
-                })}
+                        {item.map((slide: any, i: number) => {
+                          const reporting = `${dayjs(
+                            slide.reporting_period_from
+                          ).format('MMM YYYY')} - ${dayjs(
+                            slide.reporting_period_to
+                          ).format('MMM YYYY')}`;
+                          return (
+                            <TabsTrigger
+                              key={i}
+                              value={slide.id}
+                              onClick={() => {
+                                //   //   setCurrentTab(item.id);
+                                setSelectedProductIds([]);
+                              }}
+                            >
+                              <HoverCard key={i}>
+                                <HoverCardTrigger asChild>
+                                  <p className='text-blue-600'>{reporting}</p>
+                                </HoverCardTrigger>
+                                <HoverCardPortal>
+                                  <HoverCardContent
+                                    align='start'
+                                    className='w-full left-0 p-0 -ml-4 z-50'
+                                  >
+                                    <ReportingPeriodPopup
+                                      setNew={setShowNew}
+                                      period={slide}
+                                    />
+                                  </HoverCardContent>
+                                </HoverCardPortal>
+                              </HoverCard>
+                            </TabsTrigger>
+                          );
+                        })}
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselNext variant={'ghost'} />
+                  <CarouselPrevious variant={'ghost'} />
+                </Carousel>
               </TabsList>
 
               <TabsContent value={currentTab!} className='relative'>

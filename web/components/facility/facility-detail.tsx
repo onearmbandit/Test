@@ -25,6 +25,16 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
+import { separateIntoChunks } from "@/lib/utils";
+import { HoverCardPortal } from "@radix-ui/react-hover-card";
 
 const FacilityDetails = () => {
   const searchParams = useSearchParams();
@@ -34,23 +44,34 @@ const FacilityDetails = () => {
 
   const [currentTab, setCurrentTab] = useState<string | null>(null);
   const [showNew, setShowNew] = useState(false);
+  const [api, setApi] = useState<CarouselApi>();
 
   const periodsQ = useQuery({
     queryKey: ["reporting-periods"],
     queryFn: () => getReportingPeriods(facilityId as string),
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
-  console.log(reportingPeriods);
-  // const newReporting = searchParams.get("new");
-  // const reporting = searchParams.get("reporting");
-  // const reportingPeriod = reporting != null ? reporting : reportingPeriods[0];
-  // const currentTab = newReporting == "true" ? "new" : reportingPeriod!;
 
   const getTabValue = (period: any) => {
     return `${dayjs(period.reporting_period_from).format("MMM YYYY")} - ${dayjs(
       period.reporting_period_to
     ).format("MMM YYYY")}`;
   };
+
+  const periodList =
+    reportingPeriods.length > 0
+      ? separateIntoChunks(reportingPeriods, showNew ? 5 : 6)
+      : [[]];
+
+  React.useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    api.on("select", () => {
+      setCurrentTab(periodList[api.selectedScrollSnap()][0].id);
+    });
+  }, [api]);
 
   useEffect(() => {
     if (periodsQ.isSuccess) {
@@ -84,44 +105,68 @@ const FacilityDetails = () => {
         {periodsQ.isSuccess && (
           <Tabs
             value={showNew ? "new" : currentTab!}
-            onValueChange={setCurrentTab}
+            onValueChange={(e) => {
+              setShowNew(false);
+              setCurrentTab(e);
+            }}
           >
             <TabsList className="border-b border-gray-200 w-full">
-              {showNew && (
-                <TabsTrigger value="new">
-                  <Popover defaultOpen={true}>
-                    <PopoverTrigger className="text-blue-600">
-                      Add Reporting Period
-                    </PopoverTrigger>
-                    <PopoverContent
-                      align="start"
-                      className="w-full left-0 p-0 -ml-4"
-                    >
-                      <ReportingPeriod setNew={setShowNew} />
-                    </PopoverContent>
-                  </Popover>
-                </TabsTrigger>
-              )}
-              {reportingPeriods.map((item: any, i: number) => {
-                const reporting = `${dayjs(item.reporting_period_from).format(
-                  "MMM YYYY"
-                )} - ${dayjs(item.reporting_period_to).format("MMM YYYY")}`;
-                return (
-                  <TabsTrigger key={i} value={item.id}>
-                    <HoverCard key={i}>
-                      <HoverCardTrigger asChild>
-                        <p className="text-blue-600">{reporting}</p>
-                      </HoverCardTrigger>
-                      <HoverCardContent
-                        align="start"
-                        className="w-full left-0 p-0 -ml-4"
-                      >
-                        <ReportingPeriod setNew={setShowNew} period={item} />
-                      </HoverCardContent>
-                    </HoverCard>
-                  </TabsTrigger>
-                );
-              })}
+              <Carousel
+                opts={{ align: "start" }}
+                setApi={setApi}
+                className="w-full"
+              >
+                <CarouselContent className="max-w-full">
+                  {periodList.map((item: any, i: number) => (
+                    <CarouselItem key={i}>
+                      {showNew && (
+                        <TabsTrigger value="new">
+                          <Popover defaultOpen={true}>
+                            <PopoverTrigger className="text-blue-600">
+                              Add Reporting Period
+                            </PopoverTrigger>
+                            <PopoverContent
+                              align="start"
+                              className="w-full left-0 p-0 -ml-4"
+                            >
+                              <ReportingPeriod setNew={setShowNew} />
+                            </PopoverContent>
+                          </Popover>
+                        </TabsTrigger>
+                      )}
+                      {item.map((slide: any, i: number) => {
+                        const reporting = `${dayjs(
+                          slide.reporting_period_from
+                        ).format("MMM YYYY")} - ${dayjs(
+                          slide.reporting_period_to
+                        ).format("MMM YYYY")}`;
+                        return (
+                          <TabsTrigger key={i} value={slide.id}>
+                            <HoverCard key={i}>
+                              <HoverCardTrigger asChild>
+                                <p className="text-blue-600">{reporting}</p>
+                              </HoverCardTrigger>
+                              <HoverCardPortal>
+                                <HoverCardContent
+                                  align="start"
+                                  className="w-full left-0 p-0 -ml-4"
+                                >
+                                  <ReportingPeriod
+                                    setNew={setShowNew}
+                                    period={slide}
+                                  />
+                                </HoverCardContent>
+                              </HoverCardPortal>
+                            </HoverCard>
+                          </TabsTrigger>
+                        );
+                      })}
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselNext variant={"ghost"} />
+                <CarouselPrevious variant={"ghost"} />
+              </Carousel>
             </TabsList>
             <TabsContent value={currentTab!}>
               <Accordion

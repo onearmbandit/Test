@@ -23,11 +23,11 @@ import Image from "next/image";
 
 export default function Page() {
   const searchParams = useSearchParams();
-  const [currentStep, setCurrentStep] = useState(1);
   const [userId, setUserId] = useState<string | null>(null);
   const [userSlug, setUserSlug] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isSSOregistration, setiSSOregistration] = useState(false);
+  const currentStep = searchParams.get("step");
 
   const steps: {
     [key: number]: ({ setCurrentStep, setUserId, userId }: any) => JSX.Element;
@@ -39,7 +39,7 @@ export default function Page() {
   };
 
   let RegistrationSteps = Step1;
-  switch (searchParams.get("step")) {
+  switch (currentStep) {
     case "2":
       RegistrationSteps = Step2;
       break;
@@ -56,16 +56,18 @@ export default function Page() {
       RegistrationSteps = Step1;
   }
 
+  const stepper =
+    currentStep == ("complete" || "setup-done") ? "4" : currentStep;
+
   return (
     <>
       <div
         className={`h-3 absolute top-0 left-0 z-30 rounded-r-full bg-[#598E69]`}
-        style={{ width: `${(currentStep / 4) * 100}vw` }}
+        style={{ width: `${(parseInt(stepper!) / 4) * 100}vw` }}
       />
       <div className="flex container justify-between h-screen w-full">
         <div>
           <RegistrationSteps
-            setCurrentStep={setCurrentStep}
             ssoReg={isSSOregistration}
             setSSOReg={setiSSOregistration}
             setUserId={setUserId}
@@ -120,7 +122,7 @@ export default function Page() {
   );
 }
 
-const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
+const Step1 = ({ setSSOReg, setUserId }: any) => {
   const router = useRouter();
   const { data: session } = useSession();
   const searchParams = useSearchParams();
@@ -445,13 +447,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   );
 };
 
-const Step2 = ({
-  setCurrentStep,
-  ssoReg,
-  setSSOReg,
-  userId,
-  setUserSlug,
-}: any) => {
+const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
@@ -506,6 +502,7 @@ const Step2 = ({
       });
     },
   });
+
   return (
     <form
       onSubmit={step2Form.handleSubmit}
@@ -569,7 +566,11 @@ const Step2 = ({
             <Loader2 size={30} className="text-slate-400 animate-spin" />
           )}
           <Button
-            disabled={isPending}
+            disabled={
+              Object.values(step2Form.values.firstName).length === 0 ||
+              Object.values(step2Form.values.lastName).length === 0 ||
+              isPending
+            }
             className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center px-6 py-4 max-md:px-5"
             type="submit"
           >
@@ -581,7 +582,7 @@ const Step2 = ({
   );
 };
 
-const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
+const Step3 = ({ userSlug, setUserEmail }: any) => {
   const router = useRouter();
   const { data: session, update } = useSession();
   const [isEdit, setEdit] = useState(false);
@@ -733,7 +734,11 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             <Button
               size={"lg"}
               type="submit"
-              disabled={isPending}
+              disabled={
+                Object.values(step3Form.values.companyName).length === 0 ||
+                Object.values(step3Form.values.companyAddress).length === 0 ||
+                isPending
+              }
               className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap items-stretch rounded self-stretch justify-center px-6 py-4 max-md:px-5"
             >
               Continue

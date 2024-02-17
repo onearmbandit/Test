@@ -13,7 +13,7 @@ import {
 import { ArrowUpRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { getFacilities } from "@/services/facility.api";
+import { getFacilities, getFacilityDashboard } from "@/services/facility.api";
 import { useRouter } from "next/navigation";
 
 const FacilityTable = () => {
@@ -24,7 +24,19 @@ const FacilityTable = () => {
     isSuccess,
   } = useQuery({
     queryKey: ["facilities"],
-    queryFn: () => getFacilities(),
+    queryFn: () => getFacilityDashboard({}),
+  });
+
+  const emissions = facilities?.data?.finalResults.map((item: any) => {
+    const total =
+      item.totalScope1TotalEmission +
+      item.totalScope2TotalEmission +
+      item.totalScope3TotalEmission;
+
+    return {
+      ...item,
+      emission_sum: total,
+    };
   });
 
   return (
@@ -53,20 +65,20 @@ const FacilityTable = () => {
         </TableHeader>
         <TableBody>
           {isSuccess &&
-            facilities.data.map((item: any) => (
+            emissions.map((item: any) => (
               <TableRow
                 key={item.id}
                 onClick={() =>
                   router.push(
-                    `/facilities/${item.name.split(" ").join("-")}?facilityId=${
-                      item.id
-                    }`
+                    `/facilities/${item.facilityName
+                      .split(" ")
+                      .join("-")}?facilityId=${item.facilityOrganizationId}`
                   )
                 }
                 className="group"
               >
                 <TableCell className="flex h-10 justify-between items-center">
-                  <p className="whitespace-nowrap">{item.name}</p>
+                  <p className="whitespace-nowrap">{item.facilityName}</p>
                   <Button
                     size={"sm"}
                     className="bg-white hidden group-hover:flex shadow-md hover:bg-black/10 gap-2 text-gray-500 text-xs font-semibold p-[0.44rem] uppercase"
@@ -76,13 +88,27 @@ const FacilityTable = () => {
                     view
                   </Button>
                 </TableCell>
-                <TableCell>N/A</TableCell>
-                <TableCell>N/A</TableCell>
-                <TableCell>N/A</TableCell>
-                <TableCell>N/A</TableCell>
+                <TableCell>
+                  {item?.totalScope1TotalEmission == 0
+                    ? "N/A"
+                    : item?.totalScope1TotalEmission}
+                </TableCell>
+                <TableCell>
+                  {item?.totalScope2TotalEmission == 0
+                    ? "N/A"
+                    : item?.totalScope2TotalEmission}
+                </TableCell>
+                <TableCell>
+                  {item?.totalScope3TotalEmission == 0
+                    ? "N/A"
+                    : item?.totalScope3TotalEmission}
+                </TableCell>
+                <TableCell>
+                  {item?.emission_sum == 0 ? "N/A" : item?.emission_sum}
+                </TableCell>
               </TableRow>
             ))}
-          {facilities?.data?.length == 0 && (
+          {facilities?.data?.finalResults.length == 0 && (
             <TableRow
               onClick={() => router.push(`/facilities?add-new=true`)}
               className="group cursor-pointer"

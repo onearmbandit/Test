@@ -17,7 +17,7 @@ const FacilityHeader = () => {
     queryKey: ["facilitydetails", facilityId],
     queryFn: () => facilityDetails(facilityId!),
   });
-  console.log(facility);
+
   return (
     <div className="mt-3">
       <p className="font-bold text-lg">{facility?.data?.name}</p>
