@@ -1,5 +1,5 @@
 'use client';
-import { ChevronLeft, X } from 'lucide-react';
+import { ChevronLeft, Route, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { Input } from '../ui/input';
 import AutocompleteInput from '../Autocomplete';
@@ -108,16 +108,15 @@ export const AddSupplierManualy = () => {
     mutationFn: addSupplier,
     onSuccess: (data) => {
       console.log('supplier created : ', data);
-
+      setEditProductTable(true);
       setSupplier(data);
-
       setValues({
         ...data.data,
         organizationRelationship: data.data.organization_relationship,
       });
       toast.success('New Supplier Added', { style: { color: 'green' } });
       setEditSupplier(true);
-      // router.push("/supply-chain");
+      //router.push('/supply-chain');
     },
     onError: (err: any) => {
       console.log(err);
@@ -134,7 +133,6 @@ export const AddSupplierManualy = () => {
       setValues(data.data);
       toast.success('Supplier Updated', { style: { color: 'green' } });
       setEditSupplier(true);
-      // router.push("/supply-chain");
     },
     onError: (err: any) => {
       console.log(err);
@@ -146,11 +144,10 @@ export const AddSupplierManualy = () => {
     mutationFn: createSupplierProduct,
     onSuccess: (data) => {
       console.log('supplier products created: ', data);
-
+      Route;
       toast.success('Supplier Created', { style: { color: 'green' } });
-
       setEditProductTable(false);
-      // router.push("/supply-chain");
+      router.push('/supply-chain');
     },
     onError: (err: any) => {
       console.log(err);
@@ -424,7 +421,6 @@ export const AddSupplierManualy = () => {
                   <Button
                     variant='outline'
                     type='submit'
-                    onClick={() => setEditProductTable(true)}
                     className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)] max-md:mr-2.5'
                   >
                     Save
@@ -523,22 +519,6 @@ export const AddSupplierManualy = () => {
                   <TableRow key={i} className='mt-4 border-0'>
                     <TableCell className='py-3 px-3 pl-0 pr-4'>
                       <div className='2xl:w-[303px] w-[163px]'>
-                        {/* <CreatableSelect
-                          isClearable
-                          styles={customDropdownStyles}
-                          placeholder={'Add product name'}
-                          getOptionLabel={(option) => option.name}
-                          getOptionValue={(option) => option.name}
-                          onChange={(newValue) => {
-                            const newCopy = _.cloneDeep(productList);
-                            newCopy[i].name = newValue.name;
-                            console.log(newValue, 'new value');
-                            setProductList(newCopy);
-                          }}
-                          onCreateOption={(e) => handleCreate(e, i)}
-                          options={productList}
-                          value={item}
-                        /> */}
                         <CreatableSelect
                           // isClearable
                           options={productNamelist}
@@ -550,28 +530,12 @@ export const AddSupplierManualy = () => {
                           }}
                           onCreateOption={(e) => handleCreate(e, i)}
                           value={{ label: item.name, value: item.name }}
+                          placeholder='Add product name'
                         />
                       </div>
                     </TableCell>
                     <TableCell className='pl-0 py-3 pr-4'>
                       <div className='2xl:w-[303px] w-[163px]'>
-                        {/* <CreatableSelect
-                          className='border-0'
-                          // isClearable
-                          styles={customDropdownStyles}
-                          placeholder={'Add product type'}
-                          getOptionLabel={(option) => option.type}
-                          getOptionValue={(option) => option.type}
-                          onChange={(newValue) => {
-                            const newCopy = _.cloneDeep(productList);
-                            newCopy[i].type = newValue.type;
-                            console.log(newValue, 'new value');
-                            setProductList(newCopy);
-                          }}
-                          onCreateOption={(e) => handleCreateType(e, i)}
-                          options={productList}
-                          value={item}
-                        /> */}
                         <CreatableSelect
                           // isClearable
                           options={productTypelist}
@@ -583,6 +547,7 @@ export const AddSupplierManualy = () => {
                           }}
                           onCreateOption={(e) => handleCreateType(e, i)}
                           value={{ label: item.type, value: item.type }}
+                          placeholder='Add product type'
                         />
                       </div>
                     </TableCell>
