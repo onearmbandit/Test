@@ -32,7 +32,6 @@ import {
   getSupplierOrganization,
 } from "@/services/abatement.api";
 import { uploadImage } from "@/services/auth.api";
-import { getAllSuppliers } from "@/services/supply.chain";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
@@ -112,7 +111,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
         style: { color: "green" },
       });
 
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ["proposedProjects"] });
       router.push("/abatement-projects/proposed");
       console.log(data);
     },
@@ -289,9 +288,9 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
 
                     const res = z
                       .object({
-                        name: z
-                          .string()
-                          .min(3, { message: "must be at least 3 characters" }),
+                        name: z.string().min(3, {
+                          message: "Project name must be at least 3 characters",
+                        }),
                       })
                       .safeParse({ name: projectDetails[1].name });
 
@@ -431,12 +430,18 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                   onClick={() => {
                     const res = z
                       .object({
-                        description: z.string().min(3, {
-                          message: "description minimum lenth should be 3",
-                        }),
+                        description: z
+                          .string()
+                          .min(3, {
+                            message: "Description minimum length should be 3",
+                          })
+                          .max(1000, {
+                            message:
+                              "Description maximum length should be 1000",
+                          }),
                         estimatedCost: z
                           .number()
-                          .min(1, { message: "cost must be greater than 0" }),
+                          .min(1, { message: "Cost must be greater than 0" }),
                         websiteUrl: z.string().optional(),
                       })
                       .safeParse({
@@ -584,7 +589,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                             invalid_type_error: "Emissions should be a number",
                           })
                           .min(1, {
-                            message: "emissions must be greater than 0",
+                            message: "Emissions must be greater than 0",
                           }),
                       })
                       .safeParse({
