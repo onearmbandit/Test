@@ -30,11 +30,13 @@ const FacilityEmissionsSummary = () => {
 
   const sliced = facility.isSuccess && details.facilityEmission.slice(0, 2);
   const emissions = allPeriods ? details?.facilityEmission : sliced;
-  emissions?.map((item: any) => {
-    scope1Total += item.scope1_total_emission;
-    scope2Total += item.scope2_total_emission;
-    scope3Total += item.scope3_total_emission;
-  });
+  if (facility.isSuccess) {
+    emissions?.map((item: any) => {
+      scope1Total += item.scope1_total_emission;
+      scope2Total += item.scope2_total_emission;
+      scope3Total += item.scope3_total_emission;
+    });
+  }
   return (
     <div className="items-stretch bg-[#14532D0D] w-full my-3 flex flex-col rounded-lg">
       <Accordion type="single" collapsible>

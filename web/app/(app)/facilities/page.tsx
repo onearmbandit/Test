@@ -40,7 +40,7 @@ const Page = async ({ searchParams }: { searchParams: any }) => {
           {session?.user?.organizations[0].company_name}&apos;s Facilities
         </h2>
 
-        {facilities.length > 0 && <FacilitiesList facilities={facilities} />}
+        {facilities?.length > 0 && <FacilitiesList facilities={facilities} />}
 
         {searchParams["add-new"] == "true" && (
           <AddFacility serialNo={facilities.length + 1 || 1} />
