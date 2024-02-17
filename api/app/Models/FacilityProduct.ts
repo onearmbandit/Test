@@ -79,19 +79,6 @@ export default class FacilityProduct extends BaseModel {
 
     const facilityProducts = await query.paginate(page, perPage)
 
-    // // Extracting equality_attribute values from facilityProducts
-    // const equalityAttributes = facilityProducts.all().map((product) => product.equalityAttribute)
-    // // console.log("equalityAttributes", equalityAttributes)
-
-    // // Checking if all equality_attribute values are the same
-    // const areEqual = equalityAttributes.every((value, _, array) => value === array[0])
-    // // console.log("areEqual", areEqual)
-
-    // // If all equality_attribute values are the same, extract the value
-    // const commonEqualityAttribute = areEqual ? equalityAttributes[0] : null
-
-    // facilityProducts['equalityAttributes'] = commonEqualityAttribute
-
     return facilityProducts
   }
 
