@@ -5,8 +5,6 @@ import AddMultipleFacilityProductsValidator from 'App/Validators/FacilityProduct
 import FacilityProduct from 'App/Models/FacilityProduct';
 import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProduct/UpdateMultipleFacilityProductValidator';
-import OrganizationFacility from 'App/Models/OrganizationFacility';
-// import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProduct/UpdateMultipleFacilityProductValidator';
 import Database from '@ioc:Adonis/Lucid/Database'
 import User from 'App/Models/User';
 

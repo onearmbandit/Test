@@ -6,8 +6,6 @@ import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateFacilityEmissionValidator from 'App/Validators/FacilityEmission/UpdateFacilityEmissionValidator';
 import { DateTime } from 'luxon';
 import User from 'App/Models/User';
-import dayjs from 'dayjs'
-import isBetween from 'dayjs/plugin/isBetween'
 import moment from 'moment';
 
 export default class FacilityEmissionsController {
