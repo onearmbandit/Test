@@ -127,3 +127,9 @@ export const getFacilityDashboard = ({
     `/auth/dashboard-data?reportingPeriodFrom=${from}&reportingPeriodTo=${to}`
   );
 };
+
+export const getAllFacilityProductNames = (facilityId: string) => {
+  return fetchApi(
+    `/auth/facility-product-name-list?organizationFacilityId=${facilityId}&order=asc`
+  );
+};
