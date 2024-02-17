@@ -12,34 +12,26 @@ export default class UpdateMultipleFacilityProductValidator {
 
     facilityProducts: schema.array().members(
       schema.object().members({
-        name: schema.string.optional({ trim: true }, [
-          // rules.required(),
+        name: schema.string({ trim: true }, [
           rules.minLength(3),
           rules.maxLength(255),
-          // rules.unique({
-          //   table: 'facility_products',
-          //   column: 'name',
-          //   whereNot: (builder, { field, operator, value }) => {
-          //     if (this.ctx.request.input(`facilityProducts.*.${field}`)) {
-          //       builder.whereNot(field, operator, value);
-          //     }
-          //   },
-          // }),
         ]),
-        quantity: schema.number.optional(),
-        functionalUnit: schema.string.optional({ trim: true }, [rules.maxLength(255)]),
+        quantity: schema.number(),
+        functionalUnit: schema.string({ trim: true }, [rules.maxLength(255)]),
       })
     ),
   })
 
   public messages = {
-    'name.*.required': 'Name is required.',
-    'name.*.minLength': 'Name must be at least 5 characters long.',
-    'name.*.maxLength': 'Name must not exceed 255 characters.',
-    // 'facilityProducts.*.name.unique': 'Name already exists. Please choose a different name.',
+    'facilityProducts.*.name.required': 'Product name is required.',
+    'facilityProducts.*.name.maxLength': 'Product name cannot exceed 255 characters.',
+    'facilityProducts.*.name.minLength': 'Product name must be at least 1 characters long.',
 
-    'quantity.*.number': 'Quantity must be a number.',
-    'functional_unit.*.maxLength': 'Functional unit must not exceed 255 characters.',
+    'facilityProducts.*.quantity.number': 'Quantity must be a number.',
+    'facilityProducts.*.quantity.required': 'Quantity is required.',
+
+    'facilityProducts.*.functionalUnit.required': 'Functional unit is required.',
+    'facilityProducts.*.functionalUnit.maxLength': 'Functional unit must not exceed 255 characters.',
 
   }
 }
