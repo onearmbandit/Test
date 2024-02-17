@@ -175,6 +175,7 @@ const ReportingPeriod = ({
             renderMonthContent={renderMonthContent}
             showMonthYearPicker
             dateFormat="yyyy/MM"
+            placeholderText="MM/YYYY"
             onChange={(date) => setFieldValue("reportingPeriodFrom", date)}
           />
           <label className="my-auto">End Date</label>
@@ -187,6 +188,7 @@ const ReportingPeriod = ({
             renderMonthContent={renderMonthContent}
             showMonthYearPicker
             dateFormat="yyyy/MM"
+            placeholderText="MM/YYYY"
             onChange={(date) => setFieldValue("reportingPeriodTo", date)}
           />
         </div>

@@ -78,6 +78,19 @@
   }
 }
 
+.react-datepicker__month-text--keyboard-selected {
+  background-color: #dbeafe !important;
+  color: #1d4ed8 !important;
+  font-size: 12px;
+  line-height: 16px;
+}
+.react-datepicker__month-text--today {
+  font-weight: normal !important;
+}
+.react-datepicker__month .react-datepicker__month-text {
+  font-style: normal;
+}
+
 input:-webkit-autofill {
   /* background-color: transparent !important; */
   -webkit-box-shadow: 0 0 0 1000px #f9fafb inset !important;

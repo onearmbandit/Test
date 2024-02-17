@@ -234,6 +234,7 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
             </AccordionItem>
           ))}
       </Accordion>
+      {}
       <div className="flex justify-end p-[10px]">
         <p className="text-xs font-bold text-slate-600">tCO2e/func. unit</p>
       </div>

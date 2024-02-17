@@ -9,6 +9,7 @@ import {
   TrendingDown,
 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
@@ -23,7 +24,7 @@ const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
           <a href="/abatement-projects/completed" className="text-slate-500">
             Completed Abatement Projects
           </a>{" "}
-          &gt; <span className="text-blue-600 font-bold">{params.id}</span>{" "}
+          &gt; <span className="text-blue-600 font-bold">{project?.name}</span>{" "}
         </nav>
       </div>
 
@@ -32,7 +33,7 @@ const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
           <div className="p-[10px] space-y-2">
             <p className="text-xs font-medium text-slate-800">Proposed By</p>
 
-            <Image
+            <img
               src={project.logo_url}
               height={54}
               width={223}
@@ -89,7 +90,7 @@ const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
             <Calendar size={18} className="text-slate-500" />
 
             <p className="text-xs font-medium text-slate-800">
-              Completed since: {dayjs(project.updated_at).format("dd/MM/YY")}
+              Completed since: {dayjs(project.updated_at).format("DD/MM/YY")}
             </p>
           </div>
 

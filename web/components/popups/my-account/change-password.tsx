@@ -74,7 +74,9 @@ const ChangePassword = () => {
     mutationKey: ["user-details"],
     mutationFn: updateUser,
     onSuccess: (data) => {
-      console.log("after update : ", data);
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       toast.success("Password updated successfully", {
         style: { color: "green" },
       });
@@ -141,7 +143,7 @@ const ChangePassword = () => {
             )}
             placeholder="New password"
           />
-          <p className="text-xs text-red-500 mt-0.5">
+          <p className="text-xs text-red-500 !mt-[10px]">
             {updatePasswordForm.errors?.newPassword as string}
           </p>
         </div>
@@ -161,15 +163,15 @@ const ChangePassword = () => {
               )}
               placeholder="New password"
             />
-            <p className="text-xs text-red-500 mt-0.5">
+            <p className="text-xs text-red-500 mt-[10px]">
               {updatePasswordForm.errors?.confirmPassword as string}
             </p>
           </div>
         </div>
         <div>
           <p className="text-xs text-slate-700 w-[82%]">
-            Requirements: One lowercase character, one number, one uppercase
-            character, 8 characters minimum, one special character
+            <b>Requirements:</b> One lowercase character, one number, one
+            uppercase character, 8 characters minimum, one special character
           </p>
         </div>
 
