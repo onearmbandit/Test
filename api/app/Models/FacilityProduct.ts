@@ -188,15 +188,24 @@ export default class FacilityProduct extends BaseModel {
       .where('facility_emission_id', facilityEmissionData.id)
     const totalProducts = allProducts.length
 
-    const percentagePerProduct = 100 / totalProducts
+    // const percentagePerProduct = 100 / totalProducts
+
+    let scope1EmissionPerProduct=(scope1TotalEmission/totalProducts)
+    let scope2EmissionPerProduct=(scope2TotalEmission/totalProducts)
+    let scope3EmissionPerProduct=(scope3TotalEmission/totalProducts)
 
     allProducts.map((product, _) => {
-      const scope1CarbonEmission =
-        ((percentagePerProduct / 100) * scope1TotalEmission).toFixed(2) + '%'
-      const scope2CarbonEmission =
-        ((percentagePerProduct / 100) * scope2TotalEmission).toFixed(2) + '%'
-      const scope3CarbonEmission =
-        ((percentagePerProduct / 100) * scope3TotalEmission).toFixed(2) + '%'
+      // const scope1CarbonEmission =
+      //   ((percentagePerProduct / 100) * scope1TotalEmission).toFixed(2) + '%'
+      // const scope2CarbonEmission =
+      //   ((percentagePerProduct / 100) * scope2TotalEmission).toFixed(2) + '%'
+      // const scope3CarbonEmission =
+      //   ((percentagePerProduct / 100) * scope3TotalEmission).toFixed(2) + '%'
+
+      const scope1CarbonEmission =((scope1EmissionPerProduct/scope1TotalEmission)*100).toFixed(2) + '%'
+      const scope2CarbonEmission =((scope2EmissionPerProduct/scope2TotalEmission)*100).toFixed(2) + '%'
+      const scope3CarbonEmission =((scope3EmissionPerProduct/scope3TotalEmission)*100).toFixed(2) + '%'
+
 
       // Add the calculated values to the product
       const updatedProduct = {
