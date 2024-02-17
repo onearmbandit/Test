@@ -58,7 +58,7 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
   });
   const equalEmission = equality.isSuccess ? equality.data : {};
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: editProductLines,
     onSuccess: (data) => {
       toast.success("Products Lines updated.", { style: { color: "green" } });
@@ -116,21 +116,28 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
   useEffect(() => {
     if (prodLines.isSuccess) {
       setEmissions(productLines.FacilityProducts);
+      console.log("normal ===> ", productLines.FacilityProducts);
       setIsEqual(
         productLines?.FacilityEqualityAttribute?.equality_attribute == 0
           ? false
           : true
       );
     }
-  }, [prodLines.status]);
+  }, [prodLines.status, prodLines.data]);
 
   useEffect(() => {
     if (equality.isSuccess) {
-      // console.log(equalEmission);
+      console.log("equal ===> ", equalEmission.data);
       setEmissions(equalEmission.data);
       setIsEqual(true);
     }
-  }, [equality.status]);
+  }, [equality.status, equality.data]);
+
+  useEffect(() => {
+    if (!isEqual) {
+      // setEmissions(productLines.FacilityProducts);
+    }
+  }, [isEqual]);
 
   return (
     <>
@@ -167,65 +174,89 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
                   <TableBody className="pt-3">
                     <TableRow className="hover:bg-transparent justify-evenly text-xs">
                       <TableCell className="w-1/4">{item.quantity}</TableCell>
-                      <TableCell>
-                        <Input
-                          disabled={!isEdit}
-                          value={item.scope1_carbon_emission!}
-                          className="bg-gray-50 w-1/2"
-                          onChange={(e) => {
-                            const copy = _.cloneDeep(emissions);
-                            const result = z
-                              .object({ emission: z.number() })
-                              .safeParse({ emission: Number(e.target.value) });
+                      <TableCell className="w-1/4">
+                        {isEqual ? (
+                          <p className="text-sm w-full">
+                            {item.scope1_carbon_emission}
+                          </p>
+                        ) : (
+                          <Input
+                            disabled={!isEdit || isEqual}
+                            value={`${Number(item.scope1_carbon_emission!)}`}
+                            className="bg-gray-50 w-1/2"
+                            onChange={(e) => {
+                              const copy = _.cloneDeep(emissions);
+                              const result = z
+                                .object({ emission: z.number() })
+                                .safeParse({
+                                  emission: Number(e.target.value),
+                                });
 
-                            if (!result.success) {
-                              return;
-                            }
-                            copy[i].scope1CarbonEmission = e.target.value;
-                            copy[i].scope1_carbon_emission = e.target.value;
-                            setEmissions(copy);
-                          }}
-                        />
+                              if (!result.success) {
+                                return;
+                              }
+                              copy[i].scope1CarbonEmission = e.target.value;
+                              copy[i].scope1_carbon_emission = e.target.value;
+                              setEmissions(copy);
+                            }}
+                          />
+                        )}
                       </TableCell>
-                      <TableCell>
-                        <Input
-                          disabled={!isEdit}
-                          value={item.scope2_carbon_emission!}
-                          onChange={(e) => {
-                            const copy = _.cloneDeep(emissions);
-                            const result = z
-                              .object({ emission: z.number() })
-                              .safeParse({ emission: Number(e.target.value) });
+                      <TableCell className="w-1/4">
+                        {isEqual ? (
+                          <p className="text-sm w-full">
+                            {item.scope1_carbon_emission}
+                          </p>
+                        ) : (
+                          <Input
+                            disabled={!isEdit || isEqual}
+                            value={`${Number(item.scope2_carbon_emission!)}`}
+                            onChange={(e) => {
+                              const copy = _.cloneDeep(emissions);
+                              const result = z
+                                .object({ emission: z.number() })
+                                .safeParse({
+                                  emission: Number(e.target.value),
+                                });
 
-                            if (!result.success) {
-                              return;
-                            }
-                            copy[i].scope2CarbonEmission = e.target.value;
-                            copy[i].scope2_carbon_emission = e.target.value;
-                            setEmissions(copy);
-                          }}
-                          className="bg-gray-50 w-1/2"
-                        />
+                              if (!result.success) {
+                                return;
+                              }
+                              copy[i].scope2CarbonEmission = e.target.value;
+                              copy[i].scope2_carbon_emission = e.target.value;
+                              setEmissions(copy);
+                            }}
+                            className="bg-gray-50 w-1/2"
+                          />
+                        )}
                       </TableCell>
-                      <TableCell>
-                        <Input
-                          disabled={!isEdit}
-                          value={item.scope3_carbon_emission!}
-                          onChange={(e) => {
-                            const copy = _.cloneDeep(emissions);
-                            const result = z
-                              .object({ emission: z.number() })
-                              .safeParse({ emission: Number(e.target.value) });
+                      <TableCell className="w-1/4">
+                        {isEqual ? (
+                          <p className="text-sm w-full">
+                            {item.scope1_carbon_emission}
+                          </p>
+                        ) : (
+                          <Input
+                            disabled={!isEdit || isEqual}
+                            value={`${Number(item.scope3_carbon_emission!)}`}
+                            onChange={(e) => {
+                              const copy = _.cloneDeep(emissions);
+                              const result = z
+                                .object({ emission: z.number() })
+                                .safeParse({
+                                  emission: Number(e.target.value),
+                                });
 
-                            if (!result.success) {
-                              return;
-                            }
-                            copy[i].scope3CarbonEmission = e.target.value;
-                            copy[i].scope3_carbon_emission = e.target.value;
-                            setEmissions(copy);
-                          }}
-                          className="bg-gray-50 w-1/2"
-                        />
+                              if (!result.success) {
+                                return;
+                              }
+                              copy[i].scope3CarbonEmission = e.target.value;
+                              copy[i].scope3_carbon_emission = e.target.value;
+                              setEmissions(copy);
+                            }}
+                            className="bg-gray-50 w-1/2"
+                          />
+                        )}
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -261,9 +292,11 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
               Equally attribute emissions across products
             </label>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end items-center">
+            {isPending && <Loader2 className="text-blue-600 animate-spin" />}
             <Button
               size={"sm"}
+              disabled={isPending}
               onClick={() => handleSubmit()}
               className="px-4 py-1"
             >

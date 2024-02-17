@@ -64,9 +64,7 @@ const ProductLines = ({ period }: { period: string }) => {
     }),
   };
 
-  console.log(productNames);
-
-  const { mutate } = useMutation({
+  const { mutate, isPending: addPending } = useMutation({
     mutationFn: addProductLines,
     onSuccess: (data) => {
       if (data.errors) {
@@ -90,7 +88,7 @@ const ProductLines = ({ period }: { period: string }) => {
     },
   });
 
-  const { mutate: editMutate } = useMutation({
+  const { mutate: editMutate, isPending: editPending } = useMutation({
     mutationFn: editProductLines,
     onSuccess: (data) => {
       if (data.errors) {
@@ -167,7 +165,7 @@ const ProductLines = ({ period }: { period: string }) => {
         setEdit(true);
       }
     }
-  }, [prodLines.status]);
+  }, [prodLines.status, prodLines.data]);
 
   return (
     <>
@@ -188,8 +186,8 @@ const ProductLines = ({ period }: { period: string }) => {
                         className="text-white fill-slate-600"
                       />
                     </TooltipTrigger>
-                    <TooltipContent className="bg-slate-800 max-w-[246px]">
-                      <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">
+                    <TooltipContent className="bg-slate-800 max-w-[246px] px-2.5 py-3 rounded shadow-sm">
+                      <p className=" text-xs leading-4 text-white">
                         A functional unit in sustainability is a measure of
                         performance that quantifies the environmental impacts of
                         a system, used to compare different products or
@@ -296,14 +294,20 @@ const ProductLines = ({ period }: { period: string }) => {
               >
                 + Add another product
               </Button>
-              <Button
-                type="button"
-                size={"sm"}
-                onClick={() => handleSubmit()}
-                className="self-end px-4 py-1.5 mt-8  shadow"
-              >
-                Save
-              </Button>
+              <div className="flex items-center space-x-2 mt-8">
+                {(editPending || addPending) && (
+                  <Loader2 className="text-blue-600 animate-spin" />
+                )}
+                <Button
+                  type="button"
+                  size={"sm"}
+                  disabled={editPending || addPending}
+                  onClick={() => handleSubmit()}
+                  className="self-end px-4 py-1.5 shadow"
+                >
+                  Save
+                </Button>
+              </div>
             </div>
           </div>
         </Suspense>
