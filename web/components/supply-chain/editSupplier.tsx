@@ -78,7 +78,7 @@ export const EditSupplier = () => {
   const [createableValue, setCreatableValue] = useState<any>('');
   const [createableTypeValue, setCreatableTypeValue] = useState<any>('');
   const session = useSession();
-  console.log(session, 'session');
+  // console.log(session, 'session');
   const reportingPeriodQ = useQuery({
     queryKey: ['reporting-period', reportingId],
     queryFn: () => getReportingPeriodById(reportingId ? reportingId : ''),
@@ -94,7 +94,7 @@ export const EditSupplier = () => {
   });
 
   const supplier = supplierQ.isSuccess ? supplierQ.data.data : {};
-  console.log('supplier', supplier);
+  // console.log('supplier', supplier);
   const formattedDate = dayjs(supplier.updated_at).format('DD/MM/YYYY');
 
   const relationShips = ['OWNED', 'CONTRACTED'];
@@ -112,7 +112,7 @@ export const EditSupplier = () => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      console.log('supplier created : ', data);
+      // console.log('supplier created : ', data);
 
       //   setSupplier(data);
 
@@ -136,12 +136,14 @@ export const EditSupplier = () => {
         throw new Error(data.errors[0].message);
       }
       console.log('supplier updated : ', data);
-
+      queryClient.invalidateQueries({
+        queryKey: ['supplier', supplierId],
+      });
       //   setSupplier(data);
       setValues(data.data);
       toast.success('Supplier Updated', { style: { color: 'green' } });
       setEditSupplier(true);
-      // router.push("/supply-chain");
+      // router.push('/supply-chain');
     },
     onError: (err: any) => {
       console.log(err);
@@ -155,12 +157,15 @@ export const EditSupplier = () => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      console.log('supplier products created: ', data);
+      queryClient.invalidateQueries({
+        queryKey: ['supplier', supplierId],
+      });
 
+      // console.log('supplier products created: ', data);
       toast.success('Supplier Created', { style: { color: 'green' } });
 
       setEditProductTable(false);
-      // router.push("/supply-chain");
+      router.push('/supply-chain');
     },
     onError: (err: any) => {
       console.log(err);
@@ -269,7 +274,7 @@ export const EditSupplier = () => {
     }
   }, [supplierQ.status]);
 
-  console.log(productList);
+  // console.log(productList);
 
   return (
     <div className='flex flex-col flex-start p-6 w-full'>
@@ -541,23 +546,6 @@ export const EditSupplier = () => {
                   <TableRow key={i} className='mt-4 border-0'>
                     <TableCell className='py-3 px-3 pl-0 pr-4'>
                       <div className='2xl:w-[303px] w-[163px]'>
-                        {/* <CreatableSelect
-                          // isClearable
-                          styles={customDropdownStyles}
-                          placeholder={'Add product name'}
-                          getOptionLabel={(option) => option.name}
-                          getOptionValue={(option) => option.name}
-                          onChange={(newValue) => {
-                            const newCopy = _.cloneDeep(productList);
-                            newCopy[i].name = newValue.name;
-                            newCopy[i].id = newValue.id;
-                            console.log(newValue, 'new value');
-                            setProductList(newCopy);
-                          }}
-                          onCreateOption={(e) => handleCreate(e, i)}
-                          options={productList}
-                          value={item}
-                        /> */}
                         <CreatableSelect
                           // isClearable
                           options={productNamelist}
@@ -574,24 +562,6 @@ export const EditSupplier = () => {
                     </TableCell>
                     <TableCell className='pl-0 py-3 pr-4'>
                       <div className='2xl:w-[303px] w-[163px]'>
-                        {/* <CreatableSelect
-                          className='border-0'
-                          // isClearable
-                          placeholder={'Add product type'}
-                          styles={customDropdownStyles}
-                          getOptionLabel={(option) => option.type}
-                          getOptionValue={(option) => option.type}
-                          onChange={(newValue) => {
-                            const newCopy = _.cloneDeep(productList);
-                            newCopy[i].type = newValue.type;
-                            newCopy[i].id = newValue.id;
-                            console.log(newValue, 'new value');
-                            setProductList(newCopy);
-                          }}
-                          onCreateOption={(e) => handleCreateType(e, i)}
-                          options={productList}
-                          value={item}
-                        /> */}
                         <CreatableSelect
                           // isClearable
                           options={productTypelist}
@@ -692,10 +662,6 @@ export const EditSupplier = () => {
                 };
                 console.log('edit list : ', productList);
                 addSupplierProductsMut(data);
-
-                queryClient.invalidateQueries({
-                  queryKey: ['supplier', supplierId],
-                });
               }}
               className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]'
             >

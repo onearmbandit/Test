@@ -69,9 +69,7 @@ const ReportingPeriodPopup = ({
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      queryClient.invalidateQueries({
-        queryKey: ['reporting-periods', organizationId],
-      });
+      queryClient.invalidateQueries();
       setNew(false);
 
       console.log(data, 'data addd');
@@ -84,9 +82,7 @@ const ReportingPeriodPopup = ({
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      queryClient.invalidateQueries({
-        queryKey: ['reporting-periods', organizationId],
-      });
+      queryClient.invalidateQueries();
 
       toast.success('Reporting period Deleted.', {
         style: { color: 'green' },
