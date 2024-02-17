@@ -6,6 +6,7 @@ import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateFacilityEmissionValidator from 'App/Validators/FacilityEmission/UpdateFacilityEmissionValidator';
 import { DateTime } from 'luxon';
 import User from 'App/Models/User';
+import moment from 'moment';
 
 export default class FacilityEmissionsController {
 
@@ -36,15 +37,41 @@ export default class FacilityEmissionsController {
 
       // validate facility details
       await request.validate(ReportingPeriodValidator)
+      console.log(moment(requestData.reportingPeriodFrom + '-01').format('YYYY-MM-DD'))
+      const existingRecord = await FacilityEmission.query()
+        .where('organization_facility_id', requestData.organizationFacilityId)
+        .where((query) => {
+          query
+            // .where('reportingPeriodFrom', '>=', moment(requestData.reportingPeriodFrom + '-01').format('YYYY-MM-DD'))
+            // .andWhere('reportingPeriodTo', '<=',  moment(requestData.reportingPeriodTo + '-01').format('YYYY-MM-DD'))
+            .whereBetween('reportingPeriodFrom', [moment(requestData.reportingPeriodFrom + '-01').format('YYYY-MM-DD'),
+            moment(requestData.reportingPeriodTo + '-01').format('YYYY-MM-DD')
+            ])
+          // .andWhere('reportingPeriodFrom', '=', moment(requestData.reportingPeriodFrom + '-01').format('YYYY-MM-DD'))
+          // .andWhere('reportingPeriodTo', '=', moment(requestData.reportingPeriodTo + '-01').format('YYYY-MM-DD'))
 
-      const reportingPeriodData = await FacilityEmission.createReportingPeriod(requestData)
+        })
+        .first();
+
+      if (existingRecord) {
+        console.log("in between")
+        throw new Error('Reporting period already exists for the given facility.');
+      }
+
+      // dayjs.extend(isBetween)
+
+      // if(dayjs('2010-10-20').isBetween('2010-10-19', dayjs('2010-10-25'), 'month','[]')){
+      //   console.log("in between")
+      // }
+
+      // const reportingPeriodData = await FacilityEmission.createReportingPeriod(requestData)
 
       // Format dates before sending the response
       // reportingPeriodData.reportingPeriodFrom = reportingPeriodData.reportingPeriodFrom.toFormat('yyyy-MM');
       // reportingPeriodData.reportingPeriodTo = reportingPeriodData.reportingPeriodTo.toFormat('yyyy-MM');
 
-      return apiResponse(response, true, 201, reportingPeriodData,
-        Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.createFacilityReportPeriodSuccess'))
+      // return apiResponse(response, true, 201, reportingPeriodData,
+      //   Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.createFacilityReportPeriodSuccess'))
 
     } catch (error) {
       console.log("error", error)
@@ -138,7 +165,7 @@ export default class FacilityEmissionsController {
       const userFound = await User.getUserDetails('id', auth.user?.id)
       let organizationIds = (await userFound.organizations).map((item) => item.id)
 
-      const facilityDashboardData = await FacilityEmission.getFacilitiesDashboardData(queryParams,organizationIds[0]);
+      const facilityDashboardData = await FacilityEmission.getFacilitiesDashboardData(queryParams, organizationIds[0]);
 
       return apiResponse(response, true, 200, facilityDashboardData, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.dashboardCalculationFetchSuccess'));
 

@@ -5,9 +5,8 @@ import AddMultipleFacilityProductsValidator from 'App/Validators/FacilityProduct
 import FacilityProduct from 'App/Models/FacilityProduct';
 import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProduct/UpdateMultipleFacilityProductValidator';
-import OrganizationFacility from 'App/Models/OrganizationFacility';
-// import UpdateMultipleFacilityProductValidator from 'App/Validators/FacilityProduct/UpdateMultipleFacilityProductValidator';
 import Database from '@ioc:Adonis/Lucid/Database'
+import User from 'App/Models/User';
 
 
 export default class FacilityProductsController {
@@ -213,16 +212,26 @@ export default class FacilityProductsController {
     }
   }
 
-  public async getAllProductNames({ response, request }: HttpContextContract) {
+  public async getAllProductNames({ response, request, auth }: HttpContextContract) {
     try {
       const queryParams = request.qs();
-      //:: need to check facility emission/reporting period exist or not
-      var facilityData = await OrganizationFacility.getOrganizationFacilityData('id', queryParams.organizationFacilityId ? queryParams.organizationFacilityId : '')
 
-      if (facilityData) {
-        const allProductNamesOfFacility = await FacilityProduct.getAllProductNames(queryParams)
-        return apiResponse(response, true, 200, allProductNamesOfFacility, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'), false);
+      //:: Check organization id is same for auth user or not
+      const userFound = await User.getUserDetails('id', auth.user?.id)
+      let organizationIds = (await userFound.organizations).map((item) => item.id)
+      if (queryParams.organization_id && !organizationIds.includes(queryParams.organization_id)) {
+        return apiResponse(
+          response,
+          false,
+          403,
+          {},
+          "The provided organization ID does not belongs to you."
+        )
       }
+
+      const allProductNamesOfFacility = await FacilityProduct.getAllProductNames(queryParams)
+      return apiResponse(response, true, 200, allProductNamesOfFacility, Config.get('responsemessage.COMMON_RESPONSE.getRequestSuccess'), false);
+
     }
     catch (error) {
       if (error.status === 422) {
