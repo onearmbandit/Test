@@ -7,6 +7,7 @@ import UpdateFacilityEmissionValidator from 'App/Validators/FacilityEmission/Upd
 import { DateTime } from 'luxon';
 import User from 'App/Models/User';
 import moment from 'moment';
+import Database from '@ioc:Adonis/Lucid/Database';
 
 export default class FacilityEmissionsController {
 
@@ -37,41 +38,72 @@ export default class FacilityEmissionsController {
 
       // validate facility details
       await request.validate(ReportingPeriodValidator)
-      console.log(moment(requestData.reportingPeriodFrom + '-01').format('YYYY-MM-DD'))
-      const existingRecord = await FacilityEmission.query()
-        .where('organization_facility_id', requestData.organizationFacilityId)
-        .where((query) => {
-          query
-            // .where('reportingPeriodFrom', '>=', moment(requestData.reportingPeriodFrom + '-01').format('YYYY-MM-DD'))
-            // .andWhere('reportingPeriodTo', '<=',  moment(requestData.reportingPeriodTo + '-01').format('YYYY-MM-DD'))
-            .whereBetween('reportingPeriodFrom', [moment(requestData.reportingPeriodFrom + '-01').format('YYYY-MM-DD'),
-            moment(requestData.reportingPeriodTo + '-01').format('YYYY-MM-DD')
-            ])
-          // .andWhere('reportingPeriodFrom', '=', moment(requestData.reportingPeriodFrom + '-01').format('YYYY-MM-DD'))
-          // .andWhere('reportingPeriodTo', '=', moment(requestData.reportingPeriodTo + '-01').format('YYYY-MM-DD'))
 
+
+      // Convert year-month to yyyy-mm-dd for database storage
+      const reportingPeriodFrom = DateTime.fromFormat(requestData.reportingPeriodFrom, 'yyyy-MM').toISODate();
+      const reportingPeriodTo = DateTime.fromFormat(requestData.reportingPeriodTo, 'yyyy-MM').toISODate();
+
+      // console.log("reportingPeriodFrom >>", reportingPeriodFrom)
+      // console.log("reportingPeriodTo >>", reportingPeriodTo)
+
+      if (!reportingPeriodFrom || !reportingPeriodTo) {
+        return apiResponse(
+          response,
+          false,
+          422,
+          {
+            errors: [
+              {
+                field: 'reportingPeriodFrom',
+                message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityReportingPeriodInvalidFormat'),
+              },
+            ],
+          },
+          Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+        )
+      }
+
+      // Check for date overlap using raw SQL expressions
+      const overlappingPeriods = await Database.query()
+        .from('facility_emissions')
+        .where('organization_facility_id', requestData.organizationFacilityId)
+        .where(function (query) {
+          query
+            .whereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
+              reportingPeriodFrom,
+            ])
+            .orWhereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
+              reportingPeriodTo,
+            ]);
         })
         .first();
 
-      if (existingRecord) {
-        console.log("in between")
-        throw new Error('Reporting period already exists for the given facility.');
+      if (overlappingPeriods) {
+        return apiResponse(
+          response,
+          false,
+          422,
+          {
+            errors: [
+              {
+                field: 'reportingPeriodFrom',
+                message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityReportingPeriodOverlaps'),
+              },
+            ],
+          },
+          Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+        )
       }
 
-      // dayjs.extend(isBetween)
-
-      // if(dayjs('2010-10-20').isBetween('2010-10-19', dayjs('2010-10-25'), 'month','[]')){
-      //   console.log("in between")
-      // }
-
-      // const reportingPeriodData = await FacilityEmission.createReportingPeriod(requestData)
+      const reportingPeriodData = await FacilityEmission.createReportingPeriod(requestData)
 
       // Format dates before sending the response
-      // reportingPeriodData.reportingPeriodFrom = reportingPeriodData.reportingPeriodFrom.toFormat('yyyy-MM');
-      // reportingPeriodData.reportingPeriodTo = reportingPeriodData.reportingPeriodTo.toFormat('yyyy-MM');
+      reportingPeriodData.reportingPeriodFrom = reportingPeriodData.reportingPeriodFrom.toFormat('yyyy-MM');
+      reportingPeriodData.reportingPeriodTo = reportingPeriodData.reportingPeriodTo.toFormat('yyyy-MM');
 
-      // return apiResponse(response, true, 201, reportingPeriodData,
-      //   Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.createFacilityReportPeriodSuccess'))
+      return apiResponse(response, true, 201, reportingPeriodData,
+        Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.createFacilityReportPeriodSuccess'))
 
     } catch (error) {
       console.log("error", error)
