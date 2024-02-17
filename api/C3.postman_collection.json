@@ -783,10 +783,20 @@
 				{
 					"name": "Get Organization details",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/auth/organization/1",
+							"raw": "{{base_url}}/api/v1/auth/organization/ad293672-f5c4-4ed3-8a49-7f98b0be147e",
 							"host": [
 								"{{base_url}}"
 							],
@@ -795,7 +805,7 @@
 								"v1",
 								"auth",
 								"organization",
-								"1"
+								"ad293672-f5c4-4ed3-8a49-7f98b0be147e"
 							]
 						}
 					},
@@ -4539,7 +4549,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/api/v1/auth/facility-product-name-list?organizationFacilityId=cb86f994-5c37-4361-b691-3fab40554f92&order=asc",
+									"raw": "{{base_url}}/api/v1/auth/facility-product-name-list?order=asc&organizationId=ad293672-f5c4-4ed3-8a49-7f98b0be147e",
 									"host": [
 										"{{base_url}}"
 									],
@@ -4551,13 +4561,13 @@
 									],
 									"query": [
 										{
-											"key": "organizationFacilityId",
-											"value": "cb86f994-5c37-4361-b691-3fab40554f92"
-										},
-										{
 											"key": "order",
 											"value": "asc",
 											"description": "'asc','desc'"
+										},
+										{
+											"key": "organizationId",
+											"value": "ad293672-f5c4-4ed3-8a49-7f98b0be147e"
 										}
 									]
 								}
