@@ -1,14 +1,14 @@
-'use client';
-import React, { useEffect, useState } from 'react';
+"use client";
+import React, { useEffect, useState } from "react";
 
-import { Input } from './ui/input';
+import { Input } from "./ui/input";
 
 import usePlacesAutocomplete, {
   getDetails,
   getGeocode,
   getLatLng,
-} from 'use-places-autocomplete';
-import { formatAddress } from '@/lib/utils';
+} from "use-places-autocomplete";
+import { formatAddress } from "@/lib/utils";
 
 const AutocompleteInput = ({
   setAddress,
@@ -19,7 +19,7 @@ const AutocompleteInput = ({
   isDisabled?: boolean;
   address?: string;
 }) => {
-  const [val, setVal] = useState<string>(address || '');
+  const [val, setVal] = useState<string>(address || "");
 
   const {
     ready,
@@ -28,11 +28,11 @@ const AutocompleteInput = ({
     setValue,
     clearSuggestions,
   } = usePlacesAutocomplete({
-    callbackName: 'initMap',
+    callbackName: "initMap",
     requestOptions: {
       /* Define search scope here */
 
-      types: ['geocode', 'establishment'],
+      types: ["geocode", "establishment"],
     },
     debounce: 300,
   });
@@ -58,16 +58,16 @@ const AutocompleteInput = ({
 
       getDetails(parameter)
         .then((details) => {
-          console.log('Details: ', details);
+          console.log("Details: ", details);
         })
         .catch((error) => {
-          console.log('Error: ', error);
+          console.log("Error: ", error);
         });
 
       // Get latitude and longitude via utility functions
       getGeocode({ address: description }).then((results) => {
         const { lat, lng } = getLatLng(results[0]);
-        console.log('📍 Coordinates: ', { lat, lng });
+        console.log("📍 Coordinates: ", { lat, lng });
       });
     };
 
@@ -81,7 +81,7 @@ const AutocompleteInput = ({
       return (
         <li
           key={place_id}
-          className='hover:bg-black/5 p-1 break-words'
+          className="hover:bg-black/5 p-1 break-words"
           onClick={handleSelect(suggestion)}
         >
           <strong>{main_text}</strong> <small>{secondary_text}</small>
@@ -94,18 +94,20 @@ const AutocompleteInput = ({
   }, [val]);
 
   return (
-    <div className='relative'>
-      {val == '' ? (
+    <div className="relative">
+      {val == "" ? (
         <Input
           value={value}
           onChange={handleInput}
           disabled={!ready}
-          placeholder='Address'
-          className='text-slate-500 text-xs font-light mt-3 leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full'
+
+          placeholder="Address"
+          className="text-slate-500 text-xs font-light mt-3 leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-[14px] rounded-md max-md:max-w-full"
+
         />
       ) : (
         <textarea
-          className='min-h-24 h-full resize-none w-full text-sm focus:outline-none disabled:cursor-not-allowed font-light rounded-lg px-2 py-1 bg-gray-50 text-slate-500'
+          className="min-h-24 h-full resize-none w-full text-sm focus:outline-none disabled:cursor-not-allowed font-light rounded-lg px-2 py-1 bg-gray-50 text-slate-500"
           value={val}
           disabled={isDisabled}
           onChange={(e) => {
@@ -115,8 +117,8 @@ const AutocompleteInput = ({
         />
       )}
 
-      {status == 'OK' && (
-        <ul className='absolte bottom-0 mt-1 max-w-full rounded-md border p-3'>
+      {status == "OK" && (
+        <ul className="absolte bottom-0 mt-1 max-w-full rounded-md border p-3">
           {renderSuggestions()}
         </ul>
       )}

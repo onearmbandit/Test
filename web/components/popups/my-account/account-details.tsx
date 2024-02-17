@@ -25,7 +25,9 @@ const AccountDetails = () => {
 
   const deleteValidation = z.object({
     email: z.string().email(),
-    password: z.string().min(8),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters long" }),
   });
 
   const { data, isLoading, status } = useQuery({
@@ -152,7 +154,7 @@ const AccountDetails = () => {
         <Input
           disabled
           value={`${data?.data?.email}`}
-          className="text-gray-500 text-xs leading-4 self-stretch px-0 max-md:max-w-full"
+          className="text-gray-500 text-sm leading-4 self-stretch px-0 max-md:max-w-full"
         />
       </section>
 
@@ -163,7 +165,7 @@ const AccountDetails = () => {
             type="password"
             disabled
             value={"pass@123"}
-            className="text-gray-500 text-xs leading-4 px-0"
+            className="text-gray-500 text-sm leading-4 px-0"
           />
           <button
             type="button"

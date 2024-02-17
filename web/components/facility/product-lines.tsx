@@ -14,6 +14,12 @@ import {
   getProductLines,
 } from "@/services/facility.api";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip";
 
 const ProductLines = ({ period }: { period: string }) => {
   const searchParams = useSearchParams();
@@ -29,7 +35,7 @@ const ProductLines = ({ period }: { period: string }) => {
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
-  console.log(productLines);
+  // console.log(productLines);
 
   const { mutate } = useMutation({
     mutationFn: addProductLines,
@@ -108,25 +114,27 @@ const ProductLines = ({ period }: { period: string }) => {
       facilityEmissionId: period,
       facilityProducts: copy,
     };
-    if (productLines.data.length == 0) {
+    if (productLines.data?.FacilityProducts?.length == 0) {
+      // console.log("add", formData);
       mutate(formData);
     } else {
-      console.log(formData);
+      // console.log("edit ", formData);
       editMutate(formData);
     }
   };
 
   useEffect(() => {
     if (prodLines.isSuccess) {
-      const updated = productLines?.data?.FacilityProducts.map(
-        (item: Product) => ({
-          ...item,
-          functionalUnit: item?.functional_unit,
-        })
-      );
-      console.log({ updated });
+      const updated =
+        productLines?.data?.FacilityProducts.length > 0
+          ? productLines?.data?.FacilityProducts.map((item: Product) => ({
+              ...item,
+              functionalUnit: item?.functional_unit,
+            }))
+          : [{ name: "", quantity: 0, functionalUnit: "" }];
+      // console.log({ updated });
       setProducts(updated);
-      if (updated.length == 0) {
+      if (updated.length == 1) {
         setEdit(true);
       }
     }
@@ -137,12 +145,30 @@ const ProductLines = ({ period }: { period: string }) => {
       <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
         {isEdit ? (
           <div className="flex flex-col items-stretch self-stretch text-xs leading-4 bg-white rounded-lg">
-            <header className="grid grid-cols-3 gap-5  px-5 py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 max-md:flex-wrap max-md:max-w-full">
+            <header className="grid grid-cols-3 gap-5   py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 md:flex-wrap md:max-w-full">
               <div className="flex-auto">Product Name</div>
               <div className="flex-auto my-auto">Quantity (unit)</div>
               <div className="flex gap-3 self-start pr-3">
                 <div>Functional Unit</div>
-                <HelpCircle size={16} className="text-white fill-slate-600" />
+
+                <TooltipProvider delayDuration={800}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle
+                        size={16}
+                        className="text-white fill-slate-600"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-slate-800 max-w-[246px]">
+                      <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">
+                        A functional unit in sustainability is a measure of
+                        performance that quantifies the environmental impacts of
+                        a system, used to compare different products or
+                        processes within a defined context.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </header>
 
@@ -153,7 +179,7 @@ const ProductLines = ({ period }: { period: string }) => {
               >
                 <div>
                   <Input
-                    className="justify-center items-stretch text-xs p-2 max-w-[14.75rem] bg-gray-50 rounded-md"
+                    className="justify-center items-stretch text-xs p-2 max-w-[14.75rem] 2xl:max-w-[70%] bg-gray-50 rounded-md"
                     type="text"
                     id="product-name"
                     value={item.name}
@@ -164,13 +190,13 @@ const ProductLines = ({ period }: { period: string }) => {
                     }}
                     name="product-name"
                     required
-                    placeholder="product name"
+                    placeholder="Add product name "
                   />
                 </div>
 
                 <div>
                   <Input
-                    className="justify-center items-stretch text-xs p-2 max-w-[8.175rem] bg-gray-50 rounded-md"
+                    className="justify-center items-stretch text-xs p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
                     type="number"
                     id="quantity"
                     value={item.quantity}
@@ -186,7 +212,7 @@ const ProductLines = ({ period }: { period: string }) => {
                 </div>
                 <div className="flex space-x-3 items-center">
                   <Input
-                    className="justify-center items-stretch text-xs p-2 max-w-[8.125rem] bg-gray-50 rounded-md"
+                    className="justify-center items-stretch text-xs p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
                     type="text"
                     id="unit"
                     name="functionalUnit"
@@ -247,6 +273,7 @@ const Productlist = ({
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
+
   return (
     <section
       className="flex flex-col items-stretch self-stretch pb-1.5 text-base font-light leading-6 text-teal-800 bg-white rounded-lg"
@@ -261,7 +288,7 @@ const Productlist = ({
             {item.name}
           </h1>
           <p className="w-[9.75rem]">{item.quantity} units</p>
-          <p className="grow">{item.functionalUnit}</p>
+          <p className="grow">{item.functional_unit}</p>
         </div>
       ))}
       <div className="self-end mt-5 mr-4 text-sm font-semibold leading-5 text-blue-600 max-md:mr-2.5">

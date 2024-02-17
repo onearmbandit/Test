@@ -97,3 +97,9 @@ export const verifyEmail = (token: string) => {
   formDetails.append("token", token);
   return fetchApi(`/verify-email`, { method: "POST", body: formDetails });
 };
+
+export const uploadImage = (img: any) => {
+  const formbody = new FormData();
+  formbody.append("image", img);
+  return fetchApi("/upload-image", { method: "POST", body: img });
+};

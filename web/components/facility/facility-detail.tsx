@@ -25,6 +25,16 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
+import { separateIntoChunks } from "@/lib/utils";
+import { HoverCardPortal } from "@radix-ui/react-hover-card";
 
 const FacilityDetails = () => {
   const searchParams = useSearchParams();
@@ -34,23 +44,34 @@ const FacilityDetails = () => {
 
   const [currentTab, setCurrentTab] = useState<string | null>(null);
   const [showNew, setShowNew] = useState(false);
+  const [api, setApi] = useState<CarouselApi>();
 
   const periodsQ = useQuery({
     queryKey: ["reporting-periods"],
     queryFn: () => getReportingPeriods(facilityId as string),
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
-  console.log(reportingPeriods);
-  // const newReporting = searchParams.get("new");
-  // const reporting = searchParams.get("reporting");
-  // const reportingPeriod = reporting != null ? reporting : reportingPeriods[0];
-  // const currentTab = newReporting == "true" ? "new" : reportingPeriod!;
 
   const getTabValue = (period: any) => {
     return `${dayjs(period.reporting_period_from).format("MMM YYYY")} - ${dayjs(
       period.reporting_period_to
     ).format("MMM YYYY")}`;
   };
+
+  const periodList =
+    reportingPeriods.length > 0
+      ? separateIntoChunks(reportingPeriods, showNew ? 5 : 6)
+      : [[]];
+
+  React.useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    api.on("select", () => {
+      setCurrentTab(periodList[api.selectedScrollSnap()][0].id);
+    });
+  }, [api]);
 
   useEffect(() => {
     if (periodsQ.isSuccess) {
@@ -84,44 +105,68 @@ const FacilityDetails = () => {
         {periodsQ.isSuccess && (
           <Tabs
             value={showNew ? "new" : currentTab!}
-            onValueChange={setCurrentTab}
+            onValueChange={(e) => {
+              setShowNew(false);
+              setCurrentTab(e);
+            }}
           >
             <TabsList className="border-b border-gray-200 w-full">
-              {showNew && (
-                <TabsTrigger value="new">
-                  <Popover defaultOpen={true}>
-                    <PopoverTrigger className="text-blue-600">
-                      Add Reporting Period
-                    </PopoverTrigger>
-                    <PopoverContent
-                      align="start"
-                      className="w-full left-0 p-0 -ml-4"
-                    >
-                      <ReportingPeriod setNew={setShowNew} />
-                    </PopoverContent>
-                  </Popover>
-                </TabsTrigger>
-              )}
-              {reportingPeriods.map((item: any, i: number) => {
-                const reporting = `${dayjs(item.reporting_period_from).format(
-                  "MMM YYYY"
-                )} - ${dayjs(item.reporting_period_to).format("MMM YYYY")}`;
-                return (
-                  <TabsTrigger key={i} value={item.id}>
-                    <HoverCard key={i}>
-                      <HoverCardTrigger asChild>
-                        <p className="text-blue-600">{reporting}</p>
-                      </HoverCardTrigger>
-                      <HoverCardContent
-                        align="start"
-                        className="w-full left-0 p-0 -ml-4"
-                      >
-                        <ReportingPeriod setNew={setShowNew} period={item} />
-                      </HoverCardContent>
-                    </HoverCard>
-                  </TabsTrigger>
-                );
-              })}
+              <Carousel
+                opts={{ align: "start" }}
+                setApi={setApi}
+                className="w-full"
+              >
+                <CarouselContent className="max-w-full">
+                  {periodList.map((item: any, i: number) => (
+                    <CarouselItem key={i}>
+                      {showNew && (
+                        <TabsTrigger value="new">
+                          <Popover defaultOpen={true}>
+                            <PopoverTrigger className="text-blue-600">
+                              Add Reporting Period
+                            </PopoverTrigger>
+                            <PopoverContent
+                              align="start"
+                              className="w-full left-0 p-0 -ml-4"
+                            >
+                              <ReportingPeriod setNew={setShowNew} />
+                            </PopoverContent>
+                          </Popover>
+                        </TabsTrigger>
+                      )}
+                      {item.map((slide: any, i: number) => {
+                        const reporting = `${dayjs(
+                          slide.reporting_period_from
+                        ).format("MMM YYYY")} - ${dayjs(
+                          slide.reporting_period_to
+                        ).format("MMM YYYY")}`;
+                        return (
+                          <TabsTrigger key={i} value={slide.id}>
+                            <HoverCard key={i}>
+                              <HoverCardTrigger asChild>
+                                <p className="text-blue-600">{reporting}</p>
+                              </HoverCardTrigger>
+                              <HoverCardPortal>
+                                <HoverCardContent
+                                  align="start"
+                                  className="w-full left-0 p-0 -ml-4"
+                                >
+                                  <ReportingPeriod
+                                    setNew={setShowNew}
+                                    period={slide}
+                                  />
+                                </HoverCardContent>
+                              </HoverCardPortal>
+                            </HoverCard>
+                          </TabsTrigger>
+                        );
+                      })}
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselNext variant={"ghost"} />
+                <CarouselPrevious variant={"ghost"} />
+              </Carousel>
             </TabsList>
             <TabsContent value={currentTab!}>
               <Accordion
@@ -132,7 +177,7 @@ const FacilityDetails = () => {
                 <AccordionItem value="1" className="border rounded-lg p-6">
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         1
                       </div>
                       <a
@@ -159,7 +204,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         2
                       </div>
                       <a
@@ -186,7 +231,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         3
                       </div>
                       <a
@@ -198,7 +243,7 @@ const FacilityDetails = () => {
                     </section>
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
-                  <p className="text-xs font-light text-slate-700 mt-[1.88rem]">
+                  <p className="text-sm leading-5 font-light text-slate-700 mt-[1.88rem]">
                     Assign Scope 1, 2, and 3 emissions directly to specific
                     product lines within your facility by functional unit.
                   </p>
@@ -213,7 +258,7 @@ const FacilityDetails = () => {
                 <AccordionItem value="1" className="border rounded-lg p-6">
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         1
                       </div>
                       <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
@@ -223,7 +268,7 @@ const FacilityDetails = () => {
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
 
-                  <p className="text-xs font-light text-slate-700 mt-4 [&[data-state=open]]:hidden">
+                  <p className="text-sm leading-5 font-light text-slate-700 mt-4 [&[data-state=open]]:hidden">
                     Enter your reporting above. Then fill your scope 1, 2, and
                     3, emissions for this facility within the reporting period.
                   </p>
@@ -235,7 +280,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         2
                       </div>
                       <a
@@ -245,10 +290,10 @@ const FacilityDetails = () => {
                         Add product lines to your facility
                       </a>
                     </section>
-                    <ChevronDown size={16} className="text-slate-700" />
+                    <ChevronDown size={16} className="text-slate-700 " />
                   </AccordionTrigger>
 
-                  <p className="text-xs font-light text-slate-700 mt-[1.88rem]">
+                  <p className="text-sm leading-5 font-light text-slate-700 mt-[1.88rem]">
                     Add product lines associated with this facilities reporting
                     period
                   </p>
@@ -259,7 +304,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-[100px]">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         3
                       </div>
                       <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
@@ -268,7 +313,7 @@ const FacilityDetails = () => {
                     </section>
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
-                  <p className="text-xs font-light text-slate-700 mt-[1.88rem]">
+                  <p className="text-sm leading-5 font-light text-slate-700 mt-[1.88rem]">
                     Assign Scope 1, 2, and 3 emissions directly to specific
                     product lines within your facility by functional unit.
                   </p>

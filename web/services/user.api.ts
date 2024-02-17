@@ -43,7 +43,7 @@ const fetchApi = async (
     })
     .catch((err) => {
       // console.log(err.response.data.errors[0].message);
-      throw new Error(err.response.data.errors[0].message);
+      return err.response.data;
     });
 
   return response;

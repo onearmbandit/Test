@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useFormik } from "formik";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addScopeEmissions,
   getReportingPeriodById,
@@ -13,8 +13,13 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { useSearchParams } from "next/navigation";
 
 const ScopeEmissions = ({ period }: { period: any }) => {
+  const searchParams = useSearchParams();
+  const facilityId = searchParams.get("facilityId");
+  const queryClient = useQueryClient();
+
   const {
     data: periodDetails,
     isLoading,
@@ -35,6 +40,10 @@ const ScopeEmissions = ({ period }: { period: any }) => {
   const addScopeMut = useMutation({
     mutationFn: addScopeEmissions,
     onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["facility-details", facilityId],
+      });
+
       toast.success("Scope Emissions updated", { style: { color: "green" } });
       setEditMode(false);
     },
@@ -98,7 +107,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                       onChange={handleChange}
                       value={values.scope1TotalEmission}
                       name="scope1TotalEmission"
-                      className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-xs font-light leading-4 bg-gray-50 rounded-md text-slate-500"
+                      className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-sm font-light leading-4 bg-gray-50 rounded-md text-slate-500"
                     />
                     <p className="text-xs text-gray-700 font-light">tCO2e</p>
                   </div>
@@ -183,7 +192,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                       name="scope3TotalEmission"
                       onChange={handleChange}
                       value={values.scope3TotalEmission}
-                      className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-xs font-light leading-4 bg-gray-50 rounded-md text-slate-500"
+                      className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-sm font-light leading-4 bg-gray-50 rounded-md text-slate-500"
                     />
                     <p className="text-xs text-gray-700 font-light">tCO2e</p>
                   </div>
@@ -199,7 +208,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
               </div>
             </div>
 
-            <div className="bg-sky-50/50 grow rounded-md p-6 space-y-6">
+            <div className="bg-sky-50/50 grow rounded-md p-6 space-y-6 h-[340px]">
               <Tabs defaultValue="scope-1">
                 <TabsList className="flex gap-3">
                   <TabsTrigger
@@ -235,7 +244,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                   <p className="text-lg font-bold text-slate-800 ">
                     Scope 1 Emissions
                   </p>
-                  <p className="leading-6 w-[25rem]">
+                  <p className="text-base leading-6 w-[25rem] font-[300]">
                     Scope 1 emissions are direct greenhouse gas (GHG) emissions
                     that a company generates while performing its business
                     activities. These emissions come from sources that are owned
@@ -246,7 +255,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                   <p className="text-lg font-bold text-slate-800 ">
                     Scope 2 Emissions
                   </p>
-                  <p className="leading-6 w-[25rem]">
+                  <p className="text-base leading-6 w-[25rem] font-[300]">
                     Scope 2 emissions are indirect emissions from the
                     consumption of purchased electricity, steam, heating, and
                     cooling. They result from energy produced elsewhere but used
@@ -258,7 +267,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                   <p className="text-lg font-bold text-slate-800 ">
                     Scope 3 Emissions
                   </p>
-                  <p className="leading-6 w-[25rem]">
+                  <p className="text-base leading-6 w-[25rem] font-[300]">
                     Scope 3 emissions are all indirect emissions that occur in a
                     company&apos;s value chain, including both upstream and
                     downstream emissions. These can include the production of

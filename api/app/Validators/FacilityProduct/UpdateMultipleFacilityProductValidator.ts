@@ -16,15 +16,15 @@ export default class UpdateMultipleFacilityProductValidator {
           // rules.required(),
           rules.minLength(3),
           rules.maxLength(255),
-          rules.unique({
-            table: 'facility_products',
-            column: 'name',
-            whereNot: (builder, { field, operator, value }) => {
-              if (this.ctx.request.input(`facilityProducts.*.${field}`)) {
-                builder.whereNot(field, operator, value);
-              }
-            },
-          }),
+          // rules.unique({
+          //   table: 'facility_products',
+          //   column: 'name',
+          //   whereNot: (builder, { field, operator, value }) => {
+          //     if (this.ctx.request.input(`facilityProducts.*.${field}`)) {
+          //       builder.whereNot(field, operator, value);
+          //     }
+          //   },
+          // }),
         ]),
         quantity: schema.number.optional(),
         functionalUnit: schema.string.optional({ trim: true }, [rules.maxLength(255)]),
@@ -36,7 +36,7 @@ export default class UpdateMultipleFacilityProductValidator {
     'name.*.required': 'Name is required.',
     'name.*.minLength': 'Name must be at least 5 characters long.',
     'name.*.maxLength': 'Name must not exceed 255 characters.',
-    'facilityProducts.*.name.unique': 'Name already exists. Please choose a different name.',
+    // 'facilityProducts.*.name.unique': 'Name already exists. Please choose a different name.',
 
     'quantity.*.number': 'Quantity must be a number.',
     'functional_unit.*.maxLength': 'Functional unit must not exceed 255 characters.',

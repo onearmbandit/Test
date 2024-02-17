@@ -175,18 +175,20 @@ const ReportingPeriod = ({
             renderMonthContent={renderMonthContent}
             showMonthYearPicker
             dateFormat="yyyy/MM"
+            placeholderText="MM/YYYY"
             onChange={(date) => setFieldValue("reportingPeriodFrom", date)}
           />
           <label className="my-auto">End Date</label>
           <DatePicker
             selected={values.reportingPeriodTo}
             customInput={
-              <Input className="w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700" />
+              <Input className="w-[6.125rem] px-2 bg-gray-50 text-sm font-light text-slate-700" />
             }
             disabled={period && !isEdit}
             renderMonthContent={renderMonthContent}
             showMonthYearPicker
             dateFormat="yyyy/MM"
+            placeholderText="MM/YYYY"
             onChange={(date) => setFieldValue("reportingPeriodTo", date)}
           />
         </div>
