@@ -84,8 +84,7 @@ const Page = () => {
     queryFn: () => getAllReportingPeriods(organizationId),
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
-  // console.log(session.data? session.data.user.organizations[0].id:"", 'session.data');
-  console.log(reportingPeriods, "reportingPeriods");
+
   const { mutate, isPending } = useMutation({
     mutationFn: importFile,
     onSuccess: (data) => {},
@@ -212,9 +211,10 @@ const Page = () => {
     },
   });
 
-  const periodList = periodsQ.isSuccess
-    ? separateIntoChunks(reportingPeriods, showNew ? 5 : 6)
-    : [];
+  const periodList =
+    reportingPeriods.length > 0
+      ? separateIntoChunks(reportingPeriods, showNew ? 5 : 6)
+      : [[]];
 
   React.useEffect(() => {
     if (!api) {
