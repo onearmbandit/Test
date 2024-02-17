@@ -58,9 +58,10 @@ const FacilityDetails = () => {
     ).format("MMM YYYY")}`;
   };
 
-  const periodList = periodsQ.isSuccess
-    ? separateIntoChunks(reportingPeriods, showNew ? 5 : 6)
-    : [];
+  const periodList =
+    reportingPeriods.length > 0
+      ? separateIntoChunks(reportingPeriods, showNew ? 5 : 6)
+      : [[]];
 
   React.useEffect(() => {
     if (!api) {
@@ -110,7 +111,11 @@ const FacilityDetails = () => {
             }}
           >
             <TabsList className="border-b border-gray-200 w-full">
-              <Carousel opts={{ align: "start" }} setApi={setApi}>
+              <Carousel
+                opts={{ align: "start" }}
+                setApi={setApi}
+                className="w-full"
+              >
                 <CarouselContent className="max-w-full">
                   {periodList.map((item: any, i: number) => (
                     <CarouselItem key={i}>
