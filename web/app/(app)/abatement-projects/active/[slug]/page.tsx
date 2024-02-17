@@ -55,10 +55,9 @@ const ActiveDetailPage = async ({ params }: { params: { slug: string } }) => {
           <h2 className="text-2xl font-bold text-slate-800">{project.name}</h2>
           {project.photo_url && (
             <div className="w-full h-[205px] relative">
-              <Image
+              <img
+                className="h-full w-full object-contain"
                 src={project.photo_url}
-                fill={true}
-                objectFit="contain"
                 alt="project image"
               />
             </div>
