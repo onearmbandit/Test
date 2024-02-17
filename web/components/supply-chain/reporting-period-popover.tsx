@@ -77,6 +77,9 @@ const ReportingPeriodPopup = ({
       console.log(data, "data addd");
       toast.success("Reporting period Added.", { style: { color: "green" } });
     },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: "red" } });
+    },
   });
   const deleteMutation = useMutation({
     mutationFn: deleteReportingPerid,
