@@ -100,17 +100,19 @@ const AutocompleteInput = ({
           value={value}
           onChange={handleInput}
           disabled={!ready}
+
           placeholder="Address"
-          className="text-slate-500 text-xs font-light mt-3 leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-7 rounded-md max-md:max-w-full"
+          className="text-slate-500 text-xs font-light mt-3 leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-[14px] rounded-md max-md:max-w-full"
+
         />
       ) : (
         <textarea
-          className="min-h-20 h-full resize-none w-full text-sm focus:outline-none disabled:cursor-not-allowed font-light rounded-lg px-2 py-1 bg-gray-50 text-slate-500"
+          className="min-h-24 h-full resize-none w-full text-sm focus:outline-none disabled:cursor-not-allowed font-light rounded-lg px-2 py-1 bg-gray-50 text-slate-500"
           value={val}
           disabled={isDisabled}
           onChange={(e) => {
             setVal(e.target.value);
-            // setAddress(e.target.value);
+            setValue(e.target.value);
           }}
         />
       )}

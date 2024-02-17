@@ -25,7 +25,9 @@ const AccountDetails = () => {
 
   const deleteValidation = z.object({
     email: z.string().email(),
-    password: z.string().min(8),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters long" }),
   });
 
   const { data, isLoading, status } = useQuery({
@@ -80,6 +82,19 @@ const AccountDetails = () => {
     },
   });
 
+  const disableSaveBtn = () => {
+    if (
+      data?.data?.first_name === changeNameForm.values.firstName &&
+      data?.data?.last_name === changeNameForm.values.lastName
+    ) {
+      console.log("No");
+      return true;
+    }
+
+    console.log("Yes");
+
+    return false;
+  };
   useEffect(() => {
     if (status == "success") {
       changeNameForm.setFieldValue("firstName", data?.data?.first_name);
@@ -123,7 +138,7 @@ const AccountDetails = () => {
         <div className="flex w-full justify-end mt-2">
           <Button
             variant={"ghost"}
-            disabled={changeNamePending}
+            disabled={disableSaveBtn() || changeNamePending}
             className="text-blue-600 hover:text-blue-500 font-semibold"
           >
             Save
@@ -139,7 +154,7 @@ const AccountDetails = () => {
         <Input
           disabled
           value={`${data?.data?.email}`}
-          className="text-gray-500 text-xs leading-4 self-stretch px-0 max-md:max-w-full"
+          className="text-gray-500 text-sm leading-4 self-stretch px-0 max-md:max-w-full"
         />
       </section>
 
@@ -150,7 +165,7 @@ const AccountDetails = () => {
             type="password"
             disabled
             value={"pass@123"}
-            className="text-gray-500 text-xs leading-4 px-0"
+            className="text-gray-500 text-sm leading-4 px-0"
           />
           <button
             type="button"

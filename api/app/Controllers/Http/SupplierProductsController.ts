@@ -223,9 +223,9 @@ export default class SupplierProductsController {
         let missingCarbonFootPrint = (scopeEmissionNAProducts.length / emissionData.length) * 100
 
         let resData = {
-          totalProductLevelEmission: totalProductLevelEmission,
+          totalProductLevelEmission: !Number.isNaN(totalProductLevelEmission) ? totalProductLevelEmission : 0,
           productWise: productWise,
-          missingCarbonFootPrint: missingCarbonFootPrint
+          missingCarbonFootPrint: !Number.isNaN(missingCarbonFootPrint) ? missingCarbonFootPrint.toFixed(2) : 0
         }
 
         return apiResponse(response, true, 200, resData, 'Data Fetch Successfully')

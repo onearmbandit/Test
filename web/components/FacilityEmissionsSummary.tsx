@@ -24,10 +24,19 @@ const FacilityEmissionsSummary = () => {
   });
   const details = facility.isSuccess ? facility.data.data : {};
 
-  console.log(details);
+  let scope1Total = 0;
+  let scope2Total = 0;
+  let scope3Total = 0;
 
   const sliced = facility.isSuccess && details.facilityEmission.slice(0, 2);
   const emissions = allPeriods ? details?.facilityEmission : sliced;
+  if (facility.isSuccess) {
+    emissions?.map((item: any) => {
+      scope1Total += item.scope1_total_emission;
+      scope2Total += item.scope2_total_emission;
+      scope3Total += item.scope3_total_emission;
+    });
+  }
   return (
     <div className="items-stretch bg-[#14532D0D] w-full my-3 flex flex-col rounded-lg">
       <Accordion type="single" collapsible>
@@ -80,7 +89,9 @@ const FacilityEmissionsSummary = () => {
                       <CardContent className="p-0 pt-3">
                         <div className="flex justify-between items-center font-bold py-6">
                           <p className="text-xs">TOTAL tCO2e</p>
-                          <p className="text-lg text-green-900">{}</p>
+                          <p className="text-lg text-green-900">
+                            {scope1Total}
+                          </p>
                         </div>
 
                         <div className="space-y-3">
@@ -121,7 +132,9 @@ const FacilityEmissionsSummary = () => {
                       <CardContent className="p-0 pt-3">
                         <div className="flex justify-between items-center font-bold py-6">
                           <p className="text-xs">TOTAL tCO2e</p>
-                          <p className="text-lg text-green-900">{}</p>
+                          <p className="text-lg text-green-900">
+                            {scope2Total}
+                          </p>
                         </div>
 
                         <div className="space-y-3">
@@ -162,7 +175,9 @@ const FacilityEmissionsSummary = () => {
                       <CardContent className="p-0 pt-3">
                         <div className="flex justify-between items-center font-bold py-6">
                           <p className="text-xs">TOTAL tCO2e</p>
-                          <p className="text-lg text-green-900">{}</p>
+                          <p className="text-lg text-green-900">
+                            {scope3Total}
+                          </p>
                         </div>
 
                         <div className="space-y-3">

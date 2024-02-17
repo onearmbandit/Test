@@ -71,6 +71,8 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
   equalityCarbonEmissionSuccess: "Equality carbon emission to product line calculated successfully.",
   updateFacilityProductSuccess: "Facility product details updated successfully.",
   dashboardCalculationFetchSuccess: "Total emission across all facility details fetched successfully.",
+  facilityAlreadyExists: "Facility name already exists for your organization. Please choose a different name.",
+  facilityProductNameAlreadyExists: "Facility product name already exists. Please choose a different name."
 }
 
 

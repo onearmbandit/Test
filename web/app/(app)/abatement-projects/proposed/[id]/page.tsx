@@ -23,7 +23,7 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
           <a href="/abatement-projects/proposed" className="text-slate-500">
             Proposed Abatement Projects
           </a>{" "}
-          &gt; <span className="text-blue-600 font-bold">{project.name}</span>{" "}
+          &gt; <span className="text-blue-600 font-bold">{project?.name}</span>{" "}
         </nav>
       </div>
 
@@ -32,7 +32,7 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
           <div className="p-[10px] space-y-2">
             <p className="text-xs font-medium text-slate-800">Proposed By</p>
 
-            <Image
+            <img
               src={project.logo_url}
               height={54}
               width={223}
@@ -55,10 +55,9 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
           <h2 className="text-2xl font-bold text-slate-800">{project.name}</h2>
           {project.photo_url && (
             <div className="w-full h-[205px] relative">
-              <Image
+              <img
+                className="h-full w-full object-contain"
                 src={project.photo_url}
-                fill={true}
-                objectFit="contain"
                 alt="project image"
               />
             </div>
@@ -89,7 +88,7 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
             <Calendar size={18} className="text-slate-500" />
 
             <p className="text-xs font-medium text-slate-800">
-              Completed since: {dayjs(project.updated_at).format("dd/MM/YY")}
+              Completed since: {dayjs(project.updated_at).format("DD/MM/YY")}
             </p>
           </div>
 

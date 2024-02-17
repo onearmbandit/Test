@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "38df1b95-ae9c-4cf4-afe5-9ea3929077fe",
+		"_postman_id": "f902146f-5716-436f-a14d-d927cb965cfa",
 		"name": "C3",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "17650332"
@@ -34,14 +34,14 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firstName\": \"Soniya\",\n    \"lastName\": \"Mehta\",\n    \"registrationStep\": 2,\n    \"invitedUser\": true, /* if user invited by mail then true otherwise false */\n    \"throughSSO\": false, /*if first step through SSO then true otherwise false */\n    \"isSupplier\": true  /* If invited user is supplier frontend side got value once click on accept-invite button. */\n}",
+							"raw": "{\n    \"firstName\": \"Soniya\",\n    \"lastName\": \"Mehta\",\n    \"registrationStep\": 2,\n    \"invitedUser\": false, /* if user invited by mail then true otherwise false */\n    \"throughSSO\": false, /*if first step through SSO then true otherwise false */\n    \"isSupplier\": false  /* If invited user is supplier frontend side got value once click on accept-invite button. */\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "{{base_url}}/api/v1/user/1e9c5079-e2ac-4499-836d-199f404479b8"
+						"url": "{{base_url}}/api/v1/user/456cb739-4319-45db-91d6-d50cbb5280c9"
 					},
 					"response": []
 				},
@@ -4090,7 +4090,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"organizationId\":\"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",  \n    \"name\": \"Alfa Laval POMEVap second\",\n    \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n    \"estimatedCost\": 2300.0,\n    \"websiteUrl\": \"www.alfalavalproject.com/sustainability\",\n    \"emissionReductions\": 88990,\n    \"emissionUnit\": \"tCO2e\",\n    \"proposedBy\": \"8804a7b5-496f-4d36-ae35-c8ef3ad91be3\",  \n    \"photoUrl\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n    \"logoUrl\": \"\",\n    \"status\": 0   \n}",
+							"raw": "{\n    \"organizationId\":\"714f6216-3997-4f95-878a-7d81a9dffbd6\",  \n    \"name\": \"Alfa Laval POMEVap second\",\n    \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n    \"estimatedCost\": 2300.0,\n    \"websiteUrl\": \"www.alfalavalproject.com/sustainability\",\n    \"emissionReductions\": 88990,\n    \"emissionUnit\": \"tCO2e\",\n    \"proposedTo\": \"90a9519a-3b02-449b-82c1-15ce1cfc4ff3\",  \n    \"photoUrl\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n    \"logoUrl\": \"\",\n    \"status\": 0   \n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -4143,6 +4143,50 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"status\": true,\n    \"code\": 201,\n    \"message\": \"Abatement project created successfully.\",\n    \"data\": {\n        \"id\": \"bc69c63a-9754-417e-a8c7-e92807508e76\",\n        \"name\": \"Alfa Laval POMEVap second\",\n        \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n        \"estimated_cost\": 2300,\n        \"website_url\": \"www.alfalavalproject.com/sustainability\",\n        \"emission_reductions\": 88990,\n        \"emission_unit\": \"tCO2e\",\n        \"proposed_by\": \"8804a7b5-496f-4d36-ae35-c8ef3ad91be3\",\n        \"photo_url\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n        \"logo_url\": \"\",\n        \"status\": 0,\n        \"updated_by\": \"Mayuri Chaudhari\",\n        \"organization_id\": \"ad293672-f5c4-4ed3-8a49-7f98b0be147e\",\n        \"created_at\": \"2024-02-07T17:57:46.886+05:30\",\n        \"updated_at\": \"2024-02-07T17:57:46.886+05:30\"\n    }\n}"
+						},
+						{
+							"name": "create project",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"organizationId\":\"9e9fbc4e-6d76-4a6d-81b1-0cd17964eb9b\",  \n    \"name\": \"Supplier v2 Project\",\n    \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n    \"estimatedCost\": 2300.0,\n    \"websiteUrl\": \"www.alfalavalproject.com/sustainability\",\n    \"emissionReductions\": 88990,\n    \"emissionUnit\": \"tCO2e\",\n    \"proposedType\":\"supplier\",\n    \"proposedTo\": \"e97a5442-e0be-4406-befc-0fb88f3baf3d\",  \n    \"photoUrl\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n    \"logoUrl\": \"\",\n    \"status\": 0   \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{base_url}}/api/v1/auth/abatement-projects"
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "content-length",
+									"value": "1436"
+								},
+								{
+									"key": "content-type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 15 Feb 2024 12:41:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": true,\n    \"code\": 201,\n    \"message\": \"Abatement project created successfully.\",\n    \"data\": {\n        \"id\": \"b49a8c7e-4e6f-4dba-ba5f-68662415d13b\",\n        \"name\": \"Supplier v2 Project\",\n        \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n        \"estimated_cost\": 2300,\n        \"website_url\": \"www.alfalavalproject.com/sustainability\",\n        \"emission_reductions\": 88990,\n        \"emission_unit\": \"tCO2e\",\n        \"proposed_type\": \"supplier\",\n        \"proposed_to\": \"e97a5442-e0be-4406-befc-0fb88f3baf3d\",\n        \"photo_url\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n        \"logo_url\": \"\",\n        \"status\": 0,\n        \"updated_by\": \"AnujaSecond Pawar\",\n        \"organization_id\": \"9e9fbc4e-6d76-4a6d-81b1-0cd17964eb9b\",\n        \"created_at\": \"2024-02-15T18:11:41.334+05:30\",\n        \"updated_at\": \"2024-02-15T18:11:41.334+05:30\"\n    }\n}"
 						}
 					]
 				},
@@ -4196,11 +4240,11 @@
 							"body": "{\n    \"status\": false,\n    \"code\": 400,\n    \"message\": \"E_ROW_NOT_FOUND: Row not found\"\n}"
 						},
 						{
-							"name": "success result",
+							"name": "get project details",
 							"originalRequest": {
 								"method": "GET",
 								"header": [],
-								"url": "{{base_url}}/api/v1/auth/abatement-projects/01af7639-0482-4329-8513-e91b3136e6d5"
+								"url": "{{base_url}}/api/v1/auth/abatement-projects/6671c65f-89e4-46b4-b9ae-058bd51ee297"
 							},
 							"status": "OK",
 							"code": 200,
@@ -4208,7 +4252,7 @@
 							"header": [
 								{
 									"key": "content-length",
-									"value": "2226"
+									"value": "2187"
 								},
 								{
 									"key": "content-type",
@@ -4216,7 +4260,7 @@
 								},
 								{
 									"key": "Date",
-									"value": "Mon, 05 Feb 2024 12:19:18 GMT"
+									"value": "Thu, 15 Feb 2024 13:33:15 GMT"
 								},
 								{
 									"key": "Connection",
@@ -4228,7 +4272,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"01af7639-0482-4329-8513-e91b3136e6d5\",\n        \"supplier_id\": null,\n        \"organization_id\": \"1815ad88-9e4c-4c4a-aa1c-7196aa9bac8e\",\n        \"name\": \"Alfa Laval POMEVap\",\n        \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n        \"website_url\": \"www.alfalavalproject.com/sustainability\",\n        \"emission_reductions\": 88990,\n        \"emission_unit\": \"tCO2e\",\n        \"proposed_by\": \"cee90c04-11fb-4c79-a7ad-ac2ec4551af8\",\n        \"photo_url\": \"\",\n        \"logo_url\": \"\",\n        \"contact_email\": \"anjpawar+2@cxr.agency\",\n        \"status\": 0,\n        \"updated_by\": \"Soniya Mehta\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-02-05T17:23:04.000+05:30\",\n        \"updated_at\": \"2024-02-05T17:23:04.000+05:30\",\n        \"organization\": {\n            \"id\": \"1815ad88-9e4c-4c4a-aa1c-7196aa9bac8e\",\n            \"company_name\": \"soniya ABC\",\n            \"company_email\": null,\n            \"self_point_of_contact\": null,\n            \"company_size\": null,\n            \"naics_code\": null,\n            \"climate_targets\": null,\n            \"company_address\": \"Giga space IT park,Viman nagar,pune,MH,12345\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-02-05T17:20:38.000+05:30\",\n            \"updated_at\": \"2024-02-05T17:20:38.000+05:30\"\n        },\n        \"proposedSupplier\": {\n            \"id\": \"cee90c04-11fb-4c79-a7ad-ac2ec4551af8\",\n            \"supply_chain_reporting_period_id\": \"740a535d-327e-4c3f-ae39-0d15d3bad136\",\n            \"name\": \"PT KAHATEX\",\n            \"email\": \"someoneelse@ptkhatex.com\",\n            \"organization_relationship\": \"OWNED\",\n            \"address\": \"Jl. Cijerah, Cigondewah Girang No., 16, RT.001/RW032 Cimahi Selatan,, Cimahi, 40534 Bandung\",\n            \"updated_by\": \"Soniya Mehta\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-02-05T17:22:13.000+05:30\",\n            \"updated_at\": \"2024-02-05T17:22:13.000+05:30\"\n        }\n    }\n}"
+							"body": "{\n    \"status\": true,\n    \"code\": 200,\n    \"message\": \"Data Fetched Successfully\",\n    \"data\": {\n        \"id\": \"6671c65f-89e4-46b4-b9ae-058bd51ee297\",\n        \"organization_id\": \"714f6216-3997-4f95-878a-7d81a9dffbd6\",\n        \"name\": \"Alfa Laval POMEVap\",\n        \"description\": \"The Alfa Laval POMEVap technology offers an innovative and space-efficient solution for treating palm oil mill effluent (POME), an acidic and organically rich byproduct that can contaminate water and emit greenhouse gases. Utilizing advanced evaporation and separation techniques, POMEVap not only neutralizes harmful waste, but also reduces energy costs, achieves zero liquid discharge, and generates additional income through oil recovery. With a small footprint and quick payback, it stands out as a more sustainable alternative to conventional ponding systems, which are space-intensive and contribute to methane emissions. Additionally, the liquid by-product from POMEVap can be further polished for safe environmental release, enhancing its eco-friendly profile.\",\n        \"estimated_cost\": 2300,\n        \"website_url\": \"www.alfalavalproject.com/sustainability\",\n        \"emission_reductions\": 88990,\n        \"emission_unit\": \"tCO2e\",\n        \"proposed_type\": \"supplier\",\n        \"proposed_to\": \"8603be40-3faf-4d70-b1ec-0e5f5d24dfd9\",\n        \"photo_url\": \"https://s3-imagestore.s3.us-east-1.amazonaws.com/nature3.jpeg\",\n        \"logo_url\": \"\",\n        \"status\": 0,\n        \"updated_by\": \"Anuja Pawar\",\n        \"deleted_at\": null,\n        \"created_at\": \"2024-02-15T16:54:05.000+05:30\",\n        \"updated_at\": \"2024-02-15T19:00:15.000+05:30\",\n        \"organization\": {\n            \"id\": \"714f6216-3997-4f95-878a-7d81a9dffbd6\",\n            \"company_name\": \"CemtrexLabs Version\",\n            \"company_email\": \"anjpawar+devsub@cxr.agency\",\n            \"self_point_of_contact\": null,\n            \"company_size\": \"101 to 200\",\n            \"naics_code\": \"12345\",\n            \"climate_targets\": [\n                \"Carbon neutral 200\"\n            ],\n            \"company_address\": \"Centrestage,\\nHollywood Road,\\nSheung Wan,\\nHong Kong\",\n            \"deleted_at\": null,\n            \"created_at\": \"2024-02-15T16:46:59.000+05:30\",\n            \"updated_at\": \"2024-02-15T16:47:53.000+05:30\"\n        },\n        \"proposedSupplier\": {\n            \"id\": \"8603be40-3faf-4d70-b1ec-0e5f5d24dfd9\",\n            \"name\": \"trey mark\",\n            \"email\": \"treymark@mailinator.com\",\n            \"supply_chain_reporting_period_id\": \"0278dfe8-0841-49be-b8a5-37f61902281d\",\n            \"organization_relationship\": \"OWNED\",\n            \"address\": \"Trendset Mall,\\nMG Road,\\nSai Nagar,\\nIndia\"\n        },\n        \"proposedOrganization\": {}\n    }\n}"
 						}
 					]
 				},
@@ -4514,7 +4558,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/v1/auth/supplier-organizations?order=desc&include=supplier,organization",
+							"raw": "{{base_url}}/api/v1/auth/supplier-organizations?order=desc&include=supplier,organization&organizationId=9e9fbc4e-6d76-4a6d-81b1-0cd17964eb9b",
 							"host": [
 								"{{base_url}}"
 							],
@@ -4534,6 +4578,11 @@
 									"key": "include",
 									"value": "supplier,organization",
 									"description": "supplier,organization"
+								},
+								{
+									"key": "organizationId",
+									"value": "9e9fbc4e-6d76-4a6d-81b1-0cd17964eb9b",
+									"description": " Auth user organization id"
 								}
 							]
 						}

@@ -1,5 +1,5 @@
 'use client';
-import { ChevronLeft, X } from 'lucide-react';
+import { ChevronLeft, Route, X } from 'lucide-react';
 import React, { useState } from 'react';
 import { Input } from '../ui/input';
 import AutocompleteInput from '../Autocomplete';
@@ -49,6 +49,7 @@ import {
 } from '../ui/table';
 import _, { set } from 'lodash';
 import { Button } from '../ui/button';
+import Link from 'next/link';
 
 export const AddSupplierManualy = () => {
   const router = useRouter();
@@ -57,6 +58,7 @@ export const AddSupplierManualy = () => {
 
   const [editSupplier, setEditSupplier] = useState(false);
   const [editProductTable, setEditProductTable] = useState(false);
+  const [completeStep, setCompleteStep] = useState(false);
   const [supplier, setSupplier] = useState<any>(null);
   const [productList, setProductList] = useState<any>([
     {
@@ -106,16 +108,15 @@ export const AddSupplierManualy = () => {
     mutationFn: addSupplier,
     onSuccess: (data) => {
       console.log('supplier created : ', data);
-
+      setEditProductTable(true);
       setSupplier(data);
-
       setValues({
         ...data.data,
         organizationRelationship: data.data.organization_relationship,
       });
       toast.success('New Supplier Added', { style: { color: 'green' } });
       setEditSupplier(true);
-      // router.push("/supply-chain");
+      //router.push('/supply-chain');
     },
     onError: (err: any) => {
       console.log(err);
@@ -132,7 +133,6 @@ export const AddSupplierManualy = () => {
       setValues(data.data);
       toast.success('Supplier Updated', { style: { color: 'green' } });
       setEditSupplier(true);
-      // router.push("/supply-chain");
     },
     onError: (err: any) => {
       console.log(err);
@@ -144,11 +144,10 @@ export const AddSupplierManualy = () => {
     mutationFn: createSupplierProduct,
     onSuccess: (data) => {
       console.log('supplier products created: ', data);
-
+      Route;
       toast.success('Supplier Created', { style: { color: 'green' } });
-
       setEditProductTable(false);
-      // router.push("/supply-chain");
+      router.push('/supply-chain');
     },
     onError: (err: any) => {
       console.log(err);
@@ -204,12 +203,21 @@ export const AddSupplierManualy = () => {
       ...provided,
       border: 'none',
       background: '#F9FAFB',
+      borderColor: 'none', // Hide border color when menu is open
       borderRadius: '6px',
     }),
     indicatorSeparator: () => ({
       display: 'none',
     }),
   };
+  const productNamelist = productList.map((item: any) => ({
+    label: item.name,
+    value: item.name,
+  }));
+  const productTypelist = productList.map((item: any) => ({
+    label: item.type,
+    value: item.type,
+  }));
   const handleCreateType = (inputValue: string, i: number) => {
     const newOption = {
       name: '',
@@ -227,12 +235,18 @@ export const AddSupplierManualy = () => {
   return (
     <div className='flex flex-col flex-start p-6 w-full'>
       <header className='flex gap-2.5 self-stretch p-3 text-sm items-center leading-5 text-blue-600 max-md:flex-wrap'>
-        <ChevronLeft size={24} className='text-slate-500' />
+        <ChevronLeft
+          onClick={() => {
+            router.back();
+          }}
+          size={24}
+          className='text-slate-500 cursor-pointer'
+        />
         <div className='flex-auto max-md:max-w-full'>
-          <p className='text-slate-500'>
+          <Link href={'/supply-chain'} className='text-slate-500'>
             Supply Chain &gt;
             <span className='font-bold text-blue-600 ml-2'>Add Supplier</span>
-          </p>
+          </Link>
         </div>
       </header>
 
@@ -329,6 +343,7 @@ export const AddSupplierManualy = () => {
                     name='name'
                     value={values.name}
                     onChange={handleChange}
+                    placeholder='Supplier'
                     className={cn(
                       'grow justify-center bg-gray-50 text-slate-700 max-md:pr-5 max-w-[337px]',
                       errors?.name && 'border border-red-500'
@@ -344,6 +359,7 @@ export const AddSupplierManualy = () => {
                     name='email'
                     value={values.email}
                     onChange={handleChange}
+                    placeholder='Email'
                     className={cn(
                       'grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 max-w-[337px] rounded-md text-slate-700 max-md:pr-5',
                       errors?.email && 'border border-red-500'
@@ -356,7 +372,7 @@ export const AddSupplierManualy = () => {
                     Relationship <br />
                     to organization
                   </div>
-                  <div className='flex gap-2 justify-between whitespace-nowrap  text-slate-700 h-[44px]'>
+                  <div className='flex gap-2 justify-between whitespace-nowrap  text-slate-700 h-[44px] min-w-[153px]'>
                     <Select
                       value={values.organizationRelationship}
                       onValueChange={(e) => {
@@ -370,7 +386,7 @@ export const AddSupplierManualy = () => {
                           errors?.organizationRelationship && ' border-red-500'
                         )}
                       >
-                        <SelectValue placeholder='Select relation to organization' />
+                        <SelectValue placeholder='Relationship' />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup className='text-sm'>
@@ -388,9 +404,6 @@ export const AddSupplierManualy = () => {
                 <div className='flex gap-5 justify-between items-center mt-6 max-md:flex-wrap max-md:max-w-full mb-6'>
                   <div className='grow text-xs font-medium leading-4 text-slate-700 max-md:max-w-full'>
                     Supplier Address
-                  </div>
-                  <div className='my-auto text-sm font-semibold leading-4 text-center text-blue-600'>
-                    Edit
                   </div>
                 </div>
                 <div className='max-w-[768px]'>
@@ -420,28 +433,44 @@ export const AddSupplierManualy = () => {
       </div>
 
       <div className='flex flex-col self-stretch p-6 rounded border mt-6 mx-10 border-solid border-[color:var(--Gray-200,#E5E7EB)] max-md:px-5'>
-        <div className='flex gap-2.5 mb-6 justify-between items-center max-md:flex-wrap max-md:max-w-full'>
-          {!editProductTable && (
-            <div className='flex justify-center items-center px-0.5 w-5 h-5 bg-blue-600 rounded-[100px]'>
-              <img
-                loading='lazy'
-                src='https://cdn.builder.io/api/v1/image/assets/TEMP/b2283a52b7c418fce477d355fd576ce8654d424c746c4d454e724c05c7236019?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                className='w-full aspect-square'
-              />
+        <div className='flex gap-2.5 mb-6 justify-between  items-center max-md:flex-wrap max-md:max-w-full'>
+          <div className='flex flex-col'>
+            <div className='flex items-center'>
+              {completeStep && (
+                <div className='flex justify-center items-center px-0.5 w-5 mr-2 h-5 bg-blue-600 rounded-[100px]'>
+                  <img
+                    loading='lazy'
+                    src='https://cdn.builder.io/api/v1/image/assets/TEMP/b2283a52b7c418fce477d355fd576ce8654d424c746c4d454e724c05c7236019?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
+                    className='w-full aspect-square'
+                  />
+                </div>
+              )}
+              {!completeStep && (
+                <div className='flex justify-center items-center px-1.5 my-auto mr-2 h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]'>
+                  2
+                </div>
+              )}
+
+              <div className='flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full'>
+                Product & Product Level Contribution
+              </div>
             </div>
-          )}
-          {editProductTable && (
-            <div className='flex justify-center items-center px-1.5 my-auto h-5 text-xs font-semibold leading-4 text-gray-600 whitespace-nowrap aspect-square bg-slate-200 rounded-[100px]'>
-              2
+
+            <div className='text-sm mt-2 leading-5 text-slate-800 max-md:max-w-full'>
+              Enter the product type, product name, units created each year, and
+              the functional unit associated with the product. If you know the
+              total Scope 3 contributions for the given quantity of each
+              product, enter it here
             </div>
-          )}
-          <div className='flex-auto text-base font-bold leading-6 text-slate-800 max-md:max-w-full'>
-            Product & Product Level Contribution
           </div>
-          {!editProductTable && (
+
+          {completeStep && (
             <Button
               variant={'ghost'}
-              onClick={() => setEditProductTable(true)}
+              onClick={() => {
+                setEditProductTable(true);
+                setCompleteStep(false);
+              }}
               className='text-blue-600 hover:text-blue-600 font-semibold'
             >
               Edit
@@ -449,14 +478,8 @@ export const AddSupplierManualy = () => {
           )}
         </div>
 
-        {editProductTable ? (
+        {!completeStep && editProductTable ? (
           <>
-            <div className='text-sm leading-5 text-slate-800 max-md:max-w-full'>
-              Enter the product type, product name, units created each year, and
-              the functional unit associated with the product. If you know the
-              total Scope 3 contributions for the given quantity of each
-              product, enter it here
-            </div>
             <Table className=''>
               <TableHeader className='border-b'>
                 <TableHead className='text-xs pl-0 pr-4'>
@@ -494,75 +517,83 @@ export const AddSupplierManualy = () => {
               <TableBody>
                 {productList.map((item: any, i: number) => (
                   <TableRow key={i} className='mt-4 border-0'>
-                    <TableCell className='max-w-[16rem] py-3 px-3 pl-0 pr-4'>
-                      <CreatableSelect
-                        // isClearable
-                        styles={customDropdownStyles}
-                        getOptionLabel={(option) => option.name}
-                        getOptionValue={(option) => option.name}
-                        onChange={(newValue) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].name = newValue.name;
-                          console.log(newValue, 'new value');
-                          setProductList(newCopy);
-                        }}
-                        onCreateOption={(e) => handleCreate(e, i)}
-                        options={productList}
-                        value={item}
-                      />
+                    <TableCell className='py-3 px-3 pl-0 pr-4'>
+                      <div className='2xl:w-[303px] w-[163px]'>
+                        <CreatableSelect
+                          // isClearable
+                          options={productNamelist}
+                          styles={customDropdownStyles}
+                          onChange={(newValue) => {
+                            const copy = _.cloneDeep(productList);
+                            copy[i].name = newValue?.value;
+                            setProductList(copy);
+                          }}
+                          onCreateOption={(e) => handleCreate(e, i)}
+                          value={{ label: item.name, value: item.name }}
+                          placeholder='Add product name'
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='max-w-[16rem] pl-0 py-3 pr-4'>
-                      <CreatableSelect
-                        className='border-0'
-                        // isClearable
-                        styles={customDropdownStyles}
-                        getOptionLabel={(option) => option.type}
-                        getOptionValue={(option) => option.type}
-                        onChange={(newValue) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].type = newValue.type;
-                          console.log(newValue, 'new value');
-                          setProductList(newCopy);
-                        }}
-                        onCreateOption={(e) => handleCreateType(e, i)}
-                        options={productList}
-                        value={item}
-                      />
+                    <TableCell className='pl-0 py-3 pr-4'>
+                      <div className='2xl:w-[303px] w-[163px]'>
+                        <CreatableSelect
+                          // isClearable
+                          options={productTypelist}
+                          styles={customDropdownStyles}
+                          onChange={(newValue) => {
+                            const copy = _.cloneDeep(productList);
+                            copy[i].name = newValue?.value;
+                            setProductList(copy);
+                          }}
+                          onCreateOption={(e) => handleCreateType(e, i)}
+                          value={{ label: item.type, value: item.type }}
+                          placeholder='Add product type'
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='w-12 pl-0 pr-4 py-3'>
-                      <Input
-                        value={item.quantity}
-                        onChange={(e) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].quantity = e.target.value;
-                          setProductList(newCopy);
-                        }}
-                        className='bg-[#F9FAFB] rounded-md'
-                      />
+                    <TableCell className='pl-0 pr-4 py-3'>
+                      <div className='2xl:w-[303px] w-[163px]'>
+                        <Input
+                          value={item.quantity}
+                          placeholder='unit'
+                          onChange={(e) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].quantity = e.target.value;
+                            setProductList(newCopy);
+                          }}
+                          className='bg-[#F9FAFB] rounded-md'
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='pl-0 pr-4 w-[12rem] py-3'>
-                      <Input
-                        value={item.functionalUnit}
-                        onChange={(e) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].functionalUnit = e.target.value;
-                          setProductList(newCopy);
-                        }}
-                        className='bg-[#F9FAFB] rounded-md'
-                      />
+                    <TableCell className='pl-0 pr-4 py-3'>
+                      <div className='2xl:w-[225px] w-[125px]'>
+                        <Input
+                          value={item.functionalUnit}
+                          placeholder='kilowatt/hr'
+                          onChange={(e) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].functionalUnit = e.target.value;
+                            setProductList(newCopy);
+                          }}
+                          className='bg-[#F9FAFB] rounded-md'
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='pl-0 pr-4 max-w-[12rem] py-3'>
-                      <Input
-                        value={item.scope_3Contribution}
-                        onChange={(e) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].scope_3Contribution = e.target.value;
-                          setProductList(newCopy);
-                        }}
-                        className='bg-[#F9FAFB] rounded-md'
-                      />
+                    <TableCell className='pl-0 pr-4 py-3'>
+                      <div className='2xl:w-[215px] w-[125px]'>
+                        <Input
+                          value={item.scope_3Contribution}
+                          placeholder='kgCO2'
+                          onChange={(e) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].scope_3Contribution = e.target.value;
+                            setProductList(newCopy);
+                          }}
+                          className='bg-[#F9FAFB] rounded-md'
+                        />
+                      </div>
                     </TableCell>
-                    <TableCell className='pl-0 pr-4 max-w-[12rem] py-3'>
+                    <TableCell className='pl-0 pr-4  py-3'>
                       {productList.length - 1 == i ? (
                         <Plus
                           size={16}
@@ -603,7 +634,9 @@ export const AddSupplierManualy = () => {
                   supplierId: supplier?.data?.id,
                   supplierProducts: productList,
                 };
+                console.log(productList, 'productList');
                 addSupplierProductsMut(data);
+                setCompleteStep(true);
               }}
               className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]'
             >

@@ -1,13 +1,12 @@
 'use client';
-import { ChevronLeft, X } from 'lucide-react';
+import { ChevronLeft, User, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Input } from '../ui/input';
 import AutocompleteInput from '../Autocomplete';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { z } from 'zod';
-
+import { number, z } from 'zod';
+import dayjs from 'dayjs';
 import { useFormik } from 'formik';
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
@@ -26,6 +25,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import Image from 'next/image';
+
 import {
   Select,
   SelectContent,
@@ -50,6 +51,8 @@ import {
 } from '../ui/table';
 import _, { set } from 'lodash';
 import { Button } from '../ui/button';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 export const EditSupplier = () => {
   const queryClient = useQueryClient();
@@ -61,7 +64,7 @@ export const EditSupplier = () => {
 
   const [editSupplier, setEditSupplier] = useState(true);
   const [editProductTable, setEditProductTable] = useState(false);
-  //   const [supplier, setSupplier] = useState<any>(null);
+  const [totalScopeValue, setTotalScopeValue] = useState(0);
   const [productList, setProductList] = useState<any>([
     {
       id: '',
@@ -74,7 +77,8 @@ export const EditSupplier = () => {
   ]);
   const [createableValue, setCreatableValue] = useState<any>('');
   const [createableTypeValue, setCreatableTypeValue] = useState<any>('');
-
+  const session = useSession();
+  // console.log(session, 'session');
   const reportingPeriodQ = useQuery({
     queryKey: ['reporting-period', reportingId],
     queryFn: () => getReportingPeriodById(reportingId ? reportingId : ''),
@@ -90,7 +94,8 @@ export const EditSupplier = () => {
   });
 
   const supplier = supplierQ.isSuccess ? supplierQ.data.data : {};
-  console.log('supplier', supplier);
+  // console.log('supplier', supplier);
+  const formattedDate = dayjs(supplier.updated_at).format('DD/MM/YYYY');
 
   const relationShips = ['OWNED', 'CONTRACTED'];
 
@@ -107,7 +112,7 @@ export const EditSupplier = () => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      console.log('supplier created : ', data);
+      // console.log('supplier created : ', data);
 
       //   setSupplier(data);
 
@@ -131,12 +136,14 @@ export const EditSupplier = () => {
         throw new Error(data.errors[0].message);
       }
       console.log('supplier updated : ', data);
-
+      queryClient.invalidateQueries({
+        queryKey: ['supplier', supplierId],
+      });
       //   setSupplier(data);
       setValues(data.data);
       toast.success('Supplier Updated', { style: { color: 'green' } });
       setEditSupplier(true);
-      // router.push("/supply-chain");
+      // router.push('/supply-chain');
     },
     onError: (err: any) => {
       console.log(err);
@@ -150,12 +157,15 @@ export const EditSupplier = () => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      console.log('supplier products created: ', data);
+      queryClient.invalidateQueries({
+        queryKey: ['supplier', supplierId],
+      });
 
+      // console.log('supplier products created: ', data);
       toast.success('Supplier Created', { style: { color: 'green' } });
 
       setEditProductTable(false);
-      // router.push("/supply-chain");
+      router.push('/supply-chain');
     },
     onError: (err: any) => {
       console.log(err);
@@ -212,9 +222,9 @@ export const EditSupplier = () => {
     control: (provided: any, state: any) => ({
       ...provided,
       border: 'none',
+      borderColor: 'none', // Hide border color when menu is open
       background: '#F9FAFB',
       borderRadius: '6px',
-      maxWidth: '163px',
     }),
     indicatorSeparator: () => ({
       display: 'none',
@@ -235,7 +245,14 @@ export const EditSupplier = () => {
     setProductList(newCopy);
     setCreatableTypeValue(newOption);
   };
-
+  const productNamelist = productList.map((item: any) => ({
+    label: item.name,
+    value: item.name,
+  }));
+  const productTypelist = productList.map((item: any) => ({
+    label: item.type,
+    value: item.type,
+  }));
   useEffect(() => {
     if (supplierQ.isSuccess) {
       setValues(supplier);
@@ -248,10 +265,16 @@ export const EditSupplier = () => {
         scope_3Contribution: product.scope_3_contribution,
       }));
       setProductList(newSupplierList);
+      const total = newSupplierList.reduce(
+        (total: number, currentItem: any) =>
+          (total = total + currentItem.scope_3Contribution!),
+        0
+      );
+      setTotalScopeValue(total);
     }
   }, [supplierQ.status]);
 
-  console.log(productList);
+  // console.log(productList);
 
   return (
     <div className='flex flex-col flex-start p-6 w-full'>
@@ -264,12 +287,12 @@ export const EditSupplier = () => {
           }}
         />
         <div className='flex-auto max-md:max-w-full'>
-          <p className='text-slate-500'>
+          <Link href={'/supply-chain'} className='text-slate-500'>
             Supply Chain &gt;
-            <span className='font-bold text-blue-600 ml-2'>
+            <span className='font-bold text-blue-600 ml-2 capitalize'>
               {supplier?.name}
             </span>
-          </p>
+          </Link>
         </div>
       </header>
 
@@ -383,7 +406,7 @@ export const EditSupplier = () => {
                     Relationship <br />
                     to organization
                   </div>
-                  <div className='flex gap-2 justify-between whitespace-nowrap  text-slate-700 h-[44px]'>
+                  <div className='flex gap-2 justify-between whitespace-nowrap  text-slate-700 h-[44px] min-w-[153px]'>
                     <Select
                       value={values.organizationRelationship}
                       onValueChange={(e) => {
@@ -416,9 +439,9 @@ export const EditSupplier = () => {
                   <div className='grow text-xs font-medium leading-4 text-slate-700 max-md:max-w-full'>
                     Supplier Address
                   </div>
-                  <div className='my-auto text-sm font-semibold leading-4 text-center text-blue-600'>
+                  {/* <div className='my-auto text-sm font-semibold leading-4 text-center text-blue-600'>
                     Edit
-                  </div>
+                  </div> */}
                 </div>
                 <div className='max-w-[768px]'>
                   <AutocompleteInput
@@ -522,50 +545,42 @@ export const EditSupplier = () => {
                 {productList.map((item: any, i: number) => (
                   <TableRow key={i} className='mt-4 border-0'>
                     <TableCell className='py-3 px-3 pl-0 pr-4'>
-                      <div className='w-[163px]'>
+                      <div className='2xl:w-[303px] w-[163px]'>
                         <CreatableSelect
                           // isClearable
+                          options={productNamelist}
                           styles={customDropdownStyles}
-                          getOptionLabel={(option) => option.name}
-                          getOptionValue={(option) => option.name}
                           onChange={(newValue) => {
-                            const newCopy = _.cloneDeep(productList);
-                            newCopy[i].name = newValue.name;
-                            newCopy[i].id = newValue.id;
-                            console.log(newValue, 'new value');
-                            setProductList(newCopy);
+                            const copy = _.cloneDeep(productList);
+                            copy[i].name = newValue?.value;
+                            setProductList(copy);
                           }}
                           onCreateOption={(e) => handleCreate(e, i)}
-                          options={productList}
-                          value={item}
+                          value={{ label: item.name, value: item.name }}
                         />
                       </div>
                     </TableCell>
                     <TableCell className='pl-0 py-3 pr-4'>
-                      <div className='w-[163px]'>
+                      <div className='2xl:w-[303px] w-[163px]'>
                         <CreatableSelect
-                          className='border-0'
                           // isClearable
+                          options={productTypelist}
                           styles={customDropdownStyles}
-                          getOptionLabel={(option) => option.type}
-                          getOptionValue={(option) => option.type}
                           onChange={(newValue) => {
-                            const newCopy = _.cloneDeep(productList);
-                            newCopy[i].type = newValue.type;
-                            newCopy[i].id = newValue.id;
-                            console.log(newValue, 'new value');
-                            setProductList(newCopy);
+                            const copy = _.cloneDeep(productList);
+                            copy[i].name = newValue?.value;
+                            setProductList(copy);
                           }}
                           onCreateOption={(e) => handleCreateType(e, i)}
-                          options={productList}
-                          value={item}
+                          value={{ label: item.type, value: item.type }}
                         />
                       </div>
                     </TableCell>
                     <TableCell className='pl-0 pr-4 py-3'>
-                      <div className='w-[163px]'>
+                      <div className='2xl:w-[303px] w-[163px]'>
                         <Input
                           value={item.quantity}
+                          placeholder='unit'
                           onChange={(e) => {
                             const newCopy = _.cloneDeep(productList);
                             newCopy[i].quantity = e.target.value;
@@ -575,27 +590,33 @@ export const EditSupplier = () => {
                         />
                       </div>
                     </TableCell>
-                    <TableCell className='pl-0 pr-4 w-[130px] py-3'>
-                      <Input
-                        value={item.functional_unit}
-                        onChange={(e) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].functional_unit = e.target.value;
-                          setProductList(newCopy);
-                        }}
-                        className='bg-[#F9FAFB] rounded-md'
-                      />
+                    <TableCell className='pl-0 pr-4 py-3'>
+                      <div className='2xl:w-[225px] w-[125px]'>
+                        <Input
+                          value={item.functional_unit}
+                          placeholder='kilowatt/hr'
+                          onChange={(e) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].functional_unit = e.target.value;
+                            setProductList(newCopy);
+                          }}
+                          className='bg-[#F9FAFB] rounded-md'
+                        />
+                      </div>
                     </TableCell>
                     <TableCell className='pl-0 pr-4 py-3 w-[163px]'>
-                      <Input
-                        value={item.scope_3Contribution}
-                        onChange={(e) => {
-                          const newCopy = _.cloneDeep(productList);
-                          newCopy[i].scope_3Contribution = e.target.value;
-                          setProductList(newCopy);
-                        }}
-                        className='bg-[#F9FAFB] rounded-md'
-                      />
+                      <div className='2xl:w-[215px] w-[125px]'>
+                        <Input
+                          value={item.scope_3Contribution}
+                          placeholder='kgCO2'
+                          onChange={(e) => {
+                            const newCopy = _.cloneDeep(productList);
+                            newCopy[i].scope_3Contribution = e.target.value;
+                            setProductList(newCopy);
+                          }}
+                          className='bg-[#F9FAFB] rounded-md'
+                        />
+                      </div>
                     </TableCell>
                     <TableCell className='pl-0 pr-4 py-3'>
                       {productList.length - 1 == i ? (
@@ -641,10 +662,6 @@ export const EditSupplier = () => {
                 };
                 console.log('edit list : ', productList);
                 addSupplierProductsMut(data);
-
-                queryClient.invalidateQueries({
-                  queryKey: ['supplier', supplierId],
-                });
               }}
               className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]'
             >
@@ -656,19 +673,57 @@ export const EditSupplier = () => {
             {productList.map((item: any, i: number) => (
               <div
                 key={i}
-                className='flex justify-between items-center text-green-900'
+                className='flex justify-between items-center text-base leading-4 text-green-900 mb-6'
               >
                 <div className='space-y-1'>
                   <p className='font-bold'>{item.name}</p>
-
                   <p className='text-sm'>{item.type}</p>
                 </div>
 
-                <p>{item.scope_3Contribution}</p>
+                <p className='text-base leading-4 text-green-900'>
+                  {item.scope_3Contribution == null ? (
+                    'Not Available'
+                  ) : (
+                    <p>
+                      {item.scope_3Contribution} {''}
+                      <span>kgCO2</span>
+                    </p>
+                  )}
+                </p>
               </div>
             ))}
+            <div className='flex justify-between items-center text-base font-bold leading-4 text-green-900'>
+              <p>Total</p>
+              <p>
+                {totalScopeValue}
+                {''} <span>kgCO2</span>
+              </p>
+            </div>
           </div>
         )}
+      </div>
+      <div className='flex flex-col items-start mx-10 my-6'>
+        <div className='flex gap-2 self-stretch text-xs mb-6 font-medium leading-4 text-slate-800'>
+          <Image
+            src={'/assets/images/user-icon.svg'}
+            alt='close-icon'
+            height={16}
+            width={16}
+            className='w-4 aspect-square'
+          />
+          <div className='flex-auto'>Updated By: {supplier.updated_by}</div>
+        </div>
+        <div className='flex gap-2 self-stretch text-xs font-medium leading-4 text-slate-800'>
+          <Image
+            src={'/assets/images/watch-icon.svg'}
+            alt='close-icon'
+            height={16}
+            width={16}
+            className='w-4 aspect-square'
+          />
+
+          <div className='last-updated'>Last Updated: {formattedDate}</div>
+        </div>
       </div>
     </div>
   );

@@ -43,6 +43,10 @@ export const createFacility = (obj: any) => {
   return fetchApi("/auth/facility", { method: "POST", body: obj });
 };
 
+export const updateFacility = ({ id, obj }: { id: string; obj: any }) => {
+  return fetchApi(`/auth/facility/${id}`, { method: "PATCH", body: obj });
+};
+
 export const getFacilities = async () => {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizations[0].id;
@@ -113,11 +117,11 @@ export const getEqualityData = (id: string) => {
 };
 
 export const getFacilityDashboard = ({
-  from,
-  to,
+  from = "",
+  to = "",
 }: {
-  from: string;
-  to: string;
+  from?: string;
+  to?: string;
 }) => {
   return fetchApi(
     `/auth/dashboard-data?reportingPeriodFrom=${from}&reportingPeriodTo=${to}`

@@ -23,11 +23,11 @@ import Image from "next/image";
 
 export default function Page() {
   const searchParams = useSearchParams();
-  const [currentStep, setCurrentStep] = useState(1);
   const [userId, setUserId] = useState<string | null>(null);
   const [userSlug, setUserSlug] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isSSOregistration, setiSSOregistration] = useState(false);
+  const currentStep = searchParams.get("step");
 
   const steps: {
     [key: number]: ({ setCurrentStep, setUserId, userId }: any) => JSX.Element;
@@ -39,7 +39,7 @@ export default function Page() {
   };
 
   let RegistrationSteps = Step1;
-  switch (searchParams.get("step")) {
+  switch (currentStep) {
     case "2":
       RegistrationSteps = Step2;
       break;
@@ -49,20 +49,25 @@ export default function Page() {
     case "complete":
       RegistrationSteps = RegistrationComplete;
       break;
+    case "setup-done":
+      RegistrationSteps = AccountSetupComplete;
+      break;
     default:
       RegistrationSteps = Step1;
   }
+
+  const stepper =
+    currentStep == ("complete" || "setup-done") ? "4" : currentStep;
 
   return (
     <>
       <div
         className={`h-3 absolute top-0 left-0 z-30 rounded-r-full bg-[#598E69]`}
-        style={{ width: `${(currentStep / 4) * 100}vw` }}
+        style={{ width: `${(parseInt(stepper!) / 4) * 100}vw` }}
       />
       <div className="flex container justify-between h-screen w-full">
         <div>
           <RegistrationSteps
-            setCurrentStep={setCurrentStep}
             ssoReg={isSSOregistration}
             setSSOReg={setiSSOregistration}
             setUserId={setUserId}
@@ -117,11 +122,12 @@ export default function Page() {
   );
 }
 
-const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
+const Step1 = ({ setSSOReg, setUserId }: any) => {
   const router = useRouter();
   const { data: session } = useSession();
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
+  const invitedEmail = searchParams.get("email");
   const social = searchParams.get("social");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
@@ -160,7 +166,11 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
         throw new Error(user.errors[0].message);
       }
       setUserId(user.data?.id);
-      router.push("/register?step=2");
+      if (invitedEmail) {
+        router.push("/register?step=2&invited=true");
+      } else {
+        router.push("/register?step=2");
+      }
       // setCurrentStep(2);
     },
     onError: (err) => {
@@ -182,15 +192,19 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
       if (errors.length > 0) {
         return;
       }
-      mutate(data);
+      mutate({ ...data, inviedUser: invitedEmail ? true : false });
     },
   });
-
-  console.log(errors);
 
   const handleSignIn = async (provider: string) => {
     const res = await signIn(provider, { redirect: false, callbackUrl: "/" });
   };
+
+  useEffect(() => {
+    if (invitedEmail) {
+      registerForm.setFieldValue("email", invitedEmail);
+    }
+  }, []);
 
   if (session) {
     router.push("/");
@@ -217,9 +231,13 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               )}
             >
               <Input
-                className={"w-full bg-transparent"}
+                className={
+                  "w-full bg-transparent disabled:text-slate-900 px-0 "
+                }
                 id="email"
                 name="email"
+                disabled={!!invitedEmail}
+                value={registerForm.values.email}
                 onBlur={() => registerForm.validateField("email")}
                 onChange={registerForm.handleChange}
                 placeholder="Email"
@@ -242,7 +260,7 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
               <Input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                className="w-full bg-transparent"
+                className="w-full bg-transparent px-0 "
                 name="password"
                 onChange={(e) => {
                   registerForm.handleChange(e);
@@ -429,27 +447,23 @@ const Step1 = ({ setCurrentStep, setSSOReg, setUserId }: any) => {
   );
 };
 
-const Step2 = ({
-  setCurrentStep,
-  ssoReg,
-  setSSOReg,
-  userId,
-  setUserSlug,
-}: any) => {
+const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isInvited = searchParams.get("invited");
 
   const validation = z.object({
     firstName: z
       .string()
-      .min(2)
-      .max(30)
+      .min(2, "First Name should contain at least 2 characters")
+      .max(30, "First Name should contain at most 30 characters")
       .refine((val) => /^[a-zA-Z ]*$/.test(val), {
         message: "Name should contain only alphabets",
       }),
     lastName: z
       .string()
-      .min(2)
-      .max(30)
+      .min(2, "Last Name should contain at least 2 characters")
+      .max(30, "Last Name should contain at most 30 characters")
       .refine((val) => /^[a-zA-Z ]*$/.test(val), {
         message: "Name should contain only alphabets",
       }),
@@ -463,8 +477,12 @@ const Step2 = ({
       }
       setUserSlug(data.data.slug);
       // setCurrentStep(3);
-      console.log(data.data.slug);
-      router.push("/register?step=3");
+      console.log(isInvited == "true");
+      if (isInvited == "true") {
+        router.push("/register?step=setup-done");
+      } else {
+        router.push("/register?step=3");
+      }
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -478,9 +496,13 @@ const Step2 = ({
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      mutate({ id: userId, formdata: data });
+      mutate({
+        id: userId,
+        formdata: { ...data, invitedUser: isInvited == "true" ? true : false },
+      });
     },
   });
+
   return (
     <form
       onSubmit={step2Form.handleSubmit}
@@ -509,7 +531,7 @@ const Step2 = ({
               placeholder="First Name"
               name="firstName"
               onChange={step2Form.handleChange}
-              className="bg-transparent"
+              className="bg-transparent px-0"
             />
           </div>
           <p className="text-xs text-red-500">{step2Form.errors.firstName}</p>
@@ -530,7 +552,7 @@ const Step2 = ({
             <Input
               type="text"
               id="lastNameInput"
-              className="bg-transparent"
+              className="bg-transparent px-0"
               name="lastName"
               onChange={step2Form.handleChange}
               placeholder="Last Name"
@@ -544,7 +566,11 @@ const Step2 = ({
             <Loader2 size={30} className="text-slate-400 animate-spin" />
           )}
           <Button
-            disabled={isPending}
+            disabled={
+              Object.values(step2Form.values.firstName).length === 0 ||
+              Object.values(step2Form.values.lastName).length === 0 ||
+              isPending
+            }
             className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap justify-center px-6 py-4 max-md:px-5"
             type="submit"
           >
@@ -556,15 +582,21 @@ const Step2 = ({
   );
 };
 
-const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
+const Step3 = ({ userSlug, setUserEmail }: any) => {
   const router = useRouter();
   const { data: session, update } = useSession();
-  const [addressDisabled, setAddressDisabled] = useState(true);
+  const [isEdit, setEdit] = useState(false);
   const [address, setAddress] = useState("");
 
   const validation = z.object({
-    companyName: z.string(),
-    companyAddress: z.string(),
+    companyName: z
+      .string()
+      .min(2, "Company Name should contain at least 2 characters")
+      .max(50, "Company Name should contain at most 50 characters"),
+
+    companyAddress: z
+      .string()
+      .max(500, "Address should contain at most 255 characters"),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
@@ -576,9 +608,13 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
 
       setUserEmail(data.data.email);
       // setCurrentStep(4);
-      console.log("data", data.data.organizations);
+      // console.log("data", data.data.organizations);
       update({ orgs: data.data.organizations });
-      router.push("/register?step=complete");
+      if (session) {
+        router.push("/create-organisation");
+      } else {
+        router.push("/register?step=complete");
+      }
     },
     onError: (error) => {
       toast.error(error.message, { style: { color: "red" } });
@@ -592,8 +628,9 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
       registrationStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
-    validateOnChange: false,
+    validateOnChange: true,
     validateOnBlur: true,
+    validateOnMount: false,
     onSubmit: (data) => {
       console.log(data, userSlug);
       if (userSlug == null) {
@@ -629,15 +666,19 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
               id="companyName"
               name="companyName"
               onChange={step3Form.handleChange}
-              placeholder="Company"
+              placeholder="Company Name"
               className={cn(
                 "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
-                step3Form.errors.companyName && "border border-red-500"
+                step3Form.touched.companyName &&
+                  step3Form.errors.companyName &&
+                  "border border-red-500"
               )}
             />
-            <p className="text-xs text-red-500 mt-0.5">
-              {step3Form.errors.companyName}
-            </p>
+            {step3Form.touched.companyName && (
+              <p className="text-xs text-red-500 mt-0.5">
+                {step3Form.errors.companyName}
+              </p>
+            )}
           </div>
         </div>
         <div className="mt-6">
@@ -651,7 +692,7 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             {step3Form.values.companyAddress != "" && (
               <p
                 role="button"
-                onClick={() => setAddressDisabled(false)}
+                onClick={() => setEdit(true)}
                 className="text-sm font-semibold leading-4 text-blue-600"
               >
                 Edit
@@ -661,14 +702,17 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
 
           <div className="max-w-[582px]">
             <AutocompleteInput
-              isDisabled={addressDisabled}
+              isDisabled={!isEdit}
               setAddress={(e: any) => {
                 step3Form.setFieldValue("companyAddress", e);
+                setEdit(false);
               }}
             />
-            <p className="text-red-500 text-xs">
-              {step3Form.errors?.companyAddress}
-            </p>
+            {step3Form.touched.companyAddress && (
+              <p className="text-red-500 text-xs">
+                {step3Form.errors?.companyAddress}
+              </p>
+            )}
           </div>
         </div>
 
@@ -690,7 +734,11 @@ const Step3 = ({ setCurrentStep, userSlug, setUserEmail }: any) => {
             <Button
               size={"lg"}
               type="submit"
-              disabled={isPending}
+              disabled={
+                Object.values(step3Form.values.companyName).length === 0 ||
+                Object.values(step3Form.values.companyAddress).length === 0 ||
+                isPending
+              }
               className="text-white text-center text-base font-semibold leading-6 whitespace-nowrap items-stretch rounded self-stretch justify-center px-6 py-4 max-md:px-5"
             >
               Continue
@@ -711,11 +759,32 @@ const RegistrationComplete = ({ userEmail }: any) => {
         </h1>
       </header>
       <p className="mt-6 py-8 max-w-[581px]">
-        We sent an email to <strong>{userEmail}</strong>. Check your inbox to
-        activate your account.
+        We sent you an email to <strong>{userEmail}</strong>. Check your inbox
+        to activate your account.
       </p>
       <Link
         href={"/login"}
+        className="rounded bg-blue-600 hover:bg-blue-600/90 px-4 py-1 text-white text-sm font-semibold"
+      >
+        Back to Login
+      </Link>
+    </div>
+  );
+};
+
+const AccountSetupComplete = ({ userEmail }: any) => {
+  return (
+    <div className="items-center flex max-w-[840px] flex-col justify-center px-16 py-12 max-md:px-5">
+      <header className="flex w-full max-w-[581px] flex-col mt-5 max-md:max-w-full max-md:mb-10">
+        <h1 className="justify-center text-neutral-900 text-center text-[3.5rem] font-semibold self-stretch max-md:max-w-full max-md:text-4xl">
+          Your account has been set up
+        </h1>
+      </header>
+      <p className="mt-6 py-8 max-w-[581px] text-center">
+        Tap continue to head to the Terralab platform
+      </p>
+      <Link
+        href={"/"}
         className="rounded bg-blue-600 hover:bg-blue-600/90 px-4 py-1 text-white text-sm font-semibold"
       >
         Back to Login

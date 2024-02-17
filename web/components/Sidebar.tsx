@@ -28,6 +28,7 @@ const Sidebar = () => {
   const firstLetterOfLastName = lastName.charAt(0);
 
   const organizationLinks = ["/facilities"];
+  const supplychainLinks = ["/supply-chain"];
 
   function urlContainsElements(url: string, elements: string[]) {
     for (const element of elements) {
@@ -101,9 +102,9 @@ const Sidebar = () => {
           href={"/"}
           className={cn(
             "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
-            urlContainsElements(pathname, organizationLinks) ||
-              (pathname == "/" &&
-                "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500")
+            (urlContainsElements(pathname, organizationLinks) ||
+              pathname == "/") &&
+              "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
           )}
         >
           <svg
@@ -194,7 +195,11 @@ const Sidebar = () => {
 
         <Link
           href={"/supply-chain"}
-          className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
+          className={cn(
+            "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
+            pathname == "/supply-chain" &&
+              "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
+          )}
         >
           <svg
             width="16"
@@ -270,7 +275,7 @@ const Sidebar = () => {
               </h2>
             </div>
           </DialogTrigger>
-          <DialogContent className="shadow w-full max-w-[857px] rounded-lg h-full max-h-[551px] p-0">
+          <DialogContent className="shadow w-full max-w-[857px] rounded-lg  min-h-[551px] p-0">
             <Accounts />
           </DialogContent>
         </Dialog>

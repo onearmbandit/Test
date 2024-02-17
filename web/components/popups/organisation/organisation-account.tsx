@@ -26,12 +26,12 @@ const OrganisationAccount = ({
       </h2>
       <div className="bg-gray-300 self-stretch w-full shrink-0 h-px mr-2.5 mt-2.5" />
       <div className="items-stretch flex gap-2.5 mt-2.5 py-3 self-start">
-        <a
+        {/* <a
           href="#"
           className="text-blue-700 text-xs font-bold leading-4 whitespace-nowrap justify-center items-stretch bg-blue-100 px-5 py-6 rounded-md max-md:px-5"
         >
           PC
-        </a>
+        </a> */}
         <div className="justify-center items-stretch self-center flex grow basis-[0%] flex-col my-auto">
           <h3 className="text-slate-700 text-xs font-bold leading-4">Name</h3>
           <div className="text-slate-700 text-sm leading-5 mt-2.5">
@@ -92,10 +92,18 @@ const OrganisationAccount = ({
           Edit
         </p>
       </div>
-      <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
-        Climate Commitments
+      <div className="flex items-end justify-between w-full">
+        <div className="text-slate-700 text-xs font-medium leading-5 self-stretch mt-2.5 max-md:max-w-full">
+          Climate Commitments
+        </div>
+        <p
+          onClick={() => setSection("climate")}
+          className="text-blue-600 text-center text-xs font-bold leading-4 cursor-pointer"
+        >
+          Edit
+        </p>
       </div>
-      <div className="justify-between items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-md:max-w-full max-md:flex-wrap">
+      {/* <div className=" items-stretch self-stretch flex gap-5 mt-2.5 py-2  max-w-full flex-wrap max-h-[4rem] overflow-auto">
         {user?.data?.organizations[0]?.climate_targets?.map(
           (target: string, i: number) => (
             <div
@@ -106,13 +114,21 @@ const OrganisationAccount = ({
             </div>
           )
         )}
-
-        <p
-          onClick={() => setSection("climate")}
-          className="text-blue-600 text-center text-xs font-bold leading-4 cursor-pointer"
-        >
-          Edit
-        </p>
+      </div> */}
+      <div className="items-stretch self-stretch flex gap-5 mt-2.5 py-2 max-w-full flex-wrap max-h-[44px] overflow-auto">
+        {user?.data?.organizations[0]?.climate_targets && (
+          <div className="text-slate-700 text-xs font-light leading-[18px] md:max-w-[424px] w-full">
+            {user.data.organizations[0].climate_targets.map(
+              (target: string, i: number) => (
+                <span key={i} className="first:pl-0 pl-[2px]">
+                  {target}
+                  {i < user.data.organizations[0].climate_targets.length - 1 &&
+                    ", "}
+                </span>
+              )
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

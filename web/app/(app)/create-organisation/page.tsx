@@ -3,17 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  getOrganizationDetails,
   setupOrganizationStep1,
   setupOrganizationStep2,
   setupOrganizationStep3,
   setupOrganizationStep4,
 } from "@/services/organizations.api";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { useFormik } from "formik";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -117,7 +118,8 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
             id="companyEmail"
             onChange={setupOrganizationStep1Form.handleChange}
             className={cn(
-              "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
+              "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 max-w-full justify-center mt-6 px-2 py-7 rounded-md lg:max-w-[367px] w-full",
+
               setupOrganizationStep1Form.touched.companyEmail &&
                 setupOrganizationStep1Form.errors.companyEmail &&
                 "border border-red-500"
@@ -188,6 +190,14 @@ const Step2 = ({ setStep }: any) => {
     "10,000+",
   ];
 
+  const orgDetail = useQuery({
+    queryKey: ["org-capacity"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+  console.log(organization);
+
   const validation = z.object({
     companySize: z.string(),
     profileStep: z.number().int().min(1).max(3),
@@ -225,6 +235,17 @@ const Step2 = ({ setStep }: any) => {
     },
   });
 
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep2Form.setFieldValue(
+        "companySize",
+        organization?.company_size
+      );
+      const index = sizes.indexOf(organization?.company_size);
+      setSelected(index);
+    }
+  }, [orgDetail.data]);
+
   return (
     <form onSubmit={setupOrganizationStep2Form.handleSubmit}>
       <div className="max-w-[50.875rem] w-full pt-6">
@@ -243,7 +264,7 @@ const Step2 = ({ setStep }: any) => {
               className={`company-size-option  text-lg font-bold leading-7 whitespace-nowrap justify-center items-center grow px-7 py-4 rounded-2xl border-solid max-md:px-5 ${
                 selected == i
                   ? "bg-blue-200 border-2 border-blue-500 text-blue-700"
-                  : "border border-slate-500 text-slate-800"
+                  : "border-2 border-[#64748B] text-slate-800"
               }`}
             >
               {item}
@@ -293,6 +314,13 @@ const Step3 = ({ setStep }: any) => {
     profileStep: z.number().int().min(1).max(3),
   });
 
+  const orgDetail = useQuery({
+    queryKey: ["org-naics"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step3"],
     mutationFn: setupOrganizationStep3,
@@ -316,6 +344,7 @@ const Step3 = ({ setStep }: any) => {
       profileStep: 3,
     },
     validationSchema: toFormikValidationSchema(validation),
+    validateOnChange: false,
     onSubmit: (data: any) => {
       const organizationId: string | undefined =
         session.data?.user?.organizations[0]?.id;
@@ -324,6 +353,15 @@ const Step3 = ({ setStep }: any) => {
       }
     },
   });
+
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep3Form.setFieldValue(
+        "naicsCode",
+        organization?.naics_code
+      );
+    }
+  }, [orgDetail.data]);
 
   return (
     <form onSubmit={setupOrganizationStep3Form.handleSubmit}>
@@ -346,10 +384,11 @@ const Step3 = ({ setStep }: any) => {
         <Input
           name="naicsCode"
           id="naicsCode"
+          value={setupOrganizationStep3Form.values?.naicsCode}
           placeholder="Add NAICS code"
           onChange={setupOrganizationStep3Form.handleChange}
           className={cn(
-            "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
+            "text-slate-500 text-sm font-light leading-4 items-stretch self-center bg-gray-50 w-[814px] max-w-full justify-center mt-6 px-2 py-7 rounded-md max-md:max-w-full",
             setupOrganizationStep3Form.touched.naicsCode &&
               setupOrganizationStep3Form.errors.naicsCode &&
               "border border-red-500"
@@ -420,6 +459,13 @@ const Step4 = ({ setStep }: any) => {
     profileStep: z.number().int().min(1).max(3),
   });
 
+  const orgDetail = useQuery({
+    queryKey: ["org-targets"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["step1"],
     mutationFn: setupOrganizationStep4,
@@ -465,10 +511,25 @@ const Step4 = ({ setStep }: any) => {
   };
   // console.log("Form Errors : ", setupOrganizationStep4Form.errors);
 
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep4Form.setFieldValue(
+        "climateTargets",
+        organization?.climate_targets
+      );
+
+      setTargets(
+        organization?.climate_targets == null
+          ? []
+          : organization?.climate_targets
+      );
+    }
+  }, [orgDetail.data]);
+
   return (
     <form onSubmit={setupOrganizationStep4Form.handleSubmit}>
       <div className="justify-center items-start flex max-w-[814px] w-full flex-col">
-        <div role="group" className="mt-6">
+        <div role="group" className="mt-6 flex flex-col">
           <label className="text-slate-700 text-base font-medium leading-6">
             Do you have goals or targets to reduce greenhouse gas emissions
             and/or energy?
@@ -477,8 +538,8 @@ const Step4 = ({ setStep }: any) => {
             For example, Science Based Target initiatives or commitments that
             are climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
           </p>
-          {targets.length > 0 && (
-            <div className="items-stretch self-stretch rounded bg-gray-50 flex max-w-[814px] gap-x-4 gap-y-2.5 w-full mx-auto p-2.5 flex-wrap max-h-[128px] overflow-auto">
+          {targets?.length > 0 && (
+            <div className="items-stretch self-stretch rounded  flex max-w-[814px] gap-x-4 gap-y-2.5 w-full mx-auto p-2.5 flex-wrap max-h-[128px] overflow-auto">
               {targets.map((target, index) => (
                 <div
                   key={index}
@@ -488,7 +549,10 @@ const Step4 = ({ setStep }: any) => {
                     {target}
                   </div>
 
-                  <button onClick={() => removeTarget(index)}>
+                  <button
+                    onClick={() => removeTarget(index)}
+                    className="self-end"
+                  >
                     {" "}
                     <X size={12} className="text-green-800" />{" "}
                   </button>
@@ -506,8 +570,23 @@ const Step4 = ({ setStep }: any) => {
               onChange={(e) => {
                 setCurrentTarget(e.target.value);
               }}
+              // onFocus={() => {
+              //   if (!currentTarget) {
+              //     setCurrentTarget("Add another climate target");
+              //   }
+              // }}
+              // onBlur={() => {
+              //   if (!currentTarget) {
+              //     setCurrentTarget("ex: Carbon neutral by 2030");
+              //   }
+              // }}
               className="text-slate-500 text-xs font-light leading-4 bg-gray-50 self-stretch mt-2 px-2 py-6 rounded-md"
-              placeholder="ex: Carbon neutral by 2030"
+              // placeholder="ex: Carbon neutral by 2030"
+              placeholder={
+                targets?.length > 0
+                  ? "Add another climate target"
+                  : "ex: Carbon neutral by 2030"
+              }
             />
 
             <p
@@ -518,6 +597,16 @@ const Step4 = ({ setStep }: any) => {
             >
               {currentTarget.length}/50 Characters
             </p>
+            {currentTarget.length > 0 && currentTarget.length < 3 && (
+              <p
+                className={cn(
+                  "text-slate-500 text-xs font-light",
+                  "text-red-500"
+                )}
+              >
+                Target should have atleast 2 characters
+              </p>
+            )}
           </div>
           <button
             onClick={() => {
@@ -529,7 +618,7 @@ const Step4 = ({ setStep }: any) => {
             }}
             className="text-blue-600 text-end text-sm font-bold leading-4 whitespace-nowrap mt-4 disabled:cursor-not-allowed "
             type="button"
-            disabled={currentTarget.length > 50}
+            disabled={currentTarget.length > 50 || currentTarget.length < 3}
           >
             + Add another target
           </button>
@@ -557,7 +646,11 @@ const Step4 = ({ setStep }: any) => {
                 <Loader2 size={30} className="text-slate-400 animate-spin" />
               )}
               <Button
-                disabled={currentTarget.length > 50 || isPending}
+                disabled={
+                  currentTarget.length > 50 ||
+                  currentTarget.length < 3 ||
+                  isPending
+                }
                 className="save-button text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
                 type="submit"
               >
