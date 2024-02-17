@@ -13,7 +13,7 @@ export default class UpdateOrganizationValidator {
 
     climateTargets: schema.array
       .optional()
-      .members(schema.string({}, [rules.minLength(2), rules.maxLength(50)])),
+      .members(schema.string({}, [rules.minLength(1), rules.maxLength(50)])),
     companyEmail: schema.string.optional({}, [
       rules.email(),
       rules.unique({ table: 'users', column: 'email' }),
@@ -23,8 +23,8 @@ export default class UpdateOrganizationValidator {
 
   public messages = {
     'naicsCode.regex': 'NAICS codes must be 4-5 digits.',
-    'climateTargets.*.minLength': 'Each target must be at least 2 characters long.',
-    'climateTargets.*.maxLength': 'Each target must be at most 30 characters long.',
+    'climateTargets.*.minLength': 'Each target must be at least 1 characters long.',
+    'climateTargets.*.maxLength': 'Each target must be at most 50 characters long.',
     'companyEmail.unique': 'Invitation is already sent to this email',
   }
 }
