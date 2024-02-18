@@ -39,7 +39,7 @@ export default class OrganizationFacility extends BaseModel {
   public facilityEmission: HasMany<typeof FacilityEmission>
 
 
-  public static async createFacility(facilityData,organizationIds) {
+  public static async createFacility(facilityData, organizationIds) {
 
     // Generate a new UUID for the id field
     const id = uuidv4();
@@ -63,6 +63,7 @@ export default class OrganizationFacility extends BaseModel {
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1;
     const order = queryParams.order ? queryParams.order.toString() : 'desc';
     const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at';
+    let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
     const organizationId = queryParams.organization_id ? queryParams.organization_id.toString() : '';
 
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
@@ -72,6 +73,12 @@ export default class OrganizationFacility extends BaseModel {
     }
 
     query = query.orderBy(sort, order);
+
+    //::Include Relationship
+    if (includes.length > 0) {
+      console.log("includes >>", includes)
+      includes.forEach((include: any) => query.preload(include.trim()))
+    }
 
     //:: Pagination handling
     if (queryParams.per_page && queryParams.per_page !== 'all') {

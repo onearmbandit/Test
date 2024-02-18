@@ -79,19 +79,6 @@ export default class FacilityProduct extends BaseModel {
 
     const facilityProducts = await query.paginate(page, perPage)
 
-    // // Extracting equality_attribute values from facilityProducts
-    // const equalityAttributes = facilityProducts.all().map((product) => product.equalityAttribute)
-    // // console.log("equalityAttributes", equalityAttributes)
-
-    // // Checking if all equality_attribute values are the same
-    // const areEqual = equalityAttributes.every((value, _, array) => value === array[0])
-    // // console.log("areEqual", areEqual)
-
-    // // If all equality_attribute values are the same, extract the value
-    // const commonEqualityAttribute = areEqual ? equalityAttributes[0] : null
-
-    // facilityProducts['equalityAttributes'] = commonEqualityAttribute
-
     return facilityProducts
   }
 
@@ -201,15 +188,24 @@ export default class FacilityProduct extends BaseModel {
       .where('facility_emission_id', facilityEmissionData.id)
     const totalProducts = allProducts.length
 
-    const percentagePerProduct = 100 / totalProducts
+    // const percentagePerProduct = 100 / totalProducts
+
+    let scope1EmissionPerProduct = (scope1TotalEmission / totalProducts)
+    let scope2EmissionPerProduct = (scope2TotalEmission / totalProducts)
+    let scope3EmissionPerProduct = (scope3TotalEmission / totalProducts)
 
     allProducts.map((product, _) => {
-      const scope1CarbonEmission =
-        ((percentagePerProduct / 100) * scope1TotalEmission).toFixed(2) + '%'
-      const scope2CarbonEmission =
-        ((percentagePerProduct / 100) * scope2TotalEmission).toFixed(2) + '%'
-      const scope3CarbonEmission =
-        ((percentagePerProduct / 100) * scope3TotalEmission).toFixed(2) + '%'
+      // const scope1CarbonEmission =
+      //   ((percentagePerProduct / 100) * scope1TotalEmission).toFixed(2) + '%'
+      // const scope2CarbonEmission =
+      //   ((percentagePerProduct / 100) * scope2TotalEmission).toFixed(2) + '%'
+      // const scope3CarbonEmission =
+      //   ((percentagePerProduct / 100) * scope3TotalEmission).toFixed(2) + '%'
+
+      const scope1CarbonEmission = ((scope1EmissionPerProduct / scope1TotalEmission) * 100).toFixed(2) + '%'
+      const scope2CarbonEmission = ((scope2EmissionPerProduct / scope2TotalEmission) * 100).toFixed(2) + '%'
+      const scope3CarbonEmission = ((scope3EmissionPerProduct / scope3TotalEmission) * 100).toFixed(2) + '%'
+
 
       // Add the calculated values to the product
       const updatedProduct = {
@@ -229,16 +225,19 @@ export default class FacilityProduct extends BaseModel {
 
   public static async getAllProductNames(queryParams) {
 
-    const organizationFacilityId = queryParams.organizationFacilityId ? queryParams.organizationFacilityId.toString() : '';
+    const organizationId = queryParams.organizationId ? queryParams.organizationId.toString() : '';
     const order = queryParams.order ? queryParams.order.toString() : 'desc';
 
     let facilityProducts: FacilityEmission[] = [];
     let uniqueProductNames: string[] = [];
 
     facilityProducts = await FacilityEmission.query()
-      .where('organization_facility_id', organizationFacilityId)
       .whereNull('deleted_at')
+      .whereHas('OrganizationFacility', (orgQuery) => {
+        orgQuery.where('organization_id', organizationId);
+      })
       .preload('FacilityProducts');
+
 
     // Extract unique product names from the loaded data
     uniqueProductNames = Array.from(

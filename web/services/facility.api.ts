@@ -50,7 +50,9 @@ export const updateFacility = ({ id, obj }: { id: string; obj: any }) => {
 export const getFacilities = async () => {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizations[0].id;
-  return fetchApi(`/auth/facility?organization_id=${orgId}`);
+  return fetchApi(
+    `/auth/facility?organization_id=${orgId}&include=facilityEmission`
+  );
 };
 
 export const addFacilityReportingPeriod = (formData: any) => {
@@ -125,5 +127,11 @@ export const getFacilityDashboard = ({
 }) => {
   return fetchApi(
     `/auth/dashboard-data?reportingPeriodFrom=${from}&reportingPeriodTo=${to}`
+  );
+};
+
+export const getAllFacilityProductNames = (facilityId: string) => {
+  return fetchApi(
+    `/auth/facility-product-name-list?organizationFacilityId=${facilityId}&order=asc`
   );
 };

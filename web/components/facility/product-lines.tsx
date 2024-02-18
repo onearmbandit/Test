@@ -11,6 +11,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addProductLines,
   editProductLines,
+  getAllFacilityProductNames,
   getProductLines,
 } from "@/services/facility.api";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@radix-ui/react-tooltip";
+import CreatableSelect from "react-select/creatable";
 
 const ProductLines = ({ period }: { period: string }) => {
   const searchParams = useSearchParams();
@@ -37,7 +39,32 @@ const ProductLines = ({ period }: { period: string }) => {
   const productLines = prodLines.isSuccess ? prodLines.data : [];
   // console.log(productLines);
 
-  const { mutate } = useMutation({
+  const productNamesQ = useQuery({
+    queryKey: ["product-names", facilityId!],
+    queryFn: () => getAllFacilityProductNames(facilityId!),
+  });
+  const productNames = productNamesQ.isSuccess ? productNamesQ.data?.data : [];
+  const nameList: { value: string; label: string }[] = productNames?.map(
+    (item: string) => ({
+      label: item,
+      value: item,
+    })
+  );
+
+  const customDropdownStyles = {
+    control: (provided: any, state: any) => ({
+      ...provided,
+      border: "none",
+      background: "#F9FAFB",
+      borderColor: "none",
+      borderRadius: "6px",
+    }),
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+  };
+
+  const { mutate, isPending: addPending } = useMutation({
     mutationFn: addProductLines,
     onSuccess: (data) => {
       if (data.errors) {
@@ -61,7 +88,7 @@ const ProductLines = ({ period }: { period: string }) => {
     },
   });
 
-  const { mutate: editMutate } = useMutation({
+  const { mutate: editMutate, isPending: editPending } = useMutation({
     mutationFn: editProductLines,
     onSuccess: (data) => {
       if (data.errors) {
@@ -138,12 +165,12 @@ const ProductLines = ({ period }: { period: string }) => {
         setEdit(true);
       }
     }
-  }, [prodLines.status]);
+  }, [prodLines.status, prodLines.data]);
 
   return (
     <>
-      <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
-        {isEdit ? (
+      {isEdit ? (
+        <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
           <div className="flex flex-col items-stretch self-stretch text-xs leading-4 bg-white rounded-lg">
             <header className="grid grid-cols-3 gap-5   py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 md:flex-wrap md:max-w-full">
               <div className="flex-auto">Product Name</div>
@@ -159,8 +186,8 @@ const ProductLines = ({ period }: { period: string }) => {
                         className="text-white fill-slate-600"
                       />
                     </TooltipTrigger>
-                    <TooltipContent className="bg-slate-800 max-w-[246px]">
-                      <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">
+                    <TooltipContent className="bg-slate-800 max-w-[246px] px-2.5 py-3 rounded shadow-sm">
+                      <p className=" text-xs leading-4 text-white">
                         A functional unit in sustainability is a measure of
                         performance that quantifies the environmental impacts of
                         a system, used to compare different products or
@@ -178,7 +205,31 @@ const ProductLines = ({ period }: { period: string }) => {
                 className="gap-5 grid grid-cols-3 mt-6 w-full whitespace-nowrap text-slate-700 max-md:flex-wrap max-md:max-w-full"
               >
                 <div>
-                  <Input
+                  <CreatableSelect
+                    options={nameList}
+                    onChange={(e) => {
+                      const copy = _.cloneDeep(products);
+                      copy[i].name = e?.label;
+                      setProducts(copy);
+                    }}
+                    styles={customDropdownStyles}
+                    placeholder="Select..."
+                    onCreateOption={(e) => {
+                      const newOption = {
+                        name: e,
+                        quantity: "",
+                        type: "",
+                        functionalUnit: "",
+                        scope_3Contribution: "",
+                      };
+                      const newCopy = _.cloneDeep(products);
+                      newCopy[i].name = e;
+                      setProducts(newCopy);
+                      // setCreatableValue(newOption);
+                    }}
+                    value={{ label: item.name, value: item.name }}
+                  />
+                  {/* <Input
                     className="justify-center items-stretch text-xs p-2 max-w-[14.75rem] 2xl:max-w-[70%] bg-gray-50 rounded-md"
                     type="text"
                     id="product-name"
@@ -191,7 +242,7 @@ const ProductLines = ({ period }: { period: string }) => {
                     name="product-name"
                     required
                     placeholder="Add product name "
-                  />
+                  /> */}
                 </div>
 
                 <div>
@@ -243,20 +294,26 @@ const ProductLines = ({ period }: { period: string }) => {
               >
                 + Add another product
               </Button>
-              <Button
-                type="button"
-                size={"sm"}
-                onClick={() => handleSubmit()}
-                className="self-end px-4 py-1.5 mt-8  shadow"
-              >
-                Save
-              </Button>
+              <div className="flex items-center space-x-2 mt-8">
+                {(editPending || addPending) && (
+                  <Loader2 className="text-blue-600 animate-spin" />
+                )}
+                <Button
+                  type="button"
+                  size={"sm"}
+                  disabled={editPending || addPending}
+                  onClick={() => handleSubmit()}
+                  className="self-end px-4 py-1.5 shadow"
+                >
+                  Save
+                </Button>
+              </div>
             </div>
           </div>
-        ) : (
-          <Productlist period={period} setEdit={setEdit} />
-        )}
-      </Suspense>
+        </Suspense>
+      ) : (
+        <Productlist period={period} setEdit={setEdit} />
+      )}
     </>
   );
 };
@@ -275,33 +332,35 @@ const Productlist = ({
   const productLines = prodLines.isSuccess ? prodLines.data : [];
 
   return (
-    <section
-      className="flex flex-col items-stretch self-stretch pb-1.5 text-base font-light leading-6 text-teal-800 bg-white rounded-lg"
-      aria-label="Product Card"
-    >
-      {productLines?.data?.FacilityProducts?.map((item: any, i: number) => (
-        <div
-          key={i}
-          className="grid grid-cols-3 gap-5 justify-between py-1 w-fit pr-20 max-md:flex-wrap max-md:pr-5 max-md:max-w-full"
-        >
-          <h1 className="font-bold whitespace-nowrap w-[8.125rem]">
-            {item.name}
-          </h1>
-          <p className="w-[9.75rem]">{item.quantity} units</p>
-          <p className="grow">{item.functional_unit}</p>
+    <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
+      <section
+        className="flex flex-col items-stretch self-stretch pb-1.5 text-base font-light leading-6 text-teal-800 bg-white rounded-lg"
+        aria-label="Product Card"
+      >
+        {productLines?.data?.FacilityProducts?.map((item: any, i: number) => (
+          <div
+            key={i}
+            className="grid grid-cols-3 gap-5 justify-between py-1 w-fit pr-20 max-md:flex-wrap max-md:pr-5 max-md:max-w-full"
+          >
+            <h1 className="font-bold whitespace-nowrap w-[8.125rem]">
+              {item.name}
+            </h1>
+            <p className="w-[9.75rem]">{item.quantity} units</p>
+            <p className="grow">{item.functional_unit}</p>
+          </div>
+        ))}
+        <div className="self-end mt-5 mr-4 text-sm font-semibold leading-5 text-blue-600 max-md:mr-2.5">
+          <Button
+            type="button"
+            variant={"ghost"}
+            onClick={() => setEdit(true)}
+            className="font-semibold hover:bg-white hover:text-blue-600"
+          >
+            Edit
+          </Button>
         </div>
-      ))}
-      <div className="self-end mt-5 mr-4 text-sm font-semibold leading-5 text-blue-600 max-md:mr-2.5">
-        <Button
-          type="button"
-          variant={"ghost"}
-          onClick={() => setEdit(true)}
-          className="font-semibold hover:bg-white hover:text-blue-600"
-        >
-          Edit
-        </Button>
-      </div>
-    </section>
+      </section>
+    </Suspense>
   );
 };
 

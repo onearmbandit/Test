@@ -97,21 +97,6 @@ const AddProposedPage = () => {
     },
   });
 
-  const validation = z.object({
-    name: z.string().min(3, { message: "length" }),
-    description: z.string().min(3, { message: "length" }),
-    estimatedCost: z.number().min(0, { message: "must be greater than 0" }),
-    websiteUrl: z.string(),
-    emissionReductions: z
-      .number()
-      .min(0, { message: "must be greater than 0" }),
-    emissionUnit: z.string().min(3, { message: "length" }),
-    proposedTo: z.string().min(3, { message: "length" }),
-    photoUrl: z.string().min(3, { message: "length" }),
-    logoUrl: z.string().min(3, { message: "length" }),
-    status: z.number().min(0, { message: "must be greater than 0" }),
-  });
-
   const {
     values,
     setFieldValue,
@@ -363,12 +348,18 @@ const AddProposedPage = () => {
                   onClick={() => {
                     const res = z
                       .object({
-                        description: z.string().min(3, {
-                          message: "description minimum lenth should be 3",
-                        }),
+                        description: z
+                          .string()
+                          .min(3, {
+                            message: "Description minimum length should be 3",
+                          })
+                          .max(1000, {
+                            message:
+                              "Description maximum length should be 1000",
+                          }),
                         estimatedCost: z
                           .number()
-                          .min(1, { message: "cost must be greater than 0" }),
+                          .min(1, { message: "Cost must be greater than 0" }),
                         websiteUrl: z.string().optional(),
                       })
                       .safeParse({
@@ -517,7 +508,7 @@ const AddProposedPage = () => {
                             invalid_type_error: "Emissions should be a number",
                           })
                           .min(1, {
-                            message: "emissions must be greater than 0",
+                            message: "Emissions must be greater than 0",
                           }),
                       })
                       .safeParse({

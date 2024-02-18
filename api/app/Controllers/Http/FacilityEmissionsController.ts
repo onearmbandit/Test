@@ -6,6 +6,8 @@ import FacilityEmission from 'App/Models/FacilityEmission';
 import UpdateFacilityEmissionValidator from 'App/Validators/FacilityEmission/UpdateFacilityEmissionValidator';
 import { DateTime } from 'luxon';
 import User from 'App/Models/User';
+// import moment from 'moment';
+import Database from '@ioc:Adonis/Lucid/Database';
 
 export default class FacilityEmissionsController {
 
@@ -37,11 +39,60 @@ export default class FacilityEmissionsController {
       // validate facility details
       await request.validate(ReportingPeriodValidator)
 
-      const reportingPeriodData = await FacilityEmission.createReportingPeriod(requestData)
+      // Convert year-month to yyyy-mm-dd for database storage
+      const reportingPeriodFrom = DateTime.fromFormat(requestData.reportingPeriodFrom, 'yyyy-MM').toISODate();
+      const reportingPeriodTo = DateTime.fromFormat(requestData.reportingPeriodTo, 'yyyy-MM').toISODate();
 
-      // Format dates before sending the response
-      // reportingPeriodData.reportingPeriodFrom = reportingPeriodData.reportingPeriodFrom.toFormat('yyyy-MM');
-      // reportingPeriodData.reportingPeriodTo = reportingPeriodData.reportingPeriodTo.toFormat('yyyy-MM');
+      if (!reportingPeriodFrom || !reportingPeriodTo) {
+        return apiResponse(
+          response,
+          false,
+          422,
+          {
+            errors: [
+              {
+                field: 'reportingPeriodFrom',
+                message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityReportingPeriodInvalidFormat'),
+              },
+            ],
+          },
+          Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+        )
+      }
+
+      // Check for date overlap using raw SQL expressions
+      const overlappingPeriods = await Database.query()
+        .from('facility_emissions')
+        .where('organization_facility_id', requestData.organizationFacilityId)
+        .where(function (query) {
+          query
+            .whereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
+              reportingPeriodFrom,
+            ])
+            .orWhereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
+              reportingPeriodTo,
+            ]);
+        })
+        .first();
+
+      if (overlappingPeriods) {
+        return apiResponse(
+          response,
+          false,
+          422,
+          {
+            errors: [
+              {
+                field: 'reportingPeriodFrom',
+                message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityReportingPeriodOverlaps'),
+              },
+            ],
+          },
+          Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+        )
+      }
+
+      const reportingPeriodData = await FacilityEmission.createReportingPeriod(requestData)
 
       return apiResponse(response, true, 201, reportingPeriodData,
         Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.createFacilityReportPeriodSuccess'))
@@ -138,7 +189,7 @@ export default class FacilityEmissionsController {
       const userFound = await User.getUserDetails('id', auth.user?.id)
       let organizationIds = (await userFound.organizations).map((item) => item.id)
 
-      const facilityDashboardData = await FacilityEmission.getFacilitiesDashboardData(queryParams,organizationIds[0]);
+      const facilityDashboardData = await FacilityEmission.getFacilitiesDashboardData(queryParams, organizationIds[0]);
 
       return apiResponse(response, true, 200, facilityDashboardData, Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.dashboardCalculationFetchSuccess'));
 

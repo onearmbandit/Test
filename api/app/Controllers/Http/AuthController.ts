@@ -23,6 +23,7 @@ import CreateOrganizationValidator from 'App/Validators/Organization/CreateOrgan
 import Supplier from 'App/Models/Supplier'
 import SupplierOrganization from 'App/Models/SupplierOrganization'
 import UpdateUserValidator from 'App/Validators/User/UpdateUserValidator'
+import { createSlug } from 'App/helpers/helper'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
@@ -56,6 +57,8 @@ export default class AuthController {
           Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
         )
       } else {
+        //:: create slug using email data
+        const slug = await createSlug(requestData.email.split('@')[0])
         const userData = await User.createUserWithRole(
           {
             id: uuidv4(),
@@ -63,6 +66,7 @@ export default class AuthController {
             password: requestData.password,
             registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
             loginType: 'web',
+            slug: slug
           },
           role
         )
@@ -112,7 +116,7 @@ export default class AuthController {
     try {
       let requestData = request.all()
 
-      const userData = await User.getUserDetails('id', params.id)
+      const userData = await User.getUserDetails('slug', params.id)
       await request.validate(UpdateUserValidator)
 
 
@@ -207,6 +211,8 @@ export default class AuthController {
       await userData.save()
 
       const organizationData = await Organization.createOrganization(requestData)
+
+      console.log('orgData ====>',organizationData);
 
       //:: Add data in pivot table
       await userData.related('organizations').attach({
