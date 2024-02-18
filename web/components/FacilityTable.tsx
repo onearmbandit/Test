@@ -24,17 +24,26 @@ const FacilityTable = () => {
     isSuccess,
   } = useQuery({
     queryKey: ["facilities"],
-    queryFn: () => getFacilityDashboard({}),
+    queryFn: () => getFacilities(),
   });
 
-  const emissions = facilities?.data?.finalResults.map((item: any) => {
-    const total =
-      item.totalScope1TotalEmission +
-      item.totalScope2TotalEmission +
-      item.totalScope3TotalEmission;
+  const emissions = facilities?.data?.map((item: any) => {
+    let scope1 = 0;
+    let scope2 = 0;
+    let scope3 = 0;
+    let total = 0;
+    item.facilityEmission.map((emi: any) => {
+      scope1 += emi.scope1_total_emission;
+      scope2 += emi.scope2_total_emission;
+      scope3 += emi.scope3_total_emission;
+      total += emi.emission_sum;
+    });
 
     return {
       ...item,
+      scope1TotalEmission: scope1,
+      scope2TotalEmission: scope2,
+      scope3TotalEmission: scope3,
       emission_sum: total,
     };
   });
@@ -57,10 +66,10 @@ const FacilityTable = () => {
         <TableHeader className="">
           <TableRow className="hover:bg-white">
             <TableHead className="w-1/5">Facility Name</TableHead>
-            <TableHead>Scope 1</TableHead>
-            <TableHead>Scope 2</TableHead>
-            <TableHead>Scope 3</TableHead>
-            <TableHead>Total</TableHead>
+            <TableHead className="w-1/5">Scope 1</TableHead>
+            <TableHead className="w-1/5">Scope 2</TableHead>
+            <TableHead className="w-1/5">Scope 3</TableHead>
+            <TableHead className="w-1/5">Total</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -70,15 +79,15 @@ const FacilityTable = () => {
                 key={item.id}
                 onClick={() =>
                   router.push(
-                    `/facilities/${item.facilityName
-                      .split(" ")
-                      .join("-")}?facilityId=${item.facilityOrganizationId}`
+                    `/facilities/${item.name.split(" ").join("-")}?facilityId=${
+                      item.organization_id
+                    }`
                   )
                 }
                 className="group"
               >
                 <TableCell className="flex h-10 justify-between items-center">
-                  <p className="whitespace-nowrap">{item.facilityName}</p>
+                  <p className="whitespace-nowrap">{item.name}</p>
                   <Button
                     size={"sm"}
                     className="bg-white hidden group-hover:flex shadow-md hover:bg-black/10 gap-2 text-gray-500 text-xs font-semibold p-[0.44rem] uppercase"
@@ -89,26 +98,40 @@ const FacilityTable = () => {
                   </Button>
                 </TableCell>
                 <TableCell>
-                  {item?.totalScope1TotalEmission == 0
-                    ? "N/A"
-                    : item?.totalScope1TotalEmission}
+                  {(item?.scope1TotalEmission == 0 ||
+                    item?.scope2TotalEmission == 0 ||
+                    item?.scope3TotalEmission == 0) && (
+                    <Button
+                      size={"sm"}
+                      className="bg-white hidden group-hover:flex shadow-md hover:bg-black/10 gap-2 text-gray-500 text-xs font-semibold p-[0.44rem] uppercase"
+                      type="button"
+                    >
+                      <ArrowUpRight size={16} />
+                      Update Scope Emission
+                    </Button>
+                  )}
+                  {item?.scope1TotalEmission == 0 ? (
+                    <span className="group-hover:hidden">N/A</span>
+                  ) : (
+                    item?.scope1TotalEmission
+                  )}
                 </TableCell>
                 <TableCell>
-                  {item?.totalScope2TotalEmission == 0
+                  {item?.scope2TotalEmission == 0
                     ? "N/A"
-                    : item?.totalScope2TotalEmission}
+                    : item?.scope2TotalEmission}
                 </TableCell>
                 <TableCell>
-                  {item?.totalScope3TotalEmission == 0
+                  {item?.scope3TotalEmission == 0
                     ? "N/A"
-                    : item?.totalScope3TotalEmission}
+                    : item?.scope3TotalEmission}
                 </TableCell>
                 <TableCell>
                   {item?.emission_sum == 0 ? "N/A" : item?.emission_sum}
                 </TableCell>
               </TableRow>
             ))}
-          {facilities?.data?.finalResults.length == 0 && (
+          {facilities?.data?.length == 0 && (
             <TableRow
               onClick={() => router.push(`/facilities?add-new=true`)}
               className="group cursor-pointer"
