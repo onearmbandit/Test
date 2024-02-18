@@ -60,6 +60,14 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
   const router = useRouter();
   const session = useSession();
 
+  const orgDetail = useQuery({
+    queryKey: ["org-email"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+  console.log(organization);
+
   const validation = z.object({
     companyEmail: z.string().email({ message: "Please enter a valid email" }),
     profileStep: z.number().int().min(1).max(3),
