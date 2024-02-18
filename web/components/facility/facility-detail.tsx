@@ -180,12 +180,9 @@ const FacilityDetails = () => {
                       <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         1
                       </div>
-                      <a
-                        href="#"
-                        className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full"
-                      >
+                      <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
                         Add Scope Emissions
-                      </a>
+                      </p>
                     </section>
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
@@ -207,12 +204,9 @@ const FacilityDetails = () => {
                       <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         2
                       </div>
-                      <a
-                        href="#"
-                        className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full"
-                      >
+                      <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
                         Add product lines to your facility
-                      </a>
+                      </p>
                     </section>
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
@@ -234,12 +228,9 @@ const FacilityDetails = () => {
                       <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         3
                       </div>
-                      <a
-                        href="#"
-                        className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full"
-                      >
+                      <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
                         Assign carbon emissions to product line
-                      </a>
+                      </p>
                     </section>
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
