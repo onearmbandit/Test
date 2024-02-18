@@ -212,6 +212,8 @@ export default class AuthController {
 
       const organizationData = await Organization.createOrganization(requestData)
 
+      console.log('orgData ====>',organizationData);
+
       //:: Add data in pivot table
       await userData.related('organizations').attach({
         [organizationData.id]: {
