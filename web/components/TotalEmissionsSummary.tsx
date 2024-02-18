@@ -14,14 +14,38 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Select, SelectContent, SelectItem } from "./ui/select";
 import { SelectTrigger, SelectValue } from "@radix-ui/react-select";
+
 import {
-  Bar,
-  ComposedChart,
-  LabelList,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  ChartOptions,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
+
+export const options: ChartOptions<"bar"> = {
+  indexAxis: "y" as const,
+  elements: {
+    bar: {
+      borderRadius: 50,
+    },
+  },
+  responsive: true,
+
+  scales: {
+    x: { stacked: true },
+    y: {
+      stacked: true,
+    },
+  },
+};
+
+const labels = ["Scope 1", "Scope 2", "Scope 3"];
 
 const TotalEmissionsSummary = () => {
   const dashboardDetails = useQuery({
@@ -37,26 +61,30 @@ const TotalEmissionsSummary = () => {
     ? dashboardDetails.data.data
     : {};
 
-  const chartData = [
-    {
-      name: "Scope1",
-      scope1: dashboard?.totalScope1EmissionForAllFacilities,
-      scope2: 0,
-      scope3: 0,
-    },
-    {
-      name: "Scope2",
-      scope1: 0,
-      scope2: dashboard?.totalScope2EmissionForAllFacilities,
-      scope3: 0,
-    },
-    {
-      name: "Scope3",
-      scope1: 0,
-      scope2: 0,
-      scope3: dashboard?.totalScope3EmissionForAllFacilities,
-    },
-  ];
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        label: "Scope 1",
+        data: [dashboard?.totalScope1EmissionForAllFacilities, 0, 0],
+        backgroundColor: "#BBF7D0",
+        barThickness: 20,
+      },
+      {
+        label: "Scope 2",
+        data: [0, dashboard?.totalScope2EmissionForAllFacilities, 0],
+        backgroundColor: "#FED7AA",
+        barThickness: 20,
+      },
+      {
+        label: "Scope 3",
+
+        data: [0, 0, dashboard?.totalScope3EmissionForAllFacilities],
+        backgroundColor: "#BFDBFE",
+        barThickness: 20,
+      },
+    ],
+  };
 
   return (
     <div className="bg-white rounded-lg w-full mt-3">
@@ -90,58 +118,12 @@ const TotalEmissionsSummary = () => {
                 <CardHeader>
                   <p className="font-bold text-lg">Scope Emissions</p>
                 </CardHeader>
-                <CardContent className="h-[14rem] w-full">
+                <CardContent className="w-[40rem] h-[14rem]">
                   {dashboardDetails.isLoading && (
                     <Loader2 className="text-blue-600 animate-spin" />
                   )}
                   {dashboardDetails.isSuccess && (
-                    <ResponsiveContainer>
-                      <ComposedChart
-                        layout="vertical"
-                        width={600}
-                        height={200}
-                        data={chartData}
-                        stackOffset="positive"
-                        margin={{
-                          top: 20,
-                          right: 20,
-                          bottom: 20,
-                          left: 0,
-                        }}
-                      >
-                        <XAxis
-                          // hide={true}
-                          type="number"
-                          axisLine={false}
-                          // domain={["auto", "auto"]}
-                        />
-                        <YAxis
-                          dataKey="name"
-                          type="category"
-                          axisLine={false}
-                          scale="band"
-                          padding={{ top: 0, bottom: 0 }}
-                        />
-                        <Bar
-                          dataKey="scope1"
-                          barSize={20}
-                          radius={9}
-                          fill="#BBF7D0"
-                        />
-                        <Bar
-                          dataKey="scope2"
-                          barSize={20}
-                          radius={9}
-                          fill="#BFDBFE"
-                        />
-                        <Bar
-                          dataKey="scope3"
-                          barSize={20}
-                          radius={9}
-                          fill="#FED7AA"
-                        />
-                      </ComposedChart>
-                    </ResponsiveContainer>
+                    <Bar data={chartData} options={options} />
                   )}
                 </CardContent>
               </Card>

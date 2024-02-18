@@ -72,7 +72,9 @@ export const ORGANIZATION_FACILITY_RESPONSE = {
   updateFacilityProductSuccess: "Facility product details updated successfully.",
   dashboardCalculationFetchSuccess: "Total emission across all facility details fetched successfully.",
   facilityAlreadyExists: "Facility name already exists for your organization. Please choose a different name.",
-  facilityProductNameAlreadyExists: "Facility product name already exists. Please choose a different name."
+  facilityProductNameAlreadyExists: "Facility product name already exists. Please choose a different name.",
+  facilityReportingPeriodOverlaps: "This reporting period overlaps with an existing reporting period.",
+  facilityReportingPeriodInvalidFormat: "Invalid date format."
 }
 
 

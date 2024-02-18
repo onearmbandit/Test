@@ -60,6 +60,13 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
   const router = useRouter();
   const session = useSession();
 
+  const orgDetail = useQuery({
+    queryKey: ["org-email"],
+    queryFn: () =>
+      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+  });
+  const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
+
   const validation = z.object({
     companyEmail: z.string().email({ message: "Please enter a valid email" }),
     profileStep: z.number().int().min(1).max(3),
@@ -98,6 +105,15 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
     },
   });
 
+  useEffect(() => {
+    if (orgDetail.isSuccess) {
+      setupOrganizationStep1Form.setFieldValue(
+        "companyEmail",
+        organization?.company_email ? organization?.company_email : ""
+      );
+    }
+  }, [orgDetail.isSuccess, orgDetail.data]);
+
   return (
     <form onSubmit={setupOrganizationStep1Form.handleSubmit}>
       <div className="max-w-[50.875rem]">
@@ -116,6 +132,7 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
             placeholder="Add their email"
             name="companyEmail"
             id="companyEmail"
+            value={setupOrganizationStep1Form.values.companyEmail}
             onChange={setupOrganizationStep1Form.handleChange}
             className={cn(
               "text-slate-500 text-xs font-light leading-4 items-stretch self-center bg-gray-50 max-w-full justify-center mt-6 px-2 py-7 rounded-md lg:max-w-[367px] w-full",
@@ -127,7 +144,9 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
           />
 
           <p className="text-red-500 text-xs mt-[10px]">
-            {setupOrganizationStep1Form.errors.companyEmail as React.ReactNode}
+            {setupOrganizationStep1Form.touched.companyEmail &&
+              (setupOrganizationStep1Form.errors
+                .companyEmail as React.ReactNode)}
           </p>
         </div>
 
@@ -570,18 +589,7 @@ const Step4 = ({ setStep }: any) => {
               onChange={(e) => {
                 setCurrentTarget(e.target.value);
               }}
-              // onFocus={() => {
-              //   if (!currentTarget) {
-              //     setCurrentTarget("Add another climate target");
-              //   }
-              // }}
-              // onBlur={() => {
-              //   if (!currentTarget) {
-              //     setCurrentTarget("ex: Carbon neutral by 2030");
-              //   }
-              // }}
               className="text-slate-500 text-xs font-light leading-4 bg-gray-50 self-stretch mt-2 px-2 py-6 rounded-md"
-              // placeholder="ex: Carbon neutral by 2030"
               placeholder={
                 targets?.length > 0
                   ? "Add another climate target"
@@ -597,16 +605,6 @@ const Step4 = ({ setStep }: any) => {
             >
               {currentTarget.length}/50 Characters
             </p>
-            {currentTarget.length > 0 && currentTarget.length < 3 && (
-              <p
-                className={cn(
-                  "text-slate-500 text-xs font-light",
-                  "text-red-500"
-                )}
-              >
-                Target should have atleast 2 characters
-              </p>
-            )}
           </div>
           <button
             onClick={() => {
@@ -618,7 +616,7 @@ const Step4 = ({ setStep }: any) => {
             }}
             className="text-blue-600 text-end text-sm font-bold leading-4 whitespace-nowrap mt-4 disabled:cursor-not-allowed "
             type="button"
-            disabled={currentTarget.length > 50 || currentTarget.length < 3}
+            disabled={currentTarget.length > 50}
           >
             + Add another target
           </button>
@@ -646,11 +644,7 @@ const Step4 = ({ setStep }: any) => {
                 <Loader2 size={30} className="text-slate-400 animate-spin" />
               )}
               <Button
-                disabled={
-                  currentTarget.length > 50 ||
-                  currentTarget.length < 3 ||
-                  isPending
-                }
+                disabled={currentTarget.length > 50 || isPending}
                 className="save-button text-white text-center text-sm font-bold leading-4 whitespace-nowrap"
                 type="submit"
               >
