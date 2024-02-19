@@ -548,7 +548,7 @@ const EditProducts = ({
 
           <div>
             <Input
-              className="justify-center items-stretch text-xs p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
+              className="justify-center items-stretch text-sm p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
               type="number"
               id="quantity"
               value={item.quantity}
@@ -564,7 +564,7 @@ const EditProducts = ({
           </div>
           <div className="flex space-x-3 items-center">
             <Input
-              className="justify-center items-stretch text-xs p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
+              className="justify-center items-stretch text-sm p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
               type="text"
               id="unit"
               name="functionalUnit"
