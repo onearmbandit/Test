@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Input } from '../ui/input';
 import AutocompleteInput from '../Autocomplete';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { number, z } from 'zod';
+import { number, string, z } from 'zod';
 import dayjs from 'dayjs';
 import { useFormik } from 'formik';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -57,14 +57,14 @@ import { useSession } from 'next-auth/react';
 export const EditSupplier = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const params = useParams();
+  const searchParams = useSearchParams();
   const reportingId = searchParams.get('reportingId');
   const supplierId: any = params.id;
-
   const [editSupplier, setEditSupplier] = useState(true);
   const [editProductTable, setEditProductTable] = useState(false);
   const [totalScopeValue, setTotalScopeValue] = useState(0);
+  const [currentReportingPeriod, setCurrentReportingPeriod] = useState('');
   const [productList, setProductList] = useState<any>([
     {
       id: '',
@@ -78,21 +78,24 @@ export const EditSupplier = () => {
   const [createableValue, setCreatableValue] = useState<any>('');
   const [createableTypeValue, setCreatableTypeValue] = useState<any>('');
   const session = useSession();
-  // console.log(session, 'session');
+  console.log(currentReportingPeriod, 'reportingId');
+
+  //console.log(reportingPeriod, 'reportingPeriod');
+  const supplierQ = useQuery({
+    queryKey: ['supplier', supplierId],
+    queryFn: () => getSupplierDetailsById(supplierId!),
+  });
   const reportingPeriodQ = useQuery({
-    queryKey: ['reporting-period', reportingId],
-    queryFn: () => getReportingPeriodById(reportingId ? reportingId : ''),
+    queryKey: ['reporting-period', currentReportingPeriod],
+    queryFn: () =>
+      getReportingPeriodById(
+        currentReportingPeriod ? currentReportingPeriod : ''
+      ),
   });
 
   const reportingPeriod = reportingPeriodQ.isSuccess
     ? reportingPeriodQ.data.data
     : null;
-
-  const supplierQ = useQuery({
-    queryKey: ['supplier', supplierId],
-    queryFn: () => getSupplierDetailsById(supplierId!),
-  });
-
   const supplier = supplierQ.isSuccess ? supplierQ.data.data : {};
   // console.log('supplier', supplier);
   const formattedDate = dayjs(supplier.updated_at).format('DD/MM/YYYY');
@@ -100,9 +103,9 @@ export const EditSupplier = () => {
   const relationShips = ['OWNED', 'CONTRACTED'];
 
   const validation = z.object({
-    name: z.string(),
+    // name: z.string(),
     email: z.string().email(),
-    organizationRelationship: z.string(),
+    // organizationRelationship: z.string(),
     address: z.string(),
   });
 
@@ -252,6 +255,9 @@ export const EditSupplier = () => {
   useEffect(() => {
     if (supplierQ.isSuccess) {
       setValues(supplier);
+      setCurrentReportingPeriod(supplier.supplyChainReportingPeriod.id);
+
+      console.log(supplier, 'supplier1');
       setFieldValue(
         'organizationRelationship',
         supplier.organization_relationship
@@ -392,15 +398,20 @@ export const EditSupplier = () => {
                   <div className=' my-auto font-medium text-slate-700'>
                     Contact Email{' '}
                   </div>
-                  <Input
-                    name='email'
-                    value={values.email}
-                    onChange={handleChange}
-                    className={cn(
-                      'grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 max-w-[337px] rounded-md text-slate-700 max-md:pr-5',
-                      errors?.email && 'border border-red-500'
-                    )}
-                  />
+                  <div className='w-[337px] relative'>
+                    <Input
+                      name='email'
+                      value={values.email}
+                      onChange={handleChange}
+                      className={cn(
+                        'grow justify-center py-3.5 pr-8 pl-2 bg-gray-50  rounded-md text-slate-700 max-md:pr-5',
+                        errors?.email && 'border border-red-500'
+                      )}
+                    />
+                    <span className='absolute left-0 bottom-[-19px] text-xs text-red-400'>
+                      {errors?.email}
+                    </span>
+                  </div>
                 </div>
 
                 <div className='flex gap-5  pr-20 mt-6 text-xs max-md:flex-wrap max-md:pr-5 max-md:max-w-full'>
@@ -445,7 +456,7 @@ export const EditSupplier = () => {
                     Edit
                   </div> */}
                 </div>
-                <div className='max-w-[768px]'>
+                <div className='max-w-[768px] relative'>
                   <AutocompleteInput
                     setAddress={(a: string) => {
                       /** TODO: add the autocompleted address */
@@ -455,6 +466,9 @@ export const EditSupplier = () => {
                     }}
                     address={values.address}
                   />
+                  <span className='absolute left-0 text-xs bottom-[-19px] text-red-400'>
+                    {errors?.address}
+                  </span>
                 </div>
                 <div className='flex justify-end'>
                   <Button
@@ -581,6 +595,7 @@ export const EditSupplier = () => {
                     <TableCell className='pl-0 pr-4 py-3'>
                       <div className='2xl:w-[303px] w-[163px]'>
                         <Input
+                          type='number'
                           value={item.quantity}
                           placeholder='unit'
                           onChange={(e) => {
@@ -655,8 +670,8 @@ export const EditSupplier = () => {
                 ))}
               </TableBody>
             </Table>
-            <div
-              role='button'
+            <Button
+              variant={'ghost'}
               onClick={() => {
                 const data: any = {
                   supplierId: supplier?.id,
@@ -668,7 +683,7 @@ export const EditSupplier = () => {
               className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]'
             >
               Save
-            </div>
+            </Button>
           </>
         ) : (
           <div>

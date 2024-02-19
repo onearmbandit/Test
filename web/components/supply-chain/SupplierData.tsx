@@ -85,17 +85,10 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
     );
   };
   const CustomizedLabel = (props: any) => {
+    console.log(props, 'graph props');
     const { x, y, fill, value } = props;
     return (
-      <text
-        x={x}
-        y={y}
-        fontSize='12'
-        fontFamily='sans-serif'
-        fill={fill}
-        textAnchor='end'
-        overlinePosition='top'
-      >
+      <text x={x} y={y} fontSize='12' fill={fill} textAnchor='start'>
         {value}
       </text>
     );
@@ -222,6 +215,13 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
 
   return (
     <div className='relative'>
+      {showCsvUploadModal && supplierData?.productWise?.length > 0 && (
+        <UploadCsvModal
+          open={showCsvUploadModal}
+          setOpen={setShowCsvUploadModal}
+          periodId={periodId!}
+        ></UploadCsvModal>
+      )}
       {supplierDataQ.isLoading && (
         <div className='absolute top-0 left-0 h-full w-full z-10  flex items-center bg-white justify-center'>
           <Loader2
@@ -251,7 +251,6 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
             below.
             <br />
           </div>
-
           <UploadCsvModal
             open={showCsvUploadModal}
             setOpen={setShowCsvUploadModal}
@@ -278,7 +277,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                       % of missing Product Carbon Footprint
                     </div>
                     <div className='mt-1.5 text-4xl text-teal-800 leading-[84px]'>
-                      {supplierData?.missingCarbonFootPrint}
+                      {supplierData?.missingCarbonFootPrint}%
                     </div>
                   </div>
                 </div>
@@ -309,7 +308,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                           <XAxis
                             hide={true}
                             type='number'
-                            domain={['auto', 'auto']}
+                            // domain={['auto', 'auto']}
                           />
                           <YAxis
                             dataKey=''
@@ -491,12 +490,12 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
           {/* supplier list start */}
           {supplierProducts &&
             supplierProducts.length > 0 &&
-            supplierProducts.map((product: any, index: number) => (
+            supplierProducts?.map((product: any, index: number) => (
               <div
                 key={index}
-                className='items-center bg-[#F9FAFB] border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5  border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5'
+                className='items-center group bg-[#F9FAFB] border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between  border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5'
               >
-                <div className='flex items-center min-w-[280px] border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] pr-4 pl-4 py-1.5 justify-between text-slate-800 text-ellipsis truncate flex-1 text-sm leading-5 whitespace-nowrap'>
+                <div className='flex items-center min-w-[280px] h-10 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] pr-4 pl-4 py-1.5 justify-between text-slate-800 text-ellipsis truncate flex-1 text-sm leading-5 whitespace-nowrap'>
                   <div className='flex items-center max-w-[160px]'>
                     <div className='mr-2'>
                       <div className='inline-flex items-center'>
@@ -536,15 +535,15 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                     </p>
                   </div>
 
-                  <button className='flex flex-col justify-center bg-gradient-to-b from-gray-100  hover:from-gray-200 hover:via-gray-200 hover:to-gray-300 px-2 py-2 text-xs font-semibold leading-4 text-center text-gray-500 whitespace-nowrap bg-white rounded border border-solid shadow border-[color:var(--Gray-100,#F3F4F6)] max-w-[72px]'>
+                  <Button className='hidden group-hover:flex h-full flex-col justify-center bg-gradient-to-b from-gray-100  hover:from-gray-200 hover:via-gray-200 hover:to-gray-300 p-[0.44rem] text-xs font-semibold leading-4 text-center text-gray-500 whitespace-nowrap bg-white rounded border border-solid shadow border-[color:var(--Gray-100,#F3F4F6)] max-w-[72px]'>
                     <Link
                       href={`/supply-chain/supplier/${product?.supplier?.id}`}
-                      className='flex gap-2 justify-between'
+                      className='flex gap-2 justify-between '
                     >
                       <ArrowUpRight size={16} className='text-slate-600' />
                       <p className='link'>VIEW</p>
                     </Link>
-                  </button>
+                  </Button>
                 </div>
                 <div className='overflow-hidden border-r whitespace-nowrap border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800  flex-1 text-sm leading-5'>
                   <p
@@ -563,7 +562,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                 <div className='overflow-hidden pr-4 whitespace-nowrap pl-4 py-2.5 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800 text-ellipsis flex-1 truncate text-sm leading-5'>
                   {product?.scope_3_contribution == null
                     ? 'Not Available'
-                    : product?.scope_3_contribution}
+                    : product?.scope_3_contribution + ' tCO2e'}
                 </div>
                 <div className='overflow-hidden pr-4 pl-4 py-2.5 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800 text-ellipsis flex-1 text-sm leading-5 truncate grow whitespace-nowrap'>
                   {convertDateToString(product?.updated_at)}

@@ -98,9 +98,9 @@ export const AddSupplierManualy = () => {
   const relationShips = ['OWNED', 'CONTRACTED'];
 
   const validation = z.object({
-    name: z.string(),
+    // name: z.string(),
     email: z.string().email(),
-    organizationRelationship: z.string(),
+    // organizationRelationship: z.string(),
     address: z.string(),
   });
 
@@ -351,20 +351,25 @@ export const AddSupplierManualy = () => {
                   />
                 </div>
 
-                <div className='flex gap-5 self-stretch pr-20 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5'>
+                <div className='flex gap-5 self-stretch pr-20 mt-6 text-xs relative leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5'>
                   <div className=' my-auto font-medium text-slate-700'>
                     Contact Email{' '}
                   </div>
-                  <Input
-                    name='email'
-                    value={values.email}
-                    onChange={handleChange}
-                    placeholder='Email'
-                    className={cn(
-                      'grow justify-center py-3.5 pr-8 pl-2 bg-gray-50 max-w-[337px] rounded-md text-slate-700 max-md:pr-5',
-                      errors?.email && 'border border-red-500'
-                    )}
-                  />
+                  <div className='w-[337px] relative'>
+                    <Input
+                      name='email'
+                      value={values.email}
+                      onChange={handleChange}
+                      placeholder='Email'
+                      className={cn(
+                        'grow justify-center py-3.5 pr-8 pl-2 bg-gray-50  rounded-md text-slate-700 max-md:pr-5',
+                        errors?.email && 'border border-red-500'
+                      )}
+                    />
+                    <span className='absolute left-0 bottom-[-19px] text-xs text-red-400'>
+                      {errors?.email}
+                    </span>
+                  </div>
                 </div>
 
                 <div className='flex gap-5  pr-20 mt-6 text-xs max-md:flex-wrap max-md:pr-5 max-md:max-w-full'>
@@ -406,7 +411,7 @@ export const AddSupplierManualy = () => {
                     Supplier Address
                   </div>
                 </div>
-                <div className='max-w-[768px]'>
+                <div className='max-w-[768px] relative'>
                   <AutocompleteInput
                     setAddress={(a: string) => {
                       /** TODO: add the autocompleted address */
@@ -416,6 +421,9 @@ export const AddSupplierManualy = () => {
                     }}
                     address={values.address}
                   />
+                  <span className='absolute left-0 text-xs bottom-[-19px] text-red-400'>
+                    {errors?.address}
+                  </span>
                 </div>
                 <div className='flex justify-end'>
                   <Button
@@ -554,6 +562,7 @@ export const AddSupplierManualy = () => {
                     <TableCell className='pl-0 pr-4 py-3'>
                       <div className='2xl:w-[303px] w-[163px]'>
                         <Input
+                          type='number'
                           value={item.quantity}
                           placeholder='unit'
                           onChange={(e) => {
