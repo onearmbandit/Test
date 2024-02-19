@@ -363,7 +363,7 @@ const AddProposedPage = () => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "Cost must be greater than 0" }),
-                        websiteUrl: z.string().optional(),
+                        websiteUrl: z.string().url().optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,

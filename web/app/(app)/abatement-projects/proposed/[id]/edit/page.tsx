@@ -447,7 +447,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "Cost must be greater than 0" }),
-                        websiteUrl: z.string().optional(),
+                        websiteUrl: z.string().url().optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -497,7 +497,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                 {values.description}
               </p>
               <p className="text-green-900 text-sm line-clamp-2">
-                {values.estimatedCost}
+                $ {values.estimatedCost}
               </p>
               <p className="text-green-900 text-sm line-clamp-2">
                 {values.websiteUrl}

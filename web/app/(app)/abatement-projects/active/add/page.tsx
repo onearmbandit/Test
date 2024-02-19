@@ -101,7 +101,7 @@ const AddActivePage = () => {
     name: z.string().min(3, { message: "length" }),
     description: z.string().min(3, { message: "length" }),
     estimatedCost: z.number().min(0, { message: "must be greater than 0" }),
-    websiteUrl: z.string(),
+    websiteUrl: z.string().url(),
     emissionReductions: z
       .number()
       .min(0, { message: "must be greater than 0" }),
@@ -376,7 +376,7 @@ const AddActivePage = () => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "cost must be greater than 0" }),
-                        websiteUrl: z.string().optional(),
+                        websiteUrl: z.string().url().optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
