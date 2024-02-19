@@ -51,7 +51,7 @@ export const registerStep2 = ({
   id,
   formdata,
 }: {
-  id: number;
+  id: string;
   formdata: any;
 }) => {
   const formbody = new URLSearchParams(formdata).toString();

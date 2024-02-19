@@ -8,12 +8,13 @@ import {
   CircleDollarSignIcon,
   TrendingDown,
 } from "lucide-react";
-import Image from "next/image";
 import React from "react";
 
 const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
   const res = await getActiveAbatementProjectById(params?.id);
   const project = res?.data;
+
+  console.log("email:", project.proposedSupplier?.email);
 
   return (
     <div className="bg-white p-6 min-h-screen">
@@ -88,11 +89,16 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
             <Calendar size={18} className="text-slate-500" />
 
             <p className="text-xs font-medium text-slate-800">
-              Completed since: {dayjs(project.updated_at).format("DD/MM/YY")}
+              Proposed since: {dayjs(project.updated_at).format("DD/MM/YY")}
             </p>
           </div>
 
-          <Button type="button">Contact Project Owner</Button>
+          <a
+            href={`mailto:${project.proposedSupplier?.email}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <Button type="button">Contact Project Owner</Button>
+          </a>
         </div>
       </div>
     </div>

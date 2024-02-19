@@ -80,10 +80,14 @@ export default class SupplierProduct extends BaseModel {
         updateProductIds.push(element.id)
       } else {
         console.log('Inside else id is null')
-        singleData = { id: uuidv4(), ...element }
+        element.id = uuidv4()
+        singleData = { ...element }
+        console.log('singleData=>', singleData)
       }
       products.push(singleData)
     })
+
+    console.log('products : ', products)
 
     //:: Delete products whose ids not in requestData of update product
     const idsToDelete = await allProductsOfSupplier.filter(

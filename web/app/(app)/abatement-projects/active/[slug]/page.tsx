@@ -88,11 +88,16 @@ const ActiveDetailPage = async ({ params }: { params: { slug: string } }) => {
             <Calendar size={18} className="text-slate-500" />
 
             <p className="text-xs font-medium text-slate-800">
-              Completed since: {dayjs(project.updated_at).format("DD/MM/YY")}
+              Active since: {dayjs(project.updated_at).format("DD/MM/YY")}
             </p>
           </div>
 
-          <Button type="button">Contact Project Owner</Button>
+          <a
+            href={`mailto:${project.proposedSupplier?.email}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <Button type="button">Contact Project Owner</Button>
+          </a>
         </div>
       </div>
     </div>
