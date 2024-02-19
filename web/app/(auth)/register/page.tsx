@@ -192,7 +192,7 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       if (errors.length > 0) {
         return;
       }
-      mutate({ ...data, inviedUser: invitedEmail ? true : false });
+      mutate({ ...data, invitedUser: invitedEmail ? true : false });
     },
   });
 

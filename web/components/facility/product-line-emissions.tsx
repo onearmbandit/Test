@@ -23,6 +23,7 @@ import {
   editProductLines,
   getEqualityData,
   getProductLines,
+  updateProductEmissions,
 } from "@/services/facility.api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Product } from "@/lib/types/product.type";
@@ -58,8 +59,8 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
   });
   const equalEmission = equality.isSuccess ? equality.data : {};
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: editProductLines,
+  const { mutate, isPending, status } = useMutation({
+    mutationFn: updateProductEmissions,
     onSuccess: (data) => {
       toast.success("Products Lines updated.", { style: { color: "green" } });
       queryClient.invalidateQueries({
@@ -87,14 +88,13 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
           delete em[item];
         }
       });
-      return em;
+      return { ...em, equalityAttribute: isEdit };
     });
     const formData = {
       facilityEmissionId: period,
-      equalityAttribute: isEqual,
       facilityProducts: emissionCopy,
     };
-    mutate(formData);
+    mutate({ id: period!, obj: formData });
   };
 
   const handleEqual = async () => {
@@ -116,7 +116,7 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
   useEffect(() => {
     if (prodLines.isSuccess) {
       setEmissions(productLines.FacilityProducts);
-      console.log("normal ===> ", productLines.FacilityProducts);
+      // console.log("normal ===> ", productLines.FacilityProducts);
       setIsEqual(
         productLines?.FacilityEqualityAttribute?.equality_attribute == 0
           ? false
@@ -127,7 +127,6 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
 
   useEffect(() => {
     if (equality.isSuccess) {
-      console.log("equal ===> ", equalEmission.data);
       setEmissions(equalEmission.data);
       setIsEqual(true);
     }
@@ -135,9 +134,24 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
 
   useEffect(() => {
     if (!isEqual) {
-      // setEmissions(productLines.FacilityProducts);
+      console.log("equal ===> ", productLines.FacilityProducts);
+      setEmissions(productLines.FacilityProducts);
+    } else {
+      setEmissions(equalEmission.data);
     }
   }, [isEqual]);
+
+  useEffect(() => {
+    if (!isEdit) return;
+    function handleUnload(event: BeforeUnloadEvent) {
+      event.preventDefault();
+      return (event.returnValue = "");
+    }
+    window.addEventListener("beforeunload", handleUnload, { capture: true });
+
+    return () =>
+      removeEventListener("beforeunload", handleUnload, { capture: true });
+  }, [isEdit]);
 
   return (
     <>
