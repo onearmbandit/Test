@@ -114,9 +114,8 @@ const FacilityEmissionsSummary = () => {
                               </p>
                             </div>
                           ))}
-                          {emissions?.length > 2 && (
-                            <p className="font-bold">...</p>
-                          )}
+                          {details?.facilityEmission?.length > 2 &&
+                            !allPeriods && <p className="font-bold">...</p>}
                         </div>
                       </CardContent>
                     </Card>
@@ -157,9 +156,8 @@ const FacilityEmissionsSummary = () => {
                               </p>
                             </div>
                           ))}
-                          {emissions?.length > 2 && (
-                            <p className="font-bold">...</p>
-                          )}
+                          {details?.facilityEmission?.length > 2 &&
+                            !allPeriods && <p className="font-bold">...</p>}
                         </div>
                       </CardContent>
                     </Card>
@@ -200,22 +198,24 @@ const FacilityEmissionsSummary = () => {
                               </p>
                             </div>
                           ))}
-                          {emissions?.length > 2 && (
-                            <p className="font-bold">...</p>
-                          )}
+                          {details?.facilityEmission?.length > 2 &&
+                            !allPeriods && <p className="font-bold">...</p>}
                         </div>
                       </CardContent>
                     </Card>
                   </>
                 )}
 
-                {emissions?.length > 2 && (
-                  <div className="col-span-3 justify-end place-items-end place-content-end">
+                {details?.facilityEmission?.length > 2 && (
+                  <div className="col-span-3 flex justify-end">
                     <p
                       role="button"
-                      className="text-blue-600 text-sm w-full text-end font-semibold"
+                      onClick={() => setAllPeriods(!allPeriods)}
+                      className="text-blue-btn flex text-sm font-semibold"
                     >
-                      See all reporting periods
+                      {allPeriods
+                        ? "Collapse reporting periods"
+                        : "See all reporting periods"}
                     </p>
                   </div>
                 )}

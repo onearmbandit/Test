@@ -148,3 +148,7 @@ export const getAllFacilityProductNames = (orgId: string) => {
     `/auth/facility-product-name-list?organizationId=${orgId}&order=asc`
   );
 };
+
+export const getDashboardReportingPeriodList = (orgId: string) => {
+  return fetchApi(`/auth/facility-emission?organization_id=${orgId}`);
+};
