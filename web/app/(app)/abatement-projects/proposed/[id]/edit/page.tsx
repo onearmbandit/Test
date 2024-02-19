@@ -580,10 +580,10 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-red-500 mt-0.5">
-                      {err.emissionReductions}
-                    </p>
                   </div>
+                  <p className="text-xs text-red-500 mt-0.5">
+                    {err.emissionReductions}
+                  </p>
                 </div>
               </CardContent>
               <CardFooter className="justify-end">
@@ -605,6 +605,14 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         emissionReductions:
                           projectDetails[3].emissionReductions,
                       });
+
+                    if (values.emissionUnit) {
+                      setFieldError(
+                        "emissionUnit",
+                        "Emission Unit is required"
+                      );
+                      return;
+                    }
 
                     if (res.success) {
                       setErr({});
@@ -944,7 +952,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       setFieldValue("logoUrl", res2.data);
                     }
 
-                    if (res1 != null && res2 != null) {
+                    if (res1 != null || res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
                       toast.success("The changes have been saved.", {

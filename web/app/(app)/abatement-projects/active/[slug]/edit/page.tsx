@@ -52,6 +52,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Dropzone from "react-dropzone";
 import { toast } from "sonner";
+import style from "styled-jsx/style";
 import { z } from "zod";
 
 const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
@@ -573,10 +574,10 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-red-500 mt-0.5">
-                      {err.emissionReductions}
-                    </p>
-                  </div>
+                  </div>{" "}
+                  <p className="text-xs text-red-500 mt-0.5">
+                    {err.emissionReductions}
+                  </p>
                 </div>
               </CardContent>
               <CardFooter className="justify-end">
@@ -598,6 +599,11 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         emissionReductions:
                           projectDetails[3].emissionReductions,
                       });
+
+                    if (values.emissionUnit == "") {
+                      setFieldError("emissionUnit", "Please select a unit");
+                      return;
+                    }
 
                     if (res.success) {
                       setErr({});
@@ -764,7 +770,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
               )}
               <p className="flex-1 font-bold">Photo and Logo</p>
             </div>
-            {values.photoUrl != "" && values.logoUrl && (
+            {values.photoUrl != "" && values.logoUrl == "" && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(5)}
@@ -937,7 +943,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                       setFieldValue("logoUrl", res2.data);
                     }
 
-                    if (res1 != null && res2 != null) {
+                    if (res1 != null || res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
                       toast.success("The changes have been saved.", {
