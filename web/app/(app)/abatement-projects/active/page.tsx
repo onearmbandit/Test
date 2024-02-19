@@ -1,29 +1,30 @@
+"use client";
 import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { authOptions } from "@/lib/utils";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { authOptions, calculateTotals } from "@/lib/utils";
 import { getActiveAbatementProjects } from "@/services/abatement.api";
+import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { getServerSession } from "next-auth/next";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 const ActivePage = async () => {
-  const session = await getServerSession(authOptions);
-  const res = await getActiveAbatementProjects(
-    session?.user?.organizations[0]?.id!
-  );
-  const projects = res?.data;
+  const { data: session } = useSession();
+  const organizationId = session?.user?.organizations[0]?.id
+    ? session?.user?.organizations[0]?.id
+    : "";
+  const projectsQ = useQuery({
+    queryKey: ["activeProjects"],
+    queryFn: () => getActiveAbatementProjects(organizationId),
+  });
 
-  console.log("projects: ", projects);
+  const projects = projectsQ.isSuccess ? projectsQ?.data?.data : [];
+
+  const emissionTotals = calculateTotals(projects);
 
   return (
     <div className="px-8">
@@ -47,7 +48,14 @@ const ActivePage = async () => {
           {/* todo: make it dynamic */}
           <p className="text-slate-800 font-semibold">
             Total Abatement to date:{" "}
-            <span className="font-normal">NA NA / year</span>
+            {Object.keys(emissionTotals).map((unit) => (
+              <>
+                <span className="font-normal pr-4">
+                  {emissionTotals[unit]} {unit}/year
+                </span>
+              </>
+            ))}
+            {/* <span className="font-normal">NA NA / year</span> */}
           </p>
 
           <div className="grid grid-cols-3 gap-6">
@@ -87,7 +95,7 @@ const ActivePage = async () => {
                   <p className="text-xs font-bold text-slate-600">
                     Est. Emission Reduction per year:{" "}
                     <span className="font-medium">
-                      {item.emission_reductions} tCO2e
+                      {item.emission_reductions} {item.emission_unit}
                     </span>
                   </p>
 
