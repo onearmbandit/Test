@@ -346,8 +346,9 @@ const EditProducts = ({
   // console.log(productLines);
 
   const productNamesQ = useQuery({
-    queryKey: ["product-names", facilityId!],
-    queryFn: () => getAllFacilityProductNames(facilityId!),
+    queryKey: ["product-names", session?.user.organizations[0].id],
+    queryFn: () =>
+      getAllFacilityProductNames(session?.user?.organizations[0].id!),
   });
   const productNames = productNamesQ.isSuccess ? productNamesQ.data?.data : [];
   const nameList: { value: string; label: string }[] = productNames?.map(
