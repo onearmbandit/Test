@@ -57,6 +57,7 @@ const ReportingPeriod = ({
     reportingPeriodTo: z.date(),
   });
 
+  console.log("period", period);
   const editMut = useMutation({
     mutationFn: editFacilityReportingPeriod,
     onSuccess: (data) => {
@@ -93,6 +94,7 @@ const ReportingPeriod = ({
     mutationFn: addFacilityReportingPeriod,
     onSuccess: (data) => {
       if (data.errors) {
+        console.log("errror", data);
         throw new Error(data.errors[0].message);
       }
       queryClient.invalidateQueries({ queryKey: ["reporting-periods"] });
@@ -168,7 +170,7 @@ const ReportingPeriod = ({
             customInput={
               <Input
                 placeholder="MM/YYYY"
-                className="w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700"
+                className="w-[6.125rem] px-2 bg-gray-50 text-sm font-light text-slate-700"
               />
             }
             disabled={period && !isEdit}
@@ -268,7 +270,7 @@ const ReportingPeriod = ({
         ) : (
           <Button
             type="submit"
-            // disabled={}
+            disabled={isPending || editMut.isPending || deleteMut.isPending}
             variant={"ghost"}
             className="self-end mt-5 mr-4 text-sm text-blue-600 hover:text-blue-600 font-semibold leading-5 disabled:text-blue-200"
           >

@@ -136,13 +136,6 @@ const Page = () => {
   }, [periodsQ.isSuccess, reportingPeriods]);
   return (
     <>
-      {showCsvUploadModal && (
-        <UploadCsvModal
-          open={showCsvUploadModal}
-          setOpen={setShowCsvUploadModal}
-          periodId={currentTab!}
-        ></UploadCsvModal>
-      )}
       <div className='w-full shadow bg-gray-50 flex flex-col pl-6 pr-6 pt-5 pb-12 max-md:px-5'>
         <header className='justify-between items-center self-stretch flex gap-5 py-2 max-md:flex-wrap max-md:px-5'>
           <div className='overflow-hidden text-slate-800 text-ellipsis text-base font-semibold leading-6 my-auto'>
@@ -235,8 +228,11 @@ const Page = () => {
                       </CarouselItem>
                     ))}
                   </CarouselContent>
-                  <CarouselNext variant={'ghost'} />
-                  <CarouselPrevious variant={'ghost'} />
+                  <CarouselNext variant={'ghost'} className='right-0' />
+                  <CarouselPrevious
+                    variant={'ghost'}
+                    className='left-[-28px]'
+                  />
                 </Carousel>
               </TabsList>
 

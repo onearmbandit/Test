@@ -104,6 +104,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                     <Input
                       id="totalEmissions1"
                       placeholder="tCO2e"
+                      type="number"
                       onChange={handleChange}
                       value={values.scope1TotalEmission}
                       name="scope1TotalEmission"
@@ -148,9 +149,10 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                       id="totalEmissions2"
                       placeholder="tCO2e"
                       onChange={handleChange}
+                      type="number"
                       value={values.scope2TotalEmission}
                       name="scope2TotalEmission"
-                      className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-xs font-light leading-4 bg-gray-50 rounded-md text-slate-500"
+                      className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-sm font-light leading-4 bg-gray-50 rounded-md text-slate-500"
                     />
                     <p className="text-xs text-gray-700 font-light">tCO2e</p>
                   </div>
@@ -191,6 +193,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                       placeholder="tCO2e"
                       name="scope3TotalEmission"
                       onChange={handleChange}
+                      type="number"
                       value={values.scope3TotalEmission}
                       className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-sm font-light leading-4 bg-gray-50 rounded-md text-slate-500"
                     />
