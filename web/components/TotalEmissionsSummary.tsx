@@ -64,14 +64,13 @@ const TotalEmissionsSummary = () => {
       getDashboardReportingPeriodList(session?.user?.organizations[0].id!),
   });
   const reportingList = reporting.isSuccess ? reporting.data.data : [];
-  console.log(reportingList);
 
   const dashboardDetails = useQuery({
-    queryKey: ["dashboard"],
+    queryKey: ["dashboard", toFromDate],
     queryFn: () =>
       getFacilityDashboard({
-        from: "2024-01-01",
-        to: "2024-06-01",
+        from: toFromDate.from,
+        to: toFromDate.to,
       }),
     enabled: reportingList.length > 0,
   });
@@ -135,7 +134,19 @@ const TotalEmissionsSummary = () => {
               {dashboard.totalEmission} tCO2e
             </p>
             <div id="reporting">
-              <Select defaultValue={currentPeriod}>
+              <Select
+                defaultValue={currentPeriod}
+                onValueChange={(e) => {
+                  const toFrom = reportingList.find(
+                    (item: any) => item.id == e
+                  );
+                  setCurrentPeriod(e);
+                  setToFromDate({
+                    from: toFrom.reporting_period_from,
+                    to: toFrom.reporting_period_to,
+                  });
+                }}
+              >
                 <SelectTrigger className="text-base border rounded flex space-x-2 items-center px-2 py-1">
                   <SelectValue placeholder="Reporting periods" />
                   <ChevronDown size={16} className="text-slate-600" />

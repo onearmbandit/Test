@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -32,7 +32,17 @@ import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 
-const ProductLineEmissions = ({ period }: { period: string }) => {
+const ProductLineEmissions = ({
+  period,
+  completeStatus,
+  setStatus,
+}: {
+  period: string;
+  completeStatus: { 1: boolean; 2: boolean; 3: boolean };
+  setStatus: React.Dispatch<
+    SetStateAction<{ 1: boolean; 2: boolean; 3: boolean }>
+  >;
+}) => {
   const queryClient = useQueryClient();
   const [emissions, setEmissions] = useState<Product[]>([
     {
@@ -115,6 +125,9 @@ const ProductLineEmissions = ({ period }: { period: string }) => {
 
   useEffect(() => {
     if (prodLines.isSuccess) {
+      if (productLines.FacilityProducts) {
+        setStatus({ ...completeStatus, 3: true });
+      }
       setEmissions(productLines.FacilityProducts);
       // console.log("normal ===> ", productLines.FacilityProducts);
       setIsEqual(
