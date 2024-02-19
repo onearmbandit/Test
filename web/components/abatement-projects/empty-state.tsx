@@ -13,12 +13,30 @@ const EmptyState = ({ link }: { link: string }) => {
   return (
     <div className="bg-white px-6 py-16 rounded-lg grid place-items-center border border-slate-100">
       <div className="flex flex-col items-center space-y-3">
-        <Image
-          width={46}
-          height={46}
-          src={"/assets/images/folder-open.svg"}
-          alt="folder-icon"
-        />
+        {currentAbatement === "proposed" && (
+          <Image
+            width={46}
+            height={46}
+            src={"/assets/images/folder-add.svg"}
+            alt="folder-icon"
+          />
+        )}
+        {currentAbatement === "active" && (
+          <Image
+            width={46}
+            height={46}
+            src={"/assets/images/folder-open.svg"}
+            alt="folder-icon"
+          />
+        )}
+        {currentAbatement === "completed" && (
+          <Image
+            width={46}
+            height={46}
+            src={"/assets/images/folder-closed.svg"}
+            alt="folder-icon"
+          />
+        )}
 
         <p className="text-center text-slate-700 font-semibold text-3xl ">
           <span className="capitalize">{currentAbatement}</span> Abatement

@@ -298,6 +298,9 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                     if (res.success) {
                       setErr({});
                       setCurrentSection(0);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       setFieldError("name", res.error.errors[0].message);
                       setErr({ name: res.error.errors[0].message });
@@ -457,6 +460,9 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                       );
                       setFieldValue("websiteUrl", projectDetails[2].websiteUrl);
                       setCurrentSection(0);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       res.error.errors.map((item) => {
                         // setFieldError(`${item.path[0]}`, item.message);
@@ -525,6 +531,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                   </label>
                   <div>
                     <Input
+                      type="number"
                       name="emissionReductions"
                       onChange={(e) => {
                         const copy = _.cloneDeep(projectDetails);
@@ -599,6 +606,9 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         projectDetails[3].emissionReductions
                       );
                       setCurrentSection(0);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       setFieldError("emissionReductions", res.error.message);
                       setErr({
@@ -707,6 +717,9 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
 
                     if (projectDetails[4].organizationId.id != "") {
                       setCurrentSection(5);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       setFieldError(
                         "proposedTo",
@@ -927,6 +940,9 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                     if (res1 != null && res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     }
                   }}
                   className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
