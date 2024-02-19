@@ -100,10 +100,8 @@ const AutocompleteInput = ({
           value={value}
           onChange={handleInput}
           disabled={!ready}
-
           placeholder="Address"
-          className="text-slate-500 text-xs font-light mt-3 leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-[14px] rounded-md max-md:max-w-full"
-
+          className="text-slate-500 text-sm font-light mt-3 leading-4 items-stretch bg-gray-50 self-stretch justify-center px-2 py-[14px] rounded-md max-md:max-w-full"
         />
       ) : (
         <textarea

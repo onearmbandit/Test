@@ -52,6 +52,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Dropzone from "react-dropzone";
 import { toast } from "sonner";
+import style from "styled-jsx/style";
 import { z } from "zod";
 
 const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
@@ -437,7 +438,7 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "cost must be greater than 0" }),
-                        websiteUrl: z.string().optional(),
+                        websiteUrl: z.string().url().optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -487,7 +488,7 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
                 {values.description}
               </p>
               <p className="text-green-900 text-sm line-clamp-2">
-                {values.estimatedCost}
+                $ {values.estimatedCost}
               </p>
               <p className="text-green-900 text-sm line-clamp-2">
                 {values.websiteUrl}
@@ -570,10 +571,10 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-red-500 mt-0.5">
-                      {err.emissionReductions}
-                    </p>
                   </div>
+                  <p className="text-xs text-red-500 mt-0.5">
+                    {err.emissionReductions}
+                  </p>
                 </div>
               </CardContent>
               <CardFooter className="justify-end">
@@ -595,6 +596,11 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
                         emissionReductions:
                           projectDetails[3].emissionReductions,
                       });
+
+                    if (values.emissionUnit == "") {
+                      setFieldError("emissionUnit", "Please select a unit");
+                      return;
+                    }
 
                     if (res.success) {
                       setErr({});
@@ -934,7 +940,7 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
                       setFieldValue("logoUrl", res2.data);
                     }
 
-                    if (res1 != null && res2 != null) {
+                    if (res1 != null || res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
                       toast.success("The changes have been saved.", {

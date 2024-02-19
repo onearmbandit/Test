@@ -24,7 +24,17 @@ import {
 import CreatableSelect from "react-select/creatable";
 import { useSession } from "next-auth/react";
 
-const ProductLines = ({ period }: { period: string }) => {
+const ProductLines = ({
+  period,
+  completeStatus,
+  setStatus,
+}: {
+  period: string;
+  completeStatus: { 1: boolean; 2: boolean; 3: boolean };
+  setStatus: React.Dispatch<
+    SetStateAction<{ 1: boolean; 2: boolean; 3: boolean }>
+  >;
+}) => {
   const searchParams = useSearchParams();
   const facilityId = searchParams.get("facilityId");
   const [isEdit, setEdit] = useState(false);
@@ -32,141 +42,6 @@ const ProductLines = ({ period }: { period: string }) => {
   const [products, setProducts] = useState<Product[]>([
     { name: "", quantity: 0, functionalUnit: "" },
   ]);
-
-  // const prodLines = useQuery({
-  //   queryKey: ["product-lines", period],
-  //   queryFn: () => getProductLines(period!),
-  // });
-  // const productLines = prodLines.isSuccess ? prodLines.data : [];
-  // // console.log(productLines);
-
-  // const productNamesQ = useQuery({
-  //   queryKey: ["product-names", facilityId!],
-  //   queryFn: () => getAllFacilityProductNames(facilityId!),
-  // });
-  // const productNames = productNamesQ.isSuccess ? productNamesQ.data?.data : [];
-  // const nameList: { value: string; label: string }[] = productNames?.map(
-  //   (item: string) => ({
-  //     label: item,
-  //     value: item,
-  //   })
-  // );
-
-  // const customDropdownStyles = {
-  //   control: (provided: any, state: any) => ({
-  //     ...provided,
-  //     border: "none",
-  //     background: "#F9FAFB",
-  //     borderColor: "none",
-  //     borderRadius: "6px",
-  //   }),
-  //   indicatorSeparator: () => ({
-  //     display: "none",
-  //   }),
-  // };
-
-  // const { mutate, isPending: addPending } = useMutation({
-  //   mutationFn: addProductLines,
-  //   onSuccess: (data) => {
-  //     if (data.errors) {
-  //       throw new Error(data.errors[0].message);
-  //     }
-
-  //     toast.success("Products Lines added.", { style: { color: "green" } });
-  //     queryClient.invalidateQueries({
-  //       queryKey: [
-  //         "product-lines",
-  //         period,
-  //         "facility-details",
-  //         "product-emissions",
-  //       ],
-  //       fetchStatus: "idle",
-  //     });
-  //     setEdit(false);
-  //   },
-  //   onError: (err) => {
-  //     toast.error(err.message, { style: { color: "red" } });
-  //   },
-  // });
-
-  // const { mutate: editMutate, isPending: editPending } = useMutation({
-  //   mutationFn: editProductLines,
-  //   onSuccess: (data) => {
-  //     if (data.errors) {
-  //       throw new Error(data.errors[0].message);
-  //     }
-  //     toast.success("Products Lines updated.", { style: { color: "green" } });
-  //     queryClient.invalidateQueries({
-  //       queryKey: [
-  //         "product-lines",
-  //         period,
-  //         "reporting-periods",
-  //         "product-emissions",
-  //         "productlines",
-  //       ],
-  //       exact: true,
-  //     });
-  //     setEdit(false);
-  //   },
-  //   onError: (err) => {
-  //     toast.error(err.message, { style: { color: "red" } });
-  //   },
-  // });
-
-  // const handleAddProductLine = () => {
-  //   const newProduct = { name: "", quantity: 0, functionalUnit: "" };
-  //   const productLineClone = _.cloneDeep(products);
-  //   productLineClone.push(newProduct);
-  //   setProducts(productLineClone);
-  // };
-
-  // const handleProductRemove = (index: number) => {
-  //   const productLineClone = _.cloneDeep(products);
-  //   productLineClone.splice(index, 1);
-  //   setProducts(productLineClone);
-  // };
-
-  // const handleSubmit = () => {
-  //   const productKeys = ["id", "name", "quantity", "functionalUnit"];
-  //   const copy = _.cloneDeep(products);
-  //   copy.map((item) => {
-  //     Object.keys(item).map((i) => {
-  //       if (!productKeys.includes(i)) {
-  //         delete item[i];
-  //       }
-  //     });
-
-  //     return item;
-  //   });
-  //   const formData = {
-  //     facilityEmissionId: period,
-  //     facilityProducts: copy,
-  //   };
-  //   if (productLines.data?.FacilityProducts?.length == 0) {
-  //     // console.log("add", formData);
-  //     mutate(formData);
-  //   } else {
-  //     // console.log("edit ", formData);
-  //     editMutate(formData);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (prodLines.isSuccess) {
-  //     const updated =
-  //       productLines?.data?.FacilityProducts.length > 0
-  //         ? productLines?.data?.FacilityProducts.map((item: Product) => ({
-  //             ...item,
-  //             functionalUnit: item?.functional_unit,
-  //           }))
-  //         : [{ name: "", quantity: 0, functionalUnit: "" }];
-  //     // console.log({ updated });
-  //     setProducts(updated);
-  //     if (updated.length == 1) {
-  //       setEdit(true);
-  //     }
-  //   }
-  // }, [prodLines.status, prodLines.data]);
 
   return (
     <>
@@ -316,7 +191,14 @@ const ProductLines = ({ period }: { period: string }) => {
           <EditProducts period={period} setEdit={setEdit} />
         </Suspense>
       ) : (
-        <Productlist period={period} setEdit={setEdit} />
+        <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
+          <Productlist
+            period={period}
+            setEdit={setEdit}
+            complete={completeStatus}
+            setStatus={setStatus}
+          />
+        </Suspense>
       )}
     </>
   );
@@ -466,9 +348,9 @@ const EditProducts = ({
               functionalUnit: item?.functional_unit,
             }))
           : [{ name: "", quantity: 0, functionalUnit: "" }];
-      // console.log({ updated });
+      // console.log(productLines?.data?.FacilityProducts.length);
       setProducts(updated);
-      if (updated.length == 1) {
+      if (productLines?.data?.FacilityProducts.length == 0) {
         setEdit(true);
       }
     }
@@ -505,7 +387,7 @@ const EditProducts = ({
           key={i}
           className="gap-5 grid grid-cols-3 mt-6 w-full whitespace-nowrap text-slate-700 max-md:flex-wrap max-md:max-w-full"
         >
-          <div>
+          <div className="max-w-[236px] w-full 2xl:max-w-[70%]">
             <CreatableSelect
               options={nameList}
               onChange={(e) => {
@@ -514,7 +396,7 @@ const EditProducts = ({
                 setProducts(copy);
               }}
               styles={customDropdownStyles}
-              placeholder="Select..."
+              placeholder="Add product name"
               onCreateOption={(e) => {
                 const newOption = {
                   name: e,
@@ -530,25 +412,11 @@ const EditProducts = ({
               }}
               value={{ label: item.name, value: item.name }}
             />
-            {/* <Input
-                    className="justify-center items-stretch text-xs p-2 max-w-[14.75rem] 2xl:max-w-[70%] bg-gray-50 rounded-md"
-                    type="text"
-                    id="product-name"
-                    value={item.name}
-                    onChange={(e) => {
-                      const copy = _.cloneDeep(products);
-                      copy[i].name = e.target.value;
-                      setProducts(copy);
-                    }}
-                    name="product-name"
-                    required
-                    placeholder="Add product name "
-                  /> */}
           </div>
 
           <div>
             <Input
-              className="justify-center items-stretch text-xs p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
+              className="justify-center items-stretch text-sm p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
               type="number"
               id="quantity"
               value={item.quantity}
@@ -564,7 +432,7 @@ const EditProducts = ({
           </div>
           <div className="flex space-x-3 items-center">
             <Input
-              className="justify-center items-stretch text-xs p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
+              className="justify-center items-stretch text-sm p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
               type="text"
               id="unit"
               name="functionalUnit"
@@ -617,9 +485,15 @@ const EditProducts = ({
 const Productlist = ({
   period,
   setEdit,
+  complete,
+  setStatus,
 }: {
   period: string;
   setEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  complete: { 1: boolean; 2: boolean; 3: boolean };
+  setStatus: React.Dispatch<
+    SetStateAction<{ 1: boolean; 2: boolean; 3: boolean }>
+  >;
 }) => {
   const prodLines = useQuery({
     queryKey: ["productlines", period],
@@ -627,36 +501,44 @@ const Productlist = ({
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
 
+  useEffect(() => {
+    if (prodLines.isSuccess) {
+      if (productLines?.data?.FacilityProducts?.length == 0) {
+        setEdit(true);
+      } else {
+        setStatus({ ...complete, 2: true });
+      }
+    }
+  }, [prodLines.isSuccess, prodLines.data]);
+
   return (
-    <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
-      <section
-        className="flex flex-col items-stretch self-stretch pb-1.5 text-base font-light leading-6 text-teal-800 bg-white rounded-lg"
-        aria-label="Product Card"
-      >
-        {productLines?.data?.FacilityProducts?.map((item: any, i: number) => (
-          <div
-            key={i}
-            className="grid grid-cols-3 gap-5 justify-between py-1 w-fit pr-20 max-md:flex-wrap max-md:pr-5 max-md:max-w-full"
-          >
-            <h1 className="font-bold whitespace-nowrap w-[8.125rem]">
-              {item.name}
-            </h1>
-            <p className="w-[9.75rem]">{item.quantity} units</p>
-            <p className="grow">{item.functional_unit}</p>
-          </div>
-        ))}
-        <div className="self-end mt-5 mr-4 text-sm font-semibold leading-5 text-blue-600 max-md:mr-2.5">
-          <Button
-            type="button"
-            variant={"ghost"}
-            onClick={() => setEdit(true)}
-            className="font-semibold hover:bg-white hover:text-blue-600"
-          >
-            Edit
-          </Button>
+    <section
+      className="flex flex-col items-stretch self-stretch pb-1.5 text-base font-light leading-6 text-teal-800 bg-white rounded-lg"
+      aria-label="Product Card"
+    >
+      {productLines?.data?.FacilityProducts?.map((item: any, i: number) => (
+        <div
+          key={i}
+          className="grid grid-cols-3 gap-5 justify-between py-1 w-fit pr-20 max-md:flex-wrap max-md:pr-5 max-md:max-w-full"
+        >
+          <h1 className="font-bold whitespace-nowrap w-[8.125rem]">
+            {item.name}
+          </h1>
+          <p className="w-[9.75rem]">{item.quantity} units</p>
+          <p className="grow">{item.functional_unit}</p>
         </div>
-      </section>
-    </Suspense>
+      ))}
+      <div className="self-end mt-5 mr-4 text-sm font-semibold leading-5 text-blue-600 max-md:mr-2.5">
+        <Button
+          type="button"
+          variant={"ghost"}
+          onClick={() => setEdit(true)}
+          className="font-semibold hover:bg-white hover:text-blue-600"
+        >
+          Edit
+        </Button>
+      </div>
+    </section>
   );
 };
 

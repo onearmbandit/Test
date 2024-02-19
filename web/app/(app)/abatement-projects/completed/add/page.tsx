@@ -101,7 +101,7 @@ const AddCompletedPage = () => {
     name: z.string().min(3, { message: "length" }),
     description: z.string().min(3, { message: "length" }),
     estimatedCost: z.number().min(0, { message: "must be greater than 0" }),
-    websiteUrl: z.string(),
+    websiteUrl: z.string().url(),
     emissionReductions: z
       .number()
       .min(0, { message: "must be greater than 0" }),
@@ -372,7 +372,7 @@ const AddCompletedPage = () => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "cost must be greater than 0" }),
-                        websiteUrl: z.string().optional(),
+                        websiteUrl: z.string().url().optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -505,11 +505,10 @@ const AddCompletedPage = () => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-
-                    <p className="text-xs text-red-500 mt-0.5">
-                      {err.emissionReductions}
-                    </p>
                   </div>
+                  <p className="text-xs text-red-500 mt-0.5">
+                    {err.emissionReductions}
+                  </p>
                 </div>
               </CardContent>
               <CardFooter className="justify-end">
@@ -531,6 +530,11 @@ const AddCompletedPage = () => {
                         emissionReductions:
                           projectDetails[3].emissionReductions,
                       });
+
+                    if (values.emissionUnit == "") {
+                      setFieldError("emissionUnit", "Please select a unit");
+                      return;
+                    }
 
                     if (res.success) {
                       setErr({});
@@ -696,7 +700,7 @@ const AddCompletedPage = () => {
               <p className="flex-1 font-bold">Photo and Logo</p>
             </div>
 
-            {values.photoUrl != "" && values.logoUrl && (
+            {values.photoUrl != "" && values.logoUrl == "" && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(5)}
@@ -869,7 +873,7 @@ const AddCompletedPage = () => {
                       setFieldValue("logoUrl", res2.data);
                     }
 
-                    if (res1 != null && res2 != null) {
+                    if (res1 != null || res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
                       toast.success("The changes have been saved.", {
