@@ -19,7 +19,7 @@ import React from "react";
 const CompletedPage = async () => {
   const session = await getServerSession(authOptions);
   const res = await getCompletedAbatementProjects(
-    session?.user?.organizations[0].id!
+    session?.user?.organizations[0]?.id!
   );
   const projects = res?.data;
 
@@ -28,7 +28,7 @@ const CompletedPage = async () => {
   return (
     <div className="px-8">
       <Header />
-      {projects.length == 0 ? (
+      {!projects || projects?.length == 0 ? (
         <EmptyState link="/abatement-projects/completed/add" />
       ) : (
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
@@ -51,7 +51,7 @@ const CompletedPage = async () => {
           </p>
 
           <div className="grid grid-cols-3 gap-6">
-            {projects.map((item: any) => (
+            {projects?.map((item: any) => (
               <Card key={item.id} className="px-4 py-3 space-y-4 h-fit">
                 <Link href={`/abatement-projects/completed/${item.id}`}>
                   <CardTitle className="text-xs leading-5 pb-4 font-medium text-slate-800">

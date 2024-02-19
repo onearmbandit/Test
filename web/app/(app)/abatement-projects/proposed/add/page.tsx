@@ -496,11 +496,10 @@ const AddProposedPage = () => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-
-                    <p className="text-xs text-red-500 mt-0.5">
-                      {err.emissionReductions}
-                    </p>
                   </div>
+                  <p className="text-xs text-red-500 mt-0.5">
+                    {err.emissionReductions}
+                  </p>
                 </div>
               </CardContent>
               <CardFooter className="justify-end">
@@ -522,6 +521,11 @@ const AddProposedPage = () => {
                         emissionReductions:
                           projectDetails[3].emissionReductions,
                       });
+
+                    if (values.emissionUnit == "") {
+                      setFieldError("emissionUnit", "Please select a unit");
+                      return;
+                    }
 
                     if (res.success) {
                       setErr({});
@@ -687,7 +691,7 @@ const AddProposedPage = () => {
               <p className="flex-1 font-bold">Photo and Logo</p>
             </div>
 
-            {values.photoUrl != "" && values.logoUrl && (
+            {values.photoUrl != "" && values.logoUrl == "" && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(5)}
@@ -860,7 +864,7 @@ const AddProposedPage = () => {
                       setFieldValue("logoUrl", res2.data);
                     }
 
-                    if (res1 != null && res2 != null) {
+                    if (res1 != null || res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
                       toast.success("The changes have been saved.", {
