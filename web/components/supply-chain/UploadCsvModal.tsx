@@ -119,9 +119,7 @@ const UploadCsvModal = ({
         setProgress(100);
         await delay(1100);
         setProgress(0);
-        queryClient.invalidateQueries({
-          queryKey: ['supplier-data', periodId],
-        });
+        queryClient.invalidateQueries();
 
         toast.success('csv file uploaded Successfully.', {
           style: { color: 'green' },
