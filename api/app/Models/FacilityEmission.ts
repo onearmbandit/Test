@@ -83,10 +83,16 @@ export default class FacilityEmission extends BaseModel {
       ? queryParams.organization_facility_id.toString()
       : ''
 
+    const organizationId = queryParams.organization_id ? queryParams.organization_id.toString() : ''
+
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
 
     if (organizationFacilityId) {
       query = query.where('organization_facility_id', organizationFacilityId)
+    } else if (organizationId) {
+      query = query.whereHas('OrganizationFacility', (orgQuery) => {
+        orgQuery.where('organization_id', organizationId)
+      })
     }
 
     query = query.orderBy(sort, order)

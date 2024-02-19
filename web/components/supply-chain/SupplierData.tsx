@@ -8,6 +8,7 @@ import {
   Line,
   Area,
   Bar,
+  BarChart,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -79,6 +80,22 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
     const { x, y, value } = props;
     return (
       <text x={x} y={y} dy={-12} dx={0} fill='#334155' textAnchor='left'>
+        {value}
+      </text>
+    );
+  };
+  const CustomizedLabel = (props: any) => {
+    const { x, y, fill, value } = props;
+    return (
+      <text
+        x={x}
+        y={y}
+        fontSize='12'
+        fontFamily='sans-serif'
+        fill={fill}
+        textAnchor='end'
+        overlinePosition='top'
+      >
         {value}
       </text>
     );
@@ -214,9 +231,10 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
           />
         </div>
       )}
+
       {supplierData?.productWise?.length < 1 &&
-      supplierData.totalProductLevelEmission < 1 &&
-      supplierData.missingCarbonFootPrint < 1 ? (
+      supplierData?.totalProductLevelEmission < 1 &&
+      supplierData?.missingCarbonFootPrint < 1 ? (
         <div className='justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-16 rounded-lg border-solid max-md:px-5'>
           <img
             loading='lazy'
@@ -233,10 +251,11 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
             below.
             <br />
           </div>
+
           <UploadCsvModal
             open={showCsvUploadModal}
             setOpen={setShowCsvUploadModal}
-            periodId={periodId}
+            periodId={periodId!}
           ></UploadCsvModal>
         </div>
       ) : (
@@ -276,13 +295,13 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                       </div>
                     </div>
                     <div className='overflow-auto h-full flex justify-start items-start'>
-                      <ResponsiveContainer className='!w-[90%] !h-[320px] overflow-auto'>
-                        <ComposedChart
+                      <ResponsiveContainer className='!w-[86%] !h-[320px] overflow-auto'>
+                        <BarChart
                           layout='vertical'
                           data={chartData}
                           margin={{
                             top: 20,
-                            right: 20,
+                            right: 100,
                             bottom: 20,
                             left: 0,
                           }}
@@ -299,11 +318,10 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                             scale='band'
                             padding={{ top: 0, bottom: 0 }}
                           />
-                          {/* <Tooltip /> */}
-                          {/* <Legend /> */}
+
                           <Bar
                             dataKey='scope_3_contribution'
-                            label={{ position: 'right' }}
+                            label={<CustomizedLabel />}
                             barSize={20}
                             radius={4}
                             fill='#BBF7D0'
@@ -314,7 +332,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                               content={<CustomBarLabel />}
                             />
                           </Bar>
-                        </ComposedChart>
+                        </BarChart>
                       </ResponsiveContainer>
                     </div>
                   </div>

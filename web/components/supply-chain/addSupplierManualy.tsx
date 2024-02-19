@@ -542,7 +542,7 @@ export const AddSupplierManualy = () => {
                           styles={customDropdownStyles}
                           onChange={(newValue) => {
                             const copy = _.cloneDeep(productList);
-                            copy[i].name = newValue?.value;
+                            copy[i].type = newValue?.value;
                             setProductList(copy);
                           }}
                           onCreateOption={(e) => handleCreateType(e, i)}

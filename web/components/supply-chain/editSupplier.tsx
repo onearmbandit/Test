@@ -112,10 +112,6 @@ export const EditSupplier = () => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      // console.log('supplier created : ', data);
-
-      //   setSupplier(data);
-
       setValues({
         ...data.data,
         organizationRelationship: data.data.organization_relationship,
@@ -331,7 +327,13 @@ export const EditSupplier = () => {
                   </div>
                   <Button
                     variant='ghost'
-                    onClick={() => setEditSupplier(false)}
+                    onClick={() => {
+                      setEditSupplier(false);
+                      setFieldValue(
+                        'organizationRelationship',
+                        supplier.organization_relationship
+                      );
+                    }}
                     className='text-sm font-semibold leading-5 text-blue-600'
                   >
                     Edit
@@ -545,7 +547,7 @@ export const EditSupplier = () => {
                 {productList.map((item: any, i: number) => (
                   <TableRow key={i} className='mt-4 border-0'>
                     <TableCell className='py-3 px-3 pl-0 pr-4'>
-                      <div className='2xl:w-[303px] w-[163px]'>
+                      <div className='2xl:w-[303px] w-[179px]'>
                         <CreatableSelect
                           // isClearable
                           options={productNamelist}
@@ -561,14 +563,14 @@ export const EditSupplier = () => {
                       </div>
                     </TableCell>
                     <TableCell className='pl-0 py-3 pr-4'>
-                      <div className='2xl:w-[303px] w-[163px]'>
+                      <div className='2xl:w-[303px] w-[179px]'>
                         <CreatableSelect
                           // isClearable
                           options={productTypelist}
                           styles={customDropdownStyles}
                           onChange={(newValue) => {
                             const copy = _.cloneDeep(productList);
-                            copy[i].name = newValue?.value;
+                            copy[i].type = newValue?.value;
                             setProductList(copy);
                           }}
                           onCreateOption={(e) => handleCreateType(e, i)}

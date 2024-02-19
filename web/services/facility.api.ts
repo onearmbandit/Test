@@ -108,6 +108,19 @@ export const getProductLines = (emissionId: string) => {
   return fetchApi(`/auth/facility-emission/${emissionId}`);
 };
 
+export const updateProductEmissions = ({
+  id,
+  obj,
+}: {
+  id: string;
+  obj: any;
+}) => {
+  return fetchApi(`/auth/facility-emission/${id}`, {
+    method: "PATCH",
+    body: obj,
+  });
+};
+
 export const facilityDetails = (id: string) => {
   return fetchApi(`/auth/facility/${id}`);
 };
@@ -130,8 +143,12 @@ export const getFacilityDashboard = ({
   );
 };
 
-export const getAllFacilityProductNames = (facilityId: string) => {
+export const getAllFacilityProductNames = (orgId: string) => {
   return fetchApi(
-    `/auth/facility-product-name-list?organizationFacilityId=${facilityId}&order=asc`
+    `/auth/facility-product-name-list?organizationId=${orgId}&order=asc`
   );
+};
+
+export const getDashboardReportingPeriodList = (orgId: string) => {
+  return fetchApi(`/auth/facility-emission?organization_id=${orgId}`);
 };

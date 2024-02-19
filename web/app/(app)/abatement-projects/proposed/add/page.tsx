@@ -215,6 +215,9 @@ const AddProposedPage = () => {
                     if (res.success) {
                       setErr({});
                       setCurrentSection(2);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       setFieldError("name", res.error.errors[0].message);
                       setErr({ name: res.error.errors[0].message });
@@ -380,6 +383,9 @@ const AddProposedPage = () => {
                       );
                       setFieldValue("websiteUrl", projectDetails[2].websiteUrl);
                       setCurrentSection(3);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       res.error.errors.map((item) => {
                         // setFieldError(`${item.path[0]}`, item.message);
@@ -448,6 +454,7 @@ const AddProposedPage = () => {
                   </label>
                   <div className="flex">
                     <Input
+                      type="number"
                       name="emissionReductions"
                       onChange={(e) => {
                         const copy = _.cloneDeep(projectDetails);
@@ -523,6 +530,9 @@ const AddProposedPage = () => {
                         projectDetails[3].emissionReductions
                       );
                       setCurrentSection(4);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       setFieldError("emissionReductions", res.error.message);
                       setErr({
@@ -629,6 +639,9 @@ const AddProposedPage = () => {
 
                     if (projectDetails[4].organizationId.id != "") {
                       setCurrentSection(5);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       setFieldError(
                         "proposedTo",
@@ -850,6 +863,9 @@ const AddProposedPage = () => {
                     if (res1 != null && res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     }
                   }}
                   className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
