@@ -48,6 +48,8 @@ const FacilityTable = () => {
     };
   });
 
+  console.log("table", emissions);
+
   return (
     <div className="bg-white rounded-lg w-full mt-7">
       <div className="bg-gray-100 px-4 py-3 flex justify-between items-center rounded-t-lg">
@@ -80,7 +82,7 @@ const FacilityTable = () => {
                 onClick={() =>
                   router.push(
                     `/facilities/${item.name.split(" ").join("-")}?facilityId=${
-                      item.organization_id
+                      item.id
                     }`
                   )
                 }

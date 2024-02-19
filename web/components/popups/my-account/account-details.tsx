@@ -24,13 +24,16 @@ const AccountDetails = () => {
   const queryClient = useQueryClient();
 
   const deleteValidation = z.object({
-    email: z.string().email(),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters long" }),
   });
 
-  const { data, isLoading, status } = useQuery({
+  const {
+    data: user,
+    isLoading,
+    status,
+  } = useQuery({
     queryKey: ["account-details"],
     queryFn: () => getUser(),
   });
@@ -38,6 +41,9 @@ const AccountDetails = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: deleteUser,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       signOut();
       toast.success("Account Deleted.", { style: { color: "green" } });
     },
@@ -48,14 +54,13 @@ const AccountDetails = () => {
 
   const deleteAccount = useFormik({
     initialValues: {
-      email: "",
       password: "",
     },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: toFormikValidationSchema(deleteValidation),
     onSubmit: (data) => {
-      mutate({ obj: data });
+      mutate({ obj: { ...data, email: user?.data?.email } });
     },
   });
 
@@ -84,21 +89,18 @@ const AccountDetails = () => {
 
   const disableSaveBtn = () => {
     if (
-      data?.data?.first_name === changeNameForm.values.firstName &&
-      data?.data?.last_name === changeNameForm.values.lastName
+      user?.data?.first_name === changeNameForm.values.firstName &&
+      user?.data?.last_name === changeNameForm.values.lastName
     ) {
-      console.log("No");
       return true;
     }
-
-    console.log("Yes");
 
     return false;
   };
   useEffect(() => {
     if (status == "success") {
-      changeNameForm.setFieldValue("firstName", data?.data?.first_name);
-      changeNameForm.setFieldValue("lastName", data?.data?.last_name);
+      changeNameForm.setFieldValue("firstName", user?.data?.first_name);
+      changeNameForm.setFieldValue("lastName", user?.data?.last_name);
     }
   }, [status]);
 
@@ -153,7 +155,7 @@ const AccountDetails = () => {
         <label>Email</label>
         <Input
           disabled
-          value={`${data?.data?.email}`}
+          value={`${user?.data?.email}`}
           className="text-gray-500 text-sm leading-4 self-stretch px-0 max-md:max-w-full"
         />
       </section>
@@ -207,16 +209,14 @@ const AccountDetails = () => {
             <section className="input-container w-full">
               <Input
                 name="email"
+                disabled
                 onChange={deleteAccount.handleChange}
+                value={user?.data?.email}
                 placeholder="johnsmith@pepsico.com"
                 className={cn(
-                  "text-gray-500 text-sm font-light leading-5 whitespace-nowrap items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md",
-                  deleteAccount.errors?.email && "border border-red-500"
+                  "text-gray-500 text-sm font-light leading-5 whitespace-nowrap disabled:text-link-btn placeholder:text-link-btn items-stretch bg-gray-50 justify-center px-2 py-3.5 rounded-md"
                 )}
               />
-              <p className="text-xs text-red-500 py-[10px]">
-                {deleteAccount.errors?.email}
-              </p>
             </section>
             <section className="input-container w-full">
               <Input

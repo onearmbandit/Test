@@ -2,8 +2,7 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class CreateAbatementProjectValidator {
-  constructor(protected ctx: HttpContextContract) {
-  }
+  constructor(protected ctx: HttpContextContract) {}
 
   public schema = schema.create({
     name: schema.string.optional({ trim: true }, [rules.minLength(3), rules.maxLength(255)]),
@@ -12,16 +11,14 @@ export default class CreateAbatementProjectValidator {
     estimatedCost: schema.number.optional(),
     photoUrl: schema.string.optional(),
     logoUrl: schema.string.optional(),
-    contactEmail: schema.string.optional({}, [
-      rules.email(),
-    ]),
+    websiteUrl: schema.string.optional(),
+    contactEmail: schema.string.optional({}, [rules.email()]),
     status: schema.enum.optional([0, 1, 2] as const),
     proposedTo: schema.string.optional({ trim: true }, [
       rules.uuid(),
       // rules.exists({ table: 'suppliers', column: 'id' }),
     ]),
   })
-
 
   public messages = {
     'name.minLength': 'Abatement project name must be at least 3 characters.',
@@ -31,6 +28,6 @@ export default class CreateAbatementProjectValidator {
     'contactEmail.required': 'Email field is required.',
     'contactEmail.email': 'Please enter a valid email.',
     'status.enum': 'The value must be one of {{ options.choices }}',
-    'proposedTo.exists': 'Supplier with this ID does not exist.'
+    'proposedTo.exists': 'Supplier with this ID does not exist.',
   }
 }

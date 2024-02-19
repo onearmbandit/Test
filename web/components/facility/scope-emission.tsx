@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { SetStateAction, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useFormik } from "formik";
@@ -15,7 +15,17 @@ import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { useSearchParams } from "next/navigation";
 
-const ScopeEmissions = ({ period }: { period: any }) => {
+const ScopeEmissions = ({
+  period,
+  completeStatus,
+  setStatus,
+}: {
+  period: any;
+  completeStatus: { 1: boolean; 2: boolean; 3: boolean };
+  setStatus: React.Dispatch<
+    SetStateAction<{ 1: boolean; 2: boolean; 3: boolean }>
+  >;
+}) => {
   const searchParams = useSearchParams();
   const facilityId = searchParams.get("facilityId");
   const queryClient = useQueryClient();
@@ -41,7 +51,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
     mutationFn: addScopeEmissions,
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["facility-details", facilityId],
+        queryKey: ["facility-details", facilityId, "dashboard"],
       });
 
       toast.success("Scope Emissions updated", { style: { color: "green" } });
@@ -70,6 +80,13 @@ const ScopeEmissions = ({ period }: { period: any }) => {
         scope2TotalEmission: periodDetails.data?.scope2_total_emission,
         scope3TotalEmission: periodDetails.data?.scope3_total_emission,
       };
+      if (
+        periodDetails.data?.scope1_total_emission != null ||
+        periodDetails.data?.scope2_total_emission != null ||
+        periodDetails.data?.scope3_total_emission != null
+      ) {
+        setStatus({ ...completeStatus, 1: true });
+      }
       setValues(emissionValues);
     }
   }, [status, periodDetails]);
@@ -104,6 +121,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                     <Input
                       id="totalEmissions1"
                       placeholder="tCO2e"
+                      type="number"
                       onChange={handleChange}
                       value={values.scope1TotalEmission}
                       name="scope1TotalEmission"
@@ -148,9 +166,10 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                       id="totalEmissions2"
                       placeholder="tCO2e"
                       onChange={handleChange}
+                      type="number"
                       value={values.scope2TotalEmission}
                       name="scope2TotalEmission"
-                      className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-xs font-light leading-4 bg-gray-50 rounded-md text-slate-500"
+                      className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-sm font-light leading-4 bg-gray-50 rounded-md text-slate-500"
                     />
                     <p className="text-xs text-gray-700 font-light">tCO2e</p>
                   </div>
@@ -191,6 +210,7 @@ const ScopeEmissions = ({ period }: { period: any }) => {
                       placeholder="tCO2e"
                       name="scope3TotalEmission"
                       onChange={handleChange}
+                      type="number"
                       value={values.scope3TotalEmission}
                       className="grow justify-center items-stretch self-stretch p-2 max-w-24 text-sm font-light leading-4 bg-gray-50 rounded-md text-slate-500"
                     />

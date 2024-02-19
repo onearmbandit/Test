@@ -208,3 +208,22 @@ export const separateIntoChunks = (arr: any, chunkSize: number) => {
   }
   return chunks;
 };
+
+export const calculateTotals = (projects: any) => {
+  const totals: Record<string, number> = {
+    tCO2e: 0,
+    "Gallons of water": 0,
+    "Metric tonnes of waste": 0,
+  };
+
+  {
+    projects &&
+      projects.length > 0 &&
+      projects?.forEach((item: any) => {
+        const { emission_reductions, emission_unit } = item;
+        totals[emission_unit] += emission_reductions;
+      });
+  }
+
+  return totals;
+};
