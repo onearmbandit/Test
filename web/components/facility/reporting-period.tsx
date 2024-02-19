@@ -170,7 +170,7 @@ const ReportingPeriod = ({
             customInput={
               <Input
                 placeholder="MM/YYYY"
-                className="w-[6.125rem] px-2 bg-gray-50 text-xs font-light text-slate-700"
+                className="w-[6.125rem] px-2 bg-gray-50 text-sm font-light text-slate-700"
               />
             }
             disabled={period && !isEdit}
