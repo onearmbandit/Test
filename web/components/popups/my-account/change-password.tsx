@@ -102,6 +102,8 @@ const ChangePassword = () => {
     },
   });
 
+  console.log("errors", updatePasswordForm.errors);
+
   return (
     <form
       onSubmit={updatePasswordForm.handleSubmit}
@@ -125,9 +127,15 @@ const ChangePassword = () => {
             name={"oldPassword"}
             onChange={updatePasswordForm.handleChange}
             type="password"
-            className="py-2 h-11 rounded-md bg-gray-50 text-sm leading-4 font-light text-slate-700"
+            className={cn(
+              "py-2 h-11 rounded-md bg-gray-50 text-sm leading-4 font-light text-slate-700",
+              updatePasswordForm.errors?.oldPassword && "border border-red-500"
+            )}
             placeholder="Old password"
           />
+          <p className="text-xs text-red-500 !mt-[10px]">
+            {updatePasswordForm.errors?.oldPassword as string}
+          </p>
         </div>
         <div className="space-y-3">
           <label className="text-slate-700 text-base font-semibold leading-6 self-stretch max-md:max-w-full">

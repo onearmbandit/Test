@@ -33,7 +33,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
-import { separateIntoChunks } from "@/lib/utils";
+import { cn, separateIntoChunks } from "@/lib/utils";
 import { HoverCardPortal } from "@radix-ui/react-hover-card";
 
 const FacilityDetails = () => {
@@ -41,6 +41,11 @@ const FacilityDetails = () => {
   const pathname = usePathname();
   const facilityId = searchParams.get("facilityId");
   const router = useRouter();
+  const [completeStatus, setCompleteStatus] = useState({
+    1: false,
+    2: false,
+    3: false,
+  });
 
   const [currentTab, setCurrentTab] = useState<string | null>(null);
   const [showNew, setShowNew] = useState(false);
@@ -177,7 +182,12 @@ const FacilityDetails = () => {
                 <AccordionItem value="1" className="border rounded-lg p-6">
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
+                      <div
+                        className={cn(
+                          "text-slate-700 text-xs font-semibold leading-4 rounded-full flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2",
+                          completeStatus[1] && "bg-cyan-100 text-green-900"
+                        )}
+                      >
                         1
                       </div>
                       <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
@@ -187,7 +197,11 @@ const FacilityDetails = () => {
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
                   <AccordionContent>
-                    <ScopeEmissions period={currentTab} />
+                    <ScopeEmissions
+                      period={currentTab}
+                      completeStatus={completeStatus}
+                      setStatus={setCompleteStatus}
+                    />
                   </AccordionContent>
                   {/* <p className="text-xs font-light text-slate-700 mt-[1.88rem] [&[data-state=open]]:hidden">
                   Enter your reporting above. Then fill your scope 1, 2, and 3,
@@ -201,7 +215,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 rounded-full flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         2
                       </div>
                       <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
@@ -216,7 +230,11 @@ const FacilityDetails = () => {
                     period
                   </p>
                   <AccordionContent>
-                    <ProductLines period={currentTab!} />
+                    <ProductLines
+                      period={currentTab!}
+                      completeStatus={completeStatus}
+                      setStatus={setCompleteStatus}
+                    />
                   </AccordionContent>
                 </AccordionItem>
                 <AccordionItem
@@ -225,7 +243,7 @@ const FacilityDetails = () => {
                 >
                   <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
                     <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div className="text-slate-700 text-xs font-semibold leading-4 justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
+                      <div className="text-slate-700 text-xs font-semibold leading-4 flex rounded-full justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2">
                         3
                       </div>
                       <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
@@ -239,7 +257,11 @@ const FacilityDetails = () => {
                     product lines within your facility by functional unit.
                   </p>
                   <AccordionContent>
-                    <ProductLineEmissions period={currentTab!} />
+                    <ProductLineEmissions
+                      period={currentTab!}
+                      completeStatus={completeStatus}
+                      setStatus={setCompleteStatus}
+                    />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
