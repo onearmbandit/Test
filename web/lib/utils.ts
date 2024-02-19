@@ -199,3 +199,12 @@ export const converPeriodToString = (period: any) => {
 export const convertDateToString = (date: any) => {
   return dayjs(date).format("MM/DD/YYYY");
 };
+
+export const separateIntoChunks = (arr: any, chunkSize: number) => {
+  var chunkSize = chunkSize;
+  var chunks = [];
+  for (var i = 0; i < arr.length; i += chunkSize) {
+    chunks.push(arr.slice(i, i + chunkSize));
+  }
+  return chunks;
+};

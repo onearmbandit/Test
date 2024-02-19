@@ -13,7 +13,7 @@ import {
 import { ArrowUpRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { getFacilities } from "@/services/facility.api";
+import { getFacilities, getFacilityDashboard } from "@/services/facility.api";
 import { useRouter } from "next/navigation";
 
 const FacilityTable = () => {
@@ -25,6 +25,27 @@ const FacilityTable = () => {
   } = useQuery({
     queryKey: ["facilities"],
     queryFn: () => getFacilities(),
+  });
+
+  const emissions = facilities?.data?.map((item: any) => {
+    let scope1 = 0;
+    let scope2 = 0;
+    let scope3 = 0;
+    let total = 0;
+    item.facilityEmission.map((emi: any) => {
+      scope1 += emi.scope1_total_emission;
+      scope2 += emi.scope2_total_emission;
+      scope3 += emi.scope3_total_emission;
+      total += emi.emission_sum;
+    });
+
+    return {
+      ...item,
+      scope1TotalEmission: scope1,
+      scope2TotalEmission: scope2,
+      scope3TotalEmission: scope3,
+      emission_sum: total,
+    };
   });
 
   return (
@@ -45,21 +66,21 @@ const FacilityTable = () => {
         <TableHeader className="">
           <TableRow className="hover:bg-white">
             <TableHead className="w-1/5">Facility Name</TableHead>
-            <TableHead>Scope 1</TableHead>
-            <TableHead>Scope 2</TableHead>
-            <TableHead>Scope 3</TableHead>
-            <TableHead>Total</TableHead>
+            <TableHead className="w-1/5">Scope 1</TableHead>
+            <TableHead className="w-1/5">Scope 2</TableHead>
+            <TableHead className="w-1/5">Scope 3</TableHead>
+            <TableHead className="w-1/5">Total</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isSuccess &&
-            facilities.data.map((item: any) => (
+            emissions.map((item: any) => (
               <TableRow
                 key={item.id}
                 onClick={() =>
                   router.push(
                     `/facilities/${item.name.split(" ").join("-")}?facilityId=${
-                      item.id
+                      item.organization_id
                     }`
                   )
                 }
@@ -76,10 +97,38 @@ const FacilityTable = () => {
                     view
                   </Button>
                 </TableCell>
-                <TableCell>N/A</TableCell>
-                <TableCell>N/A</TableCell>
-                <TableCell>N/A</TableCell>
-                <TableCell>N/A</TableCell>
+                <TableCell>
+                  {(item?.scope1TotalEmission == 0 ||
+                    item?.scope2TotalEmission == 0 ||
+                    item?.scope3TotalEmission == 0) && (
+                    <Button
+                      size={"sm"}
+                      className="bg-white hidden group-hover:flex shadow-md hover:bg-black/10 gap-2 text-gray-500 text-xs font-semibold p-[0.44rem] uppercase"
+                      type="button"
+                    >
+                      <ArrowUpRight size={16} />
+                      Update Scope Emission
+                    </Button>
+                  )}
+                  {item?.scope1TotalEmission == 0 ? (
+                    <span className="group-hover:hidden">N/A</span>
+                  ) : (
+                    item?.scope1TotalEmission
+                  )}
+                </TableCell>
+                <TableCell>
+                  {item?.scope2TotalEmission == 0
+                    ? "N/A"
+                    : item?.scope2TotalEmission}
+                </TableCell>
+                <TableCell>
+                  {item?.scope3TotalEmission == 0
+                    ? "N/A"
+                    : item?.scope3TotalEmission}
+                </TableCell>
+                <TableCell>
+                  {item?.emission_sum == 0 ? "N/A" : item?.emission_sum}
+                </TableCell>
               </TableRow>
             ))}
           {facilities?.data?.length == 0 && (
