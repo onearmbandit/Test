@@ -108,6 +108,10 @@ export const getProductLines = (emissionId: string) => {
   return fetchApi(`/auth/facility-emission/${emissionId}`);
 };
 
+export const getProductLineEmissions = (emissionId: string) => {
+  return fetchApi(`/auth/facility-product?facilityEmissionId=${emissionId}`);
+};
+
 export const updateProductEmissions = ({
   id,
   obj,

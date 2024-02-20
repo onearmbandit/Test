@@ -93,7 +93,8 @@ const Sidebar = () => {
               {session.data?.user?.first_name} {session.data?.user?.last_name}
             </h1>
             <div className="overflow-hidden text-slate-500 text-ellipsis text-xs leading-4 whitespace-nowrap">
-              {session.data?.user?.organizations[0]?.company_name}
+              {session.data?.user?.organizations?.length! > 0 &&
+                session.data?.user?.organizations[0]?.company_name}
             </div>
           </div>
         </header>

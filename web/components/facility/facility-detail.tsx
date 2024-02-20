@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, HelpCircle, Loader2, Plus } from "lucide-react";
+import { ChevronDown, Loader2, Plus } from "lucide-react";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
@@ -85,7 +85,7 @@ const FacilityDetails = () => {
         setShowNew(true);
       }
     }
-  }, [periodsQ.isSuccess, reportingPeriods]);
+  }, [periodsQ.isSuccess, periodsQ.data]);
 
   return (
     <div className="mt-5">
