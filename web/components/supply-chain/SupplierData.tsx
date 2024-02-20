@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { ChevronDown, HelpCircle, Loader2, Plus } from 'lucide-react';
+import { ChevronDown, HelpCircle, Loader2, Plus, Table } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
@@ -52,6 +52,13 @@ import { useSession } from 'next-auth/react';
 import UploadCsvModal from './UploadCsvModal';
 import { authOptions, convertDateToString } from '@/lib/utils';
 import { exportSupplierDataCsv, getUser } from '@/services/user.api';
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../ui/table';
 
 const SupplierData = ({ periodId }: { periodId: string }) => {
   console.log(periodId, 'periodId');
@@ -85,17 +92,10 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
     );
   };
   const CustomizedLabel = (props: any) => {
+    console.log(props, 'graph props');
     const { x, y, fill, value } = props;
     return (
-      <text
-        x={x}
-        y={y}
-        fontSize='12'
-        fontFamily='sans-serif'
-        fill={fill}
-        textAnchor='end'
-        overlinePosition='top'
-      >
+      <text x={x} y={y} fontSize='12' fill={fill} textAnchor='start'>
         {value}
       </text>
     );
@@ -222,6 +222,13 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
 
   return (
     <div className='relative'>
+      {showCsvUploadModal && supplierData?.productWise?.length > 0 && (
+        <UploadCsvModal
+          open={showCsvUploadModal}
+          setOpen={setShowCsvUploadModal}
+          periodId={periodId!}
+        ></UploadCsvModal>
+      )}
       {supplierDataQ.isLoading && (
         <div className='absolute top-0 left-0 h-full w-full z-10  flex items-center bg-white justify-center'>
           <Loader2
@@ -251,7 +258,6 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
             below.
             <br />
           </div>
-
           <UploadCsvModal
             open={showCsvUploadModal}
             setOpen={setShowCsvUploadModal}
@@ -278,62 +284,75 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                       % of missing Product Carbon Footprint
                     </div>
                     <div className='mt-1.5 text-4xl text-teal-800 leading-[84px]'>
-                      {supplierData?.missingCarbonFootPrint}
+                      {supplierData?.missingCarbonFootPrint}%
                     </div>
                   </div>
                 </div>
               </div>
               {chartData?.length > 0 && (
                 <div className='flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full'>
-                  <div className='h-[242px] overflow-auto flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
-                    <div className='flex gap-5 justify-between mt-1.5 font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)]'>
-                      <div className='flex-auto text-2xl leading-5 text-slate-800 '>
-                        Scope 3 Emissions by Product Name
-                      </div>
-                      <div className='flex-auto self-start mt-3 text-sm leading-4 text-center text-gray-500'>
-                        tCO2e
-                      </div>
-                    </div>
-                    <div className='overflow-auto h-full flex justify-start items-start'>
-                      <ResponsiveContainer className='!w-[86%] !h-[320px] overflow-auto'>
-                        <BarChart
-                          layout='vertical'
-                          data={chartData}
-                          margin={{
-                            top: 20,
-                            right: 100,
-                            bottom: 20,
-                            left: 0,
-                          }}
-                        >
-                          <XAxis
-                            hide={true}
-                            type='number'
-                            domain={['auto', 'auto']}
-                          />
-                          <YAxis
-                            dataKey=''
-                            hide={true}
-                            type='category'
-                            scale='band'
-                            padding={{ top: 0, bottom: 0 }}
-                          />
+                  <div className='h-[342px] overflow-auto flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
+                    <div className=''>
+                      <div className='mt-1.5 flex font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)] '>
+                        <div className='flex-auto w-[80%] text-2xl leading-5 text-slate-800 '>
+                          Scope 3 Emissions by Product Name
+                        </div>
 
-                          <Bar
-                            dataKey='scope_3_contribution'
-                            label={<CustomizedLabel />}
-                            barSize={20}
-                            radius={4}
-                            fill='#BBF7D0'
-                          >
-                            <LabelList
-                              dataKey='name'
-                              position='top'
-                              content={<CustomBarLabel />}
-                            />
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
+                        <div className='flex flex-auto w-[20%] mt-3 text-sm leading-4 text-center text-gray-500'>
+                          tCO2e
+                        </div>
+                      </div>
+                      <div className='flex overflow-auto h-[342px]'>
+                        <div className='w-[80%]'>
+                          <div className='overflow-auto h-[342px] flex justify-start items-start'>
+                            <ResponsiveContainer>
+                              <BarChart
+                                layout='vertical'
+                                data={chartData}
+                                margin={{
+                                  top: 20,
+                                  right: 100,
+                                  bottom: 20,
+                                  left: 0,
+                                }}
+                              >
+                                <XAxis
+                                  hide={true}
+                                  type='number'
+                                  // domain={['auto', 'auto']}
+                                />
+                                <YAxis
+                                  dataKey=''
+                                  hide={true}
+                                  type='category'
+                                  scale='band'
+                                  padding={{ top: 0, bottom: 0 }}
+                                />
+
+                                <Bar
+                                  dataKey='scope_3_contribution'
+                                  barSize={20}
+                                  radius={4}
+                                  fill='#BBF7D0'
+                                >
+                                  <LabelList
+                                    dataKey='name'
+                                    position='top'
+                                    content={<CustomBarLabel />}
+                                  />
+                                </Bar>
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </div>
+                        <div className='w-[20%] flex flex-auto flex-col'>
+                          {chartData?.map((product: any, index: number) => (
+                            <div key={index} className='pt-9'>
+                              {product.scope_3_contribution}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -491,12 +510,12 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
           {/* supplier list start */}
           {supplierProducts &&
             supplierProducts.length > 0 &&
-            supplierProducts.map((product: any, index: number) => (
+            supplierProducts?.map((product: any, index: number) => (
               <div
                 key={index}
-                className='items-center bg-[#F9FAFB] border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5  border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5'
+                className='items-center group bg-[#F9FAFB] border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between  border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5'
               >
-                <div className='flex items-center min-w-[280px] border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] pr-4 pl-4 py-1.5 justify-between text-slate-800 text-ellipsis truncate flex-1 text-sm leading-5 whitespace-nowrap'>
+                <div className='flex items-center min-w-[280px] h-10 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] pr-4 pl-4 py-1.5 justify-between text-slate-800 text-ellipsis truncate flex-1 text-sm leading-5 whitespace-nowrap'>
                   <div className='flex items-center max-w-[160px]'>
                     <div className='mr-2'>
                       <div className='inline-flex items-center'>
@@ -536,15 +555,15 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                     </p>
                   </div>
 
-                  <button className='flex flex-col justify-center bg-gradient-to-b from-gray-100  hover:from-gray-200 hover:via-gray-200 hover:to-gray-300 px-2 py-2 text-xs font-semibold leading-4 text-center text-gray-500 whitespace-nowrap bg-white rounded border border-solid shadow border-[color:var(--Gray-100,#F3F4F6)] max-w-[72px]'>
+                  <Button className='hidden group-hover:flex h-full flex-col justify-center bg-gradient-to-b from-gray-100  hover:from-gray-200 hover:via-gray-200 hover:to-gray-300 p-[0.44rem] text-xs font-semibold leading-4 text-center text-gray-500 whitespace-nowrap bg-white rounded border border-solid shadow border-[color:var(--Gray-100,#F3F4F6)] max-w-[72px]'>
                     <Link
                       href={`/supply-chain/supplier/${product?.supplier?.id}`}
-                      className='flex gap-2 justify-between'
+                      className='flex gap-2 justify-between '
                     >
                       <ArrowUpRight size={16} className='text-slate-600' />
                       <p className='link'>VIEW</p>
                     </Link>
-                  </button>
+                  </Button>
                 </div>
                 <div className='overflow-hidden border-r whitespace-nowrap border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800  flex-1 text-sm leading-5'>
                   <p
@@ -563,7 +582,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                 <div className='overflow-hidden pr-4 whitespace-nowrap pl-4 py-2.5 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800 text-ellipsis flex-1 truncate text-sm leading-5'>
                   {product?.scope_3_contribution == null
                     ? 'Not Available'
-                    : product?.scope_3_contribution}
+                    : product?.scope_3_contribution + ' tCO2e'}
                 </div>
                 <div className='overflow-hidden pr-4 pl-4 py-2.5 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800 text-ellipsis flex-1 text-sm leading-5 truncate grow whitespace-nowrap'>
                   {convertDateToString(product?.updated_at)}
