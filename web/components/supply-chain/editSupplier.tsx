@@ -65,6 +65,7 @@ export const EditSupplier = () => {
   const [editProductTable, setEditProductTable] = useState(false);
   const [totalScopeValue, setTotalScopeValue] = useState(0);
   const [currentReportingPeriod, setCurrentReportingPeriod] = useState('');
+  const [isAddEdit, setIsAddEdit] = useState(false);
   const [productList, setProductList] = useState<any>([
     {
       id: '',
@@ -452,12 +453,16 @@ export const EditSupplier = () => {
                   <div className='grow text-xs font-medium leading-4 text-slate-700 max-md:max-w-full'>
                     Supplier Address
                   </div>
-                  {/* <div className='my-auto text-sm font-semibold leading-4 text-center text-blue-600'>
+                  <p
+                    className='cursor-pointer my-auto text-sm font-semibold leading-4 text-center text-blue-600'
+                    onClick={() => setIsAddEdit(true)}
+                  >
                     Edit
-                  </div> */}
+                  </p>
                 </div>
                 <div className='max-w-[768px] relative'>
                   <AutocompleteInput
+                    isDisabled={!isAddEdit}
                     setAddress={(a: string) => {
                       /** TODO: add the autocompleted address */
                       setFieldValue('address', a);

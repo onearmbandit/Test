@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { ChevronDown, HelpCircle, Loader2, Plus } from 'lucide-react';
+import { ChevronDown, HelpCircle, Loader2, Plus, Table } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import {
@@ -52,6 +52,13 @@ import { useSession } from 'next-auth/react';
 import UploadCsvModal from './UploadCsvModal';
 import { authOptions, convertDateToString } from '@/lib/utils';
 import { exportSupplierDataCsv, getUser } from '@/services/user.api';
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../ui/table';
 
 const SupplierData = ({ periodId }: { periodId: string }) => {
   console.log(periodId, 'periodId');
@@ -284,55 +291,68 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
               </div>
               {chartData?.length > 0 && (
                 <div className='flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full'>
-                  <div className='h-[242px] overflow-auto flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
-                    <div className='flex gap-5 justify-between mt-1.5 font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)]'>
-                      <div className='flex-auto text-2xl leading-5 text-slate-800 '>
-                        Scope 3 Emissions by Product Name
-                      </div>
-                      <div className='flex-auto self-start mt-3 text-sm leading-4 text-center text-gray-500'>
-                        tCO2e
-                      </div>
-                    </div>
-                    <div className='overflow-auto h-full flex justify-start items-start'>
-                      <ResponsiveContainer className='!w-[86%] !h-[320px] overflow-auto'>
-                        <BarChart
-                          layout='vertical'
-                          data={chartData}
-                          margin={{
-                            top: 20,
-                            right: 100,
-                            bottom: 20,
-                            left: 0,
-                          }}
-                        >
-                          <XAxis
-                            hide={true}
-                            type='number'
-                            // domain={['auto', 'auto']}
-                          />
-                          <YAxis
-                            dataKey=''
-                            hide={true}
-                            type='category'
-                            scale='band'
-                            padding={{ top: 0, bottom: 0 }}
-                          />
+                  <div className='h-[342px] overflow-auto flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
+                    <div className=''>
+                      <div className='mt-1.5 flex font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)] '>
+                        <div className='flex-auto w-[80%] text-2xl leading-5 text-slate-800 '>
+                          Scope 3 Emissions by Product Name
+                        </div>
 
-                          <Bar
-                            dataKey='scope_3_contribution'
-                            label={<CustomizedLabel />}
-                            barSize={20}
-                            radius={4}
-                            fill='#BBF7D0'
-                          >
-                            <LabelList
-                              dataKey='name'
-                              position='top'
-                              content={<CustomBarLabel />}
-                            />
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
+                        <div className='flex flex-auto w-[20%] mt-3 text-sm leading-4 text-center text-gray-500'>
+                          tCO2e
+                        </div>
+                      </div>
+                      <div className='flex overflow-auto h-[342px]'>
+                        <div className='w-[80%]'>
+                          <div className='overflow-auto h-[342px] flex justify-start items-start'>
+                            <ResponsiveContainer>
+                              <BarChart
+                                layout='vertical'
+                                data={chartData}
+                                margin={{
+                                  top: 20,
+                                  right: 100,
+                                  bottom: 20,
+                                  left: 0,
+                                }}
+                              >
+                                <XAxis
+                                  hide={true}
+                                  type='number'
+                                  // domain={['auto', 'auto']}
+                                />
+                                <YAxis
+                                  dataKey=''
+                                  hide={true}
+                                  type='category'
+                                  scale='band'
+                                  padding={{ top: 0, bottom: 0 }}
+                                />
+
+                                <Bar
+                                  dataKey='scope_3_contribution'
+                                  barSize={20}
+                                  radius={4}
+                                  fill='#BBF7D0'
+                                >
+                                  <LabelList
+                                    dataKey='name'
+                                    position='top'
+                                    content={<CustomBarLabel />}
+                                  />
+                                </Bar>
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </div>
+                        <div className='w-[20%] flex flex-auto flex-col'>
+                          {chartData?.map((product: any, index: number) => (
+                            <div className='pt-[34px]'>
+                              {product.scope_3_contribution}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
