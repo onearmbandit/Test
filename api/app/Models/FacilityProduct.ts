@@ -155,6 +155,7 @@ export default class FacilityProduct extends BaseModel {
           facilityEmissionId: facilityEmissionData.id
         },
         {
+          id: uuidv4(),
           equalityAttribute: requestData.equalityAttribute,
         },
         { client: trx }
