@@ -179,7 +179,7 @@ const ProductLineEmissions = ({
         <Suspense fallback={<Loader2 className="animate-spin" />}>
           {prodLines.isSuccess &&
             emissions?.map((item: Product, i: number) => (
-              <AccordionItem value={item.name!} className="border-0">
+              <AccordionItem key={i} value={item.name!} className="border-0">
                 <AccordionTrigger className="flex rounded-md [&[data-state=closed]>svg#minus]:hidden [&[data-state=open]>svg#plus]:hidden bg-gray-100 px-4 py-2">
                   <p className="text-xs font-bold">{item.name}</p>
                   <Minus size={16} id="minus" />
