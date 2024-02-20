@@ -48,7 +48,7 @@ const ReportingPeriodPopup = ({
       </p>
     );
   };
-  console.log(period, 'period');
+
   const validation = z.object({
     reportingPeriodFrom: z.date(),
     reportingPeriodTo: z.date(),
@@ -69,7 +69,7 @@ const ReportingPeriodPopup = ({
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ['reporting-periods'] });
       setNew(false);
 
       console.log(data, 'data addd');
@@ -85,7 +85,7 @@ const ReportingPeriodPopup = ({
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({ queryKey: ['reporting-periods'] });
 
       toast.success('Reporting period Deleted.', {
         style: { color: 'green' },
