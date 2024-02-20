@@ -591,6 +591,7 @@ export const AddSupplierManualy = () => {
                     <TableCell className='pl-0 pr-4 py-3'>
                       <div className='2xl:w-[215px] w-[125px]'>
                         <Input
+                          type='number'
                           value={item.scope_3Contribution}
                           placeholder='kgCO2'
                           onChange={(e) => {

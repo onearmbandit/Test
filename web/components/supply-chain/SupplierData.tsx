@@ -122,7 +122,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
   const areAllSelected = () => {
     // Assuming supplierProducts is an array of all products you are iterating over
     // This checks if every product ID is in the selectedProductIds array
-    const allProductIds = supplierProducts.map((product: any) => product.id);
+    const allProductIds = supplierProducts?.map((product: any) => product.id);
     return (
       allProductIds.length > 0 &&
       allProductIds.every((id: string) => selectedProductIds.includes(id))
@@ -291,8 +291,8 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
               </div>
               {chartData?.length > 0 && (
                 <div className='flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full'>
-                  <div className='h-[342px] overflow-auto flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
-                    <div className=''>
+                  <div className=' flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full'>
+                    <div className=' overflow-auto'>
                       <div className='mt-1.5 flex font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)] '>
                         <div className='flex-auto w-[80%] text-2xl leading-5 text-slate-800 '>
                           Scope 3 Emissions by Product Name
@@ -302,9 +302,9 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                           tCO2e
                         </div>
                       </div>
-                      <div className='flex overflow-auto h-[342px]'>
-                        <div className='w-[80%]'>
-                          <div className='overflow-auto h-[342px] flex justify-start items-start'>
+                      <div className='flex h-[242px] overflow-auto'>
+                        <div className='w-[80%] '>
+                          <div className='overflow-auto h-[340px] flex justify-start items-start'>
                             <ResponsiveContainer>
                               <BarChart
                                 layout='vertical'
@@ -333,6 +333,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                                   dataKey='scope_3_contribution'
                                   barSize={20}
                                   radius={4}
+                                  label={{ position: 'right' }}
                                   fill='#BBF7D0'
                                 >
                                   <LabelList
@@ -345,13 +346,24 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                             </ResponsiveContainer>
                           </div>
                         </div>
-                        <div className='w-[20%] flex flex-auto flex-col'>
-                          {chartData?.map((product: any, index: number) => (
-                            <div key={index} className='pt-9'>
-                              {product.scope_3_contribution}
-                            </div>
-                          ))}
-                        </div>
+                        {/* {chartData.length == 1 && (
+                          <div className='w-[20%] flex flex-auto flex-col'>
+                            {chartData?.map((product: any, index: number) => (
+                              <div key={index} className='pt-[7.5rem]'>
+                                {product.scope_3_contribution}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {chartData.length == 2 && (
+                          <div className='w-[20%] flex flex-auto flex-col'>
+                            {chartData?.map((product: any, index: number) => (
+                              <div key={index} className='pt-16'>
+                                {product.scope_3_contribution}
+                              </div>
+                            ))}
+                          </div>
+                        )} */}
                       </div>
                     </div>
                   </div>
