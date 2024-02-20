@@ -89,6 +89,8 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
   });
 
   const units = ["tCO2e", "Gallons of water", "Metric tonnes of waste"];
+  const urlPattern =
+    /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
 
   const abatementProject: any = useQuery({
     queryKey: ["completedProject", params.id],
@@ -149,6 +151,7 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
     setFieldError,
     submitForm,
     errors,
+    isSubmitting,
   } = useFormik({
     initialValues: {
       name: "",
@@ -438,7 +441,16 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "cost must be greater than 0" }),
-                        websiteUrl: z.string().url().optional(),
+                        websiteUrl: z
+                          .string()
+                          .refine(
+                            (url) => {
+                              // Regular expression to validate URLs without the scheme
+                              return url.match(urlPattern) !== null;
+                            },
+                            { message: "Invalid URL" }
+                          )
+                          .optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -527,7 +539,7 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
                   <label className="text-sm">
                     What is the estimated emission reductions?
                   </label>
-                  <div>
+                  <div className="flex items-center space-x-3">
                     <Input
                       type="number"
                       name="emissionReductions"
@@ -553,11 +565,14 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm w-28 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
                           errors?.emissionUnit && "border border-red-500"
                         )}
                       >
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue
+                          placeholder={units[0]}
+                          defaultValue={units[0]}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -573,7 +588,7 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
                     </Select>
                   </div>
                   <p className="text-xs text-red-500 mt-0.5">
-                    {err.emissionReductions}
+                    {err.emissionReductions || errors.emissionUnit}
                   </p>
                 </div>
               </CardContent>
@@ -767,7 +782,7 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
               )}
               <p className="flex-1 font-bold">Photo and Logo</p>
             </div>
-            {values.photoUrl != "" && values.logoUrl && (
+            {currentSection !== 5 && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(5)}
@@ -1087,6 +1102,7 @@ const EditCompletedAbatement = ({ params }: { params: { id: string } }) => {
 
           <Button
             type="submit"
+            disabled={isSubmitting}
             onClick={() => {
               submitForm();
             }}

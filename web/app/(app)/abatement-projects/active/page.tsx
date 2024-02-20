@@ -35,7 +35,7 @@ const ActivePage = async () => {
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
           <div className="flex items-center space-x-2">
             <Image
-              src={"/assets/images/folder-tick.svg"}
+              src={"/assets/images/folder-open.svg"}
               height={24}
               width={24}
               alt="folder icon"

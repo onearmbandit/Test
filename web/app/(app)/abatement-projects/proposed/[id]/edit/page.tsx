@@ -65,6 +65,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
     estimatedCost?: string;
     websiteUrl?: string;
     emissionReductions?: string;
+    emissionUnit?: string;
     proposedTo?: string;
     photoUrl?: string;
     logoUrl?: string;
@@ -87,6 +88,8 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
   });
 
   const units = ["tCO2e", "Gallons of water", "Metric tonnes of waste"];
+  const urlPattern =
+    /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
 
   const abatementProject: any = useQuery({
     queryKey: ["proposedProject", params.id],
@@ -149,6 +152,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
     setFieldError,
     submitForm,
     errors,
+    isSubmitting,
   } = useFormik({
     initialValues: {
       name: "",
@@ -447,7 +451,16 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "Cost must be greater than 0" }),
-                        websiteUrl: z.string().url().optional(),
+                        websiteUrl: z
+                          .string()
+                          .refine(
+                            (url) => {
+                              // Regular expression to validate URLs without the scheme
+                              return url.match(urlPattern) !== null;
+                            },
+                            { message: "Invalid URL" }
+                          )
+                          .optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -536,7 +549,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                   <label className="text-sm">
                     What is the estimated emission reductions?
                   </label>
-                  <div>
+                  <div className="flex space-x-3 items-center">
                     <Input
                       type="number"
                       name="emissionReductions"
@@ -562,11 +575,14 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm w-28 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5 bg-gray-50 mx-3    rounded-md ",
                           errors?.emissionUnit && "border border-red-500"
                         )}
                       >
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue
+                          placeholder={units[0]}
+                          defaultValue={units[0]}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -583,6 +599,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                   </div>
                   <p className="text-xs text-red-500 mt-0.5">
                     {err.emissionReductions}
+                    {err.emissionUnit}
                   </p>
                 </div>
               </CardContent>
@@ -606,12 +623,15 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                           projectDetails[3].emissionReductions,
                       });
 
-                    if (values.emissionUnit) {
+                    if (values.emissionUnit == "") {
                       setFieldError(
                         "emissionUnit",
                         "Emission Unit is required"
                       );
+                      setErr({ emissionUnit: "Emission Unit is required" });
                       return;
+                    } else {
+                      setErr({});
                     }
 
                     if (res.success) {
@@ -1099,6 +1119,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
 
           <Button
             type="submit"
+            disabled={isSubmitting}
             onClick={() => {
               submitForm();
             }}
