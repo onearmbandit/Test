@@ -233,7 +233,7 @@ const Sidebar = () => {
                 Invite Organization (For test)
               </h2>
             </Link>
-            <span
+            {/* <span
               role="button"
               onClick={() =>
                 mutate({
@@ -244,7 +244,7 @@ const Sidebar = () => {
               }
             >
               Export Supplier data
-            </span>
+            </span> */}
           </>
         )}
       </nav>
