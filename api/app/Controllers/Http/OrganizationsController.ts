@@ -6,7 +6,6 @@ import Organization from 'App/Models/Organization'
 import UpdateOrganizationValidator from 'App/Validators/Organization/UpdateOrganizationValidator'
 import { v4 as uuidv4 } from 'uuid'
 import CreateOrganizationValidator from 'App/Validators/Organization/CreateOrganizationValidator'
-import OrganizationUser from 'App/Models/OrganizationUser'
 
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
