@@ -50,7 +50,9 @@ export const updateFacility = ({ id, obj }: { id: string; obj: any }) => {
 export const getFacilities = async () => {
   const session = await getServerSession(authOptions);
   const orgId = session?.user?.organizations[0].id;
-  return fetchApi(`/auth/facility?organization_id=${orgId}`);
+  return fetchApi(
+    `/auth/facility?organization_id=${orgId}&include=facilityEmission`
+  );
 };
 
 export const addFacilityReportingPeriod = (formData: any) => {
@@ -106,6 +108,19 @@ export const getProductLines = (emissionId: string) => {
   return fetchApi(`/auth/facility-emission/${emissionId}`);
 };
 
+export const updateProductEmissions = ({
+  id,
+  obj,
+}: {
+  id: string;
+  obj: any;
+}) => {
+  return fetchApi(`/auth/facility-emission/${id}`, {
+    method: "PATCH",
+    body: obj,
+  });
+};
+
 export const facilityDetails = (id: string) => {
   return fetchApi(`/auth/facility/${id}`);
 };
@@ -128,8 +143,12 @@ export const getFacilityDashboard = ({
   );
 };
 
-export const getAllFacilityProductNames = (facilityId: string) => {
+export const getAllFacilityProductNames = (orgId: string) => {
   return fetchApi(
-    `/auth/facility-product-name-list?organizationFacilityId=${facilityId}&order=asc`
+    `/auth/facility-product-name-list?organizationId=${orgId}&order=asc`
   );
+};
+
+export const getDashboardReportingPeriodList = (orgId: string) => {
+  return fetchApi(`/auth/facility-emission?organization_id=${orgId}`);
 };

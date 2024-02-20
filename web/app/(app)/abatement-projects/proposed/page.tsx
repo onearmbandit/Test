@@ -1,3 +1,4 @@
+"use client";
 import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
@@ -8,27 +9,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { authOptions } from "@/lib/utils";
+import { authOptions, calculateTotals } from "@/lib/utils";
 import { getProposedAbatementProjects } from "@/services/abatement.api";
+import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { getServerSession } from "next-auth/next";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 const ProposedPage = async () => {
-  const session = await getServerSession(authOptions);
-  const res = await getProposedAbatementProjects(
-    session?.user?.organizations[0].id!
-  );
-  const projects = res?.data;
+  const { data: session } = useSession();
+  const organizationId = session?.user?.organizations[0]?.id
+    ? session?.user?.organizations[0]?.id
+    : "";
+  const projectsQ = useQuery({
+    queryKey: ["proposedProjects"],
+    queryFn: () => getProposedAbatementProjects(organizationId),
+  });
 
-  console.log("projects: ", projects);
+  const projects = projectsQ.isSuccess ? projectsQ?.data?.data : [];
+
+  const emissionTotals = calculateTotals(projects);
 
   return (
     <div className="px-8">
       <Header />
-      {projects.length == 0 ? (
+      {!projects || projects?.length == 0 ? (
         <EmptyState link="/abatement-projects/proposed/add" />
       ) : (
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
@@ -47,11 +54,20 @@ const ProposedPage = async () => {
           {/* todo: make it dynamic */}
           <p className="text-slate-800 font-semibold">
             Total Abatement to date:{" "}
+            {Object.keys(emissionTotals).map((unit) => (
+              <>
+                <span className="font-normal pr-4">
+                  {emissionTotals[unit]} {unit}/year
+                </span>
+              </>
+            ))}
+            {/* <span className="font-normal">{emissionTotals} / year</span>
             <span className="font-normal">NA NA / year</span>
+            <span className="font-normal">NA NA / year</span> */}
           </p>
 
           <div className="grid grid-cols-3 gap-6">
-            {projects.map((item: any) => (
+            {projects?.map((item: any) => (
               <Card key={item.id} className="px-4 py-3 space-y-4 h-fit">
                 <Link href={`/abatement-projects/proposed/${item.id}`}>
                   <CardTitle className="text-xs leading-5 pb-4 font-medium text-slate-800">
@@ -87,7 +103,7 @@ const ProposedPage = async () => {
                   <p className="text-xs font-bold text-slate-600">
                     Est. Emission Reduction per year:{" "}
                     <span className="font-medium">
-                      {item.emission_reductions} tCO2e
+                      {item.emission_reductions} {item.emission_unit}
                     </span>
                   </p>
 

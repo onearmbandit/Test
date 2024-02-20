@@ -28,7 +28,7 @@ const FacilityEmissionsSummary = () => {
   let scope2Total = 0;
   let scope3Total = 0;
 
-  const sliced = facility.isSuccess && details.facilityEmission.slice(0, 2);
+  const sliced = facility.isSuccess && details?.facilityEmission.slice(0, 2);
   const emissions = allPeriods ? details?.facilityEmission : sliced;
   if (facility.isSuccess) {
     emissions?.map((item: any) => {
@@ -50,7 +50,7 @@ const FacilityEmissionsSummary = () => {
             <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200" />
           </AccordionTrigger>
           <AccordionContent className="pb-0 p-3">
-            {details.facilityEmission?.length == 0 ? (
+            {details?.facilityEmission?.length == 0 ? (
               <div className="justify-center items-center min-h-[19.25rem] self-stretch flex flex-col max-md:px-5">
                 <section className="flex flex-col items-stretch text-lg text-slate-700 max-md:max-w-full">
                   <header
@@ -114,9 +114,8 @@ const FacilityEmissionsSummary = () => {
                               </p>
                             </div>
                           ))}
-                          {emissions?.length > 2 && (
-                            <p className="font-bold">...</p>
-                          )}
+                          {details?.facilityEmission?.length > 2 &&
+                            !allPeriods && <p className="font-bold">...</p>}
                         </div>
                       </CardContent>
                     </Card>
@@ -157,9 +156,8 @@ const FacilityEmissionsSummary = () => {
                               </p>
                             </div>
                           ))}
-                          {emissions?.length > 2 && (
-                            <p className="font-bold">...</p>
-                          )}
+                          {details?.facilityEmission?.length > 2 &&
+                            !allPeriods && <p className="font-bold">...</p>}
                         </div>
                       </CardContent>
                     </Card>
@@ -200,22 +198,24 @@ const FacilityEmissionsSummary = () => {
                               </p>
                             </div>
                           ))}
-                          {emissions?.length > 2 && (
-                            <p className="font-bold">...</p>
-                          )}
+                          {details?.facilityEmission?.length > 2 &&
+                            !allPeriods && <p className="font-bold">...</p>}
                         </div>
                       </CardContent>
                     </Card>
                   </>
                 )}
 
-                {emissions?.length > 2 && (
-                  <div className="col-span-3 justify-end place-items-end place-content-end">
+                {details?.facilityEmission?.length > 2 && (
+                  <div className="col-span-3 flex justify-end">
                     <p
                       role="button"
-                      className="text-blue-600 text-sm w-full text-end font-semibold"
+                      onClick={() => setAllPeriods(!allPeriods)}
+                      className="text-blue-btn flex text-sm font-semibold"
                     >
-                      See all reporting periods
+                      {allPeriods
+                        ? "Collapse reporting periods"
+                        : "See all reporting periods"}
                     </p>
                   </div>
                 )}

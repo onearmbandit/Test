@@ -167,9 +167,9 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       }
       setUserId(user.data?.id);
       if (invitedEmail) {
-        router.push("/register?step=2&invited=true");
+        router.push(`/register?step=2&invited=true&slug=${user.data?.slug}`);
       } else {
-        router.push("/register?step=2");
+        router.push(`/register?step=2&slug=${user.data?.slug}`);
       }
       // setCurrentStep(2);
     },
@@ -192,7 +192,7 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       if (errors.length > 0) {
         return;
       }
-      mutate({ ...data, inviedUser: invitedEmail ? true : false });
+      mutate({ ...data, invitedUser: invitedEmail ? true : false });
     },
   });
 
@@ -451,6 +451,7 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
+  const slug = searchParams.get("slug");
 
   const validation = z.object({
     firstName: z
@@ -475,13 +476,13 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      setUserSlug(data.data.slug);
-      // setCurrentStep(3);
-      console.log(isInvited == "true");
+
       if (isInvited == "true") {
-        router.push("/register?step=setup-done");
+        router.push(
+          `/register?step=setup-done&slug=${data.data?.userData?.slug}`
+        );
       } else {
-        router.push("/register?step=3");
+        router.push(`/register?step=3&slug=${data.data?.userData?.slug}`);
       }
     },
     onError: (err) => {
@@ -497,7 +498,7 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
       mutate({
-        id: userId,
+        id: slug!,
         formdata: { ...data, invitedUser: isInvited == "true" ? true : false },
       });
     },
@@ -585,8 +586,12 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
 const Step3 = ({ userSlug, setUserEmail }: any) => {
   const router = useRouter();
   const { data: session, update } = useSession();
+  const searchParams = useSearchParams();
+  const slug = searchParams.get("slug");
   const [isEdit, setEdit] = useState(false);
   const [address, setAddress] = useState("");
+
+  console.log(slug);
 
   const validation = z.object({
     companyName: z
@@ -626,17 +631,18 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
       companyName: "",
       companyAddress: "",
       registrationStep: 3,
+      isSupplier: false,
     },
     validationSchema: toFormikValidationSchema(validation),
     validateOnChange: true,
     validateOnBlur: true,
     validateOnMount: false,
     onSubmit: (data) => {
-      console.log(data, userSlug);
-      if (userSlug == null) {
+      // console.log(data, userSlug);
+      if (slug == null) {
         mutate({ ...data, userSlug: session?.user.slug });
       } else {
-        mutate({ ...data, userSlug });
+        mutate({ ...data, userSlug: slug });
       }
     },
   });

@@ -127,6 +127,8 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
         throw new Error(data.errors[0].message);
       }
 
+      console.log("edit pro: ", data);
+
       toast.success("Project Updated Successfully.", {
         style: { color: "green" },
       });
@@ -297,6 +299,9 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                     if (res.success) {
                       setErr({});
                       setCurrentSection(0);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       setFieldError("name", res.error.errors[0].message);
                       setErr({ name: res.error.errors[0].message });
@@ -442,7 +447,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "Cost must be greater than 0" }),
-                        websiteUrl: z.string().optional(),
+                        websiteUrl: z.string().url().optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -462,6 +467,9 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       );
                       setFieldValue("websiteUrl", projectDetails[2].websiteUrl);
                       setCurrentSection(0);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       res.error.errors.map((item) => {
                         // setFieldError(`${item.path[0]}`, item.message);
@@ -489,7 +497,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                 {values.description}
               </p>
               <p className="text-green-900 text-sm line-clamp-2">
-                {values.estimatedCost}
+                $ {values.estimatedCost}
               </p>
               <p className="text-green-900 text-sm line-clamp-2">
                 {values.websiteUrl}
@@ -530,6 +538,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                   </label>
                   <div>
                     <Input
+                      type="number"
                       name="emissionReductions"
                       onChange={(e) => {
                         const copy = _.cloneDeep(projectDetails);
@@ -571,10 +580,10 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-red-500 mt-0.5">
-                      {err.emissionReductions}
-                    </p>
                   </div>
+                  <p className="text-xs text-red-500 mt-0.5">
+                    {err.emissionReductions}
+                  </p>
                 </div>
               </CardContent>
               <CardFooter className="justify-end">
@@ -597,6 +606,14 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                           projectDetails[3].emissionReductions,
                       });
 
+                    if (values.emissionUnit) {
+                      setFieldError(
+                        "emissionUnit",
+                        "Emission Unit is required"
+                      );
+                      return;
+                    }
+
                     if (res.success) {
                       setErr({});
                       setFieldValue(
@@ -604,6 +621,9 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         projectDetails[3].emissionReductions
                       );
                       setCurrentSection(0);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     } else {
                       setFieldError("emissionReductions", res.error.message);
                       setErr({
@@ -705,6 +725,9 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       "proposedType",
                       projectDetails[4].organizationId.type
                     );
+                    toast.success("The changes have been saved.", {
+                      style: { color: "green" },
+                    });
 
                     // const res = z.object({ proposedBy: z.string() }).safeParse({
                     //   proposedBy: projectDetails[4].organizationId.id,
@@ -756,7 +779,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
               )}
               <p className="flex-1 font-bold">Photo and Logo</p>
             </div>
-            {values.photoUrl != "" && values.logoUrl && (
+            {currentSection !== 5 && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(5)}
@@ -929,9 +952,12 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       setFieldValue("logoUrl", res2.data);
                     }
 
-                    if (res1 != null && res2 != null) {
+                    if (res1 != null || res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
+                      toast.success("The changes have been saved.", {
+                        style: { color: "green" },
+                      });
                     }
                   }}
                   className="border-2 border-blue-600 text-blue-600 hover:text-blur-600"
