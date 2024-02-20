@@ -136,38 +136,40 @@ export default class FacilityProductsController {
 
       // Check uniqueness for each product (updated and newly added)
       for (const product of facilityProducts) {
-        const existingProducts = await FacilityProduct.query()
-          .where('facilityEmissionId', facilityEmissionId)
-          .where((query) => {
-            if (organizationId) {
-              query.whereHas('FacilityEmission', (orgQuery) => {
-                orgQuery.whereHas('OrganizationFacility', (orgFacQuery) => {
-                  orgFacQuery.where('organization_id', organizationId);
+        if (product.name) {
+          const existingProducts = await FacilityProduct.query()
+            .where('facilityEmissionId', facilityEmissionId)
+            .where((query) => {
+              if (organizationId) {
+                query.whereHas('FacilityEmission', (orgQuery) => {
+                  orgQuery.whereHas('OrganizationFacility', (orgFacQuery) => {
+                    orgFacQuery.where('organization_id', organizationId);
+                  });
                 });
-              });
-            }
-            if (product.id) {
-              query.where('id', '!=', product.id); // Exclude the current product being updated
-            }
-            query.where('name', product.name); // Check if the name matches any existing product
-          })
-          .first();
+              }
+              if (product.id) {
+                query.where('id', '!=', product.id); // Exclude the current product being updated
+              }
+              query.where('name', product.name); // Check if the name matches any existing product
+            })
+            .first();
 
-        if (existingProducts) {
-          return apiResponse(
-            response,
-            false,
-            422,
-            {
-              errors: [
-                {
-                  field: 'name',
-                  message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityProductNameAlreadyExists'),
-                },
-              ],
-            },
-            Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
-          )
+          if (existingProducts) {
+            return apiResponse(
+              response,
+              false,
+              422,
+              {
+                errors: [
+                  {
+                    field: 'name',
+                    message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityProductNameAlreadyExists'),
+                  },
+                ],
+              },
+              Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+            )
+          }
         }
       }
       const updateFacilityProducts = await FacilityProduct.updateOrCreateFacilityProducts(facilityEmissionData, requestData, trx)
