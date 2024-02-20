@@ -107,7 +107,7 @@ const Page = () => {
     : [];
 
   const periodList =
-    reportingPeriods.length > 0
+    reportingPeriods?.length > 0
       ? separateIntoChunks(reportingPeriods, showNew ? 5 : 6)
       : [[]];
 
