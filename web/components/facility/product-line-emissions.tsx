@@ -70,7 +70,7 @@ const ProductLineEmissions = ({
   const equalEmission = equality.isSuccess ? equality.data : {};
 
   const { mutate, isPending, status } = useMutation({
-    mutationFn: updateProductEmissions,
+    mutationFn: editProductLines,
     onSuccess: (data) => {
       toast.success("Products Lines updated.", { style: { color: "green" } });
       queryClient.invalidateQueries({
@@ -98,10 +98,10 @@ const ProductLineEmissions = ({
           delete em[item];
         }
       });
-      return { ...em, equalityAttribute: isEdit };
     });
     const formData = {
       facilityEmissionId: period,
+      equalityAttribute: isEdit,
       facilityProducts: emissionCopy,
     };
     mutate({ id: period!, obj: formData });

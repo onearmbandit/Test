@@ -16,23 +16,16 @@ const ChangePassword = () => {
 
   // const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<{
+    newPassword?: string;
+    confirmPassword?: string;
+  }>({});
 
   const validation = z
     .object({
-      oldPassword: z
-        .string()
-        .min(8, { message: "Password must be at least 8 characters long" })
-        .regex(/[A-Z]/, {
-          message: "Password must have at one uppercase character",
-        })
-        .regex(/[a-z]/, {
-          message: "Password must have at one lowercase character",
-        })
-        .regex(/[0-9]/, { message: "Password must have at one number" })
-        .regex(/[^A-Za-z0-9]/, {
-          message: "Password must have at one special character",
-        }),
+      // oldPassword: z
+      //   .string()
+      //   .min(8, { message: "Password must be at least 8 characters long" }),
       newPassword: z
         .string()
         .min(8, { message: "Password must be at least 8 characters long" })
@@ -48,17 +41,7 @@ const ChangePassword = () => {
         }),
       confirmPassword: z
         .string()
-        .min(8, { message: "Password must be at least 8 characters long" })
-        .regex(/[A-Z]/, {
-          message: "Password must have at one uppercase character",
-        })
-        .regex(/[a-z]/, {
-          message: "Password must have at one lowercase character",
-        })
-        .regex(/[0-9]/, { message: "Password must have at one number" })
-        .regex(/[^A-Za-z0-9]/, {
-          message: "Password must have at one special character",
-        }),
+        .min(8, { message: "Password must be at least 8 characters long" }),
     })
     .superRefine((val, ctx) => {
       if (val.confirmPassword != val.newPassword) {
@@ -93,8 +76,8 @@ const ChangePassword = () => {
       newPassword: "",
       confirmPassword: "",
     },
-    validateOnChange: true,
-    validationSchema: toFormikValidationSchema(validation),
+    // validateOnChange: true,
+    // validationSchema: toFormikValidationSchema(validation),
 
     onSubmit: (data: any) => {
       console.log("Update pass data: ", data);
@@ -133,9 +116,6 @@ const ChangePassword = () => {
             )}
             placeholder="Old password"
           />
-          <p className="text-xs text-red-500 !mt-[10px]">
-            {updatePasswordForm.errors?.oldPassword as string}
-          </p>
         </div>
         <div className="space-y-3">
           <label className="text-slate-700 text-base font-semibold leading-6 self-stretch max-md:max-w-full">
@@ -143,16 +123,45 @@ const ChangePassword = () => {
           </label>
           <Input
             name={"newPassword"}
-            onChange={updatePasswordForm.handleChange}
+            onChange={(e) => {
+              updatePasswordForm.setFieldValue("newPassword", e.target.value);
+              const res = z
+                .object({
+                  newPassword: z
+                    .string()
+                    .min(8, {
+                      message: "Password must be at least 8 characters long",
+                    })
+                    .regex(/[A-Z]/, {
+                      message: "Password must have at one uppercase character",
+                    })
+                    .regex(/[a-z]/, {
+                      message: "Password must have at one lowercase character",
+                    })
+                    .regex(/[0-9]/, {
+                      message: "Password must have at one number",
+                    })
+                    .regex(/[^A-Za-z0-9]/, {
+                      message: "Password must have at one special character",
+                    }),
+                })
+                .safeParse({ newPassword: e.target.value });
+
+              if (!res.success) {
+                setErrors({ newPassword: res.error.errors[0].message });
+              } else {
+                setErrors({});
+              }
+            }}
             type="password"
             className={cn(
               "py-2 h-11 rounded-md bg-gray-50 text-sm leading-4 font-light text-slate-700",
-              updatePasswordForm.errors?.newPassword && "border border-red-500"
+              errors?.newPassword && "border border-red-500"
             )}
             placeholder="New password"
           />
           <p className="text-xs text-red-500 !mt-[10px]">
-            {updatePasswordForm.errors?.newPassword as string}
+            {errors?.newPassword as string}
           </p>
         </div>
         <div className="space-y-3">
@@ -163,7 +172,19 @@ const ChangePassword = () => {
             <Input
               type="password"
               name={"confirmPassword"}
-              onChange={updatePasswordForm.handleChange}
+              onChange={(e) => {
+                updatePasswordForm.setFieldValue(
+                  "confirmPassword",
+                  e.target.value
+                );
+                if (updatePasswordForm.values.newPassword != e.target.value) {
+                  setErrors({
+                    confirmPassword: "Confirm Password do not match.",
+                  });
+                } else {
+                  setErrors({});
+                }
+              }}
               className={cn(
                 "py-2 h-11 rounded-md bg-gray-50 text-sm leading-4 font-light text-slate-700",
                 updatePasswordForm.errors?.confirmPassword &&
