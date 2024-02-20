@@ -98,129 +98,135 @@ const Sidebar = () => {
           </div>
         </header>
 
-        <Link
-          href={"/"}
-          className={cn(
-            "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
-            (urlContainsElements(pathname, organizationLinks) ||
-              pathname == "/") &&
-              "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
-          )}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="fill-gray-500 group-hover:fill-blue-500"
+        {!superAdmin && (
+          <Link
+            href={"/"}
+            className={cn(
+              "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
+              (urlContainsElements(pathname, organizationLinks) ||
+                pathname == "/") &&
+                "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
+            )}
           >
-            <g id="home">
-              <path
-                id="Vector"
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M7.43482 1.83482C7.58484 1.68484 7.78828 1.60059 8.00042 1.60059C8.21255 1.60059 8.41599 1.68484 8.56602 1.83482L14.166 7.43482C14.2779 7.5467 14.354 7.68923 14.3849 7.84439C14.4157 7.99955 14.3999 8.16038 14.3394 8.30654C14.2788 8.4527 14.1763 8.57763 14.0448 8.66554C13.9133 8.75344 13.7586 8.80038 13.6004 8.80042H12.8004V13.6004C12.8004 13.8126 12.7161 14.0161 12.5661 14.1661C12.4161 14.3161 12.2126 14.4004 12.0004 14.4004H10.4004C10.1882 14.4004 9.98476 14.3161 9.83473 14.1661C9.6847 14.0161 9.60042 13.8126 9.60042 13.6004V11.2004C9.60042 10.9882 9.51613 10.7848 9.3661 10.6347C9.21607 10.4847 9.01259 10.4004 8.80042 10.4004H7.20042C6.98824 10.4004 6.78476 10.4847 6.63473 10.6347C6.4847 10.7848 6.40042 10.9882 6.40042 11.2004V13.6004C6.40042 13.8126 6.31613 14.0161 6.1661 14.1661C6.01607 14.3161 5.81259 14.4004 5.60042 14.4004H4.00042C3.78824 14.4004 3.58476 14.3161 3.43473 14.1661C3.2847 14.0161 3.20042 13.8126 3.20042 13.6004V8.80042H2.40042C2.24222 8.80038 2.08758 8.75344 1.95605 8.66554C1.82452 8.57763 1.72201 8.4527 1.66147 8.30654C1.60094 8.16038 1.58509 7.99955 1.61595 7.84439C1.6468 7.68923 1.72297 7.5467 1.83482 7.43482L7.43482 1.83482Z"
-              />
-            </g>
-          </svg>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="fill-gray-500 group-hover:fill-blue-500"
+            >
+              <g id="home">
+                <path
+                  id="Vector"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
+                  d="M7.43482 1.83482C7.58484 1.68484 7.78828 1.60059 8.00042 1.60059C8.21255 1.60059 8.41599 1.68484 8.56602 1.83482L14.166 7.43482C14.2779 7.5467 14.354 7.68923 14.3849 7.84439C14.4157 7.99955 14.3999 8.16038 14.3394 8.30654C14.2788 8.4527 14.1763 8.57763 14.0448 8.66554C13.9133 8.75344 13.7586 8.80038 13.6004 8.80042H12.8004V13.6004C12.8004 13.8126 12.7161 14.0161 12.5661 14.1661C12.4161 14.3161 12.2126 14.4004 12.0004 14.4004H10.4004C10.1882 14.4004 9.98476 14.3161 9.83473 14.1661C9.6847 14.0161 9.60042 13.8126 9.60042 13.6004V11.2004C9.60042 10.9882 9.51613 10.7848 9.3661 10.6347C9.21607 10.4847 9.01259 10.4004 8.80042 10.4004H7.20042C6.98824 10.4004 6.78476 10.4847 6.63473 10.6347C6.4847 10.7848 6.40042 10.9882 6.40042 11.2004V13.6004C6.40042 13.8126 6.31613 14.0161 6.1661 14.1661C6.01607 14.3161 5.81259 14.4004 5.60042 14.4004H4.00042C3.78824 14.4004 3.58476 14.3161 3.43473 14.1661C3.2847 14.0161 3.20042 13.8126 3.20042 13.6004V8.80042H2.40042C2.24222 8.80038 2.08758 8.75344 1.95605 8.66554C1.82452 8.57763 1.72201 8.4527 1.66147 8.30654C1.60094 8.16038 1.58509 7.99955 1.61595 7.84439C1.6468 7.68923 1.72297 7.5467 1.83482 7.43482L7.43482 1.83482Z"
+                />
+              </g>
+            </svg>
 
-          <h2 className=" text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
-            Organization Profile
-          </h2>
-        </Link>
-        <Accordion type="single" collapsible>
-          <AccordionItem value="item-1" className="border-none">
-            <AccordionTrigger className="hover:bg-blue-100 group hover:text-blue-700 rounded-md mt-2 text-slate-800 py-1.5 pr-2">
-              <div className="items-stretch flex gap-3 px-2">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="group-hover:fill-blue-600 fill-gray-500"
-                >
-                  <g id="folder-open">
-                    <path
-                      id="Vector"
-                      d="M3.8002 2.40039C3.4289 2.40039 3.07281 2.54789 2.81025 2.81044C2.5477 3.07299 2.4002 3.42909 2.4002 3.80039V6.00199L2.4834 6.00039H13.517C13.545 6.00039 13.573 6.00039 13.6002 6.00199V5.40039C13.6002 5.02909 13.4527 4.67299 13.1902 4.41044C12.9276 4.14789 12.5715 4.00039 12.2002 4.00039H9.1314C9.10512 4.00044 9.07909 3.9953 9.05479 3.98528C9.03049 3.97526 9.00841 3.96055 8.9898 3.94199L7.8586 2.81079C7.5962 2.5482 7.24024 2.40058 6.869 2.40039H3.8002ZM2.4834 7.20039C2.26426 7.20033 2.04817 7.25171 1.85251 7.3504C1.65685 7.44909 1.48709 7.59234 1.35689 7.76861C1.22669 7.94488 1.13969 8.14925 1.10289 8.36528C1.06609 8.5813 1.08051 8.80295 1.145 9.01239L2.253 12.6124C2.34108 12.8984 2.51849 13.1487 2.75922 13.3265C2.99995 13.5043 3.29132 13.6003 3.5906 13.6004H12.409C12.7084 13.6005 13 13.5046 13.2409 13.3267C13.4818 13.1489 13.6593 12.8985 13.7474 12.6124L14.8546 9.01239C14.9191 8.80302 14.9335 8.58144 14.8967 8.36547C14.86 8.14951 14.7731 7.94518 14.643 7.76893C14.5128 7.59268 14.3432 7.44942 14.1476 7.35067C13.9521 7.25193 13.7361 7.20045 13.517 7.20039H2.4834Z"
-                    />
-                  </g>
-                </svg>
-                <h2 className=" text-xs font-medium leading-5 whitespace-nowrap no-underline">
-                  Abatement Projects
-                </h2>
-              </div>
-              <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200" />
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col items-stretch mt-2 space-y-2">
-                <Link
-                  href={"/abatement-projects/active"}
-                  className={cn(
-                    "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700  text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
-                    urlContainsElements(pathname, ["active"]) &&
-                      "bg-blue-100 text-blue-700 pl-9"
-                  )}
-                >
-                  Active
-                </Link>
-                <Link href="/abatement-projects/completed">
-                  <div
+            <h2 className=" text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
+              Organization Profile
+            </h2>
+          </Link>
+        )}
+        {!superAdmin && (
+          <Accordion type="single" collapsible>
+            <AccordionItem value="item-1" className="border-none">
+              <AccordionTrigger className="hover:bg-blue-100 group hover:text-blue-700 rounded-md mt-2 text-slate-800 py-1.5 pr-2">
+                <div className="items-stretch flex gap-3 px-2">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="group-hover:fill-blue-600 fill-gray-500"
+                  >
+                    <g id="folder-open">
+                      <path
+                        id="Vector"
+                        d="M3.8002 2.40039C3.4289 2.40039 3.07281 2.54789 2.81025 2.81044C2.5477 3.07299 2.4002 3.42909 2.4002 3.80039V6.00199L2.4834 6.00039H13.517C13.545 6.00039 13.573 6.00039 13.6002 6.00199V5.40039C13.6002 5.02909 13.4527 4.67299 13.1902 4.41044C12.9276 4.14789 12.5715 4.00039 12.2002 4.00039H9.1314C9.10512 4.00044 9.07909 3.9953 9.05479 3.98528C9.03049 3.97526 9.00841 3.96055 8.9898 3.94199L7.8586 2.81079C7.5962 2.5482 7.24024 2.40058 6.869 2.40039H3.8002ZM2.4834 7.20039C2.26426 7.20033 2.04817 7.25171 1.85251 7.3504C1.65685 7.44909 1.48709 7.59234 1.35689 7.76861C1.22669 7.94488 1.13969 8.14925 1.10289 8.36528C1.06609 8.5813 1.08051 8.80295 1.145 9.01239L2.253 12.6124C2.34108 12.8984 2.51849 13.1487 2.75922 13.3265C2.99995 13.5043 3.29132 13.6003 3.5906 13.6004H12.409C12.7084 13.6005 13 13.5046 13.2409 13.3267C13.4818 13.1489 13.6593 12.8985 13.7474 12.6124L14.8546 9.01239C14.9191 8.80302 14.9335 8.58144 14.8967 8.36547C14.86 8.14951 14.7731 7.94518 14.643 7.76893C14.5128 7.59268 14.3432 7.44942 14.1476 7.35067C13.9521 7.25193 13.7361 7.20045 13.517 7.20039H2.4834Z"
+                      />
+                    </g>
+                  </svg>
+                  <h2 className=" text-xs font-medium leading-5 whitespace-nowrap no-underline">
+                    Abatement Projects
+                  </h2>
+                </div>
+                <ChevronDown className="h-4 w-4 text-slate-500 shrink-0 transition-transform duration-200" />
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="flex flex-col items-stretch mt-2 space-y-2">
+                  <Link
+                    href={"/abatement-projects/active"}
                     className={cn(
-                      "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
-                      urlContainsElements(pathname, ["completed"]) &&
-                        "bg-blue-100 text-blue-700"
+                      "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700  text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                      urlContainsElements(pathname, ["active"]) &&
+                        "bg-blue-100 text-blue-700 pl-9"
                     )}
                   >
-                    Completed
-                  </div>
-                </Link>
-                <Link href="/abatement-projects/proposed">
-                  <div
-                    className={cn(
-                      "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
-                      urlContainsElements(pathname, ["proposed"]) &&
-                        "bg-blue-100 text-blue-700"
-                    )}
-                  >
-                    Proposed
-                  </div>
-                </Link>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+                    Active
+                  </Link>
+                  <Link href="/abatement-projects/completed">
+                    <div
+                      className={cn(
+                        "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                        urlContainsElements(pathname, ["completed"]) &&
+                          "bg-blue-100 text-blue-700"
+                      )}
+                    >
+                      Completed
+                    </div>
+                  </Link>
+                  <Link href="/abatement-projects/proposed">
+                    <div
+                      className={cn(
+                        "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                        urlContainsElements(pathname, ["proposed"]) &&
+                          "bg-blue-100 text-blue-700"
+                      )}
+                    >
+                      Proposed
+                    </div>
+                  </Link>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
 
-        <Link
-          href={"/supply-chain"}
-          className={cn(
-            "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
-            pathname == "/supply-chain" &&
-              "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
-          )}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="fill-gray-500 group-hover:fill-blue-600"
+        {!superAdmin && (
+          <Link
+            href={"/supply-chain"}
+            className={cn(
+              "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
+              pathname == "/supply-chain" &&
+                "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
+            )}
           >
-            <g id="chart-bar">
-              <path
-                id="Vector"
-                d="M12.3996 1.59961C12.0813 1.59961 11.7761 1.72604 11.5511 1.95108C11.326 2.17612 11.1996 2.48135 11.1996 2.79961V13.1996C11.1996 13.5179 11.326 13.8231 11.5511 14.0481C11.7761 14.2732 12.0813 14.3996 12.3996 14.3996H13.1996C13.5179 14.3996 13.8231 14.2732 14.0481 14.0481C14.2732 13.8231 14.3996 13.5179 14.3996 13.1996V2.79961C14.3996 2.48135 14.2732 2.17612 14.0481 1.95108C13.8231 1.72604 13.5179 1.59961 13.1996 1.59961H12.3996ZM7.59961 4.79961C7.28135 4.79961 6.97612 4.92604 6.75108 5.15108C6.52604 5.37612 6.39961 5.68135 6.39961 5.99961V13.1996C6.39961 13.5179 6.52604 13.8231 6.75108 14.0481C6.97612 14.2732 7.28135 14.3996 7.59961 14.3996H8.39961C8.71787 14.3996 9.02309 14.2732 9.24814 14.0481C9.47318 13.8231 9.59961 13.5179 9.59961 13.1996V5.99961C9.59961 5.68135 9.47318 5.37612 9.24814 5.15108C9.02309 4.92604 8.71787 4.79961 8.39961 4.79961H7.59961ZM2.79961 7.99961C2.48135 7.99961 2.17612 8.12604 1.95108 8.35108C1.72604 8.57612 1.59961 8.88135 1.59961 9.19961V13.1996C1.59961 13.5179 1.72604 13.8231 1.95108 14.0481C2.17612 14.2732 2.48135 14.3996 2.79961 14.3996H3.59961C3.91787 14.3996 4.22309 14.2732 4.44814 14.0481C4.67318 13.8231 4.79961 13.5179 4.79961 13.1996V9.19961C4.79961 8.88135 4.67318 8.57612 4.44814 8.35108C4.22309 8.12604 3.91787 7.99961 3.59961 7.99961H2.79961Z"
-              />
-            </g>
-          </svg>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="fill-gray-500 group-hover:fill-blue-600"
+            >
+              <g id="chart-bar">
+                <path
+                  id="Vector"
+                  d="M12.3996 1.59961C12.0813 1.59961 11.7761 1.72604 11.5511 1.95108C11.326 2.17612 11.1996 2.48135 11.1996 2.79961V13.1996C11.1996 13.5179 11.326 13.8231 11.5511 14.0481C11.7761 14.2732 12.0813 14.3996 12.3996 14.3996H13.1996C13.5179 14.3996 13.8231 14.2732 14.0481 14.0481C14.2732 13.8231 14.3996 13.5179 14.3996 13.1996V2.79961C14.3996 2.48135 14.2732 2.17612 14.0481 1.95108C13.8231 1.72604 13.5179 1.59961 13.1996 1.59961H12.3996ZM7.59961 4.79961C7.28135 4.79961 6.97612 4.92604 6.75108 5.15108C6.52604 5.37612 6.39961 5.68135 6.39961 5.99961V13.1996C6.39961 13.5179 6.52604 13.8231 6.75108 14.0481C6.97612 14.2732 7.28135 14.3996 7.59961 14.3996H8.39961C8.71787 14.3996 9.02309 14.2732 9.24814 14.0481C9.47318 13.8231 9.59961 13.5179 9.59961 13.1996V5.99961C9.59961 5.68135 9.47318 5.37612 9.24814 5.15108C9.02309 4.92604 8.71787 4.79961 8.39961 4.79961H7.59961ZM2.79961 7.99961C2.48135 7.99961 2.17612 8.12604 1.95108 8.35108C1.72604 8.57612 1.59961 8.88135 1.59961 9.19961V13.1996C1.59961 13.5179 1.72604 13.8231 1.95108 14.0481C2.17612 14.2732 2.48135 14.3996 2.79961 14.3996H3.59961C3.91787 14.3996 4.22309 14.2732 4.44814 14.0481C4.67318 13.8231 4.79961 13.5179 4.79961 13.1996V9.19961C4.79961 8.88135 4.67318 8.57612 4.44814 8.35108C4.22309 8.12604 3.91787 7.99961 3.59961 7.99961H2.79961Z"
+                />
+              </g>
+            </svg>
 
-          <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
-            Supply Chain
-          </h2>
-        </Link>
+            <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
+              Supply Chain
+            </h2>
+          </Link>
+        )}
         {superAdmin && (
           <>
             <Link
@@ -249,36 +255,38 @@ const Sidebar = () => {
         )}
       </nav>
       <footer>
-        <Dialog>
-          <DialogTrigger className="w-full">
-            <div className="items-center hover:bg-blue-100 hover:text-blue-700 group text-slate-800 flex gap-3 px-2 py-1.5 rounded-md">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="fill-gray-500 group-hover:fill-blue-600"
-              >
-                <g id="user-circle">
-                  <path
-                    id="Vector"
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M14.3996 8.00156C14.3996 9.69895 13.7253 11.3268 12.5251 12.527C11.3249 13.7273 9.69699 14.4016 7.99961 14.4016C6.30222 14.4016 4.67436 13.7273 3.47413 12.527C2.27389 11.3268 1.59961 9.69895 1.59961 8.00156C1.59961 6.30418 2.27389 4.67631 3.47413 3.47608C4.67436 2.27585 6.30222 1.60156 7.99961 1.60156C9.69699 1.60156 11.3249 2.27585 12.5251 3.47608C13.7253 4.67631 14.3996 6.30418 14.3996 8.00156ZM9.99961 6.00156C9.99961 6.532 9.7889 7.0407 9.41382 7.41578C9.03875 7.79085 8.53004 8.00156 7.99961 8.00156C7.46918 8.00156 6.96047 7.79085 6.5854 7.41578C6.21032 7.0407 5.99961 6.532 5.99961 6.00156C5.99961 5.47113 6.21032 4.96242 6.5854 4.58735C6.96047 4.21228 7.46918 4.00156 7.99961 4.00156C8.53004 4.00156 9.03875 4.21228 9.41382 4.58735C9.7889 4.96242 9.99961 5.47113 9.99961 6.00156ZM7.99961 9.60156C7.25595 9.60088 6.52233 9.77329 5.85681 10.1051C5.1913 10.437 4.61215 10.9192 4.16521 11.5136C4.6518 12.0461 5.24415 12.4713 5.90438 12.762C6.56462 13.0526 7.27823 13.2023 7.99961 13.2016C8.72099 13.2023 9.4346 13.0526 10.0948 12.762C10.7551 12.4713 11.3474 12.0461 11.834 11.5136C11.3871 10.9192 10.8079 10.437 10.1424 10.1051C9.47689 9.77329 8.74327 9.60088 7.99961 9.60156Z"
-                  />
-                </g>
-              </svg>
+        {!superAdmin && (
+          <Dialog>
+            <DialogTrigger className="w-full">
+              <div className="items-center hover:bg-blue-100 hover:text-blue-700 group text-slate-800 flex gap-3 px-2 py-1.5 rounded-md">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="fill-gray-500 group-hover:fill-blue-600"
+                >
+                  <g id="user-circle">
+                    <path
+                      id="Vector"
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M14.3996 8.00156C14.3996 9.69895 13.7253 11.3268 12.5251 12.527C11.3249 13.7273 9.69699 14.4016 7.99961 14.4016C6.30222 14.4016 4.67436 13.7273 3.47413 12.527C2.27389 11.3268 1.59961 9.69895 1.59961 8.00156C1.59961 6.30418 2.27389 4.67631 3.47413 3.47608C4.67436 2.27585 6.30222 1.60156 7.99961 1.60156C9.69699 1.60156 11.3249 2.27585 12.5251 3.47608C13.7253 4.67631 14.3996 6.30418 14.3996 8.00156ZM9.99961 6.00156C9.99961 6.532 9.7889 7.0407 9.41382 7.41578C9.03875 7.79085 8.53004 8.00156 7.99961 8.00156C7.46918 8.00156 6.96047 7.79085 6.5854 7.41578C6.21032 7.0407 5.99961 6.532 5.99961 6.00156C5.99961 5.47113 6.21032 4.96242 6.5854 4.58735C6.96047 4.21228 7.46918 4.00156 7.99961 4.00156C8.53004 4.00156 9.03875 4.21228 9.41382 4.58735C9.7889 4.96242 9.99961 5.47113 9.99961 6.00156ZM7.99961 9.60156C7.25595 9.60088 6.52233 9.77329 5.85681 10.1051C5.1913 10.437 4.61215 10.9192 4.16521 11.5136C4.6518 12.0461 5.24415 12.4713 5.90438 12.762C6.56462 13.0526 7.27823 13.2023 7.99961 13.2016C8.72099 13.2023 9.4346 13.0526 10.0948 12.762C10.7551 12.4713 11.3474 12.0461 11.834 11.5136C11.3871 10.9192 10.8079 10.437 10.1424 10.1051C9.47689 9.77329 8.74327 9.60088 7.99961 9.60156Z"
+                    />
+                  </g>
+                </svg>
 
-              <h2 className="text-xs font-medium leading-5 self-stretch whitespace-nowrap">
-                Accounts
-              </h2>
-            </div>
-          </DialogTrigger>
-          <DialogContent className="shadow w-full max-w-[857px] rounded-lg  min-h-[551px] p-0">
-            <Accounts />
-          </DialogContent>
-        </Dialog>
+                <h2 className="text-xs font-medium leading-5 self-stretch whitespace-nowrap">
+                  Accounts
+                </h2>
+              </div>
+            </DialogTrigger>
+            <DialogContent className="shadow w-full max-w-[857px] rounded-lg  min-h-[551px] p-0">
+              <Accounts />
+            </DialogContent>
+          </Dialog>
+        )}
 
         <div className="items-center hover:bg-blue-100 hover:text-blue-700 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md">
           <svg
