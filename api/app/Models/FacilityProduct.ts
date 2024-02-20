@@ -3,6 +3,7 @@ import { BaseModel, column, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm'
 import FacilityEmission from './FacilityEmission'
 import { v4 as uuidv4 } from 'uuid'
 import { ParsedQs } from 'qs'
+import FacilityEqualityAttribute from './FacilityEqualityAttribute'
 
 export default class FacilityProduct extends BaseModel {
   @column({ isPrimary: true })
@@ -54,7 +55,7 @@ export default class FacilityProduct extends BaseModel {
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
     const order = queryParams.order ? queryParams.order.toString() : 'desc'
-    let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
+    let includes: string[] = queryParams.include ? queryParams.include.split(',') : []
     const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at'
 
     const facilityEmissionId = queryParams.facilityEmissionId
@@ -64,9 +65,10 @@ export default class FacilityProduct extends BaseModel {
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
 
     if (facilityEmissionId) {
-      query = query.where('facility_emission_id', facilityEmissionId)
+      query = query
+        .where('facility_emission_id', facilityEmissionId)
         .preload('FacilityEmission', (facilityEmissionQuery) => {
-          facilityEmissionQuery.preload('FacilityEqualityAttribute');
+          facilityEmissionQuery.preload('FacilityEqualityAttribute')
         })
     }
 
@@ -85,31 +87,28 @@ export default class FacilityProduct extends BaseModel {
   public static async createFacilityProducts(emissionData, requestData) {
     const products: any = []
     for (const element of requestData.facilityProducts) {
-      const productId = uuidv4();
+      const productId = uuidv4()
 
       // Create facility product
       const productData = {
         id: productId,
         ...element,
-      };
+      }
 
-      products.push(productData);
+      products.push(productData)
     }
 
     if (requestData.equalityAttribute) {
       // save equality attribute value
-      await emissionData.related('FacilityEqualityAttribute').create(
-        {
-          id: uuidv4(),
-          facilityEmissionId: emissionData.id,
-          equalityAttribute: requestData.equalityAttribute,
-        }
-      )
+      await emissionData.related('FacilityEqualityAttribute').create({
+        id: uuidv4(),
+        facilityEmissionId: emissionData.id,
+        equalityAttribute: requestData.equalityAttribute,
+      })
     }
 
     let result = await emissionData.related('FacilityProducts').createMany(products)
     return result
-
   }
 
   public static async getFacilityProductData(field, value) {
@@ -120,7 +119,11 @@ export default class FacilityProduct extends BaseModel {
     return facilityProductDetails
   }
 
-  public static async updateOrCreateFacilityProducts(facilityEmissionData, requestData, trx: any = undefined) {
+  public static async updateOrCreateFacilityProducts(
+    facilityEmissionData,
+    requestData,
+    trx: any = undefined
+  ) {
     let products: any = []
     let updateProductIds: any = []
 
@@ -149,16 +152,10 @@ export default class FacilityProduct extends BaseModel {
     }
 
     // save equality attribute value
-    if (requestData.equalityAttribute) {
-      await facilityEmissionData.related('FacilityEqualityAttribute').updateOrCreate(
-        {
-          facilityEmissionId: facilityEmissionData.id
-        },
-        {
-          equalityAttribute: requestData.equalityAttribute,
-        },
-        { client: trx }
-      )
+    if (requestData.equalityAttribute !== undefined) {
+      await FacilityEqualityAttribute.query()
+        .where('facility_emission_id', facilityEmissionData.id)
+        .update({ equalityAttribute: requestData.equalityAttribute })
     }
 
     //:: this manage create or update using id as unique key
@@ -190,9 +187,9 @@ export default class FacilityProduct extends BaseModel {
 
     // const percentagePerProduct = 100 / totalProducts
 
-    let scope1EmissionPerProduct = (scope1TotalEmission / totalProducts)
-    let scope2EmissionPerProduct = (scope2TotalEmission / totalProducts)
-    let scope3EmissionPerProduct = (scope3TotalEmission / totalProducts)
+    let scope1EmissionPerProduct = scope1TotalEmission / totalProducts
+    let scope2EmissionPerProduct = scope2TotalEmission / totalProducts
+    let scope3EmissionPerProduct = scope3TotalEmission / totalProducts
 
     allProducts.map((product, _) => {
       // const scope1CarbonEmission =
@@ -202,10 +199,12 @@ export default class FacilityProduct extends BaseModel {
       // const scope3CarbonEmission =
       //   ((percentagePerProduct / 100) * scope3TotalEmission).toFixed(2) + '%'
 
-      const scope1CarbonEmission = ((scope1EmissionPerProduct / scope1TotalEmission) * 100).toFixed(2) + '%'
-      const scope2CarbonEmission = ((scope2EmissionPerProduct / scope2TotalEmission) * 100).toFixed(2) + '%'
-      const scope3CarbonEmission = ((scope3EmissionPerProduct / scope3TotalEmission) * 100).toFixed(2) + '%'
-
+      const scope1CarbonEmission =
+        ((scope1EmissionPerProduct / scope1TotalEmission) * 100).toFixed(2) + '%'
+      const scope2CarbonEmission =
+        ((scope2EmissionPerProduct / scope2TotalEmission) * 100).toFixed(2) + '%'
+      const scope3CarbonEmission =
+        ((scope3EmissionPerProduct / scope3TotalEmission) * 100).toFixed(2) + '%'
 
       // Add the calculated values to the product
       const updatedProduct = {
@@ -224,41 +223,37 @@ export default class FacilityProduct extends BaseModel {
   }
 
   public static async getAllProductNames(queryParams) {
+    const organizationId = queryParams.organizationId ? queryParams.organizationId.toString() : ''
+    const order = queryParams.order ? queryParams.order.toString() : 'desc'
 
-    const organizationId = queryParams.organizationId ? queryParams.organizationId.toString() : '';
-    const order = queryParams.order ? queryParams.order.toString() : 'desc';
-
-    let facilityProducts: FacilityEmission[] = [];
-    let uniqueProductNames: string[] = [];
+    let facilityProducts: FacilityEmission[] = []
+    let uniqueProductNames: string[] = []
 
     facilityProducts = await FacilityEmission.query()
       .whereNull('deleted_at')
       .whereHas('OrganizationFacility', (orgQuery) => {
-        orgQuery.where('organization_id', organizationId);
+        orgQuery.where('organization_id', organizationId)
       })
-      .preload('FacilityProducts');
-
+      .preload('FacilityProducts')
 
     // Extract unique product names from the loaded data
     uniqueProductNames = Array.from(
       new Set(
         facilityProducts.reduce((acc, item) => {
-          return acc.concat(
-            item.FacilityProducts.map((product) => product.name as string)
-          );
+          return acc.concat(item.FacilityProducts.map((product) => product.name as string))
         }, [] as string[])
       )
-    );
+    )
 
     // Function to sort the array based on order ("asc" or "desc")
     const sortArray = (order: 'asc' | 'desc'): Array<string> => {
       return order === 'asc'
         ? [...uniqueProductNames].sort() // Use spread operator to create a copy
-        : [...uniqueProductNames].sort((a, b) => b.localeCompare(a));
-    };
+        : [...uniqueProductNames].sort((a, b) => b.localeCompare(a))
+    }
 
-    const sortedArray: Array<string> = sortArray(order);
+    const sortedArray: Array<string> = sortArray(order)
 
-    return sortedArray;
+    return sortedArray
   }
 }

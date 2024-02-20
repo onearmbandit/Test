@@ -122,7 +122,7 @@ export default class OrganizationsController {
           //   password: string.generateRandom(8),
           //   registrationStep: 1,
           // }, role)
-
+        
           //:: Add data in pivot table organization_users
           await auth.user?.related('organizations').attach({
             [organizationData.id]: {
