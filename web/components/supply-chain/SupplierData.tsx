@@ -347,7 +347,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                         </div>
                         <div className='w-[20%] flex flex-auto flex-col'>
                           {chartData?.map((product: any, index: number) => (
-                            <div className='pt-[34px]'>
+                            <div key={index} className='pt-9'>
                               {product.scope_3_contribution}
                             </div>
                           ))}
