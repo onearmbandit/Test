@@ -76,7 +76,7 @@ const FacilityTable = () => {
         </TableHeader>
         <TableBody>
           {isSuccess &&
-            emissions.map((item: any) => (
+            emissions?.map((item: any) => (
               <TableRow
                 key={item.id}
                 onClick={() =>
