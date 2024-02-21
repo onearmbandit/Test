@@ -1,5 +1,7 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { getActiveAbatementProjectById } from "@/services/abatement.api";
+import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import {
   ArrowUpRight,
@@ -8,13 +10,17 @@ import {
   CircleDollarSignIcon,
   TrendingDown,
 } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React from "react";
 
 const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
-  const res = await getActiveAbatementProjectById(params?.id);
-  const project = res?.data;
+  const projectQ = useQuery({
+    queryKey: ["completed-abatement-project", params?.id],
+    queryFn: () => getActiveAbatementProjectById(params?.id),
+  });
+
+  const project = projectQ.isSuccess ? projectQ?.data?.data : [];
+
+  const emailHref = `mailto:${project.proposedSupplier?.email}`;
 
   return (
     <div className="bg-white p-6 min-h-screen">
@@ -93,7 +99,12 @@ const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
             </p>
           </div>
 
-          <Button type="button">Contact Project Owner</Button>
+          <a
+            href={emailHref}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <Button type="button">Contact Project Owner</Button>
+          </a>
         </div>
       </div>
     </div>

@@ -92,7 +92,11 @@ const InviteOrganization = () => {
   console.log("role baher: ", role);
   return (
     <div className="min-h-screen w-full grid place-items-center bg-gray-50 absolute inset-0">
-      <img src="/assets/images/Logo.svg" className="p-4" />
+      <img
+        src={"https://diw3xy9w4etxp.cloudfront.net/terralab_logo.png"}
+        height={"39px"}
+        width={"177px"}
+      />
       <section className="flex flex-col justify-center items-stretch px-11 py-8 bg-white rounded max-w-[50rem] w-full max-md:px-5">
         <header className="text-2xl font-semibold leading-8 text-center text-slate-700 max-md:max-w-full">
           Invite Organization

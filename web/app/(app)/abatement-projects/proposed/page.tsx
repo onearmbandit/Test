@@ -2,14 +2,8 @@
 import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { authOptions, calculateTotals } from "@/lib/utils";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { calculateTotals } from "@/lib/utils";
 import { getProposedAbatementProjects } from "@/services/abatement.api";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
@@ -41,7 +35,7 @@ const ProposedPage = async () => {
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
           <div className="flex items-center space-x-2">
             <Image
-              src={"/assets/images/folder-tick.svg"}
+              src={"/assets/images/folder-add.svg"}
               height={24}
               width={24}
               alt="folder icon"
@@ -51,7 +45,6 @@ const ProposedPage = async () => {
             </p>
           </div>
 
-          {/* todo: make it dynamic */}
           <p className="text-slate-800 font-semibold">
             Total Abatement to date:{" "}
             {Object.keys(emissionTotals).map((unit) => (
@@ -61,9 +54,6 @@ const ProposedPage = async () => {
                 </span>
               </>
             ))}
-            {/* <span className="font-normal">{emissionTotals} / year</span>
-            <span className="font-normal">NA NA / year</span>
-            <span className="font-normal">NA NA / year</span> */}
           </p>
 
           <div className="grid grid-cols-3 gap-6">
