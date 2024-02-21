@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SetStateAction, useEffect, useState } from "react";
+import React, { SetStateAction, Suspense, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +22,7 @@ import { Button } from "../ui/button";
 import {
   editProductLines,
   getEqualityData,
+  getProductLineEmissions,
   getProductLines,
   updateProductEmissions,
 } from "@/services/facility.api";
@@ -58,9 +59,9 @@ const ProductLineEmissions = ({
 
   const prodLines = useQuery({
     queryKey: ["product-emissions", period],
-    queryFn: () => getProductLines(period!),
+    queryFn: () => getProductLineEmissions(period!),
   });
-  const productLines = prodLines.isSuccess ? prodLines.data.data : {};
+  const productLines = prodLines.isSuccess ? prodLines.data.data : [];
 
   const equality = useQuery({
     queryKey: ["equality", period],
@@ -70,7 +71,7 @@ const ProductLineEmissions = ({
   const equalEmission = equality.isSuccess ? equality.data : {};
 
   const { mutate, isPending, status } = useMutation({
-    mutationFn: updateProductEmissions,
+    mutationFn: editProductLines,
     onSuccess: (data) => {
       toast.success("Products Lines updated.", { style: { color: "green" } });
       queryClient.invalidateQueries({
@@ -98,13 +99,13 @@ const ProductLineEmissions = ({
           delete em[item];
         }
       });
-      return { ...em, equalityAttribute: isEdit };
     });
     const formData = {
       facilityEmissionId: period,
+      equalityAttribute: isEqual,
       facilityProducts: emissionCopy,
     };
-    mutate({ id: period!, obj: formData });
+    mutate(formData);
   };
 
   const handleEqual = async () => {
@@ -128,13 +129,16 @@ const ProductLineEmissions = ({
       if (productLines.FacilityProducts) {
         setStatus({ ...completeStatus, 3: true });
       }
-      setEmissions(productLines.FacilityProducts);
-      // console.log("normal ===> ", productLines.FacilityProducts);
-      setIsEqual(
-        productLines?.FacilityEqualityAttribute?.equality_attribute == 0
-          ? false
-          : true
-      );
+      setEmissions(productLines);
+      // // console.log("normal ===> ", productLines.FacilityProducts);
+      if (productLines[0]?.FacilityEmission?.FacilityEqualityAttribute) {
+        setIsEqual(
+          productLines[0]?.FacilityEmission?.FacilityEqualityAttribute
+            ?.equality_attribute == 1
+            ? true
+            : false
+        );
+      }
     }
   }, [prodLines.status, prodLines.data]);
 
@@ -147,8 +151,8 @@ const ProductLineEmissions = ({
 
   useEffect(() => {
     if (!isEqual) {
-      console.log("equal ===> ", productLines.FacilityProducts);
-      setEmissions(productLines.FacilityProducts);
+      console.log("equal ===> ", productLines);
+      setEmissions(productLines);
     } else {
       setEmissions(equalEmission.data);
     }
@@ -172,127 +176,128 @@ const ProductLineEmissions = ({
         {prodLines.isLoading && (
           <Loader2 className="text-blue-400 animate-spin" />
         )}
-        {prodLines.isSuccess &&
-          emissions?.map((item: Product, i: number) => (
-            <AccordionItem key={i} value={item.name!} className="border-0">
-              <AccordionTrigger className="flex rounded-md [&[data-state=closed]>svg#minus]:hidden [&[data-state=open]>svg#plus]:hidden bg-gray-100 px-4 py-2">
-                <p className="text-xs font-bold">{item.name}</p>
-                <Minus size={16} id="minus" />
-                <Plus size={16} id="plus" />
-              </AccordionTrigger>
-              <AccordionContent className="py-3">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-b hover:bg-transparent py-2">
-                      <TableHead className="text-xs py-2 h-fit">
-                        Quantity
-                      </TableHead>
-                      <TableHead className="text-xs py-2 h-fit">
-                        Scope 1
-                      </TableHead>
-                      <TableHead className="text-xs py-2 h-fit">
-                        Scope 2
-                      </TableHead>
-                      <TableHead className="text-xs py-2 h-fit">
-                        Scope 3
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody className="pt-3">
-                    <TableRow className="hover:bg-transparent justify-evenly text-xs">
-                      <TableCell className="w-1/4">{item.quantity}</TableCell>
-                      <TableCell className="w-1/4">
-                        {isEqual ? (
-                          <p className="text-sm w-full">
-                            {item.scope1_carbon_emission}
-                          </p>
-                        ) : (
-                          <Input
-                            disabled={!isEdit || isEqual}
-                            value={`${Number(item.scope1_carbon_emission!)}`}
-                            className="bg-gray-50 w-1/2"
-                            onChange={(e) => {
-                              const copy = _.cloneDeep(emissions);
-                              const result = z
-                                .object({ emission: z.number() })
-                                .safeParse({
-                                  emission: Number(e.target.value),
-                                });
+        <Suspense fallback={<Loader2 className="animate-spin" />}>
+          {prodLines.isSuccess &&
+            emissions?.map((item: Product, i: number) => (
+              <AccordionItem key={i} value={item.name!} className="border-0">
+                <AccordionTrigger className="flex rounded-md [&[data-state=closed]>svg#minus]:hidden [&[data-state=open]>svg#plus]:hidden bg-gray-100 px-4 py-2">
+                  <p className="text-xs font-bold">{item.name}</p>
+                  <Minus size={16} id="minus" />
+                  <Plus size={16} id="plus" />
+                </AccordionTrigger>
+                <AccordionContent className="py-3">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-b hover:bg-transparent py-2">
+                        <TableHead className="text-xs py-2 h-fit">
+                          Quantity
+                        </TableHead>
+                        <TableHead className="text-xs py-2 h-fit">
+                          Scope 1
+                        </TableHead>
+                        <TableHead className="text-xs py-2 h-fit">
+                          Scope 2
+                        </TableHead>
+                        <TableHead className="text-xs py-2 h-fit">
+                          Scope 3
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody className="pt-3">
+                      <TableRow className="hover:bg-transparent justify-evenly text-xs">
+                        <TableCell className="w-1/4">{item.quantity}</TableCell>
+                        <TableCell className="w-1/4">
+                          {isEqual ? (
+                            <p className="text-sm w-full">
+                              {item.scope1_carbon_emission}
+                            </p>
+                          ) : (
+                            <Input
+                              disabled={!isEdit || isEqual}
+                              value={`${Number(item.scope1_carbon_emission!)}`}
+                              className="bg-gray-50 w-1/2"
+                              onChange={(e) => {
+                                const copy = _.cloneDeep(emissions);
+                                const result = z
+                                  .object({ emission: z.number() })
+                                  .safeParse({
+                                    emission: Number(e.target.value),
+                                  });
 
-                              if (!result.success) {
-                                return;
-                              }
-                              copy[i].scope1CarbonEmission = e.target.value;
-                              copy[i].scope1_carbon_emission = e.target.value;
-                              setEmissions(copy);
-                            }}
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell className="w-1/4">
-                        {isEqual ? (
-                          <p className="text-sm w-full">
-                            {item.scope1_carbon_emission}
-                          </p>
-                        ) : (
-                          <Input
-                            disabled={!isEdit || isEqual}
-                            value={`${Number(item.scope2_carbon_emission!)}`}
-                            onChange={(e) => {
-                              const copy = _.cloneDeep(emissions);
-                              const result = z
-                                .object({ emission: z.number() })
-                                .safeParse({
-                                  emission: Number(e.target.value),
-                                });
+                                if (!result.success) {
+                                  return;
+                                }
+                                copy[i].scope1CarbonEmission = e.target.value;
+                                copy[i].scope1_carbon_emission = e.target.value;
+                                setEmissions(copy);
+                              }}
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell className="w-1/4">
+                          {isEqual ? (
+                            <p className="text-sm w-full">
+                              {item.scope1_carbon_emission}
+                            </p>
+                          ) : (
+                            <Input
+                              disabled={!isEdit || isEqual}
+                              value={`${Number(item.scope2_carbon_emission!)}`}
+                              onChange={(e) => {
+                                const copy = _.cloneDeep(emissions);
+                                const result = z
+                                  .object({ emission: z.number() })
+                                  .safeParse({
+                                    emission: Number(e.target.value),
+                                  });
 
-                              if (!result.success) {
-                                return;
-                              }
-                              copy[i].scope2CarbonEmission = e.target.value;
-                              copy[i].scope2_carbon_emission = e.target.value;
-                              setEmissions(copy);
-                            }}
-                            className="bg-gray-50 w-1/2"
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell className="w-1/4">
-                        {isEqual ? (
-                          <p className="text-sm w-full">
-                            {item.scope1_carbon_emission}
-                          </p>
-                        ) : (
-                          <Input
-                            disabled={!isEdit || isEqual}
-                            value={`${Number(item.scope3_carbon_emission!)}`}
-                            onChange={(e) => {
-                              const copy = _.cloneDeep(emissions);
-                              const result = z
-                                .object({ emission: z.number() })
-                                .safeParse({
-                                  emission: Number(e.target.value),
-                                });
+                                if (!result.success) {
+                                  return;
+                                }
+                                copy[i].scope2CarbonEmission = e.target.value;
+                                copy[i].scope2_carbon_emission = e.target.value;
+                                setEmissions(copy);
+                              }}
+                              className="bg-gray-50 w-1/2"
+                            />
+                          )}
+                        </TableCell>
+                        <TableCell className="w-1/4">
+                          {isEqual ? (
+                            <p className="text-sm w-full">
+                              {item.scope1_carbon_emission}
+                            </p>
+                          ) : (
+                            <Input
+                              disabled={!isEdit || isEqual}
+                              value={`${Number(item.scope3_carbon_emission!)}`}
+                              onChange={(e) => {
+                                const copy = _.cloneDeep(emissions);
+                                const result = z
+                                  .object({ emission: z.number() })
+                                  .safeParse({
+                                    emission: Number(e.target.value),
+                                  });
 
-                              if (!result.success) {
-                                return;
-                              }
-                              copy[i].scope3CarbonEmission = e.target.value;
-                              copy[i].scope3_carbon_emission = e.target.value;
-                              setEmissions(copy);
-                            }}
-                            className="bg-gray-50 w-1/2"
-                          />
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+                                if (!result.success) {
+                                  return;
+                                }
+                                copy[i].scope3CarbonEmission = e.target.value;
+                                copy[i].scope3_carbon_emission = e.target.value;
+                                setEmissions(copy);
+                              }}
+                              className="bg-gray-50 w-1/2"
+                            />
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+        </Suspense>
       </Accordion>
-      {}
       <div className="flex justify-end p-[10px]">
         <p className="text-xs font-bold text-slate-600">tCO2e/func. unit</p>
       </div>

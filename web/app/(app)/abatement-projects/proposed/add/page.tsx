@@ -70,6 +70,8 @@ const AddProposedPage = () => {
   });
 
   const units = ["tCO2e", "Gallons of water", "Metric tonnes of waste"];
+  const urlPattern =
+    /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
 
   const suppliers = useQuery({
     queryKey: ["supplier-list"],
@@ -104,6 +106,7 @@ const AddProposedPage = () => {
     setFieldError,
     submitForm,
     errors,
+    isSubmitting,
   } = useFormik({
     initialValues: {
       name: "",
@@ -363,7 +366,16 @@ const AddProposedPage = () => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "Cost must be greater than 0" }),
-                        websiteUrl: z.string().url().optional(),
+                        websiteUrl: z
+                          .string()
+                          .refine(
+                            (url) => {
+                              // Regular expression to validate URLs without the scheme
+                              return url.match(urlPattern) !== null;
+                            },
+                            { message: "Invalid URL" }
+                          )
+                          .optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -478,16 +490,18 @@ const AddProposedPage = () => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm w-28 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
                           errors?.emissionUnit && "border border-red-500"
                         )}
                       >
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue
+                          placeholder={units[0]}
+                          defaultValue={units[0]}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
                           <SelectLabel>Select a unit</SelectLabel>
-
                           {units?.map((unit: any, index: number) => (
                             <SelectItem key={index} value={unit}>
                               {unit}
@@ -498,7 +512,7 @@ const AddProposedPage = () => {
                     </Select>
                   </div>
                   <p className="text-xs text-red-500 mt-0.5">
-                    {err.emissionReductions}
+                    {err.emissionReductions || errors.emissionUnit}
                   </p>
                 </div>
               </CardContent>
@@ -901,6 +915,7 @@ const AddProposedPage = () => {
         <div className="flex justify-end">
           <Button
             type="submit"
+            disabled={isSubmitting}
             // disabled
             onClick={() => {
               submitForm();

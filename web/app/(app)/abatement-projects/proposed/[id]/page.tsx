@@ -1,5 +1,7 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { getActiveAbatementProjectById } from "@/services/abatement.api";
+import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import {
   ArrowUpRight,
@@ -11,10 +13,14 @@ import {
 import React from "react";
 
 const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
-  const res = await getActiveAbatementProjectById(params?.id);
-  const project = res?.data;
+  const projectQ = useQuery({
+    queryKey: ["proposed-abatement-project", params?.id],
+    queryFn: () => getActiveAbatementProjectById(params?.id),
+  });
 
-  console.log("email:", project.proposedSupplier?.email);
+  const project = projectQ.isSuccess ? projectQ?.data?.data : [];
+
+  const emailHref = `mailto:${project.proposedSupplier?.email}`;
 
   return (
     <div className="bg-white p-6 min-h-screen">
@@ -94,7 +100,7 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
           </div>
 
           <a
-            href={`mailto:${project.proposedSupplier?.email}`}
+            href={emailHref}
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <Button type="button">Contact Project Owner</Button>

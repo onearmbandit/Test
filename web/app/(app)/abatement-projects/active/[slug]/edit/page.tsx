@@ -89,6 +89,8 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
   });
 
   const units = ["tCO2e", "Gallons of water", "Metric tonnes of waste"];
+  const urlPattern =
+    /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
 
   const abatementProject: any = useQuery({
     queryKey: ["activeProject", params.slug],
@@ -148,6 +150,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
     handleSubmit,
     setFieldError,
     submitForm,
+    isSubmitting,
     errors,
   } = useFormik({
     initialValues: {
@@ -441,7 +444,16 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "cost must be greater than 0" }),
-                        websiteUrl: z.string().url().optional(),
+                        websiteUrl: z
+                          .string()
+                          .refine(
+                            (url) => {
+                              // Regular expression to validate URLs without the scheme
+                              return url.match(urlPattern) !== null;
+                            },
+                            { message: "Invalid URL" }
+                          )
+                          .optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -530,7 +542,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                   <label className="text-sm">
                     What is the estimated emission reductions?
                   </label>
-                  <div>
+                  <div className="flex items-center space-x-3">
                     <Input
                       type="number"
                       name="emissionReductions"
@@ -556,11 +568,14 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm w-28 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
                           errors?.emissionUnit && "border border-red-500"
                         )}
                       >
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue
+                          placeholder={units[0]}
+                          defaultValue={units[0]}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -770,7 +785,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
               )}
               <p className="flex-1 font-bold">Photo and Logo</p>
             </div>
-            {values.photoUrl != "" && values.logoUrl == "" && (
+            {currentSection !== 5 && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(5)}
@@ -1090,6 +1105,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
 
           <Button
             type="submit"
+            disabled={isSubmitting}
             onClick={() => {
               submitForm();
             }}

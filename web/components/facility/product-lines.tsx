@@ -332,7 +332,7 @@ const EditProducts = ({
     };
     if (productLines.data?.FacilityProducts?.length == 0) {
       // console.log("add", formData);
-      mutate(formData);
+      mutate({ ...formData, equalityAttribute: true });
     } else {
       // console.log("edit ", formData);
       editMutate(formData);
