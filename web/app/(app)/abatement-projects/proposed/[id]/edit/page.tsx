@@ -398,7 +398,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       type="number"
                       onChange={(e) => {
                         const copy = _.cloneDeep(projectDetails);
-                        copy[2].estimatedCost = Number(e.target.value);
+                        copy[2].estimatedCost = parseInt(e.target.value);
                         setProjectDetails(copy);
                       }}
                       value={projectDetails[2].estimatedCost}
@@ -406,7 +406,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         "h-16 bg-gray-50 w-1/2 text-slate-700 text-sm font-light",
                         err.estimatedCost && "border border-red-600"
                       )}
-                      placeholder="Add description"
+                      placeholder="Add cost"
                     />
                     <p className="text-xs text-red-500 mt-0.5">
                       {err.estimatedCost}
@@ -556,11 +556,11 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                   </label>
                   <div className="flex space-x-3 items-center">
                     <Input
-                      type="number"
+                      // type="number"
                       name="emissionReductions"
                       onChange={(e) => {
                         const copy = _.cloneDeep(projectDetails);
-                        copy[3].emissionReductions = Number(e.target.value);
+                        copy[3].emissionReductions = parseInt(e.target.value);
                         setProjectDetails(copy);
                       }}
                       value={projectDetails[3].emissionReductions}
