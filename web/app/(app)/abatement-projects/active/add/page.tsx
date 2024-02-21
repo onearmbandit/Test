@@ -137,7 +137,7 @@ const AddActivePage = () => {
       estimatedCost: 0,
       websiteUrl: "",
       emissionReductions: 0,
-      emissionUnit: "",
+      emissionUnit: units[0],
       proposedTo: "",
       proposedType: "",
       photoUrl: "",

@@ -14,12 +14,10 @@ import React from "react";
 
 const ProposedPage = async () => {
   const { data: session } = useSession();
-  const organizationId = session?.user?.organizations[0]?.id
-    ? session?.user?.organizations[0]?.id
-    : "";
+  const organizationId = session?.user?.organizations[0]?.id;
   const projectsQ = useQuery({
-    queryKey: ["proposedProjects"],
-    queryFn: () => getProposedAbatementProjects(organizationId),
+    queryKey: ["proposedProjects", organizationId],
+    queryFn: () => getProposedAbatementProjects(organizationId!),
   });
 
   const projects = projectsQ.isSuccess ? projectsQ?.data?.data : [];
@@ -29,7 +27,7 @@ const ProposedPage = async () => {
   return (
     <div className="px-8">
       <Header />
-      {!projects || projects?.length == 0 ? (
+      {projectsQ.isSuccess && projects?.length == 0 ? (
         <EmptyState link="/abatement-projects/proposed/add" />
       ) : (
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">

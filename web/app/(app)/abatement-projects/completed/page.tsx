@@ -15,12 +15,10 @@ import React from "react";
 
 const CompletedPage = async () => {
   const { data: session } = useSession();
-  const organizationId = session?.user?.organizations[0]?.id
-    ? session?.user?.organizations[0]?.id
-    : "";
+  const organizationId = session?.user?.organizations[0]?.id;
   const projectsQ = useQuery({
-    queryKey: ["completedProjects"],
-    queryFn: () => getCompletedAbatementProjects(organizationId),
+    queryKey: ["completedProjects", organizationId],
+    queryFn: () => getCompletedAbatementProjects(organizationId!),
   });
 
   const projects = projectsQ.isSuccess ? projectsQ?.data?.data : [];
@@ -30,7 +28,7 @@ const CompletedPage = async () => {
   return (
     <div className="px-8">
       <Header />
-      {!projects || projects?.length == 0 ? (
+      {projectsQ.isSuccess && projects?.length == 0 ? (
         <EmptyState link="/abatement-projects/completed/add" />
       ) : (
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
