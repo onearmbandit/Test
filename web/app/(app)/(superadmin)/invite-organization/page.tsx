@@ -142,6 +142,7 @@ const InviteOrganization = () => {
         src={"https://diw3xy9w4etxp.cloudfront.net/terralab_logo.png"}
         height={"39px"}
         width={"177px"}
+        alt="Terralab"
       />
       <section className="flex flex-col justify-center items-stretch px-11 py-8 bg-white rounded max-w-[50rem] w-full max-md:px-5">
         <header className="text-2xl font-semibold leading-8 text-center text-slate-700 max-md:max-w-full">
