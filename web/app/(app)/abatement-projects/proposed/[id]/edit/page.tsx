@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogPortal,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -70,6 +71,10 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
     photoUrl?: string;
     logoUrl?: string;
   }>({});
+
+  const [confirmationPopup, setConfirmationPopup] = useState(false);
+  const [confirmationCompletedPopup, setConfirmationCompletedPopup] =
+    useState(false);
 
   const [uploading, setUploading] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
@@ -1010,7 +1015,15 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
           <RadioGroup
             defaultValue="default"
             value={`${values.status}`}
-            onValueChange={(e) => setFieldValue("status", parseInt(e))}
+            onValueChange={(e) => {
+              if (e == "1") {
+                setConfirmationPopup(true);
+              } else if (e == "2") {
+                setConfirmationCompletedPopup(true);
+              } else {
+                setFieldValue("status", 0);
+              }
+            }}
             className="flex"
           >
             <div
@@ -1077,6 +1090,74 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
               </label>
             </div>
           </RadioGroup>
+
+          {/* completed confirmation */}
+          <Dialog
+            open={confirmationCompletedPopup}
+            onOpenChange={setConfirmationCompletedPopup}
+          >
+            <DialogPortal>
+              <DialogContent className="p-6 space-y-5">
+                <p className="text text-center">
+                  Are you sure you want to mark this project as completed? This
+                  will indicate to your suppliers that this project has
+                  finished. You can always go back and change the project
+                  status.
+                </p>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="border-2 border-blue-500 w-full font-semibold text-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    No, don&apos;t mark this project as completed
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => setFieldValue("status", 2)}
+                    className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                  >
+                    Yes, continue
+                  </Button>
+                </DialogClose>
+              </DialogContent>
+            </DialogPortal>
+          </Dialog>
+
+          {/* active confirmation */}
+          <Dialog open={confirmationPopup} onOpenChange={setConfirmationPopup}>
+            <DialogPortal>
+              <DialogContent className="p-6 space-y-5">
+                <p className="text text-center">
+                  Are you sure you want to mark this project as active? This
+                  will indicate to your suppliers that this project has started.
+                  You can always go back and change the project status.
+                </p>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="border-2 border-blue-500 w-full font-semibold text-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    No, don&apos;t activate this project
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => setFieldValue("status", 1)}
+                    className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                  >
+                    Yes, continue
+                  </Button>
+                </DialogClose>
+              </DialogContent>
+            </DialogPortal>
+          </Dialog>
         </div>
 
         <div className="flex justify-between items-center">
