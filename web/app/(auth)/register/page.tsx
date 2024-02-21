@@ -128,6 +128,7 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
   const invitedEmail = searchParams.get("email");
+  const isSupplier = searchParams.get("isSupplier");
   const social = searchParams.get("social");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
@@ -168,9 +169,15 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       setUserId(user.data?.id);
       if (invitedEmail) {
         router.push(`/register?step=2&invited=true&slug=${user.data?.slug}`);
-      } else {
-        router.push(`/register?step=2&slug=${user.data?.slug}`);
+        return;
       }
+
+      if (isSupplier == "true") {
+        router.push(`/register?step=2&isSupplier=true&slug=${user.data?.slug}`);
+        return;
+      }
+
+      router.push(`/register?step=2&slug=${user.data?.slug}`);
       // setCurrentStep(2);
     },
     onError: (err) => {
@@ -192,7 +199,11 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       if (errors.length > 0) {
         return;
       }
-      mutate({ ...data, invitedUser: invitedEmail ? true : false });
+      mutate({
+        ...data,
+        invitedUser: invitedEmail ? true : false,
+        isSupplier: isSupplier == "true" ? true : false,
+      });
     },
   });
 
@@ -452,6 +463,7 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
   const slug = searchParams.get("slug");
+  const isSupplier = searchParams.get("isSupplier");
 
   const validation = z.object({
     firstName: z
@@ -481,9 +493,16 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
         router.push(
           `/register?step=setup-done&slug=${data.data?.userData?.slug}`
         );
-      } else {
-        router.push(`/register?step=3&slug=${data.data?.userData?.slug}`);
+        return;
       }
+      if (isSupplier == "true") {
+        router.push(
+          `/register?step=3&slug=${data.data?.userData?.slug}&isSupplier=true`
+        );
+        return;
+      }
+
+      router.push(`/register?step=3&slug=${data.data?.userData?.slug}`);
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -499,7 +518,11 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
     onSubmit: (data) => {
       mutate({
         id: slug!,
-        formdata: { ...data, invitedUser: isInvited == "true" ? true : false },
+        formdata: {
+          ...data,
+          invitedUser: isInvited == "true" ? true : false,
+          isSupplier: isSupplier == "true" ? true : false,
+        },
       });
     },
   });
@@ -588,10 +611,9 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
   const { data: session, update } = useSession();
   const searchParams = useSearchParams();
   const slug = searchParams.get("slug");
+  const isSupplier = searchParams.get("isSupplier");
   const [isEdit, setEdit] = useState(false);
   const [address, setAddress] = useState("");
-
-  console.log(slug);
 
   const validation = z.object({
     companyName: z
@@ -640,9 +662,17 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
     onSubmit: (data) => {
       // console.log(data, userSlug);
       if (slug == null) {
-        mutate({ ...data, userSlug: session?.user.slug });
+        mutate({
+          ...data,
+          userSlug: session?.user.slug,
+          isSupplier: isSupplier == "true" ? true : false,
+        });
       } else {
-        mutate({ ...data, userSlug: slug });
+        mutate({
+          ...data,
+          userSlug: slug,
+          isSupplier: isSupplier == "true" ? true : false,
+        });
       }
     },
   });
