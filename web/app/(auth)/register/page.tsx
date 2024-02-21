@@ -490,19 +490,15 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
       }
 
       if (isInvited == "true") {
-        router.push(
-          `/register?step=setup-done&slug=${data.data?.userData?.slug}`
-        );
+        router.push(`/register?step=setup-done&slug=${data.data?.slug}`);
         return;
       }
       if (isSupplier == "true") {
-        router.push(
-          `/register?step=3&slug=${data.data?.userData?.slug}&isSupplier=true`
-        );
+        router.push(`/register?step=3&slug=${data.data?.slug}&isSupplier=true`);
         return;
       }
 
-      router.push(`/register?step=3&slug=${data.data?.userData?.slug}`);
+      router.push(`/register?step=3&slug=${data.data?.slug}`);
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -636,7 +632,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
       setUserEmail(data.data.email);
       // setCurrentStep(4);
       // console.log("data", data.data.organizations);
-      update({ orgs: data.data.organizations });
+      // update({ orgs: data.data.organizations });
       if (session) {
         router.push("/create-organisation");
       } else {
@@ -660,8 +656,8 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
     validateOnBlur: true,
     validateOnMount: false,
     onSubmit: (data) => {
-      // console.log(data, userSlug);
-      if (slug == null) {
+      console.log({ slug });
+      if (!slug) {
         mutate({
           ...data,
           userSlug: session?.user.slug,

@@ -53,7 +53,7 @@ export const options: ChartOptions<"bar"> = {
 const labels = ["Scope 1", "Scope 2", "Scope 3"];
 
 const TotalEmissionsSummary = () => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const [toFromDate, setToFromDate] = useState({
     from: dayjs().format("YYYY-MM-DD"),
     to: dayjs().format("YYYY-MM-DD"),

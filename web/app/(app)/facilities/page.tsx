@@ -12,9 +12,11 @@ import { getServerSession } from "next-auth/next";
 import Link from "next/link";
 import React from "react";
 import { redirect } from "next/navigation";
+import { getUser } from "@/services/user.api";
 
 const Page = async ({ searchParams }: { searchParams: any }) => {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
+  const user = await getUser();
   const { data: facilities } = await getFacilities();
 
   return (
@@ -30,20 +32,20 @@ const Page = async ({ searchParams }: { searchParams: any }) => {
           </a>{" "}
           &gt;{" "}
           <a href="/facilities" className="text-blue-600 font-bold">
-            {session?.user?.organizations[0].company_name}&apos;s Facilities
+            {user?.data?.organizations[0].company_name}&apos;s Facilities
           </a>{" "}
         </nav>
       </div>
 
       <div className="mt-3 space-y-3">
         <h2 className="text-slate-800 text-ellipsis whitespace-nowrap text-lg font-bold leading-7 max-w-[73px]">
-          {session?.user?.organizations[0].company_name}&apos;s Facilities
+          {user?.data?.organizations[0].company_name}&apos;s Facilities
         </h2>
 
         {facilities?.length > 0 && <FacilitiesList facilities={facilities} />}
 
         {searchParams["add-new"] == "true" && (
-          <AddFacility serialNo={facilities.length + 1 || 1} />
+          <AddFacility serialNo={facilities?.length + 1 || 1} />
         )}
 
         {searchParams["add-new"] != "true" && (

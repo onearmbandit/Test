@@ -3,6 +3,7 @@
 import { authOptions } from "@/lib/utils";
 import axios, { AxiosHeaders } from "axios";
 import { getServerSession } from "next-auth";
+import { getUser } from "./user.api";
 
 type Options = {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -48,8 +49,9 @@ export const updateFacility = ({ id, obj }: { id: string; obj: any }) => {
 };
 
 export const getFacilities = async () => {
-  const session = await getServerSession(authOptions);
-  const orgId = session?.user?.organizations[0]?.id;
+  // const session = await getServerSession(authOptions);
+  const user = await getUser();
+  const orgId = user?.data?.organizations[0]?.id;
   return fetchApi(
     `/auth/facility?organization_id=${orgId}&include=facilityEmission`
   );
