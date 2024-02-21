@@ -103,6 +103,7 @@ export default class SupplyChainReportingPeriodsController {
       const overlappingPeriods = await Database.query()
         .from('supply_chain_reporting_periods')
         .where('organization_id', requestData.organizationId ? requestData.organizationId : organizationIds[0])
+        .andWhereNull('deleted_at')
         .where(function (query) {
           query
             .whereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
@@ -213,6 +214,7 @@ export default class SupplyChainReportingPeriodsController {
       const overlappingPeriods = await Database.query()
         .from('supply_chain_reporting_periods')
         .where('organization_id', requestData.organizationId)
+        .andWhereNull('deleted_at')
         .where(function (query) {
           query
             .whereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
