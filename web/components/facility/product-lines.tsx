@@ -347,7 +347,7 @@ const EditProducts = ({
               ...item,
               functionalUnit: item?.functional_unit,
             }))
-          : [{ name: "", quantity: 0, functionalUnit: "" }];
+          : [{ name: "", quantity: null, functionalUnit: "" }];
       // console.log(productLines?.data?.FacilityProducts.length);
       setProducts(updated);
       if (productLines?.data?.FacilityProducts.length == 0) {
@@ -396,7 +396,7 @@ const EditProducts = ({
                 setProducts(copy);
               }}
               styles={customDropdownStyles}
-              placeholder="Add product name"
+              placeholder={"Add product name"}
               onCreateOption={(e) => {
                 const newOption = {
                   name: e,
@@ -410,7 +410,9 @@ const EditProducts = ({
                 setProducts(newCopy);
                 // setCreatableValue(newOption);
               }}
-              value={{ label: item.name, value: item.name }}
+              value={
+                item.name == "" ? null : { label: item.name, value: item.name }
+              }
             />
           </div>
 
@@ -426,7 +428,6 @@ const EditProducts = ({
                 setProducts(copy);
               }}
               name="quantity"
-              required
               placeholder="1"
             />
           </div>

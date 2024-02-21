@@ -50,9 +50,17 @@ const ScopeEmissions = ({
   const addScopeMut = useMutation({
     mutationFn: addScopeEmissions,
     onSuccess: (data) => {
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       queryClient.invalidateQueries({
-        queryKey: ["facility-details", "dashboard", "facilitydetails"],
-        // stale: true,
+        queryKey: ["facility-details", facilityId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["facilitydetails", facilityId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["dashboard"],
       });
 
       toast.success("Scope Emissions updated", { style: { color: "green" } });
