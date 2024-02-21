@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
-import { authOptions, calculateTotals } from "@/lib/utils";
+import { authOptions, calculateTotals, cn } from "@/lib/utils";
 import { getActiveAbatementProjects } from "@/services/abatement.api";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
@@ -48,7 +48,16 @@ const ActivePage = async () => {
             Total Abatement to date:{" "}
             {Object.keys(emissionTotals).map((unit) => (
               <>
-                <span className="font-normal pr-4">
+                <span
+                  className={cn(
+                    "font-normal mr-4 rounded-md",
+                    unit === "tCO2e" && "bg-green-50 text-[#1E293B] p-2 ml-2",
+                    unit === "Gallons of water" &&
+                      "bg-cyan-50 text-cyan-800 p-2",
+                    unit === "Metric tonnes of waste" &&
+                      "bg-red-50 text-orange-800 p-2"
+                  )}
+                >
                   {emissionTotals[unit]} {unit}/year
                 </span>
               </>

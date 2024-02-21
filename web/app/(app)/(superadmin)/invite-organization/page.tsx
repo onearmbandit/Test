@@ -137,7 +137,7 @@ const InviteOrganization = () => {
   }, [organizationsQ.isSuccess, organizationsQ.data]);
 
   return (
-    <div className="min-h-screen w-full grid place-items-center bg-gray-50 absolute inset-0">
+    <div className="min-h-screen w-full grid place-items-center bg-gray-50 absolute inset-0 overflow-auto">
       <img
         src={"https://diw3xy9w4etxp.cloudfront.net/terralab_logo.png"}
         height={"39px"}
@@ -267,6 +267,7 @@ const InviteOrganization = () => {
                 </SelectContent>
               </Select> */}
               <CreatableSelect
+                placeholder="Select or add a company"
                 options={organizations?.data?.map((item: any) => ({
                   value: item.id,
                   label: item.company_name,

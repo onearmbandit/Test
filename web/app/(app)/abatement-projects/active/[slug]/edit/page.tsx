@@ -395,7 +395,11 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         copy[2].estimatedCost = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[2].estimatedCost}
+                      value={
+                        projectDetails[2].estimatedCost === 0
+                          ? ""
+                          : projectDetails[2].estimatedCost
+                      }
                       className={cn(
                         "h-16 bg-gray-50 w-1/2 text-slate-700 text-sm font-light",
                         err.estimatedCost && "border border-red-600"
@@ -551,7 +555,11 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         copy[3].emissionReductions = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[3].emissionReductions}
+                      value={
+                        projectDetails[3].emissionReductions === 0
+                          ? ""
+                          : projectDetails[3].emissionReductions
+                      }
                       className={cn(
                         "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
                         err.emissionReductions && "border border-red-600"
