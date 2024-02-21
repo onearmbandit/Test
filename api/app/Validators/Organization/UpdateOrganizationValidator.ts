@@ -25,6 +25,6 @@ export default class UpdateOrganizationValidator {
     'naicsCode.regex': 'NAICS codes must be 4-5 digits.',
     'climateTargets.*.minLength': 'Each target must be at least 1 characters long.',
     'climateTargets.*.maxLength': 'Each target must be at most 50 characters long.',
-    'companyEmail.unique': 'Invitation is already sent to this email',
+    'companyEmail.unique': 'The email address you are trying to invite has already been registered with another organization',
   }
 }
