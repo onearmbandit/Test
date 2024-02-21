@@ -87,6 +87,6 @@ export default class InviteOrganizationValidator {
     'email.required': 'Email is required.',
     'email.minLength': 'Email must be at least 3 characters long.',
     'email.maxLength': 'Email must not exceed 255 characters.',
-    'email.unique': 'Invitation is already sent to this email',
+    'email.unique': 'The email address you are trying to invite has already been registered with another organization',
   }
 }
