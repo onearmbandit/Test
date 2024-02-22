@@ -39,6 +39,8 @@ export default class AuthController {
 
       if (requestData.isSupplier) {
         role = await Role.getRoleByName(UserRoles.SUPPLIER)
+      } else if (requestData.invitedUser) {
+        role = await Role.getRoleByName(UserRoles.SUB_ADMIN)
       }
 
       if (userExist) {
@@ -78,6 +80,7 @@ export default class AuthController {
           organizationUserData
             ?.merge({
               user_id: userData.id,
+              role_id: role?.id
             })
             .save()
         }
@@ -211,8 +214,6 @@ export default class AuthController {
       await userData.save()
 
       const organizationData = await Organization.createOrganization(requestData)
-
-      console.log('orgData ====>',organizationData);
 
       //:: Add data in pivot table
       await userData.related('organizations').attach({
@@ -568,6 +569,12 @@ export default class AuthController {
       let invitedUserExist = await OrganizationUser.query()
         .where('email', requestData.email)
         .first()
+
+      //:: Required to findout user is supplier or not
+      let supplierData = await SupplierOrganization.query().whereHas('supplier', (query) => {
+        query.where('email', requestData.email)
+      }).whereNotNull('supplier_id')
+
       // if (!invitedUserExist) {
       //     return apiResponse(response, false, 422, {
       //         'errors': [{
@@ -583,9 +590,14 @@ export default class AuthController {
         requestData.email,
         requestData.socialLoginToken
       )
-      const role: any = await Role.getRoleByName(UserRoles.ADMIN)
+      var role: any = await Role.getRoleByName(UserRoles.ADMIN)
+      if (invitedUserExist) {
+        role = await Role.getRoleByName(UserRoles.SUB_ADMIN)
+      } else if (supplierData.length !== 0) {
+        role = await Role.getRoleByName(UserRoles.SUPPLIER)
+      }
 
-      if (!userExist && !invitedUserExist) {
+      if (!userExist) {
         const userData = await User.createUserWithRole(
           {
             id: uuidv4(),
@@ -601,6 +613,17 @@ export default class AuthController {
           role
         )
 
+        //:: If invitedUserExist then update details otherwise create new in organizationUsers table 
+        if (invitedUserExist) {
+
+          let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
+            'email',
+            requestData.email
+          )
+          organizationUserData?.merge({ user_id: userData?.id, role_id: role?.id })
+            .save()
+        }
+
         const token = await auth.use('api').generate(userData as User, {
           expiresIn: '1day',
         })
@@ -613,25 +636,21 @@ export default class AuthController {
           Config.get('responsemessage.AUTH_RESPONSE.userCreated')
         )
       } else {
-        // userExist
-        //   ?.merge({
-        //     firstName: requestData.firstName ? requestData.firstName : null,
-        //     lastName: requestData.lastName ? requestData.lastName : null,
-        //     socialLoginToken: requestData.socialLoginToken,
-        //     loginType: requestData.loginType,
-        //   })
-        //   .save()
 
-        //:: Update organization user table entry
-        let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
-          'email',
-          requestData.email
-        )
-        organizationUserData
-          ?.merge({
-            user_id: userExist?.id,
-          })
-          .save()
+        if (invitedUserExist) {
+          //:: Update organization user table entry
+          let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
+            'email',
+            requestData.email
+          )
+          console.log("organizationUserData", organizationUserData)
+          organizationUserData
+            ?.merge({
+              user_id: userExist?.id,
+              role_id: role?.id
+            })
+            .save()
+        }
 
         // const emailData = {
         //     user: userExist,
@@ -651,13 +670,6 @@ export default class AuthController {
           Config.get('responsemessage.AUTH_RESPONSE.loginSuccess')
         )
 
-        // return apiResponse(response, false, 422, {
-        //     'errors': [{
-        //         field: 'email',
-        //         message: Config.get('responsemessage.AUTH_RESPONSE.emailExists')
-        //     }]
-        // },
-        //     Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
       }
     } catch (error) {
       if (error.status === 422) {

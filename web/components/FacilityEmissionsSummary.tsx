@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "./ui/accordion";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { facilityDetails } from "@/services/facility.api";
@@ -76,7 +76,7 @@ const FacilityEmissionsSummary = () => {
                   <Loader2 className="text-blue-500 animate-spin" />
                 )}
                 {facility.isSuccess && (
-                  <>
+                  <Suspense fallback={<Loader2 className="animate-spin" />}>
                     <Card className="p-4">
                       <CardHeader className="border-b p-0 pb-3">
                         <div className="flex gap-3 items-stretch w-fit px-6 py-2 my-auto bg-blue-100 bg-opacity-50 rounded-[999px]">
@@ -203,7 +203,7 @@ const FacilityEmissionsSummary = () => {
                         </div>
                       </CardContent>
                     </Card>
-                  </>
+                  </Suspense>
                 )}
 
                 {details?.facilityEmission?.length > 2 && (

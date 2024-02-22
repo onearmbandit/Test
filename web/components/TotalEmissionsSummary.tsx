@@ -29,6 +29,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useSession } from "next-auth/react";
+import { getUser } from "@/services/user.api";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 
@@ -52,18 +53,26 @@ export const options: ChartOptions<"bar"> = {
 const labels = ["Scope 1", "Scope 2", "Scope 3"];
 
 const TotalEmissionsSummary = () => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const [toFromDate, setToFromDate] = useState({
     from: dayjs().format("YYYY-MM-DD"),
     to: dayjs().format("YYYY-MM-DD"),
   });
   const [currentPeriod, setCurrentPeriod] = useState("");
+
+  const userQ = useQuery({
+    queryKey: ["user-profile"],
+    queryFn: () => getUser(),
+  });
+  const user = userQ.isSuccess ? userQ.data.data : { organizations: [] };
+
   const reporting = useQuery({
-    queryKey: ["dashboard-reporting", session?.user?.organizations[0].id],
-    queryFn: () =>
-      getDashboardReportingPeriodList(session?.user?.organizations[0].id!),
+    queryKey: ["dashboard-reporting", user?.organizations[0]?.id],
+    queryFn: () => getDashboardReportingPeriodList(user?.organizations[0]?.id!),
+    enabled: userQ.isSuccess,
   });
   const reportingList = reporting.isSuccess ? reporting.data.data : [];
+  console.log(reportingList);
 
   const dashboardDetails = useQuery({
     queryKey: ["dashboard", toFromDate],

@@ -4,6 +4,10 @@ import Config from '@ioc:Adonis/Core/Config';
 import SupplyChainReportingPeriodValidator from 'App/Validators/Supplier/SupplyChainReportingPeriodValidator';
 import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 import User from 'App/Models/User';
+import { DateTime } from 'luxon';
+import Database from '@ioc:Adonis/Lucid/Database';
+
+
 
 export default class SupplyChainReportingPeriodsController {
   public async index({ request, response, auth }: HttpContextContract) {
@@ -57,9 +61,6 @@ export default class SupplyChainReportingPeriodsController {
     try {
       let requestData = request.all()
 
-      // validate facility details
-      await request.validate(SupplyChainReportingPeriodValidator)
-
 
       //:: Check organization id is same for auth user or not
       const userFound = await User.getUserDetails('id', auth.user?.id)
@@ -73,6 +74,64 @@ export default class SupplyChainReportingPeriodsController {
           "The provided organization ID does not belongs to you."
         )
       }
+
+      // validate facility details
+      await request.validate(SupplyChainReportingPeriodValidator)
+
+      // Convert year-month to yyyy-mm-dd for database storage
+      const reportingPeriodFrom = DateTime.fromFormat(requestData.reportingPeriodFrom, 'yyyy-MM').toISODate();
+      const reportingPeriodTo = DateTime.fromFormat(requestData.reportingPeriodTo, 'yyyy-MM').toISODate();
+
+      if (!reportingPeriodFrom || !reportingPeriodTo) {
+        return apiResponse(
+          response,
+          false,
+          422,
+          {
+            errors: [
+              {
+                field: 'reportingPeriodFrom',
+                message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityReportingPeriodInvalidFormat'),
+              },
+            ],
+          },
+          Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+        )
+      }
+
+      // Check for date overlap using raw SQL expressions
+      const overlappingPeriods = await Database.query()
+        .from('supply_chain_reporting_periods')
+        .where('organization_id', requestData.organizationId ? requestData.organizationId : organizationIds[0])
+        .andWhereNull('deleted_at')
+        .where(function (query) {
+          query
+            .whereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
+              reportingPeriodFrom,
+            ])
+            .orWhereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
+              reportingPeriodTo,
+            ]);
+        })
+        .first();
+
+      if (overlappingPeriods) {
+        return apiResponse(
+          response,
+          false,
+          422,
+          {
+            errors: [
+              {
+                field: 'reportingPeriodFrom',
+                message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityReportingPeriodOverlaps'),
+              },
+            ],
+          },
+          Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+        )
+      }
+
 
       const reportPeriodData = await SupplyChainReportingPeriod.createReportPeriod(requestData, organizationIds[0])
 
@@ -130,6 +189,60 @@ export default class SupplyChainReportingPeriodsController {
       // validate facility details
       await request.validate(SupplyChainReportingPeriodValidator)
 
+      // Convert year-month to yyyy-mm-dd for database storage
+      const reportingPeriodFrom = DateTime.fromFormat(requestData.reportingPeriodFrom, 'yyyy-MM').toISODate();
+      const reportingPeriodTo = DateTime.fromFormat(requestData.reportingPeriodTo, 'yyyy-MM').toISODate();
+
+      if (!reportingPeriodFrom || !reportingPeriodTo) {
+        return apiResponse(
+          response,
+          false,
+          422,
+          {
+            errors: [
+              {
+                field: 'reportingPeriodFrom',
+                message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityReportingPeriodInvalidFormat'),
+              },
+            ],
+          },
+          Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+        )
+      }
+
+      // Check for date overlap using raw SQL expressions
+      const overlappingPeriods = await Database.query()
+        .from('supply_chain_reporting_periods')
+        .where('organization_id', requestData.organizationId)
+        .andWhereNull('deleted_at')
+        .where(function (query) {
+          query
+            .whereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
+              reportingPeriodFrom,
+            ])
+            .orWhereRaw('( ? BETWEEN reporting_period_from AND reporting_period_to )', [
+              reportingPeriodTo,
+            ]);
+        })
+        .first();
+
+      if (overlappingPeriods) {
+        return apiResponse(
+          response,
+          false,
+          422,
+          {
+            errors: [
+              {
+                field: 'reportingPeriodFrom',
+                message: Config.get('responsemessage.ORGANIZATION_FACILITY_RESPONSE.facilityReportingPeriodOverlaps'),
+              },
+            ],
+          },
+          Config.get('responsemessage.COMMON_RESPONSE.validation_failed')
+        )
+      }
+
       const updatedPeriodData = await SupplyChainReportingPeriod.updateReportPeriod(reportPeriodData, requestData)
 
       return apiResponse(response, true, 200, updatedPeriodData,
@@ -157,7 +270,7 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
-  public async destroy({ response, params,bouncer }: HttpContextContract) {
+  public async destroy({ response, params, bouncer }: HttpContextContract) {
     try {
       const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)
 

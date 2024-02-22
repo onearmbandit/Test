@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, HelpCircle, Loader2, Plus } from "lucide-react";
+import { ChevronDown, Loader2, Plus } from "lucide-react";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import {
@@ -85,7 +85,7 @@ const FacilityDetails = () => {
         setShowNew(true);
       }
     }
-  }, [periodsQ.isSuccess, reportingPeriods]);
+  }, [periodsQ.isSuccess, periodsQ.data]);
 
   return (
     <div className="mt-5">
@@ -180,21 +180,31 @@ const FacilityDetails = () => {
                 className="space-y-3"
               >
                 <AccordionItem value="1" className="border rounded-lg p-6">
-                  <AccordionTrigger className="items-stretch flex justify-between gap-5 py-3 max-md:max-w-full max-md:flex-wrap">
-                    <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-                      <div
-                        className={cn(
-                          "text-slate-700 text-xs font-semibold leading-4 rounded-full flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2",
-                          completeStatus[1] && "bg-cyan-100 text-green-900"
-                        )}
-                      >
-                        1
-                      </div>
-                      <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
-                        Add Scope Emissions
-                      </p>
-                    </section>
-                    <ChevronDown size={16} className="text-slate-700" />
+                  <AccordionTrigger className="flex-col items-start [&[data-state=open]>#scope-desc]:hidden">
+                    <div className="items-stretch flex justify-between gap-5 w-full">
+                      <section className="items-stretch flex justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
+                        <div
+                          className={cn(
+                            "text-slate-700 text-xs font-semibold leading-4 rounded-full flex justify-center items-center bg-gray-100 aspect-square h-5 px-2 rounded-1/2",
+                            completeStatus[1] && "bg-cyan-100 text-green-900"
+                          )}
+                        >
+                          1
+                        </div>
+                        <p className="justify-center text-green-950 text-base font-semibold leading-6 grow max-md:max-w-full">
+                          Add Scope Emissions
+                        </p>
+                      </section>
+                      <ChevronDown size={16} className="text-slate-700" />
+                    </div>
+                    <p
+                      id="scope-desc"
+                      className="text-xs font-light text-slate-700 mt-[1.88rem] [&[data-state=open]]:hidden"
+                    >
+                      Enter your reporting above. Then fill your scope 1, 2, and
+                      3, emissions for this facility within the reporting
+                      period.
+                    </p>
                   </AccordionTrigger>
                   <AccordionContent>
                     <ScopeEmissions
@@ -203,10 +213,6 @@ const FacilityDetails = () => {
                       setStatus={setCompleteStatus}
                     />
                   </AccordionContent>
-                  {/* <p className="text-xs font-light text-slate-700 mt-[1.88rem] [&[data-state=open]]:hidden">
-                  Enter your reporting above. Then fill your scope 1, 2, and 3,
-                  emissions for this facility within the reporting period.
-                </p> */}
                 </AccordionItem>
 
                 <AccordionItem

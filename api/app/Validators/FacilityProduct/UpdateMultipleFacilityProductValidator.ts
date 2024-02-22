@@ -13,7 +13,7 @@ export default class UpdateMultipleFacilityProductValidator {
     facilityProducts: schema.array().members(
       schema.object().members({
         name: schema.string.optional({ trim: true }, [
-          rules.minLength(3),
+          rules.minLength(1),
           rules.maxLength(255),
         ]),
         quantity: schema.number.optional(),

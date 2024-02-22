@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogPortal,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -65,10 +66,15 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
     estimatedCost?: string;
     websiteUrl?: string;
     emissionReductions?: string;
+    emissionUnit?: string;
     proposedTo?: string;
     photoUrl?: string;
     logoUrl?: string;
   }>({});
+
+  const [confirmationPopup, setConfirmationPopup] = useState(false);
+  const [confirmationCompletedPopup, setConfirmationCompletedPopup] =
+    useState(false);
 
   const [uploading, setUploading] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
@@ -87,6 +93,8 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
   });
 
   const units = ["tCO2e", "Gallons of water", "Metric tonnes of waste"];
+  const urlPattern =
+    /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
 
   const abatementProject: any = useQuery({
     queryKey: ["proposedProject", params.id],
@@ -149,6 +157,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
     setFieldError,
     submitForm,
     errors,
+    isSubmitting,
   } = useFormik({
     initialValues: {
       name: "",
@@ -392,12 +401,16 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         copy[2].estimatedCost = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[2].estimatedCost}
+                      value={
+                        projectDetails[2].estimatedCost === 0
+                          ? ""
+                          : projectDetails[2].estimatedCost
+                      }
                       className={cn(
                         "h-16 bg-gray-50 w-1/2 text-slate-700 text-sm font-light",
                         err.estimatedCost && "border border-red-600"
                       )}
-                      placeholder="Add description"
+                      placeholder="Add project cost"
                     />
                     <p className="text-xs text-red-500 mt-0.5">
                       {err.estimatedCost}
@@ -447,7 +460,16 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "Cost must be greater than 0" }),
-                        websiteUrl: z.string().url().optional(),
+                        websiteUrl: z
+                          .string()
+                          .refine(
+                            (url) => {
+                              // Regular expression to validate URLs without the scheme
+                              return url.match(urlPattern) !== null;
+                            },
+                            { message: "Invalid URL" }
+                          )
+                          .optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -536,7 +558,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                   <label className="text-sm">
                     What is the estimated emission reductions?
                   </label>
-                  <div>
+                  <div className="flex space-x-3 items-center">
                     <Input
                       type="number"
                       name="emissionReductions"
@@ -545,7 +567,11 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         copy[3].emissionReductions = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[3].emissionReductions}
+                      value={
+                        projectDetails[3].emissionReductions === 0
+                          ? ""
+                          : projectDetails[3].emissionReductions
+                      }
                       className={cn(
                         "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
                         err.emissionReductions && "border border-red-600"
@@ -562,11 +588,14 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm w-28 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5 bg-gray-50 mx-3    rounded-md ",
                           errors?.emissionUnit && "border border-red-500"
                         )}
                       >
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue
+                          placeholder={units[0]}
+                          defaultValue={units[0]}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -583,6 +612,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                   </div>
                   <p className="text-xs text-red-500 mt-0.5">
                     {err.emissionReductions}
+                    {err.emissionUnit}
                   </p>
                 </div>
               </CardContent>
@@ -606,12 +636,15 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                           projectDetails[3].emissionReductions,
                       });
 
-                    if (values.emissionUnit) {
+                    if (values.emissionUnit == "") {
                       setFieldError(
                         "emissionUnit",
                         "Emission Unit is required"
                       );
+                      setErr({ emissionUnit: "Emission Unit is required" });
                       return;
+                    } else {
+                      setErr({});
                     }
 
                     if (res.success) {
@@ -990,7 +1023,15 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
           <RadioGroup
             defaultValue="default"
             value={`${values.status}`}
-            onValueChange={(e) => setFieldValue("status", parseInt(e))}
+            onValueChange={(e) => {
+              if (e == "1") {
+                setConfirmationPopup(true);
+              } else if (e == "2") {
+                setConfirmationCompletedPopup(true);
+              } else {
+                setFieldValue("status", 0);
+              }
+            }}
             className="flex"
           >
             <div
@@ -1057,6 +1098,74 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
               </label>
             </div>
           </RadioGroup>
+
+          {/* completed confirmation */}
+          <Dialog
+            open={confirmationCompletedPopup}
+            onOpenChange={setConfirmationCompletedPopup}
+          >
+            <DialogPortal>
+              <DialogContent className="p-6 space-y-5">
+                <p className="text text-center">
+                  Are you sure you want to mark this project as completed? This
+                  will indicate to your suppliers that this project has
+                  finished. You can always go back and change the project
+                  status.
+                </p>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="border-2 border-blue-500 w-full font-semibold text-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    No, don&apos;t mark this project as completed
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => setFieldValue("status", 2)}
+                    className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                  >
+                    Yes, continue
+                  </Button>
+                </DialogClose>
+              </DialogContent>
+            </DialogPortal>
+          </Dialog>
+
+          {/* active confirmation */}
+          <Dialog open={confirmationPopup} onOpenChange={setConfirmationPopup}>
+            <DialogPortal>
+              <DialogContent className="p-6 space-y-5">
+                <p className="text text-center">
+                  Are you sure you want to mark this project as active? This
+                  will indicate to your suppliers that this project has started.
+                  You can always go back and change the project status.
+                </p>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="border-2 border-blue-500 w-full font-semibold text-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    No, don&apos;t activate this project
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => setFieldValue("status", 1)}
+                    className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                  >
+                    Yes, continue
+                  </Button>
+                </DialogClose>
+              </DialogContent>
+            </DialogPortal>
+          </Dialog>
         </div>
 
         <div className="flex justify-between items-center">
@@ -1099,6 +1208,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
 
           <Button
             type="submit"
+            disabled={isSubmitting}
             onClick={() => {
               submitForm();
             }}

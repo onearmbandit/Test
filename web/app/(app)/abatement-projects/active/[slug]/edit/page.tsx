@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogPortal,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -72,6 +73,10 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
     logoUrl?: string;
   }>({});
 
+  const [confirmationPopup, setConfirmationPopup] = useState(false);
+  const [confirmationCompletedPopup, setConfirmationCompletedPopup] =
+    useState(false);
+
   const [uploading, setUploading] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
   const [projectDetails, setProjectDetails] = useState({
@@ -89,6 +94,8 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
   });
 
   const units = ["tCO2e", "Gallons of water", "Metric tonnes of waste"];
+  const urlPattern =
+    /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
 
   const abatementProject: any = useQuery({
     queryKey: ["activeProject", params.slug],
@@ -148,6 +155,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
     handleSubmit,
     setFieldError,
     submitForm,
+    isSubmitting,
     errors,
   } = useFormik({
     initialValues: {
@@ -392,7 +400,11 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         copy[2].estimatedCost = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[2].estimatedCost}
+                      value={
+                        projectDetails[2].estimatedCost === 0
+                          ? ""
+                          : projectDetails[2].estimatedCost
+                      }
                       className={cn(
                         "h-16 bg-gray-50 w-1/2 text-slate-700 text-sm font-light",
                         err.estimatedCost && "border border-red-600"
@@ -441,7 +453,16 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "cost must be greater than 0" }),
-                        websiteUrl: z.string().url().optional(),
+                        websiteUrl: z
+                          .string()
+                          .refine(
+                            (url) => {
+                              // Regular expression to validate URLs without the scheme
+                              return url.match(urlPattern) !== null;
+                            },
+                            { message: "Invalid URL" }
+                          )
+                          .optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -530,7 +551,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                   <label className="text-sm">
                     What is the estimated emission reductions?
                   </label>
-                  <div>
+                  <div className="flex items-center space-x-3">
                     <Input
                       type="number"
                       name="emissionReductions"
@@ -539,7 +560,11 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         copy[3].emissionReductions = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[3].emissionReductions}
+                      value={
+                        projectDetails[3].emissionReductions === 0
+                          ? ""
+                          : projectDetails[3].emissionReductions
+                      }
                       className={cn(
                         "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
                         err.emissionReductions && "border border-red-600"
@@ -556,11 +581,14 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm w-28 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
                           errors?.emissionUnit && "border border-red-500"
                         )}
                       >
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue
+                          placeholder={units[0]}
+                          defaultValue={units[0]}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -770,7 +798,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
               )}
               <p className="flex-1 font-bold">Photo and Logo</p>
             </div>
-            {values.photoUrl != "" && values.logoUrl == "" && (
+            {currentSection !== 5 && (
               <Button
                 variant={"ghost"}
                 onClick={() => setCurrentSection(5)}
@@ -981,7 +1009,15 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
           <RadioGroup
             defaultValue="default"
             value={`${values.status}`}
-            onValueChange={(e) => setFieldValue("status", parseInt(e))}
+            onValueChange={(e) => {
+              if (e == "1") {
+                setConfirmationPopup(true);
+              } else if (e == "2") {
+                setConfirmationCompletedPopup(true);
+              } else {
+                setFieldValue("status", 0);
+              }
+            }}
             className="flex"
           >
             <div
@@ -1048,6 +1084,74 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
               </label>
             </div>
           </RadioGroup>
+
+          {/* completed confirmation */}
+          <Dialog
+            open={confirmationCompletedPopup}
+            onOpenChange={setConfirmationCompletedPopup}
+          >
+            <DialogPortal>
+              <DialogContent className="p-6 space-y-5">
+                <p className="text text-center">
+                  Are you sure you want to mark this project as completed? This
+                  will indicate to your suppliers that this project has
+                  finished. You can always go back and change the project
+                  status.
+                </p>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="border-2 border-blue-500 w-full font-semibold text-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    No, don&apos;t mark this project as completed
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => setFieldValue("status", 2)}
+                    className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                  >
+                    Yes, continue
+                  </Button>
+                </DialogClose>
+              </DialogContent>
+            </DialogPortal>
+          </Dialog>
+
+          {/* active confirmation */}
+          <Dialog open={confirmationPopup} onOpenChange={setConfirmationPopup}>
+            <DialogPortal>
+              <DialogContent className="p-6 space-y-5">
+                <p className="text text-center">
+                  Are you sure you want to mark this project as active? This
+                  will indicate to your suppliers that this project has started.
+                  You can always go back and change the project status.
+                </p>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="border-2 border-blue-500 w-full font-semibold text-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    No, don&apos;t activate this project
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => setFieldValue("status", 1)}
+                    className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                  >
+                    Yes, continue
+                  </Button>
+                </DialogClose>
+              </DialogContent>
+            </DialogPortal>
+          </Dialog>
         </div>
 
         <div className="flex justify-between items-center">
@@ -1090,6 +1194,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
 
           <Button
             type="submit"
+            disabled={isSubmitting}
             onClick={() => {
               submitForm();
             }}

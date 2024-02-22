@@ -18,6 +18,7 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { getRoleByName, updateUser } from "@/services/user.api";
 import { toast } from "sonner";
 import {
+  createOrganization,
   getAllOrganizations,
   inviteOrganization,
 } from "@/services/organizations.api";
@@ -25,9 +26,20 @@ import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import CreatableSelect from "react-select/creatable";
 
 const InviteOrganization = () => {
   const { data: session } = useSession();
+  const [options, setOptions] = React.useState<
+    {
+      label: string;
+      value: string;
+    }[]
+  >([]);
+  const [selectedOrg, setSelectedOrg] = React.useState<{
+    label: string;
+    value: string;
+  } | null>(null);
   const organizationsQ = useQuery({
     queryKey: ["organizations"],
     queryFn: () => getAllOrganizations(),
@@ -56,6 +68,7 @@ const InviteOrganization = () => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
+
       toast.success("Invitation sent successfully", {
         style: { color: "green" },
       });
@@ -65,6 +78,21 @@ const InviteOrganization = () => {
       toast.error(err.message, { style: { color: "red" } });
     },
   });
+
+  const customDropdownStyles = {
+    control: (provided: any, state: any) => ({
+      ...provided,
+      border: "none",
+      borderColor: "none", // Hide border color when menu is open
+      background: "#F9FAFB",
+      borderRadius: "6px",
+      padding: "1.5rem 0.2rem",
+      marginTop: "0.75rem",
+    }),
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+  };
 
   const inviteOrganizationForm = useFormik({
     initialValues: {
@@ -77,22 +105,45 @@ const InviteOrganization = () => {
     validateOnBlur: true,
     validationSchema: toFormikValidationSchema(validation),
 
-    onSubmit: (data: any) => {
+    onSubmit: async (data: any) => {
       console.log("role : ", role);
       const formData = {
         ...data,
         role_id: role?.data?.id,
         invited_by: session?.user.id,
       };
+      if (selectedOrg) {
+        const res = await createOrganization({
+          companyName: data.organization_id,
+        });
+        console.log({ res });
+        mutate({ ...formData, organization_id: res.data.id });
+        return;
+      }
       console.log("data : ", formData);
       mutate(formData);
     },
   });
 
-  console.log("role baher: ", role);
+  React.useEffect(() => {
+    if (organizationsQ.isSuccess) {
+      setOptions(
+        organizations?.data?.map((item: any) => ({
+          label: item.company_name,
+          value: item.id,
+        }))
+      );
+    }
+  }, [organizationsQ.isSuccess, organizationsQ.data]);
+
   return (
-    <div className="min-h-screen w-full grid place-items-center bg-gray-50 absolute inset-0">
-      <img src="/assets/images/Logo.svg" className="p-4" />
+    <div className="min-h-screen w-full grid place-items-center bg-gray-50 absolute inset-0 overflow-auto">
+      <img
+        src={"https://diw3xy9w4etxp.cloudfront.net/terralab_logo.png"}
+        height={"39px"}
+        width={"177px"}
+        alt="Terralab"
+      />
       <section className="flex flex-col justify-center items-stretch px-11 py-8 bg-white rounded max-w-[50rem] w-full max-md:px-5">
         <header className="text-2xl font-semibold leading-8 text-center text-slate-700 max-md:max-w-full">
           Invite Organization
@@ -188,7 +239,7 @@ const InviteOrganization = () => {
             //     "border border-red-500"
             // )}
             >
-              <Select
+              {/* <Select
                 name="organizationId"
                 onValueChange={(e) => {
                   inviteOrganizationForm.setFieldValue("organization_id", e);
@@ -213,15 +264,33 @@ const InviteOrganization = () => {
                           {org?.company_name}
                         </SelectItem>
                       ))}
-
-                    {/* <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem> */}
                   </SelectGroup>
                 </SelectContent>
-              </Select>
+              </Select> */}
+              <CreatableSelect
+                placeholder="Select or add a company"
+                options={organizations?.data?.map((item: any) => ({
+                  value: item.id,
+                  label: item.company_name,
+                }))}
+                // getOptionLabel={(option: any) => option.company_name}
+                // getOptionValue={(option) => option.id}
+                styles={customDropdownStyles}
+                onChange={(e: any) => {
+                  inviteOrganizationForm.setFieldValue(
+                    "organization_id",
+                    e.value
+                  );
+                  setSelectedOrg(e);
+                }}
+                onCreateOption={(e) => {
+                  console.log(e, "fists ");
+                  inviteOrganizationForm.setFieldValue("organization_id", e);
+                  setOptions([...options, { value: e, label: e }]);
+                  setSelectedOrg({ value: e, label: e });
+                }}
+                value={selectedOrg}
+              />
             </div>
           </div>
 

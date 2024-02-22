@@ -58,9 +58,12 @@ export const editAbatementProjects = ({
 };
 
 export const getActiveAbatementProjects = (orgId: string) => {
-  return fetchApi(
-    `/auth/abatement-projects?organizationId=${orgId}&filters[status]=1`
-  );
+  console.log("organization id: ", orgId);
+  if (orgId) {
+    return fetchApi(
+      `/auth/abatement-projects?organizationId=${orgId}&filters[status]=1`
+    );
+  }
 };
 
 export const getActiveAbatementProjectById = (projectId: string) => {

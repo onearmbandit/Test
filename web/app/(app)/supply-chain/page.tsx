@@ -70,7 +70,7 @@ import {
 const Page = () => {
   const queryClient = useQueryClient();
   const [showNew, setShowNew] = useState(false);
-  const session = useSession();
+  // const session = useSession();
   const [currentTab, setCurrentTab] = useState<string | null>(null);
   const [showCsvUploadModal, setShowCsvUploadModal] = useState(false);
   const [uploadStatus, setUploadStatus] = useState('select');
@@ -82,11 +82,12 @@ const Page = () => {
     queryFn: () => getUser(),
   });
   const user = userQ.isSuccess ? userQ.data.data : null;
-  const organizationId = session?.data?.user.organizations[0].id!;
+  const organizationId = user?.organizations[0].id!;
 
   const periodsQ = useQuery({
     queryKey: ['reporting-periods', organizationId],
     queryFn: () => getAllReportingPeriods(organizationId),
+    enabled: userQ.isSuccess,
   });
   const reportingPeriods = periodsQ.isSuccess ? periodsQ.data.data : [];
 

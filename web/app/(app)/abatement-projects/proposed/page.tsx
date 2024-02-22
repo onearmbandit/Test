@@ -2,14 +2,8 @@
 import Header from "@/components/Header";
 import EmptyState from "@/components/abatement-projects/empty-state";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { authOptions, calculateTotals } from "@/lib/utils";
+import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { calculateTotals, cn } from "@/lib/utils";
 import { getProposedAbatementProjects } from "@/services/abatement.api";
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
@@ -20,12 +14,10 @@ import React from "react";
 
 const ProposedPage = async () => {
   const { data: session } = useSession();
-  const organizationId = session?.user?.organizations[0]?.id
-    ? session?.user?.organizations[0]?.id
-    : "";
+  const organizationId = session?.user?.organizations[0]?.id;
   const projectsQ = useQuery({
-    queryKey: ["proposedProjects"],
-    queryFn: () => getProposedAbatementProjects(organizationId),
+    queryKey: ["proposedProjects", organizationId],
+    queryFn: () => getProposedAbatementProjects(organizationId!),
   });
 
   const projects = projectsQ.isSuccess ? projectsQ?.data?.data : [];
@@ -35,13 +27,13 @@ const ProposedPage = async () => {
   return (
     <div className="px-8">
       <Header />
-      {!projects || projects?.length == 0 ? (
+      {projectsQ.isSuccess && projects?.length == 0 ? (
         <EmptyState link="/abatement-projects/proposed/add" />
       ) : (
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
           <div className="flex items-center space-x-2">
             <Image
-              src={"/assets/images/folder-tick.svg"}
+              src={"/assets/images/folder-add.svg"}
               height={24}
               width={24}
               alt="folder icon"
@@ -51,19 +43,24 @@ const ProposedPage = async () => {
             </p>
           </div>
 
-          {/* todo: make it dynamic */}
           <p className="text-slate-800 font-semibold">
             Total Abatement to date:{" "}
             {Object.keys(emissionTotals).map((unit) => (
               <>
-                <span className="font-normal pr-4">
+                <span
+                  className={cn(
+                    "font-normal mr-4 rounded-md",
+                    unit === "tCO2e" && "bg-green-50 text-[#1E293B] p-2 ml-2",
+                    unit === "Gallons of water" &&
+                      "bg-cyan-50 text-cyan-800 p-2",
+                    unit === "Metric tonnes of waste" &&
+                      "bg-red-50 text-orange-800 p-2"
+                  )}
+                >
                   {emissionTotals[unit]} {unit}/year
                 </span>
               </>
             ))}
-            {/* <span className="font-normal">{emissionTotals} / year</span>
-            <span className="font-normal">NA NA / year</span>
-            <span className="font-normal">NA NA / year</span> */}
           </p>
 
           <div className="grid grid-cols-3 gap-6">

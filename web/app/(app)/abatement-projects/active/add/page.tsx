@@ -23,7 +23,6 @@ import {
   getSupplierOrganization,
 } from "@/services/abatement.api";
 import { uploadImage } from "@/services/auth.api";
-import { getAllSuppliers } from "@/services/supply.chain";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import _ from "lodash";
@@ -70,6 +69,8 @@ const AddActivePage = () => {
   });
 
   const units = ["tCO2e", "Gallons of water", "Metric tonnes of waste"];
+  const urlPattern =
+    /(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?\/[a-zA-Z0-9]{2,}|((https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z]{2,}(\.[a-zA-Z]{2,})(\.[a-zA-Z]{2,})?)|(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})?/g;
 
   const suppliers = useQuery({
     queryKey: ["supplier-list"],
@@ -101,7 +102,16 @@ const AddActivePage = () => {
     name: z.string().min(3, { message: "length" }),
     description: z.string().min(3, { message: "length" }),
     estimatedCost: z.number().min(0, { message: "must be greater than 0" }),
-    websiteUrl: z.string().url(),
+    websiteUrl: z
+      .string()
+      .refine(
+        (url) => {
+          // Regular expression to validate URLs without the scheme
+          return url.match(urlPattern) !== null;
+        },
+        { message: "Invalid URL" }
+      )
+      .optional(),
     emissionReductions: z
       .number()
       .min(0, { message: "must be greater than 0" }),
@@ -119,6 +129,7 @@ const AddActivePage = () => {
     setFieldError,
     submitForm,
     errors,
+    isSubmitting,
   } = useFormik({
     initialValues: {
       name: "",
@@ -126,7 +137,7 @@ const AddActivePage = () => {
       estimatedCost: 0,
       websiteUrl: "",
       emissionReductions: 0,
-      emissionUnit: "",
+      emissionUnit: units[0],
       proposedTo: "",
       proposedType: "",
       photoUrl: "",
@@ -327,12 +338,16 @@ const AddActivePage = () => {
                         copy[2].estimatedCost = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[2].estimatedCost}
+                      value={
+                        projectDetails[2].estimatedCost === 0
+                          ? ""
+                          : projectDetails[2].estimatedCost
+                      }
                       className={cn(
                         "h-16 bg-gray-50 w-1/2 text-slate-700 text-sm font-light",
                         err.estimatedCost && "border border-red-600"
                       )}
-                      placeholder="Add description"
+                      placeholder="Add project cost"
                     />
                     <p className="text-xs text-red-500 mt-0.5">
                       {err.estimatedCost}
@@ -376,7 +391,16 @@ const AddActivePage = () => {
                         estimatedCost: z
                           .number()
                           .min(1, { message: "cost must be greater than 0" }),
-                        websiteUrl: z.string().url().optional(),
+                        websiteUrl: z
+                          .string()
+                          .refine(
+                            (url) => {
+                              // Regular expression to validate URLs without the scheme
+                              return url.match(urlPattern) !== null;
+                            },
+                            { message: "Invalid URL" }
+                          )
+                          .optional(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,
@@ -426,7 +450,7 @@ const AddActivePage = () => {
                 {values.description}
               </p>
               <p className="text-green-900 text-sm line-clamp-2">
-                {values.estimatedCost}
+                $ {values.estimatedCost}
               </p>
               <p className="text-green-900 text-sm line-clamp-2">
                 {values.websiteUrl}
@@ -474,7 +498,11 @@ const AddActivePage = () => {
                         copy[3].emissionReductions = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[3].emissionReductions}
+                      value={
+                        projectDetails[3].emissionReductions === 0
+                          ? ""
+                          : projectDetails[3].emissionReductions
+                      }
                       className={cn(
                         "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
                         err.emissionReductions && "border border-red-600"
@@ -491,11 +519,14 @@ const AddActivePage = () => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm w-28 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
                           errors?.emissionUnit && "border border-red-500"
                         )}
                       >
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue
+                          placeholder={units[0]}
+                          defaultValue={units[0]}
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -914,7 +945,7 @@ const AddActivePage = () => {
         <div className="flex justify-end">
           <Button
             type="submit"
-            // disabled
+            disabled={isSubmitting}
             onClick={() => {
               submitForm();
             }}

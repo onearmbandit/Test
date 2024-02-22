@@ -13,7 +13,7 @@ interface PropsWithChildren {
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "C3 Insets",
+  title: "Terralab",
   description: "Dashboard",
 };
 
