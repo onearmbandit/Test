@@ -29,7 +29,7 @@ const WEB_BASE_URL = process.env.WEB_BASE_URL
 
 export default class AuthController {
   //register new user in first step of registration
-  public async register({ request, response }: HttpContextContract) {
+  public async register({ request, response, auth }: HttpContextContract) {
     try {
       await request.validate(SignupValidator)
 
@@ -83,6 +83,29 @@ export default class AuthController {
               role_id: role?.id
             })
             .save()
+
+          //:: Condition true when user invited by super-admin
+          if (organizationUserData?.firstName !=='' || organizationUserData?.lastName !=='') {
+            userData.merge({ firstName: organizationUserData?.firstName, lastName: organizationUserData?.lastName }).save()
+            let data = { 'firstName': organizationUserData?.firstName, 'lastName': organizationUserData?.lastName }
+            const emailData = {
+              user: data,
+              url: `${WEB_BASE_URL}`,
+            }
+
+            await sendMail(userData.email, 'Welcome to Terralab!', 'emails/user_welcome', emailData)
+          }
+
+          const token = await auth.use('api').generate(userData, {
+            expiresIn: '1day',
+          })
+          return apiResponse(
+            response,
+            true,
+            200,
+            { token, userData },
+            Config.get('responsemessage.AUTH_RESPONSE.loginSuccess')
+          )
         }
 
         return apiResponse(
@@ -115,7 +138,7 @@ export default class AuthController {
   }
 
   // update user data in second step
-  public async updateNewUser({ request, response, params, auth }: HttpContextContract) {
+  public async updateNewUser({ request, response, params }: HttpContextContract) {
     try {
       let requestData = request.all()
 
@@ -140,26 +163,26 @@ export default class AuthController {
         }
 
         await sendMail(userData.email, 'Welcome to Terralab!', 'emails/user_welcome', emailData)
-        if (requestData.invitedUser && !requestData.isSupplier) {
-          const token = await auth.use('api').generate(userData, {
-            expiresIn: '1day',
-          })
-          return apiResponse(
-            response,
-            true,
-            200,
-            { token, userData },
-            Config.get('responsemessage.AUTH_RESPONSE.loginSuccess')
-          )
-        } else {
-          return apiResponse(
-            response,
-            true,
-            201,
-            userData,
-            Config.get('responsemessage.AUTH_RESPONSE.signupSuccess')
-          )
-        }
+        // if (requestData.invitedUser && !requestData.isSupplier) {
+        // const token = await auth.use('api').generate(userData, {
+        //   expiresIn: '1day',
+        // })
+        // return apiResponse(
+        //   response,
+        //   true,
+        //   200,
+        //   { token, userData },
+        //   Config.get('responsemessage.AUTH_RESPONSE.loginSuccess')
+        // )
+        // } else {
+        return apiResponse(
+          response,
+          true,
+          201,
+          userData,
+          Config.get('responsemessage.AUTH_RESPONSE.signupSuccess')
+        )
+        // }
       } else {
         //:: Only uninvited user
         const emailData = {
