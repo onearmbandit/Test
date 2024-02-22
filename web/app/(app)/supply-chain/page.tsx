@@ -260,73 +260,15 @@ const Page = () => {
                     data manually in the table below.
                     <br />
                   </div>
-                  <Dialog>
-                    <DialogTrigger>
-                      <Button
-                        disabled
-                        className='text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 mb-9 px-4 py-3'
-                      >
-                        Upload CSV
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className='max-w-[44rem] p-[60px]'>
-                      <DialogDescription>
-                        <div className='bg-white flex max-w-[707px] flex-col items-end'>
-                          <DialogClose asChild>
-                            <Button type='button' variant='ghost'>
-                              <img
-                                loading='lazy'
-                                src='https://cdn.builder.io/api/v1/image/assets/TEMP/d846c09ab3f4187b63077673a631850dbed6d5d8a2e8740d3dfc3f933dba7c58?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                                className='aspect-square object-contain object-center w-6 overflow-hidden max-w-full max-md:mr-2.5'
-                              />
-                            </Button>
-                          </DialogClose>
 
-                          <div className='text-gray-800 text-center text-xl font-bold leading-7 self-stretch max-md:max-w-full'>
-                            Import Supplier GHG Emissions
-                          </div>
-                          <form>
-                            <div className='self-stretch flex w-full flex-col mt-4 mb-0 max-md:max-w-full max-md:px-5'>
-                              <div className='text-gray-800 text-xl leading-7 self-stretch w-full mr-4 mt-4 max-md:max-w-full max-md:mr-2.5'>
-                                Download our CSV template to ensure successful
-                                upload. Be sure to attribute only one product to
-                                a supplier.
-                              </div>
-
-                              <div className='bg-gray-200 self-stretch flex relative cursor-pointer flex-col justify-center items-center mr-4 mt-4 px-16 py-12 rounded-lg max-md:max-w-full max-md:mr-2.5 max-md:px-5'>
-                                <input
-                                  type='file'
-                                  accept='.csv'
-                                  className='absolute left-0 top-0 w-full h-full opacity-0'
-                                ></input>
-                                <div className='items-center flex gap-3 mt-1.5 mb-1'>
-                                  <img
-                                    loading='lazy'
-                                    src='https://cdn.builder.io/api/v1/image/assets/TEMP/90462b2605fc6d0399b50fa56cda63f7809e55747efc111afb6771457a2f2140?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&'
-                                    className='aspect-square object-contain object-center w-3 overflow-hidden shrink-0 max-w-full my-auto'
-                                  />
-                                  <div className='text-slate-500 text-sm font-bold leading-5 self-stretch grow whitespace-nowrap'>
-                                    ADD A CSV FILE
-                                  </div>
-                                </div>
-                              </div>
-
-                              <Button
-                                type='submit'
-                                disabled
-                                className='text-white text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 aspect-[1.625] mr-4 mt-4 px-4 py-3 self-end max-md:mr-2.5'
-                              >
-                                Import
-                              </Button>
-                            </div>
-                          </form>
-                          <button className='text-blue-600 absolute bottom-[80px] text-sm leading-5 underline self-stretch mt-4 max-md:max-w-full'>
-                            Download our CSV Template
-                          </button>
-                        </div>
-                      </DialogDescription>
-                    </DialogContent>
-                  </Dialog>
+                  <div>
+                    <Button
+                      disabled
+                      className='text-white cursor-not-allowed text-center text-sm font-semibold leading-4 whitespace-nowrap justify-center items-stretch rounded bg-blue-600 self-center mt-6 mb-9 px-4 py-3'
+                    >
+                      Upload CSV
+                    </Button>
+                  </div>
                 </div>
                 <div className='items-stretch self-stretch flex flex-col pb-12 mt-8'>
                   <div className='items-center bg-gray-100 flex justify-between rounded-t-md  gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap'>

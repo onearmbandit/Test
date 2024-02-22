@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Input } from '../ui/input';
 import AutocompleteInput from '../Autocomplete';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { z } from 'zod';
+import { number, z } from 'zod';
 
 import { useFormik } from 'formik';
 
@@ -60,15 +60,24 @@ export const AddSupplierManualy = () => {
   const [editProductTable, setEditProductTable] = useState(false);
   const [completeStep, setCompleteStep] = useState(false);
   const [supplier, setSupplier] = useState<any>(null);
+  const [err, setErr] = useState<{
+    name?: string;
+    type?: string;
+    quantity?: number | null;
+    functionalUnit?: string;
+    scope_3Contribution?: number | null;
+  }>({});
+
   const [productList, setProductList] = useState<any>([
     {
       name: 'Add product name',
       type: 'Add product type',
-      quantity: '',
+      quantity: null,
       functionalUnit: '',
-      scope_3Contribution: '',
+      scope_3Contribution: null,
     },
   ]);
+
   const [createableValue, setCreatableValue] = useState<any>('');
   const [createableTypeValue, setCreatableTypeValue] = useState<any>('');
 
@@ -107,7 +116,9 @@ export const AddSupplierManualy = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: addSupplier,
     onSuccess: (data) => {
-      console.log('supplier created : ', data);
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       setEditProductTable(true);
       setSupplier(data);
       setValues({
@@ -127,7 +138,9 @@ export const AddSupplierManualy = () => {
   const { mutate: editSupplierMut } = useMutation({
     mutationFn: updateSupplier,
     onSuccess: (data) => {
-      console.log('supplier updated : ', data);
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
 
       setSupplier(data);
       setValues(data.data);
@@ -143,8 +156,10 @@ export const AddSupplierManualy = () => {
   const { mutate: addSupplierProductsMut } = useMutation({
     mutationFn: createSupplierProduct,
     onSuccess: (data) => {
-      console.log('supplier products created: ', data);
-      Route;
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
+
       toast.success('Supplier Created', { style: { color: 'green' } });
       setEditProductTable(false);
       router.push('/supply-chain');
@@ -191,7 +206,7 @@ export const AddSupplierManualy = () => {
       quantity: '',
       type: '',
       functionalUnit: '',
-      scope_3Contribution: '',
+      scope_3Contribution: null,
     };
     const newCopy = _.cloneDeep(productList);
     newCopy[i].name = inputValue;
@@ -224,7 +239,7 @@ export const AddSupplierManualy = () => {
       quantity: '',
       type: inputValue,
       functionalUnit: '',
-      scope_3Contribution: '',
+      scope_3Contribution: null,
     };
     const newCopy = _.cloneDeep(productList);
     newCopy[i].type = inputValue;
@@ -429,6 +444,7 @@ export const AddSupplierManualy = () => {
                   <Button
                     variant='outline'
                     type='submit'
+                    // onClick={() => setEditProductTable(true)}
                     className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)] max-md:mr-2.5'
                   >
                     Save
@@ -529,6 +545,7 @@ export const AddSupplierManualy = () => {
                       <div className='2xl:w-[303px] w-[163px]'>
                         <CreatableSelect
                           // isClearable
+                          name='name'
                           options={productNamelist}
                           styles={customDropdownStyles}
                           onChange={(newValue) => {
@@ -539,13 +556,18 @@ export const AddSupplierManualy = () => {
                           onCreateOption={(e) => handleCreate(e, i)}
                           value={{ label: item.name, value: item.name }}
                           placeholder='Add product name'
+                          className={cn(err.name && 'border border-red-600')}
                         />
+                        <p className='text-xs absolute max-w-[189px] text-red-500 mt-0.5'>
+                          {err.name}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className='pl-0 py-3 pr-4'>
                       <div className='2xl:w-[303px] w-[163px]'>
                         <CreatableSelect
                           // isClearable
+                          name='type'
                           options={productTypelist}
                           styles={customDropdownStyles}
                           onChange={(newValue) => {
@@ -556,12 +578,17 @@ export const AddSupplierManualy = () => {
                           onCreateOption={(e) => handleCreateType(e, i)}
                           value={{ label: item.type, value: item.type }}
                           placeholder='Add product type'
+                          className={cn(err.type && 'border border-red-600')}
                         />
+                        <p className='text-xs absolute text-red-500 mt-0.5'>
+                          {err.type}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className='pl-0 pr-4 py-3'>
                       <div className='2xl:w-[303px] w-[163px]'>
                         <Input
+                          name='quantity'
                           type='number'
                           value={item.quantity}
                           placeholder='unit'
@@ -570,13 +597,20 @@ export const AddSupplierManualy = () => {
                             newCopy[i].quantity = e.target.value;
                             setProductList(newCopy);
                           }}
-                          className='bg-[#F9FAFB] rounded-md'
+                          className={cn(
+                            'bg-[#F9FAFB] rounded-md',
+                            err.quantity && 'border border-red-600'
+                          )}
                         />
+                        <p className='text-xs absolute text-red-500 mt-0.5'>
+                          {err.quantity}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className='pl-0 pr-4 py-3'>
                       <div className='2xl:w-[225px] w-[125px]'>
                         <Input
+                          name='functionalUnit'
                           value={item.functionalUnit}
                           placeholder='kilowatt/hr'
                           onChange={(e) => {
@@ -584,13 +618,20 @@ export const AddSupplierManualy = () => {
                             newCopy[i].functionalUnit = e.target.value;
                             setProductList(newCopy);
                           }}
-                          className='bg-[#F9FAFB] rounded-md'
+                          className={cn(
+                            'bg-[#F9FAFB] rounded-md',
+                            err.functionalUnit && 'border border-red-600'
+                          )}
                         />
+                        <p className='text-xs absolute text-red-500 mt-0.5'>
+                          {err.functionalUnit}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className='pl-0 pr-4 py-3'>
                       <div className='2xl:w-[215px] w-[125px]'>
                         <Input
+                          name='scope_3Contribution'
                           type='number'
                           value={item.scope_3Contribution}
                           placeholder='kgCO2'
@@ -599,8 +640,14 @@ export const AddSupplierManualy = () => {
                             newCopy[i].scope_3Contribution = e.target.value;
                             setProductList(newCopy);
                           }}
-                          className='bg-[#F9FAFB] rounded-md'
+                          className={cn(
+                            'bg-[#F9FAFB] rounded-md',
+                            err.scope_3Contribution && 'border border-red-600'
+                          )}
                         />
+                        <p className='text-xs absolute text-red-500 mt-0.5'>
+                          {err.scope_3Contribution}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className='pl-0 pr-4  py-3'>
@@ -615,7 +662,7 @@ export const AddSupplierManualy = () => {
                               type: '',
                               quantity: '',
                               functionalUnit: '',
-                              scope_3Contribution: '',
+                              scope_3Contribution: null,
                             });
 
                             setProductList(newCopy);
@@ -637,21 +684,59 @@ export const AddSupplierManualy = () => {
                 ))}
               </TableBody>
             </Table>
-            <div
-              role='button'
+            <Button
+              variant='ghost'
               onClick={() => {
                 const data: any = {
                   supplierId: supplier?.data?.id,
                   supplierProducts: productList,
                 };
+
+                const res = z
+                  .object({
+                    name: z.string().min(3, {
+                      message: 'description minimum lenth should be 3',
+                    }),
+                    type: z.string().trim().min(1, { message: 'Required' }),
+                    quantity: z.nullable(z.number()),
+                    functionalUnit: z
+                      .string()
+                      .trim()
+                      .min(1, { message: 'Required' }),
+                    scope_3Contribution: z.nullable(z.number()),
+                  })
+
+                  .safeParse({
+                    name: productList[0].name,
+                    type: productList[0].type,
+                    quantity: productList[0].quantity,
+                    functionalUnit: productList[0].functionalUnit,
+                    scope_3Contribution: productList[0].scope_3Contribution,
+                  });
+                console.log(productList[0].name, 'dsfsd');
+
+                if (res.success) {
+                  setErr({});
+                  addSupplierProductsMut(data);
+                  setCompleteStep(true);
+
+                  toast.success('The changes have been saved.', {
+                    style: { color: 'green' },
+                  });
+                } else {
+                  res.error.errors.map((item) => {
+                    setErr({ ...err, [`${item.path[0]}`]: item.message });
+                  });
+                  console.log(res.error, 'err');
+                }
                 console.log(productList, 'productList');
-                addSupplierProductsMut(data);
-                setCompleteStep(true);
+                // addSupplierProductsMut(data);
+                // setCompleteStep(true);
               }}
               className='justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]'
             >
               Save
-            </div>
+            </Button>
           </>
         ) : (
           <div>
