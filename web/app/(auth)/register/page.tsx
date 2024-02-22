@@ -237,13 +237,13 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
             </label>
             <div
               className={cn(
-                "input text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
+                "input text-slate-500 text-xs font-light leading-4  items-stretch bg-gray-50 justify-center mt-3 px-2 rounded-md max-md:max-w-full",
                 registerForm.errors.email && "border border-red-500"
               )}
             >
               <Input
                 className={
-                  "w-full bg-transparent disabled:text-slate-900 px-0 "
+                  "w-full bg-transparent disabled:text-slate-900 px-0 h-[69px]"
                 }
                 id="email"
                 name="email"
@@ -265,13 +265,13 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
             </label>
             <div
               className={cn(
-                "input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 py-7 rounded-md max-md:max-w-full max-md:flex-wrap"
+                "input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 rounded-md max-md:max-w-full max-md:flex-wrap"
               )}
             >
               <Input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                className="w-full bg-transparent px-0 "
+                className="w-full bg-transparent px-0 h-[69px]"
                 name="password"
                 onChange={(e) => {
                   registerForm.handleChange(e);
@@ -399,7 +399,7 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
           >
             Or Sign Up with SSO
           </div>
-          <div className="text-blue-700 text-center text-xs font-medium leading-5 mt-6 max-md:max-w-full">
+          <div className="text-[#334155] text-center text-xs font-medium leading-5 mt-6 max-md:max-w-full">
             Already have an account?{" "}
             <Link href="/login" className="font-bold text-sm text-blue-700">
               Sign In
@@ -541,7 +541,7 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
           </label>
           <div
             className={cn(
-              "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+              "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 rounded-md max-md:max-w-full",
               step2Form.errors.firstName && "border border-red-500"
             )}
           >
@@ -551,7 +551,7 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
               placeholder="First Name"
               name="firstName"
               onChange={step2Form.handleChange}
-              className="bg-transparent px-0"
+              className="bg-transparent px-0 h-[69px]"
             />
           </div>
           <p className="text-xs text-red-500">{step2Form.errors.firstName}</p>
@@ -565,14 +565,14 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
           </label>
           <div
             className={cn(
-              "text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
+              "text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 rounded-md max-md:max-w-full",
               step2Form.errors.lastName && "border border-red-500"
             )}
           >
             <Input
               type="text"
               id="lastNameInput"
-              className="bg-transparent px-0"
+              className="bg-transparent px-0 h-[69px]"
               name="lastName"
               onChange={step2Form.handleChange}
               placeholder="Last Name"
@@ -700,7 +700,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
               onChange={step3Form.handleChange}
               placeholder="Company Name"
               className={cn(
-                "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+                "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 h-[69px] rounded-md max-md:max-w-full",
                 step3Form.touched.companyName &&
                   step3Form.errors.companyName &&
                   "border border-red-500"
@@ -732,7 +732,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
             )}
           </div>
 
-          <div className="max-w-[582px]">
+          <div className="max-w-[582px] h-[69px]">
             <AutocompleteInput
               isDisabled={!isEdit}
               setAddress={(e: any) => {

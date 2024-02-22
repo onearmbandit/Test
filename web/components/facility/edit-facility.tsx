@@ -138,7 +138,7 @@ const EditFacility = ({
             Edit
           </p>
         </div>
-        <div>
+        <div className="h-[44px]">
           <AutocompleteInput
             isDisabled={!isEdit}
             setAddress={(e: any) => {

@@ -130,7 +130,7 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
             </p>
           )}
         </div>
-        <div>
+        <div className="h-[44px]">
           <AutocompleteInput
             isDisabled={!isEdit}
             setAddress={(e: any) => {
