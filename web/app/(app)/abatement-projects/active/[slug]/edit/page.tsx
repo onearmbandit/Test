@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogPortal,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -71,6 +72,10 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
     photoUrl?: string;
     logoUrl?: string;
   }>({});
+
+  const [confirmationPopup, setConfirmationPopup] = useState(false);
+  const [confirmationCompletedPopup, setConfirmationCompletedPopup] =
+    useState(false);
 
   const [uploading, setUploading] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
@@ -395,7 +400,11 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         copy[2].estimatedCost = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[2].estimatedCost}
+                      value={
+                        projectDetails[2].estimatedCost === 0
+                          ? ""
+                          : projectDetails[2].estimatedCost
+                      }
                       className={cn(
                         "h-16 bg-gray-50 w-1/2 text-slate-700 text-sm font-light",
                         err.estimatedCost && "border border-red-600"
@@ -551,7 +560,11 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         copy[3].emissionReductions = Number(e.target.value);
                         setProjectDetails(copy);
                       }}
-                      value={projectDetails[3].emissionReductions}
+                      value={
+                        projectDetails[3].emissionReductions === 0
+                          ? ""
+                          : projectDetails[3].emissionReductions
+                      }
                       className={cn(
                         "h-16 bg-gray-50 text-slate-700 text-sm font-light w-1/2",
                         err.emissionReductions && "border border-red-600"
@@ -996,7 +1009,15 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
           <RadioGroup
             defaultValue="default"
             value={`${values.status}`}
-            onValueChange={(e) => setFieldValue("status", parseInt(e))}
+            onValueChange={(e) => {
+              if (e == "1") {
+                setConfirmationPopup(true);
+              } else if (e == "2") {
+                setConfirmationCompletedPopup(true);
+              } else {
+                setFieldValue("status", 0);
+              }
+            }}
             className="flex"
           >
             <div
@@ -1063,6 +1084,74 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
               </label>
             </div>
           </RadioGroup>
+
+          {/* completed confirmation */}
+          <Dialog
+            open={confirmationCompletedPopup}
+            onOpenChange={setConfirmationCompletedPopup}
+          >
+            <DialogPortal>
+              <DialogContent className="p-6 space-y-5">
+                <p className="text text-center">
+                  Are you sure you want to mark this project as completed? This
+                  will indicate to your suppliers that this project has
+                  finished. You can always go back and change the project
+                  status.
+                </p>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="border-2 border-blue-500 w-full font-semibold text-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    No, don&apos;t mark this project as completed
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => setFieldValue("status", 2)}
+                    className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                  >
+                    Yes, continue
+                  </Button>
+                </DialogClose>
+              </DialogContent>
+            </DialogPortal>
+          </Dialog>
+
+          {/* active confirmation */}
+          <Dialog open={confirmationPopup} onOpenChange={setConfirmationPopup}>
+            <DialogPortal>
+              <DialogContent className="p-6 space-y-5">
+                <p className="text text-center">
+                  Are you sure you want to mark this project as active? This
+                  will indicate to your suppliers that this project has started.
+                  You can always go back and change the project status.
+                </p>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="border-2 border-blue-500 w-full font-semibold text-blue-500 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    No, don&apos;t activate this project
+                  </Button>
+                </DialogClose>
+                <DialogClose>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={() => setFieldValue("status", 1)}
+                    className="border-2 border-gray-400 w-full font-semibold text-gray-400 hover:text-gray-600"
+                  >
+                    Yes, continue
+                  </Button>
+                </DialogClose>
+              </DialogContent>
+            </DialogPortal>
+          </Dialog>
         </div>
 
         <div className="flex justify-between items-center">
