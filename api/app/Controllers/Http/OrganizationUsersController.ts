@@ -42,7 +42,7 @@ export default class OrganizationUsersController {
       const emailData = {
         initials: invitedBy.firstName[0] + invitedBy.lastName[0],
         fullName: `${invitedBy.firstName} ${invitedBy.lastName}`,
-        organizationName: invitedBy.organizations[0].companyName,
+        organizationName: 'Terralab',
         email: result.email,
         url: `${WEB_BASE_URL}`,
       }

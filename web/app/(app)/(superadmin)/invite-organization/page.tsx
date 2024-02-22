@@ -40,6 +40,11 @@ const InviteOrganization = () => {
     label: string;
     value: string;
   } | null>(null);
+
+  const [createdOrg, setCreatedOrg] = React.useState<{
+    label: string;
+    value: string;
+  } | null>(null);
   const organizationsQ = useQuery({
     queryKey: ["organizations"],
     queryFn: () => getAllOrganizations(),
@@ -112,7 +117,7 @@ const InviteOrganization = () => {
         role_id: role?.data?.id,
         invited_by: session?.user.id,
       };
-      if (selectedOrg) {
+      if (createdOrg) {
         const res = await createOrganization({
           companyName: data.organization_id,
         });
@@ -288,6 +293,7 @@ const InviteOrganization = () => {
                   inviteOrganizationForm.setFieldValue("organization_id", e);
                   setOptions([...options, { value: e, label: e }]);
                   setSelectedOrg({ value: e, label: e });
+                  setCreatedOrg({ value: e, label: e });
                 }}
                 value={selectedOrg}
               />
