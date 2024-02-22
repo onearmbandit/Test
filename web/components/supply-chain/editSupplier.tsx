@@ -460,7 +460,7 @@ export const EditSupplier = () => {
                     Edit
                   </p>
                 </div>
-                <div className="max-w-[768px] relative h-[44px]">
+                <div className="max-w-[768px] relative min-h-[44px]">
                   <AutocompleteInput
                     isDisabled={!isAddEdit}
                     setAddress={(a: string) => {

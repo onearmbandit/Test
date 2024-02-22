@@ -94,18 +94,18 @@ const AutocompleteInput = ({
   }, [val]);
 
   return (
-    <div className="relative h-full">
+    <div className="relative min-h-[44px] h-full">
       {val == "" ? (
         <Input
           value={value}
           onChange={handleInput}
           disabled={!ready}
           placeholder="Add address"
-          className="text-slate-500 text-sm font-light mt-3 leading-4 items-stretch h-full bg-gray-50 self-stretch justify-center px-2 rounded-md max-md:max-w-full max-h-[69px]"
+          className="text-slate-500 text-sm font-light leading-4 items-stretch min-h-[44px] h-full bg-gray-50 self-stretch justify-center px-2 rounded-md max-md:max-w-full max-h-[69px]"
         />
       ) : (
         <textarea
-          className="min-h-24 h-full resize-none w-full text-sm focus:outline-none disabled:cursor-not-allowed font-light rounded-lg px-2 bg-gray-50 text-slate-500"
+          className="min-h-24 h-full resize-none w-full text-sm focus:outline-none disabled:cursor-not-allowed font-light rounded-lg px-2 py-1 bg-gray-50 text-slate-500"
           value={val}
           disabled={isDisabled}
           onChange={(e) => {

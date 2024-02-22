@@ -335,7 +335,7 @@ export const AddSupplierManualy = () => {
                 Add the basic information about your supplier
               </div>
               <form onSubmit={handleSubmit}>
-                <div className="flex gap-5 pr-20 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+                <div className="flex gap-5 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:max-w-full">
                   <div className=" my-auto font-medium text-slate-700">
                     Supplier Name
                   </div>
@@ -345,7 +345,7 @@ export const AddSupplierManualy = () => {
                     onChange={handleChange}
                     placeholder="Supplier"
                     className={cn(
-                      "grow justify-center bg-gray-50 text-slate-700 max-md:pr-5 max-w-[337px]",
+                      "grow justify-center bg-gray-50 text-slate-700 h-[44px] max-w-[337px]",
                       errors?.name && "border border-red-500"
                     )}
                   />
@@ -362,7 +362,7 @@ export const AddSupplierManualy = () => {
                       onChange={handleChange}
                       placeholder="Email"
                       className={cn(
-                        "grow justify-center py-3.5 pr-8 pl-2 bg-gray-50  rounded-md text-slate-700 max-md:pr-5",
+                        "grow justify-center h-[44px] pr-8 pl-2 bg-gray-50  rounded-md text-slate-700 max-md:pr-5",
                         errors?.email && "border border-red-500"
                       )}
                     />
@@ -411,7 +411,7 @@ export const AddSupplierManualy = () => {
                     Supplier Address
                   </div>
                 </div>
-                <div className="max-w-[768px] relative h-[44px]">
+                <div className="max-w-[768px] relative min-h-[44px]">
                   <AutocompleteInput
                     setAddress={(a: string) => {
                       /** TODO: add the autocompleted address */
