@@ -464,7 +464,6 @@ export const EditSupplier = () => {
                   <AutocompleteInput
                     isDisabled={!isAddEdit}
                     setAddress={(a: string) => {
-                      /** TODO: add the autocompleted address */
                       setFieldValue("address", a);
                       console.log(a, "address");
                       console.log("first");

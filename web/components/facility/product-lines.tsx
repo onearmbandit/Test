@@ -227,8 +227,10 @@ const EditProducts = ({
     <div className="flex flex-col items-stretch self-stretch text-xs leading-4 bg-white rounded-lg">
       <header className="grid grid-cols-3 gap-5   py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 md:flex-wrap md:max-w-full">
         <div className="flex-auto">Product Name</div>
-        <div className="flex-auto my-auto">Quantity (unit)</div>
-        <div className="flex gap-3 self-start pr-3">
+        <div className="flex-auto my-auto place-self-center">
+          Quantity (unit)
+        </div>
+        <div className="flex gap-3 self-start pr-9 place-self-end">
           <div>Functional Unit</div>
 
           <TooltipProvider delayDuration={800}>
@@ -283,22 +285,21 @@ const EditProducts = ({
             />
           </div>
 
-          <div>
+          <div className="place-self-center">
             <Input
               className="justify-center items-stretch text-sm p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
-              type="number"
               id="quantity"
               value={item.quantity}
               onChange={(e) => {
                 const copy = _.cloneDeep(products);
-                copy[i].quantity = Number(e.target.value);
+                copy[i].quantity = parseInt(e.target.value);
                 setProducts(copy);
               }}
               name="quantity"
               placeholder="1"
             />
           </div>
-          <div className="flex space-x-3 items-center">
+          <div className="flex space-x-3 items-center place-self-end">
             <Input
               className="justify-center items-stretch text-sm p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
               type="text"

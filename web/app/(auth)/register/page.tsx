@@ -815,12 +815,12 @@ const AccountSetupComplete = ({ userEmail }: any) => {
       <p className="mt-6 py-8 max-w-[581px] text-center">
         Tap continue to head to the Terralab platform
       </p>
-      <Link
-        href={"/"}
+      <p
+        role="button"
         className="rounded bg-blue-600 hover:bg-blue-600/90 px-4 py-1 text-white text-sm font-semibold"
       >
-        Back to Login
-      </Link>
+        Continue
+      </p>
     </div>
   );
 };
