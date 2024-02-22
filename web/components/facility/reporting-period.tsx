@@ -97,7 +97,13 @@ const ReportingPeriod = ({
         console.log("errror", data);
         throw new Error(data.errors[0].message);
       }
-      queryClient.invalidateQueries({});
+      queryClient.invalidateQueries({ queryKey: ["reporting-periods"] });
+      queryClient.invalidateQueries({
+        queryKey: ["facility-details", facilityId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["facilitydetails", facilityId],
+      });
       setNew(false);
     },
     onError: (error) => {

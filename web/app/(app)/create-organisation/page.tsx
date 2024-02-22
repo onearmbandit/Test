@@ -19,11 +19,17 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { getUser } from "@/services/user.api";
 
 const Page = () => {
   const session = useSession();
 
   const [step, setStep] = useState(1);
+  const userQ = useQuery({
+    queryKey: ["user-data"],
+    queryFn: () => getUser(),
+  });
+  const user = userQ.isSuccess ? userQ.data.data : null;
 
   const [currentStep, setCurrentStep] = useState(1);
   const [organizationId, setOrganizationId] = useState<string | null>(null);
@@ -51,19 +57,19 @@ const Page = () => {
           </h2>
         </section>
       </header>
-      <CreateOrganisation setStep={setStep} />
+      {userQ.isLoading && <Loader2 className="text-blue-400 animate-spin" />}
+      {userQ.isSuccess && <CreateOrganisation setStep={setStep} user={user} />}
     </div>
   );
 };
 
-const Step1 = ({ setStep, setCurrentStep }: any) => {
+const Step1 = ({ setStep, setCurrentStep, user }: any) => {
   const router = useRouter();
-  const session = useSession();
+  // const session = useSession();
 
   const orgDetail = useQuery({
     queryKey: ["org-email"],
-    queryFn: () =>
-      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+    queryFn: () => getOrganizationDetails(user?.organizations[0]?.id!),
   });
   const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
 
@@ -97,8 +103,7 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data: any) => {
-      const organizationId: string | undefined =
-        session.data?.user?.organizations[0]?.id;
+      const organizationId: string | undefined = user?.organizations[0]?.id;
       if (organizationId) {
         mutate({ id: organizationId, formdata: data });
       }
@@ -194,8 +199,8 @@ const Step1 = ({ setStep, setCurrentStep }: any) => {
   );
 };
 
-const Step2 = ({ setStep }: any) => {
-  const session = useSession();
+const Step2 = ({ setStep, user }: any) => {
+  // const session = useSession();
   const [selected, setSelected] = useState<number | null>(null);
   const sizes = [
     "1 to 10",
@@ -211,8 +216,7 @@ const Step2 = ({ setStep }: any) => {
 
   const orgDetail = useQuery({
     queryKey: ["org-capacity"],
-    queryFn: () =>
-      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+    queryFn: () => getOrganizationDetails(user?.organizations[0]?.id!),
   });
   const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
   console.log(organization);
@@ -246,8 +250,7 @@ const Step2 = ({ setStep }: any) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data: any) => {
-      const organizationId: string | undefined =
-        session.data?.user?.organizations[0]?.id;
+      const organizationId: string | undefined = user?.organizations[0]?.id;
       if (organizationId) {
         mutate({ id: organizationId, formdata: data });
       }
@@ -326,8 +329,8 @@ const Step2 = ({ setStep }: any) => {
   );
 };
 
-const Step3 = ({ setStep }: any) => {
-  const session = useSession();
+const Step3 = ({ setStep, user }: any) => {
+  // const session = useSession();
   const validation = z.object({
     naicsCode: z.string().regex(/^[0-9]{4,5}$/, "NAICS codes are 4-5 digits"),
     profileStep: z.number().int().min(1).max(3),
@@ -335,8 +338,7 @@ const Step3 = ({ setStep }: any) => {
 
   const orgDetail = useQuery({
     queryKey: ["org-naics"],
-    queryFn: () =>
-      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+    queryFn: () => getOrganizationDetails(user?.organizations[0]?.id!),
   });
   const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
 
@@ -365,8 +367,7 @@ const Step3 = ({ setStep }: any) => {
     validationSchema: toFormikValidationSchema(validation),
     validateOnChange: false,
     onSubmit: (data: any) => {
-      const organizationId: string | undefined =
-        session.data?.user?.organizations[0]?.id;
+      const organizationId: string | undefined = user?.organizations[0]?.id;
       if (organizationId) {
         mutate({ id: organizationId, formdata: data });
       }
@@ -455,9 +456,9 @@ const Step3 = ({ setStep }: any) => {
   );
 };
 
-const Step4 = ({ setStep }: any) => {
+const Step4 = ({ setStep, user }: any) => {
   const router = useRouter();
-  const session = useSession();
+  // const session = useSession();
   const [targets, setTargets] = useState<string[]>([]);
   const [currentTarget, setCurrentTarget] = useState<string>("");
   const validation = z.object({
@@ -480,8 +481,7 @@ const Step4 = ({ setStep }: any) => {
 
   const orgDetail = useQuery({
     queryKey: ["org-targets"],
-    queryFn: () =>
-      getOrganizationDetails(session.data?.user?.organizations[0]?.id!),
+    queryFn: () => getOrganizationDetails(user?.organizations[0]?.id!),
   });
   const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
 
@@ -509,8 +509,7 @@ const Step4 = ({ setStep }: any) => {
     },
     // validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data: any) => {
-      const organizationId: string | undefined =
-        session.data?.user?.organizations[0]?.id;
+      const organizationId: string | undefined = user?.organizations[0]?.id;
 
       const newTargets =
         currentTarget != "" ? [...targets, currentTarget] : targets;

@@ -13,16 +13,21 @@ import { ChevronDown, MailPlus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn, isSuperAdmin } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
-import { exportSupplierDataCsv } from "@/services/user.api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { exportSupplierDataCsv, getUser } from "@/services/user.api";
 import { toast } from "sonner";
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const session = useSession();
+  // const session = useSession();
+  const userQ = useQuery({
+    queryKey: ["user-data"],
+    queryFn: () => getUser(),
+  });
+  const user = userQ.isSuccess ? userQ.data.data : {};
 
-  const firstName = session?.data?.user?.first_name || "";
-  const lastName = session?.data?.user?.last_name || "";
+  const firstName = user?.first_name || "";
+  const lastName = user?.last_name || "";
 
   const firstLetterOfFirstName = firstName.charAt(0);
   const firstLetterOfLastName = lastName.charAt(0);
@@ -39,10 +44,7 @@ const Sidebar = () => {
     return false;
   }
 
-  const superAdmin: Boolean = isSuperAdmin(
-    session?.data?.user?.roles,
-    "super-admin"
-  );
+  const superAdmin: Boolean = isSuperAdmin(user?.roles, "super-admin");
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationKey: ["supplier-data-csv"],
@@ -90,11 +92,11 @@ const Sidebar = () => {
           </div>
           <div className="justify-center items-stretch self-stretch flex grow basis-[0%] flex-col">
             <h1 className="overflow-hidden text-slate-800 text-ellipsis text-sm font-semibold leading-5 whitespace-nowrap">
-              {session.data?.user?.first_name} {session.data?.user?.last_name}
+              {user?.first_name} {user?.last_name}
             </h1>
             <div className="overflow-hidden text-slate-500 text-ellipsis text-xs leading-4 whitespace-nowrap">
-              {session.data?.user?.organizations?.length! > 0 &&
-                session.data?.user?.organizations[0]?.company_name}
+              {user?.organizations?.length! > 0 &&
+                user?.organizations[0]?.company_name}
             </div>
           </div>
         </header>

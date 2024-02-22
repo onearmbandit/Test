@@ -19,7 +19,7 @@ const EditClimateConditions = ({
   setSection: (val: string) => void;
 }) => {
   const router = useRouter();
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const [targets, setTargets] = useState<string[]>([]);
   const [currentTarget, setCurrentTarget] = useState<string>("");
   const queryClient = useQueryClient();
@@ -53,7 +53,7 @@ const EditClimateConditions = ({
       profileStep: 4,
     },
     onSubmit: (data: any) => {
-      const organizationId = session?.user?.organizations[0]?.id!;
+      const organizationId = user?.organizations[0]?.id!;
       const newTargets =
         currentTarget.length > 0 ? [...targets, currentTarget] : targets;
       if (organizationId) {

@@ -5,7 +5,7 @@ import AutocompleteInput from "../Autocomplete";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useFormik } from "formik";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFacility, updateFacility } from "@/services/facility.api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
@@ -14,6 +14,7 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { getUser } from "@/services/user.api";
 
 const EditFacility = ({
   serialNo = 1,
@@ -22,9 +23,16 @@ const EditFacility = ({
   serialNo?: number;
   facility: any;
 }) => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const router = useRouter();
-  const orgId = session?.user?.organizations[0].id;
+
+  const userQ = useQuery({
+    queryKey: ["user-data"],
+    queryFn: () => getUser(),
+  });
+  const user = userQ.isSuccess ? userQ.data.data : {};
+
+  const orgId = user?.organizations[0].id;
 
   const [isEdit, setEdit] = useState(false);
 
@@ -130,7 +138,7 @@ const EditFacility = ({
             Edit
           </p>
         </div>
-        <div>
+        <div className="min-h-[44px]">
           <AutocompleteInput
             isDisabled={!isEdit}
             setAddress={(e: any) => {

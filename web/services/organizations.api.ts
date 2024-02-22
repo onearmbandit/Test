@@ -111,3 +111,10 @@ export const inviteOrganization = async (formdata: any) => {
 export const getOrganizationDetails = (id: string) => {
   return fetchApi(`/auth/organization/${id}`);
 };
+
+export const createOrganization = async (formdata: any) => {
+  return fetchApi(`/auth/organization`, {
+    method: "POST",
+    body: formdata,
+  } as Options);
+};

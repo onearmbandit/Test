@@ -23,6 +23,7 @@ import {
 } from "@radix-ui/react-tooltip";
 import CreatableSelect from "react-select/creatable";
 import { useSession } from "next-auth/react";
+import { getUser } from "@/services/user.api";
 
 const ProductLines = ({
   period,
@@ -43,152 +44,17 @@ const ProductLines = ({
     { name: "", quantity: 0, functionalUnit: "" },
   ]);
 
+  const userQ = useQuery({
+    queryKey: ["user-data"],
+    queryFn: () => getUser(),
+  });
+  const user = userQ.isSuccess ? userQ.data.data : {};
+
   return (
     <>
       {isEdit ? (
-        // <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
-        //   <div className="flex flex-col items-stretch self-stretch text-xs leading-4 bg-white rounded-lg">
-        //     <header className="grid grid-cols-3 gap-5   py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 md:flex-wrap md:max-w-full">
-        //       <div className="flex-auto">Product Name</div>
-        //       <div className="flex-auto my-auto">Quantity (unit)</div>
-        //       <div className="flex gap-3 self-start pr-3">
-        //         <div>Functional Unit</div>
-
-        //         <TooltipProvider delayDuration={800}>
-        //           <Tooltip>
-        //             <TooltipTrigger>
-        //               <HelpCircle
-        //                 size={16}
-        //                 className="text-white fill-slate-600"
-        //               />
-        //             </TooltipTrigger>
-        //             <TooltipContent className="bg-slate-800 max-w-[246px] px-2.5 py-3 rounded shadow-sm">
-        //               <p className=" text-xs leading-4 text-white">
-        //                 A functional unit in sustainability is a measure of
-        //                 performance that quantifies the environmental impacts of
-        //                 a system, used to compare different products or
-        //                 processes within a defined context.
-        //               </p>
-        //             </TooltipContent>
-        //           </Tooltip>
-        //         </TooltipProvider>
-        //       </div>
-        //     </header>
-
-        //     {products.map((item: Product, i: number) => (
-        //       <div
-        //         key={i}
-        //         className="gap-5 grid grid-cols-3 mt-6 w-full whitespace-nowrap text-slate-700 max-md:flex-wrap max-md:max-w-full"
-        //       >
-        //         <div>
-        //           <CreatableSelect
-        //             options={nameList}
-        //             onChange={(e) => {
-        //               const copy = _.cloneDeep(products);
-        //               copy[i].name = e?.label;
-        //               setProducts(copy);
-        //             }}
-        //             styles={customDropdownStyles}
-        //             placeholder="Select..."
-        //             onCreateOption={(e) => {
-        //               const newOption = {
-        //                 name: e,
-        //                 quantity: "",
-        //                 type: "",
-        //                 functionalUnit: "",
-        //                 scope_3Contribution: "",
-        //               };
-        //               const newCopy = _.cloneDeep(products);
-        //               newCopy[i].name = e;
-        //               setProducts(newCopy);
-        //               // setCreatableValue(newOption);
-        //             }}
-        //             value={{ label: item.name, value: item.name }}
-        //           />
-        //           {/* <Input
-        //             className="justify-center items-stretch text-xs p-2 max-w-[14.75rem] 2xl:max-w-[70%] bg-gray-50 rounded-md"
-        //             type="text"
-        //             id="product-name"
-        //             value={item.name}
-        //             onChange={(e) => {
-        //               const copy = _.cloneDeep(products);
-        //               copy[i].name = e.target.value;
-        //               setProducts(copy);
-        //             }}
-        //             name="product-name"
-        //             required
-        //             placeholder="Add product name "
-        //           /> */}
-        //         </div>
-
-        //         <div>
-        //           <Input
-        //             className="justify-center items-stretch text-xs p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
-        //             type="number"
-        //             id="quantity"
-        //             value={item.quantity}
-        //             onChange={(e) => {
-        //               const copy = _.cloneDeep(products);
-        //               copy[i].quantity = Number(e.target.value);
-        //               setProducts(copy);
-        //             }}
-        //             name="quantity"
-        //             required
-        //             placeholder="1"
-        //           />
-        //         </div>
-        //         <div className="flex space-x-3 items-center">
-        //           <Input
-        //             className="justify-center items-stretch text-xs p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
-        //             type="text"
-        //             id="unit"
-        //             name="functionalUnit"
-        //             onChange={(e) => {
-        //               const copy = _.cloneDeep(products);
-        //               copy[i].functionalUnit = e.target.value;
-        //               setProducts(copy);
-        //             }}
-        //             value={item.functionalUnit}
-        //             placeholder="Kilowatt/hour"
-        //             required
-        //           />
-        //           <X
-        //             size={16}
-        //             onClick={() => handleProductRemove(i)}
-        //             className="text-slate-500"
-        //             role="button"
-        //           />
-        //         </div>
-        //       </div>
-        //     ))}
-
-        //     <div className="flex flex-col items-stretch self-end mt-8 max-w-full text-sm font-semibold leading-5 whitespace-nowrap">
-        //       <Button
-        //         variant={"ghost"}
-        //         onClick={handleAddProductLine}
-        //         className="text-blue-600 font-semibold hover:bg-white hover:text-blue-600"
-        //       >
-        //         + Add another product
-        //       </Button>
-        //       <div className="flex items-center space-x-2 mt-8">
-        //         {(editPending || addPending) && (
-        //           <Loader2 className="text-blue-600 animate-spin" />
-        //         )}
-        //         <Button
-        //           type="button"
-        //           size={"sm"}
-        //           disabled={editPending || addPending}
-        //           onClick={() => handleSubmit()}
-        //           className="self-end px-4 py-1.5 shadow"
-        //         >
-        //           Save
-        //         </Button>
-        //       </div>
-        //     </div>
-        //   </div>
-        // </Suspense>
         <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
-          <EditProducts period={period} setEdit={setEdit} />
+          <EditProducts period={period} setEdit={setEdit} user={user} />
         </Suspense>
       ) : (
         <Suspense fallback={<Loader2 className="animate-spin text-blue-400" />}>
@@ -207,14 +73,15 @@ const ProductLines = ({
 const EditProducts = ({
   period,
   setEdit,
+  user,
 }: {
   period: string;
+  user: any;
   setEdit: React.Dispatch<SetStateAction<boolean>>;
 }) => {
   const searchParams = useSearchParams();
   const facilityId = searchParams.get("facilityId");
-  const { data: session } = useSession();
-  const orgId = session?.user?.organizations[0]?.id;
+
   const queryClient = useQueryClient();
   const [products, setProducts] = useState<Product[]>([
     { name: "", quantity: 0, functionalUnit: "" },
@@ -225,12 +92,12 @@ const EditProducts = ({
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
-  // console.log(productLines);
+  const orgId = user?.organizations[0]?.id;
 
   const productNamesQ = useQuery({
-    queryKey: ["product-names", session?.user.organizations[0].id],
-    queryFn: () =>
-      getAllFacilityProductNames(session?.user?.organizations[0].id!),
+    queryKey: ["product-names", orgId],
+    queryFn: () => getAllFacilityProductNames(orgId),
+    enabled: Object.keys(user).length > 0,
   });
   const productNames = productNamesQ.isSuccess ? productNamesQ.data?.data : [];
   const nameList: { value: string; label: string }[] = productNames?.map(
@@ -270,6 +137,18 @@ const EditProducts = ({
         ],
         fetchStatus: "idle",
       });
+      queryClient.invalidateQueries({
+        queryKey: ["product-lines", period],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["product-emissions", period],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reporting-periods"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["productlines"],
+      });
       setEdit(false);
     },
     onError: (err) => {
@@ -285,14 +164,16 @@ const EditProducts = ({
       }
       toast.success("Products Lines updated.", { style: { color: "green" } });
       queryClient.invalidateQueries({
-        queryKey: [
-          "product-lines",
-          period,
-          "reporting-periods",
-          "product-emissions",
-          "productlines",
-        ],
-        exact: true,
+        queryKey: ["product-lines", period],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["product-emissions", period],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reporting-periods"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["productlines"],
       });
       setEdit(false);
     },
@@ -360,8 +241,10 @@ const EditProducts = ({
     <div className="flex flex-col items-stretch self-stretch text-xs leading-4 bg-white rounded-lg">
       <header className="grid grid-cols-3 gap-5   py-2 w-full font-bold border-b border-solid border-b-slate-200 text-slate-700 md:flex-wrap md:max-w-full">
         <div className="flex-auto">Product Name</div>
-        <div className="flex-auto my-auto">Quantity (unit)</div>
-        <div className="flex gap-3 self-start pr-3">
+        <div className="flex-auto my-auto place-self-center">
+          Quantity (unit)
+        </div>
+        <div className="flex gap-3 self-start pr-9 place-self-end">
           <div>Functional Unit</div>
 
           <TooltipProvider delayDuration={800}>
@@ -385,9 +268,9 @@ const EditProducts = ({
       {products.map((item: Product, i: number) => (
         <div
           key={i}
-          className="gap-5 grid grid-cols-3 mt-6 w-full whitespace-nowrap text-slate-700 max-md:flex-wrap max-md:max-w-full"
+          className="gap-5 grid grid-cols-3 mt-6 w-full whitespace-nowrap text-slate-700"
         >
-          <div className="max-w-[236px] w-full 2xl:max-w-[70%]">
+          <div className="max-w-[236px] w-full">
             <CreatableSelect
               options={nameList}
               onChange={(e) => {
@@ -396,7 +279,7 @@ const EditProducts = ({
                 setProducts(copy);
               }}
               styles={customDropdownStyles}
-              placeholder="Add product name"
+              placeholder={"Add product name"}
               onCreateOption={(e) => {
                 const newOption = {
                   name: e,
@@ -410,29 +293,29 @@ const EditProducts = ({
                 setProducts(newCopy);
                 // setCreatableValue(newOption);
               }}
-              value={{ label: item.name, value: item.name }}
+              value={
+                item.name == "" ? null : { label: item.name, value: item.name }
+              }
             />
           </div>
 
-          <div>
+          <div className="place-self-center">
             <Input
-              className="justify-center items-stretch text-sm p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
-              type="number"
+              className="justify-center items-stretch text-sm p-2 max-w-[8.175rem]  bg-gray-50 rounded-md"
               id="quantity"
               value={item.quantity}
               onChange={(e) => {
                 const copy = _.cloneDeep(products);
-                copy[i].quantity = Number(e.target.value);
+                copy[i].quantity = parseInt(e.target.value);
                 setProducts(copy);
               }}
               name="quantity"
-              required
               placeholder="1"
             />
           </div>
-          <div className="flex space-x-3 items-center">
+          <div className="flex space-x-3 items-center place-self-end">
             <Input
-              className="justify-center items-stretch text-sm p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
+              className="justify-center items-stretch text-sm p-2 max-w-[8.125rem]  bg-gray-50 rounded-md"
               type="text"
               id="unit"
               name="functionalUnit"

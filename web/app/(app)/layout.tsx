@@ -16,7 +16,7 @@ const AuthProvider = dynamic(() => import("../../components/AuthProvider"), {
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "C3 Insets",
+  title: "Terralab",
   description: "Dashboard",
 };
 

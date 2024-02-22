@@ -128,6 +128,7 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
   const invitedEmail = searchParams.get("email");
+  const isSupplier = searchParams.get("isSupplier");
   const social = searchParams.get("social");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
@@ -165,12 +166,19 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       if (user.errors) {
         throw new Error(user.errors[0].message);
       }
-      setUserId(user.data?.id);
+      console.log("reg 1 ", user);
+      setUserId(user.duserata?.id);
       if (invitedEmail) {
         router.push(`/register?step=2&invited=true&slug=${user.data?.slug}`);
-      } else {
-        router.push(`/register?step=2&slug=${user.data?.slug}`);
+        return;
       }
+
+      if (isSupplier == "true") {
+        router.push(`/register?step=2&isSupplier=true&slug=${user.data?.slug}`);
+        return;
+      }
+
+      router.push(`/register?step=2&slug=${user.data?.slug}`);
       // setCurrentStep(2);
     },
     onError: (err) => {
@@ -192,7 +200,11 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       if (errors.length > 0) {
         return;
       }
-      mutate({ ...data, invitedUser: invitedEmail ? true : false });
+      mutate({
+        ...data,
+        invitedUser: invitedEmail ? true : false,
+        isSupplier: isSupplier == "true" ? true : false,
+      });
     },
   });
 
@@ -226,13 +238,13 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
             </label>
             <div
               className={cn(
-                "input text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
+                "input text-slate-500 text-xs font-light leading-4  items-stretch bg-gray-50 justify-center mt-3 px-2 rounded-md max-md:max-w-full",
                 registerForm.errors.email && "border border-red-500"
               )}
             >
               <Input
                 className={
-                  "w-full bg-transparent disabled:text-slate-900 px-0 "
+                  "w-full bg-transparent disabled:text-slate-900 px-0 h-[69px]"
                 }
                 id="email"
                 name="email"
@@ -254,13 +266,13 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
             </label>
             <div
               className={cn(
-                "input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 py-7 rounded-md max-md:max-w-full max-md:flex-wrap"
+                "input-group items-stretch bg-gray-50 flex justify-between gap-2 mt-3 px-2 rounded-md max-md:max-w-full max-md:flex-wrap"
               )}
             >
               <Input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                className="w-full bg-transparent px-0 "
+                className="w-full bg-transparent px-0 h-[69px]"
                 name="password"
                 onChange={(e) => {
                   registerForm.handleChange(e);
@@ -388,7 +400,7 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
           >
             Or Sign Up with SSO
           </div>
-          <div className="text-blue-700 text-center text-xs font-medium leading-5 mt-6 max-md:max-w-full">
+          <div className="text-[#334155] text-center text-xs font-medium leading-5 mt-6 max-md:max-w-full">
             Already have an account?{" "}
             <Link href="/login" className="font-bold text-sm text-blue-700">
               Sign In
@@ -452,6 +464,7 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
   const searchParams = useSearchParams();
   const isInvited = searchParams.get("invited");
   const slug = searchParams.get("slug");
+  const isSupplier = searchParams.get("isSupplier");
 
   const validation = z.object({
     firstName: z
@@ -477,13 +490,18 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
         throw new Error(data.errors[0].message);
       }
 
+      console.log("user", data);
+
       if (isInvited == "true") {
-        router.push(
-          `/register?step=setup-done&slug=${data.data?.userData?.slug}`
-        );
-      } else {
-        router.push(`/register?step=3&slug=${data.data?.userData?.slug}`);
+        router.push(`/register?step=setup-done&slug=${data.data?.slug}`);
+        return;
       }
+      if (isSupplier == "true") {
+        router.push(`/register?step=3&slug=${data.data?.slug}&isSupplier=true`);
+        return;
+      }
+
+      router.push(`/register?step=3&slug=${data.data?.slug}`);
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -499,7 +517,11 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
     onSubmit: (data) => {
       mutate({
         id: slug!,
-        formdata: { ...data, invitedUser: isInvited == "true" ? true : false },
+        formdata: {
+          ...data,
+          invitedUser: isInvited == "true" ? true : false,
+          isSupplier: isSupplier == "true" ? true : false,
+        },
       });
     },
   });
@@ -522,7 +544,7 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
           </label>
           <div
             className={cn(
-              "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+              "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 rounded-md max-md:max-w-full",
               step2Form.errors.firstName && "border border-red-500"
             )}
           >
@@ -532,7 +554,7 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
               placeholder="First Name"
               name="firstName"
               onChange={step2Form.handleChange}
-              className="bg-transparent px-0"
+              className="bg-transparent px-0 h-[69px]"
             />
           </div>
           <p className="text-xs text-red-500">{step2Form.errors.firstName}</p>
@@ -546,14 +568,14 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
           </label>
           <div
             className={cn(
-              "text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 py-7 rounded-md max-md:max-w-full",
+              "text-slate-500 text-xs font-light leading-4 items-stretch bg-gray-50 justify-center mt-3 px-2 rounded-md max-md:max-w-full",
               step2Form.errors.lastName && "border border-red-500"
             )}
           >
             <Input
               type="text"
               id="lastNameInput"
-              className="bg-transparent px-0"
+              className="bg-transparent px-0 h-[69px]"
               name="lastName"
               onChange={step2Form.handleChange}
               placeholder="Last Name"
@@ -588,10 +610,9 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
   const { data: session, update } = useSession();
   const searchParams = useSearchParams();
   const slug = searchParams.get("slug");
+  const isSupplier = searchParams.get("isSupplier");
   const [isEdit, setEdit] = useState(false);
   const [address, setAddress] = useState("");
-
-  console.log(slug);
 
   const validation = z.object({
     companyName: z
@@ -614,7 +635,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
       setUserEmail(data.data.email);
       // setCurrentStep(4);
       // console.log("data", data.data.organizations);
-      update({ orgs: data.data.organizations });
+      // update({ orgs: data.data.organizations });
       if (session) {
         router.push("/create-organisation");
       } else {
@@ -638,11 +659,19 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
     validateOnBlur: true,
     validateOnMount: false,
     onSubmit: (data) => {
-      // console.log(data, userSlug);
-      if (slug == null) {
-        mutate({ ...data, userSlug: session?.user.slug });
+      console.log({ slug });
+      if (!slug) {
+        mutate({
+          ...data,
+          userSlug: session?.user.slug,
+          isSupplier: isSupplier == "true" ? true : false,
+        });
       } else {
-        mutate({ ...data, userSlug: slug });
+        mutate({
+          ...data,
+          userSlug: slug,
+          isSupplier: isSupplier == "true" ? true : false,
+        });
       }
     },
   });
@@ -674,7 +703,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
               onChange={step3Form.handleChange}
               placeholder="Company Name"
               className={cn(
-                "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
+                "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 h-[69px] rounded-md max-md:max-w-full",
                 step3Form.touched.companyName &&
                   step3Form.errors.companyName &&
                   "border border-red-500"
@@ -706,7 +735,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
             )}
           </div>
 
-          <div className="max-w-[582px]">
+          <div className="max-w-[582px] h-[69px]">
             <AutocompleteInput
               isDisabled={!isEdit}
               setAddress={(e: any) => {
@@ -789,12 +818,12 @@ const AccountSetupComplete = ({ userEmail }: any) => {
       <p className="mt-6 py-8 max-w-[581px] text-center">
         Tap continue to head to the Terralab platform
       </p>
-      <Link
-        href={"/"}
+      <p
+        role="button"
         className="rounded bg-blue-600 hover:bg-blue-600/90 px-4 py-1 text-white text-sm font-semibold"
       >
-        Back to Login
-      </Link>
+        Continue
+      </p>
     </div>
   );
 };

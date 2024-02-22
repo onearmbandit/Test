@@ -15,7 +15,7 @@ const EditEmployees = ({
   setSection: (val: string) => void;
 }) => {
   const { setNav } = useAccountStore();
-  const { data: session, update } = useSession();
+  // const { data: session, update } = useSession();
   const [selected, setSelected] = useState<number | null>(null);
   const queryClient = useQueryClient();
 
@@ -53,7 +53,7 @@ const EditEmployees = ({
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const orgId = session?.user.organizations[0].id;
+    const orgId = user.organizations[0].id;
 
     mutate({ id: orgId!, formdata: { companySize: sizes[selected!] } });
   };
