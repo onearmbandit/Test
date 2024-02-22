@@ -100,7 +100,7 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
           )}
         </div>
 
-        <div className="h-[44px]">
+        <div className="min-h-[44px]">
           {userQ.isLoading && (
             <Loader2 className="animate-spin text-blue-600" />
           )}

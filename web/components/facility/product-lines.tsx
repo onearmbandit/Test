@@ -137,6 +137,18 @@ const EditProducts = ({
         ],
         fetchStatus: "idle",
       });
+      queryClient.invalidateQueries({
+        queryKey: ["product-lines", period],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["product-emissions", period],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reporting-periods"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["productlines"],
+      });
       setEdit(false);
     },
     onError: (err) => {
@@ -152,14 +164,16 @@ const EditProducts = ({
       }
       toast.success("Products Lines updated.", { style: { color: "green" } });
       queryClient.invalidateQueries({
-        queryKey: [
-          "product-lines",
-          period,
-          "reporting-periods",
-          "product-emissions",
-          "productlines",
-        ],
-        exact: true,
+        queryKey: ["product-lines", period],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["product-emissions", period],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["reporting-periods"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["productlines"],
       });
       setEdit(false);
     },
@@ -214,7 +228,7 @@ const EditProducts = ({
               ...item,
               functionalUnit: item?.functional_unit,
             }))
-          : [{ name: "", quantity: null, functionalUnit: "" }];
+          : [{ name: "", quantity: 0, functionalUnit: "" }];
       // console.log(productLines?.data?.FacilityProducts.length);
       setProducts(updated);
       if (productLines?.data?.FacilityProducts.length == 0) {
@@ -254,9 +268,9 @@ const EditProducts = ({
       {products.map((item: Product, i: number) => (
         <div
           key={i}
-          className="gap-5 grid grid-cols-3 mt-6 w-full whitespace-nowrap text-slate-700 max-md:flex-wrap max-md:max-w-full"
+          className="gap-5 grid grid-cols-3 mt-6 w-full whitespace-nowrap text-slate-700"
         >
-          <div className="max-w-[236px] w-full 2xl:max-w-[70%]">
+          <div className="max-w-[236px] w-full">
             <CreatableSelect
               options={nameList}
               onChange={(e) => {
@@ -287,7 +301,7 @@ const EditProducts = ({
 
           <div className="place-self-center">
             <Input
-              className="justify-center items-stretch text-sm p-2 max-w-[8.175rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
+              className="justify-center items-stretch text-sm p-2 max-w-[8.175rem]  bg-gray-50 rounded-md"
               id="quantity"
               value={item.quantity}
               onChange={(e) => {
@@ -301,7 +315,7 @@ const EditProducts = ({
           </div>
           <div className="flex space-x-3 items-center place-self-end">
             <Input
-              className="justify-center items-stretch text-sm p-2 max-w-[8.125rem] 2xl:max-w-[40%] bg-gray-50 rounded-md"
+              className="justify-center items-stretch text-sm p-2 max-w-[8.125rem]  bg-gray-50 rounded-md"
               type="text"
               id="unit"
               name="functionalUnit"

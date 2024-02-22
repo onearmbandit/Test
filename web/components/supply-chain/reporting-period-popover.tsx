@@ -69,6 +69,9 @@ const ReportingPeriodPopup = ({
 
       toast.success("Reporting period updated", { style: { color: "green" } });
     },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: 'red' } });
+    },
   });
   const addReportMut = useMutation({
     mutationFn: addReportingPeriod,
@@ -97,6 +100,9 @@ const ReportingPeriodPopup = ({
       toast.success("Reporting period Deleted.", {
         style: { color: "green" },
       });
+    },
+    onError: (error) => {
+      toast.error(error.message, { style: { color: 'red' } });
     },
   });
   const { values, setFieldValue, errors, handleSubmit, submitForm } = useFormik(
