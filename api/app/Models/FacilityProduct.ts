@@ -4,7 +4,6 @@ import FacilityEmission from './FacilityEmission'
 import { v4 as uuidv4 } from 'uuid'
 import { ParsedQs } from 'qs'
 import FacilityEqualityAttribute from './FacilityEqualityAttribute'
-import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class FacilityProduct extends BaseModel {
   @column({ isPrimary: true })

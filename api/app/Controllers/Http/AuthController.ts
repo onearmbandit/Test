@@ -138,7 +138,7 @@ export default class AuthController {
   }
 
   // update user data in second step
-  public async updateNewUser({ request, response, params, auth }: HttpContextContract) {
+  public async updateNewUser({ request, response, params }: HttpContextContract) {
     try {
       let requestData = request.all()
 
