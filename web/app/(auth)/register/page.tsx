@@ -166,7 +166,8 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       if (user.errors) {
         throw new Error(user.errors[0].message);
       }
-      setUserId(user.data?.id);
+      console.log("reg 1 ", user);
+      setUserId(user.duserata?.id);
       if (invitedEmail) {
         router.push(`/register?step=2&invited=true&slug=${user.data?.slug}`);
         return;
@@ -488,6 +489,8 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
+
+      console.log("user", data);
 
       if (isInvited == "true") {
         router.push(`/register?step=setup-done&slug=${data.data?.slug}`);
