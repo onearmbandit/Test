@@ -4,6 +4,7 @@ import FacilityEmission from './FacilityEmission'
 import { v4 as uuidv4 } from 'uuid'
 import { ParsedQs } from 'qs'
 import FacilityEqualityAttribute from './FacilityEqualityAttribute'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class FacilityProduct extends BaseModel {
   @column({ isPrimary: true })
@@ -127,7 +128,9 @@ export default class FacilityProduct extends BaseModel {
     let products: any = []
     let updateProductIds: any = []
 
-    let allProductsOfFacility: any = facilityEmissionData.FacilityProducts?.map((item) => item.id)
+    let allProductsOfFacility: any = facilityEmissionData.FacilityProducts?.map((item) => {
+      return item.id
+    })
 
     requestData.facilityProducts.forEach((element) => {
       var singleData: any = {}
@@ -146,9 +149,20 @@ export default class FacilityProduct extends BaseModel {
     )
 
     if (idsToDelete.length !== 0) {
-      await this.query().whereIn('id', idsToDelete).update({
-        deletedAt: new Date(),
-      })
+      // Fetch the records to be updated
+      const recordsToUpdate = await this.query().whereIn('id', idsToDelete);
+
+      // Update each record
+      await Promise.all(recordsToUpdate.map(async (record) => {
+        const newName = DateTime.now() + '_' + record.name
+        // Update the record
+        await this.query()
+          .where('id', record.id)
+          .update({
+            name: newName,
+            deletedAt: new Date(),
+          });
+      }));
     }
 
     // save equality attribute value
@@ -185,7 +199,6 @@ export default class FacilityProduct extends BaseModel {
       .where('facility_emission_id', facilityEmissionData.id)
     const totalProducts = allProducts.length
 
-    // const percentagePerProduct = 100 / totalProducts
 
     let scope1EmissionPerProduct = scope1TotalEmission / totalProducts
     let scope2EmissionPerProduct = scope2TotalEmission / totalProducts
