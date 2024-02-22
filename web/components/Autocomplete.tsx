@@ -100,7 +100,7 @@ const AutocompleteInput = ({
           value={value}
           onChange={handleInput}
           disabled={!ready}
-          placeholder="Add address"
+          placeholder="Add Address"
           className="text-slate-500 text-sm font-light leading-4 items-stretch min-h-[44px] h-full bg-gray-50 self-stretch justify-center px-2 rounded-md max-md:max-w-full max-h-[69px]"
         />
       ) : (
