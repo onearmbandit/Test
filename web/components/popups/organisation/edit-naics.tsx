@@ -14,15 +14,15 @@ import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 
 const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const orgId = session?.user.organizations[0].id!;
 
   const userQ = useQuery({
     queryKey: ["naics-details"],
     queryFn: () => getUser(),
   });
-  const user = userQ.isSuccess ? userQ.data : null;
+  const user = userQ.isSuccess ? userQ.data.data : null;
+  const orgId = user?.organizations[0].id!;
 
   const { mutate, isPending } = useMutation({
     mutationFn: setupOrganizationStep3,
@@ -60,7 +60,7 @@ const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
 
   useEffect(() => {
     if (userQ.isSuccess) {
-      const naics = user.data.organizations[0].naics_code;
+      const naics = user?.organizations[0].naics_code;
       console.log(naics);
       naicsForm.setFieldValue("naicsCode", naics);
     }
