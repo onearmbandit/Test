@@ -69,22 +69,13 @@ export const EditSupplier = () => {
   const [productList, setProductList] = useState<any>([
     {
       id: "",
-      name: "",
-      type: "",
+      name: "Add product name",
+      type: "Add product type",
       quantity: "",
       functional_unit: "",
       scope_3Contribution: "",
     },
   ]);
-  const [err, setErr] = useState<
-    {
-      name?: string;
-      type?: string;
-      quantity?: number | null;
-      functional_unit?: string;
-      scope_3Contribution?: number | null;
-    }[]
-  >([]);
   const [createableValue, setCreatableValue] = useState<any>("");
   const [createableTypeValue, setCreatableTypeValue] = useState<any>("");
   const session = useSession();
@@ -286,7 +277,7 @@ export const EditSupplier = () => {
     }
   }, [supplierQ.status]);
 
-  console.log(err);
+  // console.log(productList);
 
   return (
     <div className="flex flex-col flex-start p-6 w-full">
@@ -574,9 +565,7 @@ export const EditSupplier = () => {
                 {productList.map((item: any, i: number) => (
                   <TableRow key={i} className="mt-4 border-0">
                     <TableCell className="py-3 px-3 pl-0 pr-4">
-                      <div
-                        className={cn("2xl:w-[303px] w-[179px]", err[i]?.name)}
-                      >
+                      <div className="2xl:w-[303px] w-[179px]">
                         <CreatableSelect
                           // isClearable
                           options={productNamelist}
@@ -586,24 +575,13 @@ export const EditSupplier = () => {
                             copy[i].name = newValue?.value;
                             setProductList(copy);
                           }}
-                          placeholder="Add Product name"
                           onCreateOption={(e) => handleCreate(e, i)}
-                          value={
-                            item.name == ""
-                              ? null
-                              : { label: item.name, value: item.name }
-                          }
+                          value={{ label: item.name, value: item.name }}
                         />
                       </div>
-                      <p className="text-xs text-red-500">{err[i]?.name}</p>
                     </TableCell>
                     <TableCell className="pl-0 py-3 pr-4">
-                      <div
-                        className={cn(
-                          "2xl:w-[303px] w-[179px]",
-                          err[i]?.type && "border border-red-500"
-                        )}
-                      >
+                      <div className="2xl:w-[303px] w-[179px]">
                         <CreatableSelect
                           // isClearable
                           options={productTypelist}
@@ -613,13 +591,8 @@ export const EditSupplier = () => {
                             copy[i].type = newValue?.value;
                             setProductList(copy);
                           }}
-                          placeholder="Add Product Type"
                           onCreateOption={(e) => handleCreateType(e, i)}
-                          value={
-                            item.type == ""
-                              ? null
-                              : { label: item.type, value: item.type }
-                          }
+                          value={{ label: item.type, value: item.type }}
                         />
                       </div>
                     </TableCell>
@@ -631,17 +604,11 @@ export const EditSupplier = () => {
                           placeholder="unit"
                           onChange={(e) => {
                             const newCopy = _.cloneDeep(productList);
-                            newCopy[i].quantity = e.target.value.toString();
+                            newCopy[i].quantity = e.target.value;
                             setProductList(newCopy);
                           }}
-                          className={cn(
-                            "bg-[#F9FAFB] rounded-md",
-                            err[i]?.quantity && "border border-red-500"
-                          )}
+                          className="bg-[#F9FAFB] rounded-md"
                         />
-                        <p className="text-xs text-red-500">
-                          {err[i]?.quantity}
-                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="pl-0 pr-4 py-3">
@@ -654,14 +621,8 @@ export const EditSupplier = () => {
                             newCopy[i].functional_unit = e.target.value;
                             setProductList(newCopy);
                           }}
-                          className={cn(
-                            "bg-[#F9FAFB] rounded-md",
-                            err[i]?.functional_unit && "border border-red-500"
-                          )}
+                          className="bg-[#F9FAFB] rounded-md"
                         />
-                        <p className="text-xs text-red-500">
-                          {err[i]?.functional_unit}
-                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="pl-0 pr-4 py-3 w-[163px]">
@@ -672,16 +633,10 @@ export const EditSupplier = () => {
                           placeholder="kgCO2"
                           onChange={(e) => {
                             const newCopy = _.cloneDeep(productList);
-                            newCopy[i].scope_3Contribution = parseInt(
-                              e.target.value
-                            );
+                            newCopy[i].scope_3Contribution = e.target.value;
                             setProductList(newCopy);
                           }}
-                          className={cn(
-                            "bg-[#F9FAFB] rounded-md ",
-                            err[i]?.scope_3Contribution &&
-                              "border border-red-500"
-                          )}
+                          className="bg-[#F9FAFB] rounded-md"
                         />
                       </div>
                     </TableCell>
@@ -727,45 +682,8 @@ export const EditSupplier = () => {
                   supplierId: supplier?.id,
                   supplierProducts: productList,
                 };
-
-                const res = z
-                  .array(
-                    z.object({
-                      name: z.string().min(3, {
-                        message: "description minimum lenth should be 3",
-                      }),
-                      type: z.string().min(1, { message: "Required" }).trim(),
-                      quantity: z.string(),
-                      functional_unit: z.string(),
-                      scope_3Contribution: z.number(),
-                    })
-                  )
-                  .safeParse(productList);
-
-                if (res.success) {
-                  setErr([]);
-                  addSupplierProductsMut(data);
-                  // setCompleteStep(true);
-
-                  toast.success("The changes have been saved.", {
-                    style: { color: "green" },
-                  });
-                } else {
-                  let errorList: { [key: string]: string }[] = [];
-                  res.error.errors.map((item) => {
-                    const [index, key] = item.path;
-                    const message = item.message;
-                    if (!errorList[index as number]) {
-                      errorList[index as number] = {};
-                    }
-                    errorList[index as number][key] = message;
-                  });
-                  setErr(errorList);
-                }
-                // console.log(productList, "productList");
-
-                // console.log("edit list : ", productList);
-                // addSupplierProductsMut(data);
+                console.log("edit list : ", productList);
+                addSupplierProductsMut(data);
               }}
               className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]"
             >
