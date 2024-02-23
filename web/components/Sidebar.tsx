@@ -239,7 +239,7 @@ const Sidebar = () => {
               <MailPlus />
 
               <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
-                Invite Organization (For test)
+                Invite Organization
               </h2>
             </Link>
             {/* <span

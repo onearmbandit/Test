@@ -13,6 +13,7 @@ import { getUser } from "@/services/user.api";
 import { useQuery } from "@tanstack/react-query";
 import TotalEmissionsSummary from "./TotalEmissionsSummary";
 import { getFacilities } from "@/services/facility.api";
+import { isSuperAdmin } from "@/lib/utils";
 
 const Dashboard = () => {
   const {
@@ -30,11 +31,15 @@ const Dashboard = () => {
     queryFn: () => getFacilities(),
   });
 
+  const superAdmin: Boolean = isSuperAdmin(user?.roles, "super-admin");
+
   return (
     <div className="items-center w-full min-h-screen shadow bg-gray-50 flex flex-col px-8 pb-8 max-md:px-5">
       <div className="justify-between self-stretch gap-5 flex flex-row w-full px-8 py-2 max-md:px-5">
         <header className="text-slate-800 text-ellipsis text-base font-semibold leading-6 my-auto">
-          {user?.organizations.length > 0
+          {superAdmin
+            ? "Terralab"
+            : user?.organizations.length > 0
             ? user?.organizations[0]?.company_name
             : "Company Name"}
         </header>
@@ -48,6 +53,7 @@ const Dashboard = () => {
       </div>
 
       {isSuccess &&
+        !superAdmin &&
         (user?.organizations[0]?.naics_code ? (
           <>
             <ClimateCommitments
