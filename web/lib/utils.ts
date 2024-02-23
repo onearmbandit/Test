@@ -65,18 +65,39 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials, req) {
-        console.log(credentials, { req });
+        console.log(credentials, "nwwe", { req });
         const formBody = new FormData();
         formBody.append("email", credentials?.email as string);
         formBody.append("password", credentials?.password as string);
-        const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/login`;
         try {
-          const response = await fetch(url, {
-            method: "POST",
-            body: formBody,
-          });
+          let res = null;
+          if (req.body?.isInvited && req.body?.isInvited == "true") {
+            console.log("if block");
+            const formData = {
+              email: credentials?.email,
+              password: credentials?.password,
+              registrationStep: 1,
+              invitedUser: true,
+            };
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/register`;
+            const response = await fetch(url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formData),
+            });
+            res = await response.json();
+          } else {
+            console.log("else block");
+            const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/login`;
+            const response = await fetch(url, {
+              method: "POST",
+              body: formBody,
+            });
 
-          const res = await response.json();
+            res = await response.json();
+          }
 
           if (!res?.status) {
             console.log("err", res);

@@ -68,7 +68,7 @@ export default class AuthController {
             password: requestData.password,
             registrationStep: requestData.registrationStep ? requestData.registrationStep : 1,
             loginType: 'web',
-            slug: slug
+            slug: slug,
           },
           role
         )
@@ -80,14 +80,23 @@ export default class AuthController {
           organizationUserData
             ?.merge({
               user_id: userData.id,
-              role_id: role?.id
+              role_id: role?.id,
             })
             .save()
 
+          console.log('Organisations DAta ---->', organizationUserData)
           //:: Condition true when user invited by super-admin
-          if (organizationUserData?.firstName !=='' || organizationUserData?.lastName !=='') {
-            userData.merge({ firstName: organizationUserData?.firstName, lastName: organizationUserData?.lastName }).save()
-            let data = { 'firstName': organizationUserData?.firstName, 'lastName': organizationUserData?.lastName }
+          if (organizationUserData?.firstName || organizationUserData?.lastName) {
+            userData
+              .merge({
+                firstName: organizationUserData?.firstName,
+                lastName: organizationUserData?.lastName,
+              })
+              .save()
+            let data = {
+              firstName: organizationUserData?.firstName,
+              lastName: organizationUserData?.lastName,
+            }
             const emailData = {
               user: data,
               url: `${WEB_BASE_URL}`,
@@ -103,7 +112,7 @@ export default class AuthController {
             response,
             true,
             200,
-            { token, userData },
+            { token, user: userData },
             Config.get('responsemessage.AUTH_RESPONSE.loginSuccess')
           )
         }
@@ -144,7 +153,6 @@ export default class AuthController {
 
       const userData = await User.getUserDetails('slug', params.id)
       await request.validate(UpdateUserValidator)
-
 
       await userData
         .merge({
@@ -594,9 +602,11 @@ export default class AuthController {
         .first()
 
       //:: Required to findout user is supplier or not
-      let supplierData = await SupplierOrganization.query().whereHas('supplier', (query) => {
-        query.where('email', requestData.email)
-      }).whereNotNull('supplier_id')
+      let supplierData = await SupplierOrganization.query()
+        .whereHas('supplier', (query) => {
+          query.where('email', requestData.email)
+        })
+        .whereNotNull('supplier_id')
 
       // if (!invitedUserExist) {
       //     return apiResponse(response, false, 422, {
@@ -636,15 +646,13 @@ export default class AuthController {
           role
         )
 
-        //:: If invitedUserExist then update details otherwise create new in organizationUsers table 
+        //:: If invitedUserExist then update details otherwise create new in organizationUsers table
         if (invitedUserExist) {
-
           let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
             'email',
             requestData.email
           )
-          organizationUserData?.merge({ user_id: userData?.id, role_id: role?.id })
-            .save()
+          organizationUserData?.merge({ user_id: userData?.id, role_id: role?.id }).save()
         }
 
         const token = await auth.use('api').generate(userData as User, {
@@ -659,18 +667,17 @@ export default class AuthController {
           Config.get('responsemessage.AUTH_RESPONSE.userCreated')
         )
       } else {
-
         if (invitedUserExist) {
           //:: Update organization user table entry
           let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
             'email',
             requestData.email
           )
-          console.log("organizationUserData", organizationUserData)
+          console.log('organizationUserData', organizationUserData)
           organizationUserData
             ?.merge({
               user_id: userExist?.id,
-              role_id: role?.id
+              role_id: role?.id,
             })
             .save()
         }
@@ -692,7 +699,6 @@ export default class AuthController {
           { token, user: userExist },
           Config.get('responsemessage.AUTH_RESPONSE.loginSuccess')
         )
-
       }
     } catch (error) {
       if (error.status === 422) {

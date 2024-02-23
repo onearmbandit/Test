@@ -53,8 +53,8 @@ const EditFacility = ({
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      console.log(data);
-      toast.success("Facility updated", { style: { color: "green" } });
+      // console.log(data);
+      toast.success("Facility is updated", { style: { color: "green" } });
       router.push("/facilities");
       // revalidatePath("/facilities");
     },
