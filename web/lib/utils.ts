@@ -65,6 +65,7 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials, req) {
+        console.log(credentials, { req });
         const formBody = new FormData();
         formBody.append("email", credentials?.email as string);
         formBody.append("password", credentials?.password as string);

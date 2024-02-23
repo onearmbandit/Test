@@ -23,25 +23,9 @@ const ChangePassword = () => {
 
   const validation = z
     .object({
-      // oldPassword: z
-      //   .string()
-      //   .min(8, { message: "Password must be at least 8 characters long" }),
-      newPassword: z
-        .string()
-        .min(8, { message: "Password must be at least 8 characters long" })
-        .regex(/[A-Z]/, {
-          message: "Password must have at one uppercase character",
-        })
-        .regex(/[a-z]/, {
-          message: "Password must have at one lowercase character",
-        })
-        .regex(/[0-9]/, { message: "Password must have at one number" })
-        .regex(/[^A-Za-z0-9]/, {
-          message: "Password must have at one special character",
-        }),
-      confirmPassword: z
-        .string()
-        .min(8, { message: "Password must be at least 8 characters long" }),
+      oldPassword: z.string(),
+      newPassword: z.string(),
+      confirmPassword: z.string(),
     })
     .superRefine((val, ctx) => {
       if (val.confirmPassword != val.newPassword) {
@@ -76,8 +60,8 @@ const ChangePassword = () => {
       newPassword: "",
       confirmPassword: "",
     },
-    // validateOnChange: true,
-    // validationSchema: toFormikValidationSchema(validation),
+    validateOnChange: false,
+    validationSchema: toFormikValidationSchema(validation),
 
     onSubmit: (data: any) => {
       console.log("Update pass data: ", data);

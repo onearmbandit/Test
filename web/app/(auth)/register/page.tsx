@@ -735,7 +735,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
             )}
           </div>
 
-          <div className="max-w-[582px] h-[69px]">
+          <div className="max-w-[582px] min-h-[69px]">
             <AutocompleteInput
               isDisabled={!isEdit}
               setAddress={(e: any) => {
