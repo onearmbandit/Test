@@ -9,7 +9,7 @@ import { getRoleByName, updateUser } from "@/services/user.api";
 import { toast } from "sonner";
 import {
   createOrganization,
-  getAllOrganizations,
+  getAllOrganizationsSuperAdmin,
   inviteOrganization,
 } from "@/services/organizations.api";
 import { useSession } from "next-auth/react";
@@ -37,9 +37,11 @@ const InviteOrganization = () => {
   } | null>(null);
   const organizationsQ = useQuery({
     queryKey: ["organizations"],
-    queryFn: () => getAllOrganizations(),
+    queryFn: () => getAllOrganizationsSuperAdmin(),
   });
-  const organizations = organizationsQ.isSuccess ? organizationsQ.data : [];
+  const organizations = organizationsQ.isSuccess
+    ? organizationsQ.data?.data
+    : [];
 
   const roleQ = useQuery({
     queryKey: ["role"],
