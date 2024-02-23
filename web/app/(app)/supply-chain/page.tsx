@@ -8,6 +8,7 @@ import {
   ChevronDown,
   HelpCircle,
   Loader2,
+  MoreHorizontal,
   Plus,
 } from "lucide-react";
 import download from "downloadjs";
@@ -248,7 +249,7 @@ const Page = () => {
                 <div className="justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-12 rounded-lg border-solid max-md:px-5">
                   <img
                     loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/9125c29d6e22fd51a2f1e9dcb27da44ac69b93ebcdb1009043a3b8178d6d05e3?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
+                    src="/assets/images/supply-chain-logo.svg"
                     className="aspect-[1.17] object-contain object-center w-[54px] overflow-hidden self-center max-w-full mt-9"
                   />
                   <div className="text-slate-700 text-3xl font-semibold leading-9 self-center mt-3 max-md:max-w-full">
@@ -277,11 +278,7 @@ const Page = () => {
                       Suppliers
                     </div>
                     <div>
-                      <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/2e0a663d923aa11cad808bb8c9e5a6c4f17b083df00a83ae82feefea8d812672?apiKey=d6fc2e9c7f6b4dada8012c83a9c1be80&"
-                        className="w-full aspect-square max-w-[16px]"
-                      />
+                      <MoreHorizontal size={16} className="text-slate-500" />
                     </div>
                   </div>
 

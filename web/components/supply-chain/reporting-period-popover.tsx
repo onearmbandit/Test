@@ -39,7 +39,7 @@ const ReportingPeriodPopup = ({
   });
   const user = userQ.isSuccess ? userQ.data.data : {};
 
-  const organizationId = user?.organizations[0]?.id!;
+  const organizationId = userQ.isSuccess && user?.organizations[0]?.id!;
 
   const renderMonthContent = (
     monthIndex: number,
