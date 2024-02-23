@@ -72,7 +72,7 @@ const EditClimateConditions = ({
 
   useEffect(() => {
     if (userQ.isSuccess) {
-      const targetArray = user?.data?.organizations[0].climate_targets;
+      const targetArray = user?.organizations[0].climate_targets;
       climateForm.setFieldValue(
         "climateTargets",
         targetArray == null ? [] : targetArray
@@ -138,7 +138,7 @@ const EditClimateConditions = ({
         />
         <p
           className={cn(
-            "text-slate-500 text-xs font-light",
+            "text-slate-500 text-xs font-light mt-1",
             currentTarget.length > 50 && "text-red-500"
           )}
         >
