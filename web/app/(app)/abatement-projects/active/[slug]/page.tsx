@@ -53,6 +53,7 @@ const ActiveDetailPage = async ({ params }: { params: { slug: string } }) => {
           {project.website_url && (
             <a
               href={formatUrl(project?.website_url!)}
+              target="_blank"
               className="text-blue-600 text-xs font-medium gap-1 flex"
             >
               <ArrowUpRight size={16} />
