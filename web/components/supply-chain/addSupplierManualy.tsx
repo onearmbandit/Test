@@ -75,8 +75,8 @@ export const AddSupplierManualy = () => {
       name: "",
       type: "",
       quantity: null,
-      functionalUnit: "",
-      scope_3Contribution: null,
+      functionalUnit: null,
+      scope_3Contribution: 0,
     },
   ]);
 
@@ -162,7 +162,7 @@ export const AddSupplierManualy = () => {
         throw new Error(data.errors[0].message);
       }
 
-      toast.success("Supplier Created", { style: { color: "green" } });
+      toast.success("Supplier Products Created", { style: { color: "green" } });
       setEditProductTable(false);
       router.push("/supply-chain");
     },
@@ -649,7 +649,11 @@ export const AddSupplierManualy = () => {
                         <Input
                           name="scope_3Contribution"
                           type="number"
-                          value={item.scope_3Contribution}
+                          value={
+                            item.scope_3Contribution === 0
+                              ? ""
+                              : item.scope_3Contribution
+                          }
                           placeholder="kgCO2"
                           onChange={(e) => {
                             const newCopy = _.cloneDeep(productList);
@@ -687,8 +691,8 @@ export const AddSupplierManualy = () => {
                               name: null,
                               type: null,
                               quantity: "",
-                              functionalUnit: "",
-                              scope_3Contribution: null,
+                              functionalUnit: null,
+                              scope_3Contribution: 0,
                             });
 
                             setProductList(newCopy);
@@ -713,39 +717,83 @@ export const AddSupplierManualy = () => {
             <Button
               variant="ghost"
               onClick={() => {
-                const data: any = {
-                  supplierId: supplier?.data?.id,
-                  supplierProducts: productList,
-                };
+                let ress: any;
 
-                const ress = z
-                  .array(
-                    z.object({
-                      name: z.string().min(3, {
-                        message: "description minimum lenth should be 3",
-                      }),
-                      type: z.string().trim().min(1, { message: "Required" }),
-                      quantity: z.string(),
-                      functionalUnit: z
-                        .string()
-                        .trim()
-                        .min(1, { message: "Required" }),
-                      scope_3Contribution: z.number(),
-                    })
-                  )
-                  .safeParse(productList);
+                if (productList.length > 1) {
+                  ress = z
+                    .array(
+                      z.object({
+                        name: z
+                          .string()
+                          .min(3, {
+                            message: "Minimum length should be 3",
+                          })
+                          .optional()
+                          .nullable(),
+                        type: z
+                          .string()
+                          .trim()
+                          .min(1, { message: "Required" })
+                          .optional()
+                          .nullable(),
+                        quantity: z
+                          .string({
+                            invalid_type_error: "Please enter a valid number",
+                          })
+                          .optional()
+                          .nullable(),
+                        functionalUnit: z
+                          .string({
+                            invalid_type_error: "Please enter a valid unit",
+                          })
+                          .trim()
+                          .min(1, { message: "Required" })
+                          .optional()
+                          .nullable(),
+                        scope_3Contribution: z.number().optional().nullable(),
+                      })
+                    )
+                    .safeParse(productList);
+                } else {
+                  ress = z
+                    .array(
+                      z.object({
+                        name: z.string().min(3, {
+                          message: "Minimum length should be 3",
+                        }),
+                        type: z.string().trim().min(1, { message: "Required" }),
+                        quantity: z.string({
+                          invalid_type_error: "Please enter a valid number",
+                        }),
+                        functionalUnit: z
+                          .string({
+                            invalid_type_error: "Please enter a valid unit",
+                          })
+                          .trim()
+                          .min(1, { message: "Required" }),
+                        scope_3Contribution: z.number().optional(),
+                      })
+                    )
+                    .safeParse(productList);
+                }
 
                 if (ress.success) {
                   setErr([]);
+                  const filteredData = productList.filter(
+                    (item: any) =>
+                      item.name !== null &&
+                      item.type !== null &&
+                      item.functionalUnit !== null
+                  );
+                  const data: any = {
+                    supplierId: supplier?.data?.id,
+                    supplierProducts: filteredData,
+                  };
                   addSupplierProductsMut(data);
                   setCompleteStep(true);
-
-                  toast.success("The changes have been saved.", {
-                    style: { color: "green" },
-                  });
                 } else {
                   let errors: { [key: string]: string }[] = [];
-                  ress.error.errors.map((item) => {
+                  ress.error.errors.map((item: any) => {
                     const [index, key] = item.path;
                     const message = item.message;
                     if (!errors[index as number]) {
