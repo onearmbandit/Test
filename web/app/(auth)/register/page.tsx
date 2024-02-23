@@ -586,7 +586,9 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
               className="bg-transparent px-0 h-[69px]"
             />
           </div>
-          <p className="text-xs text-red-500">{step2Form.errors.firstName}</p>
+          <p className="text-xs text-red-500 mt-[10px]">
+            {step2Form.errors.firstName}
+          </p>
         </div>
         <div>
           <label
@@ -610,7 +612,9 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
               placeholder="Last Name"
             />
           </div>
-          <p className="text-xs text-red-500">{step2Form.errors.lastName}</p>
+          <p className="text-xs text-red-500 mt-[10px]">
+            {step2Form.errors.lastName}
+          </p>
         </div>
 
         <div className="justify-end flex pl-16 pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
@@ -739,7 +743,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
               )}
             />
             {step3Form.touched.companyName && (
-              <p className="text-xs text-red-500 mt-0.5">
+              <p className="text-xs text-red-500 mt-[10px]">
                 {step3Form.errors.companyName}
               </p>
             )}
@@ -773,7 +777,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
               }}
             />
             {step3Form.touched.companyAddress && (
-              <p className="text-red-500 text-xs">
+              <p className="text-red-500 text-xs mt-[10px]">
                 {step3Form.errors?.companyAddress}
               </p>
             )}
