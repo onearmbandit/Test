@@ -39,12 +39,14 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
           <div className="p-[10px] space-y-2">
             <p className="text-xs font-medium text-slate-800">Proposed By</p>
 
-            <img
-              src={project.logo_url}
-              height={54}
-              width={223}
-              alt="company logo"
-            />
+            {project?.logo_url && (
+              <img
+                src={project.logo_url}
+                height={54}
+                width={223}
+                alt="company logo"
+              />
+            )}
           </div>
 
           {project.website_url && (
@@ -63,7 +65,7 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
           {project.photo_url && (
             <div className="w-full h-[205px] relative">
               <img
-                className="h-full w-full object-contain"
+                className="h-full w-full object-cover"
                 src={project.photo_url}
                 alt="project image"
               />
