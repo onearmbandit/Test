@@ -32,7 +32,7 @@ const AutocompleteInput = ({
     requestOptions: {
       /* Define search scope here */
 
-      types: ["geocode", "establishment", "postal_codes"],
+      types: ["geocode", "establishment"],
     },
     debounce: 300,
   });
