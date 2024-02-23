@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Input } from "../ui/input";
 import AutocompleteInput from "../Autocomplete";
 import { useRouter, useSearchParams } from "next/navigation";
-import { z } from "zod";
+import { number, z } from "zod";
 
 import { useFormik } from "formik";
 
@@ -47,7 +47,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import _, { set } from "lodash";
+import _, { parseInt, set } from "lodash";
 import { Button } from "../ui/button";
 import Link from "next/link";
 
@@ -60,15 +60,26 @@ export const AddSupplierManualy = () => {
   const [editProductTable, setEditProductTable] = useState(false);
   const [completeStep, setCompleteStep] = useState(false);
   const [supplier, setSupplier] = useState<any>(null);
+  const [err, setErr] = useState<
+    {
+      name?: string;
+      type?: string;
+      quantity?: number | null;
+      functionalUnit?: string;
+      scope_3Contribution?: number | null;
+    }[]
+  >([]);
+
   const [productList, setProductList] = useState<any>([
     {
-      name: "Add product name",
-      type: "Add product type",
-      quantity: "",
+      name: "",
+      type: "",
+      quantity: null,
       functionalUnit: "",
-      scope_3Contribution: "",
+      scope_3Contribution: null,
     },
   ]);
+
   const [createableValue, setCreatableValue] = useState<any>("");
   const [createableTypeValue, setCreatableTypeValue] = useState<any>("");
 
@@ -107,7 +118,9 @@ export const AddSupplierManualy = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: addSupplier,
     onSuccess: (data) => {
-      console.log("supplier created : ", data);
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
       setEditProductTable(true);
       setSupplier(data);
       setValues({
@@ -127,7 +140,9 @@ export const AddSupplierManualy = () => {
   const { mutate: editSupplierMut } = useMutation({
     mutationFn: updateSupplier,
     onSuccess: (data) => {
-      console.log("supplier updated : ", data);
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
 
       setSupplier(data);
       setValues(data.data);
@@ -143,8 +158,10 @@ export const AddSupplierManualy = () => {
   const { mutate: addSupplierProductsMut } = useMutation({
     mutationFn: createSupplierProduct,
     onSuccess: (data) => {
-      console.log("supplier products created: ", data);
-      Route;
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      }
+
       toast.success("Supplier Created", { style: { color: "green" } });
       setEditProductTable(false);
       router.push("/supply-chain");
@@ -191,7 +208,7 @@ export const AddSupplierManualy = () => {
       quantity: "",
       type: "",
       functionalUnit: "",
-      scope_3Contribution: "",
+      scope_3Contribution: null,
     };
     const newCopy = _.cloneDeep(productList);
     newCopy[i].name = inputValue;
@@ -224,13 +241,15 @@ export const AddSupplierManualy = () => {
       quantity: "",
       type: inputValue,
       functionalUnit: "",
-      scope_3Contribution: "",
+      scope_3Contribution: null,
     };
     const newCopy = _.cloneDeep(productList);
     newCopy[i].type = inputValue;
     setProductList(newCopy);
     setCreatableTypeValue(newOption);
   };
+
+  console.log(productList);
 
   return (
     <div className="flex flex-col flex-start p-6 w-full">
@@ -529,6 +548,7 @@ export const AddSupplierManualy = () => {
                       <div className="2xl:w-[303px] w-[163px]">
                         <CreatableSelect
                           // isClearable
+                          name="name"
                           options={productNamelist}
                           styles={customDropdownStyles}
                           onChange={(newValue) => {
@@ -537,15 +557,26 @@ export const AddSupplierManualy = () => {
                             setProductList(copy);
                           }}
                           onCreateOption={(e) => handleCreate(e, i)}
-                          value={{ label: item.name, value: item.name }}
+                          value={
+                            item.name == ""
+                              ? null
+                              : { label: item.name, value: item.name }
+                          }
                           placeholder="Add product name"
+                          className={cn(
+                            err[i]?.name && "border border-red-600"
+                          )}
                         />
+                        <p className="text-xs absolute max-w-[189px] text-red-500 mt-0.5">
+                          {err[i]?.name}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="pl-0 py-3 pr-4">
                       <div className="2xl:w-[303px] w-[163px]">
                         <CreatableSelect
                           // isClearable
+                          name="type"
                           options={productTypelist}
                           styles={customDropdownStyles}
                           onChange={(newValue) => {
@@ -554,29 +585,48 @@ export const AddSupplierManualy = () => {
                             setProductList(copy);
                           }}
                           onCreateOption={(e) => handleCreateType(e, i)}
-                          value={{ label: item.type, value: item.type }}
+                          value={
+                            item.type == ""
+                              ? null
+                              : { label: item.type, value: item.type }
+                          }
                           placeholder="Add product type"
+                          className={cn(
+                            err[i]?.type && "border border-red-600"
+                          )}
                         />
+                        <p className="text-xs absolute text-red-500 mt-0.5">
+                          {err[i]?.type}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="pl-0 pr-4 py-3">
                       <div className="2xl:w-[303px] w-[163px]">
                         <Input
+                          name="quantity"
                           type="number"
                           value={item.quantity}
                           placeholder="unit"
                           onChange={(e) => {
                             const newCopy = _.cloneDeep(productList);
-                            newCopy[i].quantity = e.target.value;
+                            newCopy[i].quantity = e.target.value.toString();
                             setProductList(newCopy);
                           }}
-                          className="bg-[#F9FAFB] rounded-md"
+                          // zal vatte try kr ekda
+                          className={cn(
+                            "bg-[#F9FAFB] rounded-md",
+                            err[i]?.quantity && "border border-red-600"
+                          )}
                         />
+                        <p className="text-xs absolute text-red-500 mt-0.5">
+                          {err[i]?.quantity}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="pl-0 pr-4 py-3">
                       <div className="2xl:w-[225px] w-[125px]">
                         <Input
+                          name="functionalUnit"
                           value={item.functionalUnit}
                           placeholder="kilowatt/hr"
                           onChange={(e) => {
@@ -584,23 +634,39 @@ export const AddSupplierManualy = () => {
                             newCopy[i].functionalUnit = e.target.value;
                             setProductList(newCopy);
                           }}
-                          className="bg-[#F9FAFB] rounded-md"
+                          className={cn(
+                            "bg-[#F9FAFB] rounded-md",
+                            err[i]?.functionalUnit && "border border-red-600"
+                          )}
                         />
+                        <p className="text-xs absolute text-red-500 mt-0.5">
+                          {err[i]?.functionalUnit}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="pl-0 pr-4 py-3">
                       <div className="2xl:w-[215px] w-[125px]">
                         <Input
+                          name="scope_3Contribution"
                           type="number"
                           value={item.scope_3Contribution}
                           placeholder="kgCO2"
                           onChange={(e) => {
                             const newCopy = _.cloneDeep(productList);
-                            newCopy[i].scope_3Contribution = e.target.value;
+                            newCopy[i].scope_3Contribution = parseInt(
+                              e.target.value
+                            );
                             setProductList(newCopy);
                           }}
-                          className="bg-[#F9FAFB] rounded-md"
+                          className={cn(
+                            "bg-[#F9FAFB] rounded-md",
+                            err[i]?.scope_3Contribution &&
+                              "border border-red-600"
+                          )}
                         />
+                        <p className="text-xs absolute text-red-500 mt-0.5">
+                          {err[i]?.scope_3Contribution}
+                        </p>
                       </div>
                     </TableCell>
                     <TableCell className="pl-0 pr-4  py-3">
@@ -608,14 +674,21 @@ export const AddSupplierManualy = () => {
                         <Plus
                           size={16}
                           role="button"
+                          // disabled={
+                          //   Object.values(productList[i]).find(
+                          //     (item) => item === null || item === ""
+                          //   ) != undefined
+                          //     ? true
+                          //     : false
+                          // }
                           onClick={() => {
                             const newCopy = _.cloneDeep(productList);
                             newCopy.push({
-                              name: "",
-                              type: "",
+                              name: null,
+                              type: null,
                               quantity: "",
                               functionalUnit: "",
-                              scope_3Contribution: "",
+                              scope_3Contribution: null,
                             });
 
                             setProductList(newCopy);
@@ -637,21 +710,60 @@ export const AddSupplierManualy = () => {
                 ))}
               </TableBody>
             </Table>
-            <div
-              role="button"
+            <Button
+              variant="ghost"
               onClick={() => {
                 const data: any = {
                   supplierId: supplier?.data?.id,
                   supplierProducts: productList,
                 };
+
+                const ress = z
+                  .array(
+                    z.object({
+                      name: z.string().min(3, {
+                        message: "description minimum lenth should be 3",
+                      }),
+                      type: z.string().trim().min(1, { message: "Required" }),
+                      quantity: z.string(),
+                      functionalUnit: z
+                        .string()
+                        .trim()
+                        .min(1, { message: "Required" }),
+                      scope_3Contribution: z.number(),
+                    })
+                  )
+                  .safeParse(productList);
+
+                if (ress.success) {
+                  setErr([]);
+                  addSupplierProductsMut(data);
+                  setCompleteStep(true);
+
+                  toast.success("The changes have been saved.", {
+                    style: { color: "green" },
+                  });
+                } else {
+                  let errors: { [key: string]: string }[] = [];
+                  ress.error.errors.map((item) => {
+                    const [index, key] = item.path;
+                    const message = item.message;
+                    if (!errors[index as number]) {
+                      errors[index as number] = {};
+                    }
+                    errors[index as number][key] = message;
+                  });
+                  setErr(errors);
+                  console.log(ress.error, "err");
+                }
                 console.log(productList, "productList");
-                addSupplierProductsMut(data);
-                setCompleteStep(true);
+                // addSupplierProductsMut(data);
+                // setCompleteStep(true);
               }}
               className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]"
             >
               Save
-            </div>
+            </Button>
           </>
         ) : (
           <div>

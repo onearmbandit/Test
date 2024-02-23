@@ -91,12 +91,12 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
       </text>
     );
   };
-  const CustomizedLabel = (props: any) => {
+  const RenderLabel = (props: any) => {
     console.log(props, 'graph props');
     const { x, y, fill, value } = props;
     return (
-      <text x={x} y={y} fontSize='12' fill={fill} textAnchor='start'>
-        {value}
+      <text x={'90%'} y={y} dy={14} dx={0} fill='#334155'>
+        <tspan> {value} </tspan>
       </text>
     );
   };
@@ -303,7 +303,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                         </div>
                       </div>
                       <div className='flex h-[242px] overflow-auto'>
-                        <div className='w-[80%] '>
+                        <div className='w-[90%] '>
                           <div className='overflow-auto h-[340px] flex justify-start items-start'>
                             <ResponsiveContainer>
                               <BarChart
@@ -333,7 +333,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                                   dataKey='scope_3_contribution'
                                   barSize={20}
                                   radius={4}
-                                  label={{ position: 'right' }}
+                                  label={<RenderLabel position='right' />}
                                   fill='#BBF7D0'
                                 >
                                   <LabelList
