@@ -118,3 +118,7 @@ export const createOrganization = async (formdata: any) => {
     body: formdata,
   } as Options);
 };
+
+export const getAllOrganizationsSuperAdmin = async () => {
+  return fetchApi(`/auth/organization?per_page=all`);
+};
