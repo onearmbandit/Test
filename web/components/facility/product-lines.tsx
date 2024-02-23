@@ -270,7 +270,7 @@ const EditProducts = ({
           key={i}
           className="gap-5 grid grid-cols-3 mt-6 w-full whitespace-nowrap text-slate-700"
         >
-          <div className="max-w-[236px] w-full">
+          <div className="max-w-[236px] w-full pl-1">
             <CreatableSelect
               options={nameList}
               onChange={(e) => {
@@ -346,7 +346,7 @@ const EditProducts = ({
         >
           + Add another product
         </Button>
-        <div className="flex items-center space-x-2 mt-8">
+        <div className="flex justify-end items-center space-x-2 mt-8">
           {(editPending || addPending) && (
             <Loader2 className="text-blue-600 animate-spin" />
           )}
@@ -355,7 +355,7 @@ const EditProducts = ({
             size={"sm"}
             disabled={editPending || addPending}
             onClick={() => handleSubmit()}
-            className="self-end px-4 py-1.5 shadow"
+            className="px-4 py-1.5 shadow"
           >
             Save
           </Button>

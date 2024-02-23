@@ -54,14 +54,11 @@ export const registerStep2 = ({
   id: string;
   formdata: any;
 }) => {
-  const formbody = new URLSearchParams(formdata).toString();
+  // const formbody = new URLSearchParams(formdata).toString();
 
   return fetchApi(`/user/${id}`, {
     method: "PATCH",
-    body: formbody,
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    } as RawAxiosRequestHeaders,
+    body: formdata,
   } as Options);
 };
 

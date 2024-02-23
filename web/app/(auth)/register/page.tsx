@@ -195,14 +195,30 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
     },
     validateOnChange: false,
     validationSchema: toFormikValidationSchema(validation),
-    onSubmit: (data) => {
+    onSubmit: async (data) => {
       console.log("mutate", data);
       if (errors.length > 0) {
         return;
       }
+      if (invitedEmail) {
+        const res = await signIn("credentials", {
+          ...data,
+          isInvited: true,
+          redirect: false,
+        });
+        if (res?.ok) {
+          console.log(session?.user);
+          router.push("/register?step=2&invited=true");
+        }
+        if (res?.error) {
+          toast.error(res.error, { style: { color: "red" } });
+        }
+
+        return;
+      }
       mutate({
         ...data,
-        invitedUser: invitedEmail ? true : false,
+        invitedUser: false,
         isSupplier: isSupplier == "true" ? true : false,
       });
     },
@@ -217,10 +233,6 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
       registerForm.setFieldValue("email", invitedEmail);
     }
   }, []);
-
-  if (session) {
-    router.push("/");
-  }
 
   return (
     <div className="items-center flex flex-1 max-w-[840px] w-full flex-col px-20 py-12 max-md:px-5">
@@ -462,6 +474,7 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
 const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
   const isInvited = searchParams.get("invited");
   const slug = searchParams.get("slug");
   const isSupplier = searchParams.get("isSupplier");
@@ -515,6 +528,17 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
+      if (isInvited == "true" && session) {
+        mutate({
+          id: session?.user?.slug,
+          formdata: {
+            ...data,
+            invitedUser: isInvited == "true" ? true : false,
+            isSupplier: isSupplier == "true" ? true : false,
+          },
+        });
+        return;
+      }
       mutate({
         id: slug!,
         formdata: {
@@ -525,6 +549,11 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
       });
     },
   });
+
+  if (isInvited == "true" && session?.user.first_name) {
+    router.push("/register?step=setup-done");
+  }
+  console.log("step2", session);
 
   return (
     <form
@@ -557,7 +586,9 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
               className="bg-transparent px-0 h-[69px]"
             />
           </div>
-          <p className="text-xs text-red-500">{step2Form.errors.firstName}</p>
+          <p className="text-xs text-red-500 mt-[10px]">
+            {step2Form.errors.firstName}
+          </p>
         </div>
         <div>
           <label
@@ -581,7 +612,9 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
               placeholder="Last Name"
             />
           </div>
-          <p className="text-xs text-red-500">{step2Form.errors.lastName}</p>
+          <p className="text-xs text-red-500 mt-[10px]">
+            {step2Form.errors.lastName}
+          </p>
         </div>
 
         <div className="justify-end flex pl-16 pr-2.5 py-2.5 items-center max-md:max-w-full max-md:pl-5">
@@ -710,7 +743,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
               )}
             />
             {step3Form.touched.companyName && (
-              <p className="text-xs text-red-500 mt-0.5">
+              <p className="text-xs text-red-500 mt-[10px]">
                 {step3Form.errors.companyName}
               </p>
             )}
@@ -735,7 +768,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
             )}
           </div>
 
-          <div className="max-w-[582px] h-[69px]">
+          <div className="max-w-[582px] h-[69px] ">
             <AutocompleteInput
               isDisabled={!isEdit}
               setAddress={(e: any) => {
@@ -744,14 +777,14 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
               }}
             />
             {step3Form.touched.companyAddress && (
-              <p className="text-red-500 text-xs">
+              <p className="text-red-500 text-xs mt-[10px]">
                 {step3Form.errors?.companyAddress}
               </p>
             )}
           </div>
         </div>
 
-        <div className="justify-between items-center self-stretch flex gap-5 mt-3 pl-1 pr-2.5 py-2.5 max-md:max-w-full max-md:flex-wrap">
+        <div className="justify-between items-center self-stretch flex gap-5 mt-8 pl-1 pr-2.5 py-2.5 max-md:max-w-full max-md:flex-wrap">
           <div className="text-blue-600 text-center text-sm font-semibold leading-4 my-auto">
             {/* <Button
               variant={"ghost"}
@@ -818,12 +851,12 @@ const AccountSetupComplete = ({ userEmail }: any) => {
       <p className="mt-6 py-8 max-w-[581px] text-center">
         Tap continue to head to the Terralab platform
       </p>
-      <p
-        role="button"
+      <Link
+        href={"/"}
         className="rounded bg-blue-600 hover:bg-blue-600/90 px-4 py-1 text-white text-sm font-semibold"
       >
         Continue
-      </p>
+      </Link>
     </div>
   );
 };
