@@ -40,7 +40,7 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
         throw new Error(data.errors[0].message);
       }
 
-      toast.success("Success \n Your facility is saved!", {
+      toast.success("Your facility is saved!", {
         style: { color: "green" },
       });
       router.push("/facilities");

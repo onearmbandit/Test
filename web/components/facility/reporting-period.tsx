@@ -186,7 +186,7 @@ const ReportingPeriod = ({
             placeholderText="MM/YYYY"
             onChange={(date) => setFieldValue("reportingPeriodFrom", date)}
           />
-          <label className="my-auto">End Date</label>
+          <label className="my-auto whitespace-nowrap">End Date</label>
           <DatePicker
             selected={values.reportingPeriodTo}
             customInput={
