@@ -44,7 +44,7 @@ export default class OrganizationUsersController {
         fullName: `${invitedBy.firstName} ${invitedBy.lastName}`,
         organizationName: 'Terralab',
         email: result.email,
-        url: `${WEB_BASE_URL}`,
+        url: `${WEB_BASE_URL}/register?email=${requestData?.email}`,
       }
 
       await sendMail(

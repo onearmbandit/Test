@@ -63,7 +63,10 @@ const InviteOrganization = () => {
     first_name: z.string().min(3, { message: "length" }),
     last_name: z.string().min(3, { message: "length" }),
     email: z.string().email({ message: "Please enter valid email" }),
-    organization_id: z.string(),
+    organization_id: z.string({
+      required_error: "Please select company",
+      invalid_type_error: "Please select company",
+    }),
   });
 
   const { mutate, isSuccess, isPending } = useMutation({
@@ -164,6 +167,7 @@ const InviteOrganization = () => {
             >
               First Name
             </label>
+
             <div
               className={cn(
                 "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
@@ -180,6 +184,9 @@ const InviteOrganization = () => {
                 className="bg-transparent"
               />
             </div>
+            <p className="text-red-500 text-xs mt-1">
+              {inviteOrganizationForm?.errors?.first_name?.toString()}
+            </p>
           </div>
           <div>
             <label
@@ -204,6 +211,9 @@ const InviteOrganization = () => {
                 className="bg-transparent"
               />
             </div>
+            <p className="text-red-500 text-xs mt-1">
+              {inviteOrganizationForm?.errors?.last_name?.toString()}
+            </p>
           </div>
 
           <div>
@@ -227,6 +237,9 @@ const InviteOrganization = () => {
                 className="bg-transparent"
               />
             </div>
+            <p className="text-red-500 text-xs mt-1">
+              {inviteOrganizationForm?.errors?.email?.toString()}
+            </p>
           </div>
 
           <div>
@@ -237,49 +250,13 @@ const InviteOrganization = () => {
               Company Name
             </label>
 
-            <div
-            // className={cn(
-            //   "text-slate-500 text-sm font-light leading-5 items-stretch bg-gray-50 justify-center mt-3 px-2 py-6 rounded-md max-md:max-w-full",
-            //   inviteOrganizationForm.errors?.organization_id &&
-            //     "border border-red-500"
-            // )}
-            >
-              {/* <Select
-                name="organizationId"
-                onValueChange={(e) => {
-                  inviteOrganizationForm.setFieldValue("organization_id", e);
-                }}
-              >
-                <SelectTrigger
-                  className={cn(
-                    "text-slate-500 text-sm font-light leading-5  bg-gray-50  mt-3 px-2 py-6 rounded-md max-md:max-w-full",
-                    inviteOrganizationForm.errors?.organization_id &&
-                      "border border-red-500"
-                  )}
-                >
-                  <SelectValue placeholder="Select or add a company" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Add or select a company</SelectLabel>
-
-                    {organizationsQ.isSuccess &&
-                      organizations?.data?.map((org: any, index: number) => (
-                        <SelectItem key={org?.id} value={org?.id}>
-                          {org?.company_name}
-                        </SelectItem>
-                      ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select> */}
+            <div>
               <CreatableSelect
                 placeholder="Select or add a company"
                 options={organizations?.data?.map((item: any) => ({
                   value: item.id,
                   label: item.company_name,
                 }))}
-                // getOptionLabel={(option: any) => option.company_name}
-                // getOptionValue={(option) => option.id}
                 styles={customDropdownStyles}
                 onChange={(e: any) => {
                   inviteOrganizationForm.setFieldValue(
@@ -298,6 +275,9 @@ const InviteOrganization = () => {
                 value={selectedOrg}
               />
             </div>
+            <p className="text-red-500 text-xs mt-1">
+              {inviteOrganizationForm?.errors?.organization_id?.toString()}
+            </p>
           </div>
 
           <div className="flex justify-center items-center">
