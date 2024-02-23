@@ -29,7 +29,9 @@ const EditClimateConditions = ({
     queryKey: ["climate-details"],
     queryFn: () => getUser(),
   });
-  const user = userQ.isSuccess ? userQ.data : null;
+  const user = userQ.isSuccess ? userQ.data?.data : null;
+
+  const organizationId = user?.organizations[0]?.id!;
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationFn: setupOrganizationStep4,
@@ -53,7 +55,6 @@ const EditClimateConditions = ({
       profileStep: 4,
     },
     onSubmit: (data: any) => {
-      const organizationId = user?.organizations[0]?.id!;
       const newTargets =
         currentTarget.length > 0 ? [...targets, currentTarget] : targets;
       if (organizationId) {

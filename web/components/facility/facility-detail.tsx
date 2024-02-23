@@ -231,7 +231,7 @@ const FacilityDetails = () => {
                     <ChevronDown size={16} className="text-slate-700" />
                   </AccordionTrigger>
 
-                  <p className="text-xs font-light text-slate-700 mt-[1.88rem]">
+                  <p className="text-sm font-light text-slate-700 mt-[1.88rem]">
                     Add product lines associated with this facilities reporting
                     period
                   </p>

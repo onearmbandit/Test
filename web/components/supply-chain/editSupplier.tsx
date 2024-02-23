@@ -551,7 +551,10 @@ export const EditSupplier = () => {
                     <TooltipProvider delayDuration={800}>
                       <Tooltip>
                         <TooltipTrigger>
-                          <HelpCircle className="ml-2" size={12}></HelpCircle>
+                          <HelpCircle
+                            className="ml-2 text-white fill-slate-600"
+                            size={12}
+                          ></HelpCircle>
                         </TooltipTrigger>
                         <TooltipContent className="bg-slate-800 max-w-[246px]">
                           <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">

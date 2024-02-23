@@ -39,7 +39,7 @@ const ReportingPeriodPopup = ({
   });
   const user = userQ.isSuccess ? userQ.data.data : {};
 
-  const organizationId = user.organizations[0].id!;
+  const organizationId = userQ.isSuccess && user?.organizations[0]?.id!;
 
   const renderMonthContent = (
     monthIndex: number,
@@ -70,7 +70,7 @@ const ReportingPeriodPopup = ({
       toast.success("Reporting period updated", { style: { color: "green" } });
     },
     onError: (error) => {
-      toast.error(error.message, { style: { color: 'red' } });
+      toast.error(error.message, { style: { color: "red" } });
     },
   });
   const addReportMut = useMutation({
@@ -102,7 +102,7 @@ const ReportingPeriodPopup = ({
       });
     },
     onError: (error) => {
-      toast.error(error.message, { style: { color: 'red' } });
+      toast.error(error.message, { style: { color: "red" } });
     },
   });
   const { values, setFieldValue, errors, handleSubmit, submitForm } = useFormik(

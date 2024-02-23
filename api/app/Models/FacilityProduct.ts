@@ -149,19 +149,19 @@ export default class FacilityProduct extends BaseModel {
 
     if (idsToDelete.length !== 0) {
       // Fetch the records to be updated
-      const recordsToUpdate = await this.query().whereIn('id', idsToDelete);
+      const recordsToUpdate = await this.query().whereIn('id', idsToDelete)
 
       // Update each record
-      await Promise.all(recordsToUpdate.map(async (record) => {
-        const newName = DateTime.now() + '_' + record.name
-        // Update the record
-        await this.query()
-          .where('id', record.id)
-          .update({
+      await Promise.all(
+        recordsToUpdate.map(async (record) => {
+          const newName = DateTime.now() + '_' + record.name
+          // Update the record
+          await this.query().where('id', record.id).update({
             name: newName,
             deletedAt: new Date(),
-          });
-      }));
+          })
+        })
+      )
     }
 
     // save equality attribute value
@@ -197,7 +197,6 @@ export default class FacilityProduct extends BaseModel {
       .whereNull('deleted_at')
       .where('facility_emission_id', facilityEmissionData.id)
     const totalProducts = allProducts.length
-
 
     let scope1EmissionPerProduct = scope1TotalEmission / totalProducts
     let scope2EmissionPerProduct = scope2TotalEmission / totalProducts
@@ -246,7 +245,9 @@ export default class FacilityProduct extends BaseModel {
       .whereHas('OrganizationFacility', (orgQuery) => {
         orgQuery.where('organization_id', organizationId)
       })
-      .preload('FacilityProducts')
+      .preload('FacilityProducts', (query) => {
+        query.whereNull('deletedAt')
+      })
 
     // Extract unique product names from the loaded data
     uniqueProductNames = Array.from(

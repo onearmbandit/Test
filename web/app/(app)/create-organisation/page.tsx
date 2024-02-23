@@ -269,12 +269,12 @@ const Step2 = ({ setStep, user }: any) => {
   }, [orgDetail.data]);
 
   return (
-    <form onSubmit={setupOrganizationStep2Form.handleSubmit}>
-      <div className="max-w-[50.875rem] w-full pt-6">
-        <header className="header text-slate-700 text-2xl font-medium leading-8 w-full max-md:max-w-full">
+    <form onSubmit={setupOrganizationStep2Form.handleSubmit} className="w-full">
+      <div className="max-w-[50.875rem] mx-auto w-full pt-6">
+        <header className="header text-slate-700 text-2xl font-medium leading-8 w-full ">
           What is the size of your company?*
         </header>
-        <div className="company-size-container grid grid-cols-3 gap-4 mt-6 max-md:max-w-full max-md:flex-wrap">
+        <div className="company grid grid-cols-3 gap-4 mt-6 pr-[137px]">
           {sizes.map((item, i) => (
             <button
               key={i}
@@ -385,7 +385,7 @@ const Step3 = ({ setStep, user }: any) => {
 
   return (
     <form onSubmit={setupOrganizationStep3Form.handleSubmit}>
-      <div className="max-w-[50.875rem]">
+      <div className="max-w-[50.875rem] pt-6">
         <header className="text-slate-700 text-2xl font-medium leading-8 self-stretch w-full max-md:max-w-full">
           What is your NAICS code?
         </header>
@@ -548,11 +548,11 @@ const Step4 = ({ setStep, user }: any) => {
     <form onSubmit={setupOrganizationStep4Form.handleSubmit}>
       <div className="justify-center items-start flex max-w-[814px] w-full flex-col">
         <div role="group" className="mt-6 flex flex-col">
-          <label className="text-slate-700 text-base font-medium leading-6">
+          <p className="text-slate-700 text-2xl font-medium">
             Do you have goals or targets to reduce greenhouse gas emissions
             and/or energy?
-          </label>
-          <p className="text-slate-500 text-sm font-light leading-5 mt-1">
+          </p>
+          <p className="text-slate-500 text-sm font-light leading-5 my-6 ">
             For example, Science Based Target initiatives or commitments that
             are climate related (ex: Carbon neutral by 2040, Net Zero by 2030).
           </p>
@@ -598,7 +598,7 @@ const Step4 = ({ setStep, user }: any) => {
 
             <p
               className={cn(
-                "text-slate-500 text-xs font-light",
+                "text-slate-500 text-xs font-light mt-1",
                 currentTarget.length > 50 && "text-red-500"
               )}
             >

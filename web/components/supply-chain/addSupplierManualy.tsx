@@ -406,8 +406,9 @@ export const AddSupplierManualy = () => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm font-light leading-5  bg-gray-50 py-6 rounded-md max-md:max-w-full",
-                          errors?.organizationRelationship && " border-red-500"
+                          "text-slate-500 text-sm font-light leading-5 border-none bg-gray-50 py-6 rounded-md max-md:max-w-full",
+                          errors?.organizationRelationship &&
+                            "border border-red-500"
                         )}
                       >
                         <SelectValue placeholder="Relationship" />
@@ -416,7 +417,7 @@ export const AddSupplierManualy = () => {
                         <SelectGroup className="text-sm">
                           {relationShips?.map((rel: string, index: number) => (
                             <SelectItem key={index} value={rel}>
-                              {rel}
+                              {_.capitalize(rel)}
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -486,8 +487,9 @@ export const AddSupplierManualy = () => {
             <div className="text-sm mt-2 leading-5 text-slate-800 max-md:max-w-full">
               Enter the product type, product name, units created each year, and
               the functional unit associated with the product. If you know the
-              total Scope 3 contributions for the given quantity of each
-              product, enter it here
+              Scope 3 contributions for each product, enter it here. If
+              you&apos;re unable to provide this information, we can collaborate
+              with your supplier to gather the data.
             </div>
           </div>
 
@@ -522,7 +524,10 @@ export const AddSupplierManualy = () => {
                     <TooltipProvider delayDuration={800}>
                       <Tooltip>
                         <TooltipTrigger>
-                          <HelpCircle className="ml-2" size={12}></HelpCircle>
+                          <HelpCircle
+                            className="ml-2 text-white fill-slate-600"
+                            size={12}
+                          ></HelpCircle>
                         </TooltipTrigger>
                         <TooltipContent className="bg-slate-800 max-w-[246px]">
                           <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">
