@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { formatUrl } from "@/lib/utils";
 import { getActiveAbatementProjectById } from "@/services/abatement.api";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -51,7 +52,7 @@ const ActiveDetailPage = async ({ params }: { params: { slug: string } }) => {
 
           {project.website_url && (
             <a
-              href={project.website_url}
+              href={formatUrl(project?.website_url!)}
               className="text-blue-600 text-xs font-medium gap-1 flex"
             >
               <ArrowUpRight size={16} />
