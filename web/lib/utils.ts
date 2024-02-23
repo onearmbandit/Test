@@ -8,6 +8,7 @@ import { boolean } from "zod";
 import dayjs from "dayjs";
 import _ from "lodash";
 import { AdapterUser } from "next-auth/adapters";
+import { url } from "inspector";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -248,4 +249,17 @@ export const calculateTotals = (projects: any) => {
   }
 
   return totals;
+};
+
+export const formatUrl = (url: string) => {
+  if (url) {
+    // Remove leading and trailing whitespace
+    url = url.trim();
+    // Check if the URL starts with 'http://' or 'https://'
+    if (!/^https?:\/\//i.test(url)) {
+      // If not, assume it's just the domain, so prepend 'http://'
+      return "http://" + url;
+    }
+  }
+  return url;
 };
