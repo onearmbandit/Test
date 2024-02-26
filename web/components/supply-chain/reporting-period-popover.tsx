@@ -41,6 +41,8 @@ const ReportingPeriodPopup = ({
 
   const organizationId = userQ.isSuccess && user?.organizations[0]?.id!;
 
+  console.log("organization Id from popover : ", organizationId);
+
   const renderMonthContent = (
     monthIndex: number,
     shortMonthIndex: string,
@@ -269,6 +271,7 @@ const ReportingPeriodPopup = ({
               aria-label="Save Button"
               role="button"
               type="submit"
+              disabled={organizationId === undefined}
             >
               Save
             </Button>

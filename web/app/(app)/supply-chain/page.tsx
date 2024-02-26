@@ -83,7 +83,7 @@ const Page = () => {
     queryFn: () => getUser(),
   });
   const user = userQ.isSuccess ? userQ.data.data : null;
-  const organizationId = user?.organizations[0].id!;
+  const organizationId = user?.organizations[0]?.id!;
 
   const periodsQ = useQuery({
     queryKey: ["reporting-periods", organizationId],
@@ -133,7 +133,10 @@ const Page = () => {
       ) {
         setShowNew(true);
       }
-      setCurrentTab(reportingPeriods[0]?.id);
+      reportingPeriods && reportingPeriods[0].id
+        ? setCurrentTab(reportingPeriods[0].id)
+        : null;
+      // setCurrentTab(reportingPeriods[0]?.id);
     }
   }, [periodsQ.isSuccess, reportingPeriods]);
   return (
