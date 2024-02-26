@@ -71,23 +71,18 @@ export default class SupplierProduct extends BaseModel {
     let allProductsOfSupplier: any = supplierData.supplierProducts?.map((item) => item.id)
 
     requestData.supplierProducts.forEach((element: any) => {
-      console.log('element=>', element)
       var singleData: any = {}
       element.scope_3Contribution = element.scope_3Contribution ? element.scope_3Contribution : null
       if (element?.id && element?.id !== '') {
-        console.log('Inside if id is not null')
         singleData = { ...element }
         updateProductIds.push(element.id)
       } else {
-        console.log('Inside else id is null')
         element.id = uuidv4()
         singleData = { ...element }
-        console.log('singleData=>', singleData)
       }
       products.push(singleData)
     })
 
-    console.log('products : ', products)
 
     //:: Delete products whose ids not in requestData of update product
     const idsToDelete = await allProductsOfSupplier.filter(
@@ -151,6 +146,7 @@ export default class SupplierProduct extends BaseModel {
     return allSupplierProductsData
   }
 
+  
   public static async getProductsEmissionDataForSpecificPeriod(queryParams: ParsedQs) {
     const supplyChainReportingPeriodId = queryParams.supplyChainReportingPeriodId
       ? queryParams.supplyChainReportingPeriodId.toString()
@@ -168,6 +164,8 @@ export default class SupplierProduct extends BaseModel {
     return JSON.parse(JSON.stringify(allSupplierProductsData))
   }
 
+
+  //::  Get all products types for specifc supplier
   public static async getAllProductTypesOfSuppliers(queryParams: ParsedQs) {
     const supplierId = queryParams.supplierId ? queryParams.supplierId.toString() : ''
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
@@ -185,6 +183,8 @@ export default class SupplierProduct extends BaseModel {
     return JSON.parse(JSON.stringify(allProductTypesOfSupplier))
   }
 
+
+  //:: Get all products names for specifc supplier
   public static async getAllProductNamesOfSuppliers(queryParams: ParsedQs) {
     const supplierId = queryParams.supplierId ? queryParams.supplierId.toString() : ''
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
@@ -202,6 +202,8 @@ export default class SupplierProduct extends BaseModel {
     return JSON.parse(JSON.stringify(allProductNamesOfSupplier))
   }
 
+
+  //:: GEt product details
   public static async getProductDetailsData(field, value) {
     const productDetails = await SupplierProduct.query()
       .where(field, value)

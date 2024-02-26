@@ -6,7 +6,6 @@ import SupplierProduct from 'App/Models/SupplierProduct';
 import Supplier from 'App/Models/Supplier';
 import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 import { DateTime } from 'luxon'
-// import DeleteMultipleSupplierProductValidator from 'App/Validators/Supplier/DeleteMultipleSupplierProductValidator';
 import User from 'App/Models/User';
 
 export default class SupplierProductsController {
@@ -59,6 +58,7 @@ export default class SupplierProductsController {
     }
   }
 
+  //:: Use one API for create and update supplier-products
   public async store({ request, response, auth }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -102,6 +102,8 @@ export default class SupplierProductsController {
 
   }
 
+
+  //:: Use for delete multiple supplier products
   public async deleteMultipleSupplierProducts({ request, response }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -132,6 +134,8 @@ export default class SupplierProductsController {
     }
   }
 
+
+  //:: Single delete API
   public async destroy({ response, request, bouncer }: HttpContextContract) {
     try {
       const productDetailsData = await SupplierProduct.getProductDetailsData('id', request.param('id'));
@@ -171,6 +175,8 @@ export default class SupplierProductsController {
 
   }
 
+
+  //:: Calculate supplier products emission data by namewise
   public async calculateProductEmissionData({ response, request }: HttpContextContract) {
     try {
       const queryParams = request.qs();
@@ -204,9 +210,6 @@ export default class SupplierProductsController {
           let productData = {
             name: ele.name,
             scope_3_contribution: ele.scope_3_contribution,
-            // functional_unit: ele.functional_unit,
-            // quantity: ele.quantity,
-            // type: ele.type
           }
 
           //:: Findout NA element count

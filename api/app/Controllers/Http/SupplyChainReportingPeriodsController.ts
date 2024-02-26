@@ -10,6 +10,8 @@ import Database from '@ioc:Adonis/Lucid/Database';
 
 
 export default class SupplyChainReportingPeriodsController {
+
+  //:: Get all reporting periods API 
   public async index({ request, response, auth }: HttpContextContract) {
     try {
 
@@ -57,10 +59,11 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
+
+  //:: Create new reporting period
   public async store({ request, response, auth }: HttpContextContract) {
     try {
       let requestData = request.all()
-
 
       //:: Check organization id is same for auth user or not
       const userFound = await User.getUserDetails('id', auth.user?.id)
@@ -132,11 +135,8 @@ export default class SupplyChainReportingPeriodsController {
         )
       }
 
-
+      //:: create function call
       const reportPeriodData = await SupplyChainReportingPeriod.createReportPeriod(requestData, organizationIds[0])
-
-
-
 
       return apiResponse(response, true, 201, reportPeriodData,
         Config.get('responsemessage.SUPPLIER_RESPONSE.createSupplierReportPeriodSuccess'))
@@ -163,6 +163,9 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
+
+
+  //:: Get single reporting period data
   public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)
@@ -178,6 +181,7 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
+  //:: Update reporting period
   public async update({ request, response, params, bouncer }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -224,6 +228,7 @@ export default class SupplyChainReportingPeriodsController {
               reportingPeriodTo,
             ]);
         })
+        .whereNot('id', params.id)
         .first();
 
       if (overlappingPeriods) {
@@ -270,6 +275,8 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
+
+  //:: Delete reporting period
   public async destroy({ response, params, bouncer }: HttpContextContract) {
     try {
       const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)

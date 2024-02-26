@@ -74,18 +74,6 @@ export default class SupplyChainReportingPeriod extends BaseModel {
       organizationReportingPeriods = await query.preload('supplier')
     }
 
-    // Format reportingPeriodFrom and reportingPeriodTo
-    //  const formattedReportingPeriods = organizationReportingPeriods.map((period) => {
-    //   return {
-    //     ...period,
-    //     reportingPeriodFrom: period.reportingPeriodFrom.toFormat("LLL yyyy"),
-    //     reportingPeriodTo: period.reportingPeriodTo.toFormat("LLL yyyy"),
-    //   };
-    // });
-    // console.log("formattedReportingPeriods",formattedReportingPeriods)
-
-    // return formattedReportingPeriods;
-
     return organizationReportingPeriods
   }
 

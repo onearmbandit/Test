@@ -16,6 +16,8 @@ import { sendMail } from 'App/helpers/sendEmail'
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
 export default class SuppliersController {
+
+  //:: Get all suppliers
   public async index({ request, response }: HttpContextContract) {
     try {
       const queryParams = request.qs()
@@ -292,20 +294,16 @@ export default class SuppliersController {
 
       await worksheet?.eachRow(async function (row, rowNumber) {
         if (rowNumber !== 1) {
-          // let supplierProductTypes = row.values[7].split(",");
           let supplierProducts: any = []
-          // await supplierProductTypes.forEach(type => {
           let productData = {
             id: uuidv4(),
             name: row.values[6] ?? null,
             type: row.values[7],
-            // 'type': type ?? null,
             quantity: row.values[8] ?? null,
             functionalUnit: row.values[9] ?? null,
             scope_3Contribution: row.values[10] ?? null,
           }
           supplierProducts.push(productData)
-          // });
 
           let supplier = {
             id: uuidv4(),
@@ -373,7 +371,7 @@ export default class SuppliersController {
             fullName: `${auth.user?.firstName} ${auth.user?.lastName}`,
             organizationName: reportPeriodData.organization?.toJSON().company_name,
             email: elementData.email,
-            url: `${WEB_BASE_URL}?isSupplier=true`,   // isSupplier required to know invited user is supplier 
+            url: `${WEB_BASE_URL}/register?email=${elementData.email}&isSupplier=true`,   // isSupplier required to know invited user is supplier 
           }
 
           await sendMail(

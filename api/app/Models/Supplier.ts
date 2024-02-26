@@ -3,7 +3,6 @@ import { BaseModel, column, belongsTo, BelongsTo, hasMany, HasMany, manyToMany, 
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod'
 import SupplierProduct from './SupplierProduct'
 import { ParsedQs } from 'qs'
-// import AbatementProject from './AbatementProject'
 import Organization from './Organization'
 
 export default class Supplier extends BaseModel {
@@ -119,7 +118,6 @@ export default class Supplier extends BaseModel {
   //:: Need to check
   public static async getAllSuppliersForSpecificUser(queryParams: ParsedQs) {
     let allSuppliersData: any = {}
-    // let allOrganizationData: any = {}
 
     const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
@@ -158,10 +156,6 @@ export default class Supplier extends BaseModel {
     else {
       allSuppliersData = await query
     }
-
-
-    //:: ORganization data handling
-
 
     return allSuppliersData
   }
