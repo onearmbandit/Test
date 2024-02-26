@@ -74,6 +74,12 @@ export default class FacilityEmission extends BaseModel {
 
   //::_____Relationships End_____:://
 
+  /**
+ * Gets all facility emissions records filtered by the provided query parameters.
+ * 
+ * Accepts pagination, sorting and filtering params.
+ * Returns a paginated result of facility emission records matching the criteria.
+ */
   public static async getAllFacilityEmissions(queryParams: ParsedQs) {
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
@@ -102,6 +108,12 @@ export default class FacilityEmission extends BaseModel {
     return facilityEmissions
   }
 
+  /**
+ * Creates a new reporting period record.
+ *
+ * @param requestData - The request data containing the details for the new reporting period.
+ * @returns The newly created reporting period record.
+ */
   public static async createReportingPeriod(requestData) {
     const reportingPeriodData = await this.create({
       id: uuidv4(),
@@ -113,6 +125,12 @@ export default class FacilityEmission extends BaseModel {
     return reportingPeriodData
   }
 
+  /**
+ * Gets facility emission data by the provided field and value.
+ * 
+ * Queries for the facility emission record matching the provided 
+ * field and value. Returns the facility emission details if found.
+*/
   public static async getFacilityEmissionData(field, value) {
     const facilityDetails = await this.query()
       .where(field, value)
@@ -127,6 +145,16 @@ export default class FacilityEmission extends BaseModel {
     return facilityDetails
   }
 
+  /**
+ * Updates the facility emission data for the provided facility emission record 
+ * with the new data in the request. Updates the reporting period fields if they exist in the
+ * request. Also updates the emission total fields (scope1TotalEmission, 
+ * scope2TotalEmission, scope3TotalEmission) if they exist. Saves the changes to the database.
+ * 
+ * @param {Object} facilityEmission - The facility emission record to update 
+ * @param {Object} requestData - The request data containing the fields to update
+ * @returns {Object} The updated facility emission record
+*/
   public static async updateFacilityEmissionData(FacilityEmissionData, requestData) {
     const facilityEmission = await this.findOrFail(FacilityEmissionData.id)
 
@@ -158,6 +186,15 @@ export default class FacilityEmission extends BaseModel {
     return facilityEmission
   }
 
+  /**
+ * Retrieves dashboard data for facilities in the given organization based on the provided query parameters. 
+ * 
+ * Sums the total emissions by scope for each facility. Also calculates the totals for all facilities.
+ * 
+ * @param queryParams - Object containing reportingPeriodFrom and reportingPeriodTo filters
+ * @param organizationId - ID of the organization to get facilities for 
+ * @returns Object containing final results array and total emissions by scope sums
+*/
   public static async getFacilitiesDashboardData(queryParams, organizationId) {
     const reportingPeriodFrom = queryParams.reportingPeriodFrom
       ? queryParams.reportingPeriodFrom.toString()
@@ -199,24 +236,24 @@ export default class FacilityEmission extends BaseModel {
     let totalScope2ForAllFacilities = 0
     let totalScope3ForAllFacilities = 0
 
-    ;(await query).forEach((item) => {
-      const facilityId = item.organizationFacilityId
+      ; (await query).forEach((item) => {
+        const facilityId = item.organizationFacilityId
 
-      summedResults[facilityId] ||= {
-        facilityName: item.OrganizationFacility?.name,
-        totalScope1: 0,
-        totalScope2: 0,
-        totalScope3: 0,
-      }
+        summedResults[facilityId] ||= {
+          facilityName: item.OrganizationFacility?.name,
+          totalScope1: 0,
+          totalScope2: 0,
+          totalScope3: 0,
+        }
 
-      summedResults[facilityId].totalScope1 += item.scope1TotalEmission
-      summedResults[facilityId].totalScope2 += item.scope2TotalEmission
-      summedResults[facilityId].totalScope3 += item.scope3TotalEmission
+        summedResults[facilityId].totalScope1 += item.scope1TotalEmission
+        summedResults[facilityId].totalScope2 += item.scope2TotalEmission
+        summedResults[facilityId].totalScope3 += item.scope3TotalEmission
 
-      totalScope1ForAllFacilities += item.scope1TotalEmission
-      totalScope2ForAllFacilities += item.scope2TotalEmission
-      totalScope3ForAllFacilities += item.scope3TotalEmission
-    })
+        totalScope1ForAllFacilities += item.scope1TotalEmission
+        totalScope2ForAllFacilities += item.scope2TotalEmission
+        totalScope3ForAllFacilities += item.scope3TotalEmission
+      })
 
     const finalResults = Object.keys(summedResults).map((facilityId) => ({
       facilityOrganizationId: facilityId,

@@ -13,6 +13,12 @@ import SupplierOrganization from 'App/Models/SupplierOrganization'
 
 
 export default class AbatementProjectsController {
+  /**
+ * Gets all abatement projects. 
+ * Checks if the organization ID in the query matches the auth user's organization.
+ * Calculates and returns the total abatement amount.
+ * Returns paginated response if perPage is set in query.
+*/
   public async index({ request, response, auth }: HttpContextContract) {
     try {
       const queryParams = request.qs()
@@ -84,6 +90,15 @@ export default class AbatementProjectsController {
   }
 
 
+  /**
+ * Creates a new abatement project.
+ * 
+ * Validates the request data against the validator. 
+ * Checks if the organization ID matches the authenticated user's organizations.
+ * Gets the organization data for the provided or default organization ID.
+ * Calls the AbatementProject model to create the new project.
+ * Handles validation errors and other exceptions.
+*/
   public async store({ request, response, auth }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -138,6 +153,11 @@ export default class AbatementProjectsController {
     }
   }
 
+  /**
+ * Retrieves a single abatement project by ID.
+ * @param params - The route parameters containing the project ID.
+ * Authorizes the user can only access their own projects.
+ */
   public async show({ response, params }: HttpContextContract) {
     try {
       let projectData = await AbatementProject.getProjectDetails('id', params.id)
@@ -174,6 +194,16 @@ export default class AbatementProjectsController {
     }
   }
 
+  /**
+ * Updates an abatement project.
+ * 
+ * Validates the request payload against the update project schema. 
+ * Fetches the project by ID to get previous status.
+ * Authorizes the user can only update their own project.
+ * Updates the project details. 
+ * Sends email notification if status changed.
+ * Returns API response with updated project data.
+*/
   public async update({ request, response }: HttpContextContract) {
     try {
 
@@ -236,6 +266,13 @@ export default class AbatementProjectsController {
     }
   }
 
+  /**
+ * Deletes an abatement project by ID.
+ * 
+ * Authorizes the request using the AbatementProjectsPolicy. 
+ * Updates the deletedAt timestamp if the project exists.
+ * Returns a success response with no data if deleted, else returns a 404.
+ */
   public async destroy({ request, response }: HttpContextContract) {
     try {
       const projectData = await AbatementProject.getProjectData('id', request.param('id'))

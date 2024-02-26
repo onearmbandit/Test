@@ -9,6 +9,14 @@ import User from 'App/Models/User'
 
 export default class FacilitiesController {
 
+  /**
+ * Handles GET request to retrieve facilities. 
+ * 
+ * Checks if organization ID in query params matches current user's organizations.
+ * Calls getAllFacilities on OrganizationFacility model to retrieve facilities.
+ * Handles pagination if per_page is set in query params.
+ * Returns API response with facilities data or error.
+*/
   public async index({ response, request, auth }: HttpContextContract) {
     try {
       const queryParams = request.qs();
@@ -43,6 +51,15 @@ export default class FacilitiesController {
     }
   }
 
+  /**
+ * Handles POST request to create a new facility. 
+ * 
+ * Validates request data against CreateFacilityValidator.
+ * Checks if organization ID matches current user's organizations. 
+ * Checks if facility name already exists for the organization.
+ * Calls createFacility on OrganizationFacility model to create new facility.
+ * Returns API response with new facility data or error.
+*/
   public async store({ request, response, auth }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -115,6 +132,14 @@ export default class FacilitiesController {
     }
   }
 
+  /**
+ * Gets an organization facility by ID.
+ * 
+ * Authorizes the user can view the facility via the OrganizationFacilityPolicy.
+ * 
+ * Returns the facility data on success.
+ * Handles errors and returns a formatted API response.
+*/
   public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       const organizationFacility = await OrganizationFacility.getOrganizationFacilityData('id', params.id)
@@ -131,6 +156,14 @@ export default class FacilitiesController {
     }
   }
 
+  /**
+ * Updates an organization facility. 
+ * 
+ * Validates the request data. Checks if the updated facility name already exists for the organization.
+ * Authorizes the user can update the facility via the OrganizationFacilityPolicy.
+ * Updates the facility data.
+ * Handles errors and returns an API response.
+*/
   public async update({ request, response, bouncer }: HttpContextContract) {
     try {
 
@@ -186,6 +219,11 @@ export default class FacilitiesController {
     }
   }
 
+  /**
+ * Destroys an organization facility record by ID. 
+ * Authorizes the authenticated user can only delete facilities belonging to their organization.
+ * Sets the deleted_at timestamp on the facility record.
+*/
   public async destroy({ request, response, bouncer }: HttpContextContract) {
     try {
       const organizationFacilityData = await OrganizationFacility.getOrganizationFacilityData('id', request.param('id'))

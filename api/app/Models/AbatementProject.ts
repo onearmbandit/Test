@@ -89,6 +89,14 @@ export default class AbatementProject extends BaseModel {
   @computed()
   public proposedOrganization: any
 
+  /**
+ * Gets all abatement projects. Applies filters, sorting, pagination. 
+ * Preloads relationships based on includes.
+ * 
+ * @param queryParams - Request query parameters for filtering, sorting, pagination
+ * @param supplierOrganizationData - Data about the supplier organization making request 
+ * @returns Promise resolving to paginated project data
+*/
   public static async getAllProjects(queryParams: ParsedQs, supplierOrganizationData: any) {
     let allProjectData: any = []
     let perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
@@ -160,6 +168,13 @@ export default class AbatementProject extends BaseModel {
     return allProjectData
   }
 
+  /**
+ * Creates a new abatement project and associates it with the given organization.
+ * 
+ * @param auth - The authenticated user info. 
+ * @param organizationData - The organization model instance to associate the project with.
+ * @returns The newly created project model instance.
+ */
   public static async createNewProject(requestData, auth, organizationData) {
     const projectData = await organizationData.related('abatementProjects').create({
       id: uuidv4(),
@@ -181,6 +196,10 @@ export default class AbatementProject extends BaseModel {
     return projectData
   }
 
+  /**
+ * Retrieves detailed project data for the project matching the given field and value.
+ * Joins the organization and proposed supplier/organization data.
+ */
   public static async getProjectDetails(field, value) {
     var supplierData = await AbatementProject.query()
       .where(field, value)
@@ -211,6 +230,10 @@ export default class AbatementProject extends BaseModel {
     return supplierDataJSON
   }
 
+  /**
+ * Retrieves project data for the project matching the given field and value.
+ * Joins the organization data but not proposed supplier/organization data.
+ */
   public static async getProjectData(field, value) {
     var supplierData = await AbatementProject.query()
       .where(field, value)
@@ -222,6 +245,10 @@ export default class AbatementProject extends BaseModel {
     return supplierData
   }
 
+  /**
+ * Updates the details for the given project by merging the provided request data.
+ * Retrieves the updated project details after saving.
+ */
   public static async updateProjectDetails(project, requestData) {
     await project.merge(requestData).save()
     // const projectData = await this.getProjectData('id', project.id)

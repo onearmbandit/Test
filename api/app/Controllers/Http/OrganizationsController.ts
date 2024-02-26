@@ -10,6 +10,10 @@ import CreateOrganizationValidator from 'App/Validators/Organization/CreateOrgan
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
 export default class OrganizationsController {
+  /**
+ * Gets all organizations.
+ * @returns A response with the organizations data and metadata.
+ */
   public async index({ request, response }: HttpContextContract) {
     try {
       const queryParams = request.qs()
@@ -33,6 +37,11 @@ export default class OrganizationsController {
     }
   }
 
+  /**
+ * Creates a new organization.
+ * @param bouncer - The bouncer instance for authorization.  
+ * @returns A response with the new organization data on success, or an error response.
+ */
   public async store({ request, response, bouncer }: HttpContextContract) {
     try {
       //:: Authorization (every user can access their organization only)
@@ -69,7 +78,12 @@ export default class OrganizationsController {
     }
   }
 
-  //:: GEt data of organization
+  /**
+ * Gets organization details by ID.
+ * @param bouncer - The authorization service.
+ * 
+ * @returns The organization data on success. 
+ */
   public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       const organizationData = await Organization.getOrganizationDetails('id', params.id)
@@ -84,6 +98,13 @@ export default class OrganizationsController {
     }
   }
 
+  /**
+ * Updates an organization by ID. 
+ * @param params - The route parameters containing the organization ID.
+ * @param bouncer - The authorization service.
+ * @param auth - The authenticated user.
+ * @returns API response with updated organization data on success.
+ */
   public async update({ request, response, params, bouncer, auth }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -113,7 +134,7 @@ export default class OrganizationsController {
             'emails/invite_sub_user',
             emailData
           )
-        
+
           //:: Add data in pivot table organization_users
           await auth.user?.related('organizations').attach({
             [organizationData.id]: {

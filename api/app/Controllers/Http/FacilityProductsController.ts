@@ -9,6 +9,14 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import User from 'App/Models/User'
 
 export default class FacilityProductsController {
+  /**
+ * Handles GET request to retrieve all facility products.
+ * 
+ * Query parameters can be passed to filter/paginate results.
+ * 
+ * Returns paginated JSON response with facility products data.
+ * Handles errors and returns error response if request fails.
+ */
   public async index({ request, response }: HttpContextContract) {
     try {
       const queryParams = request.qs()
@@ -30,6 +38,15 @@ export default class FacilityProductsController {
     }
   }
 
+  /**
+ * Handles POST request to create multiple facility products for a facility emission.
+ * 
+ * Validates request data against schema. Checks for duplicate product names for the facility emission.
+ * Creates facility products and links to facility emission. 
+ * 
+ * Returns API response with created facility products data on success,
+ * validation errors or error response on failure.
+ */
   public async store({ request, response }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -117,6 +134,14 @@ export default class FacilityProductsController {
     }
   }
 
+  /**
+ * Update multiple facility products for a facility emission.
+ * 
+ * Validates the request data against the update facility product validator.
+ * Checks for duplicate product names within the organization.
+ * Updates existing products or creates new ones in a database transaction.
+ * Returns the updated facility products.
+*/
   public async updateFacilityMultipleProducts({ request, response, bouncer }) {
     //::Initialize database transaction
     const trx = await Database.transaction()
@@ -225,6 +250,14 @@ export default class FacilityProductsController {
     }
   }
 
+  /**
+ * Calculates the carbon emission for a facility emission based on the provided facility emission ID.
+ * 
+ * Gets the facility emission data for the provided ID. 
+ * Calls the FacilityProduct model's calculateCarbonEmission method to perform the calculation.
+ * 
+ * Returns the calculated carbon emission in the response.
+*/
   public async calculateEqualityCarbonEmission({ request, response }) {
     try {
       const queryParams = request.qs()
@@ -264,6 +297,14 @@ export default class FacilityProductsController {
     }
   }
 
+  /**
+ * Gets all product names for the given organization.
+ * 
+ * Checks that the given organization ID matches the auth user's organization. 
+ * Calls the FacilityProduct model to get all product names for the given organization.
+ * 
+ * Returns the product names in the response.
+*/
   public async getAllProductNames({ response, request, auth }: HttpContextContract) {
     try {
       const queryParams = request.qs()

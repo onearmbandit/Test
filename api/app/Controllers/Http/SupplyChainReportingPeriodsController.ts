@@ -11,7 +11,13 @@ import Database from '@ioc:Adonis/Lucid/Database';
 
 export default class SupplyChainReportingPeriodsController {
 
-  //:: Get all reporting periods API 
+  /**
+ * Gets all reporting periods. 
+ * 
+ * Checks if the organization ID in the query matches the auth user's organizations.  
+ * Returns paginated reporting periods if pagination params are passed.
+ * Handles validation errors and general errors.
+*/
   public async index({ request, response, auth }: HttpContextContract) {
     try {
 
@@ -60,7 +66,13 @@ export default class SupplyChainReportingPeriodsController {
   }
 
 
-  //:: Create new reporting period
+  /**
+ * Creates a new reporting period for the given organization.
+ * 
+ * Validates that the reporting period dates do not overlap with existing periods for the organization.
+ * Converts the reporting period date strings to proper date objects before saving.
+ * Calls the SupplyChainReportingPeriod model's createReportPeriod method to save the new record.
+*/
   public async store({ request, response, auth }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -164,8 +176,11 @@ export default class SupplyChainReportingPeriodsController {
   }
 
 
-
-  //:: Get single reporting period data
+  /**
+ * Gets the details of a single supply chain reporting period by ID.
+ * @param bouncer - The bouncer instance for authorization
+ * 
+ */
   public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)
@@ -181,7 +196,16 @@ export default class SupplyChainReportingPeriodsController {
     }
   }
 
-  //:: Update reporting period
+  /**
+ * Updates a supply chain reporting period.
+ * @param params - The request params containing the reporting period ID
+ * @param bouncer - The bouncer instance for authorization  
+ * 
+ * Validates the request data and authorizes the user. 
+ * Checks for overlapping date ranges with existing periods.
+ * Updates the reporting period data in the database.
+ * 
+*/
   public async update({ request, response, params, bouncer }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -276,7 +300,14 @@ export default class SupplyChainReportingPeriodsController {
   }
 
 
-  //:: Delete reporting period
+  /**
+ * Deletes a supply chain reporting period by ID.
+ * @param params - The route parameters containing the ID of the reporting period to delete.
+ * @param bouncer - The authorization service.
+ * 
+ * Authorizes the user can delete the specified reporting period. 
+ * Deletes the reporting period.
+*/
   public async destroy({ response, params, bouncer }: HttpContextContract) {
     try {
       const reportPeriodData = await SupplyChainReportingPeriod.getReportPeriodDetails('id', params.id)

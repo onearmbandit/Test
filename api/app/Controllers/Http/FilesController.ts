@@ -1,7 +1,6 @@
 import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { apiResponse } from 'App/helpers/response'
-// import Config from '@ioc:Adonis/Core/Config';
 import ImageUploadValidator from 'App/Validators/FileUpload/ImageUploadValidator';
 import Env from '@ioc:Adonis/Core/Env'
 
@@ -11,13 +10,22 @@ import fs from 'fs';
 
 export default class FilesController {
 
-  //:: For download any file from public/downloads folder
+  /**
+ * Downloads a file from the public/downloads folder.
+ * 
+ * @param response - The HTTP response to send the file download on.
+ * @param params.fileName - The name of the file in the downloads folder to download.
+ */
   async download({ response, params }: HttpContextContract) {
     const filePath = Application.publicPath(`downloads/${params.fileName}`);
     return response.download(filePath)
   }
 
-  //:: API return download URL to enduser
+  /**
+ * Returns a download URL for a sample supplier CSV template file.
+ * 
+ * Sends back a JSON response with a `download_url` property containing the URL.
+ */
   async downloadSupplierCSV({ response }: HttpContextContract) {
     let data = {
       'download_url': `${Env.get('APP_URL')}/download/Supplier_GHG_Emissions_CSV_Template.csv`
@@ -33,7 +41,14 @@ export default class FilesController {
 
 
 
-  // Upload image in s3 bucket
+  /**
+ * Uploads an image to AWS S3.
+ * 
+ * Validates the image upload using the ImageUploadValidator. 
+ * Configures the S3 client with credentials. 
+ * Uploads the image file to S3.
+ * Returns the uploaded file URL on success.
+ */
   public async uploadImageToS3({ request, response }: HttpContextContract) {
     try {
 
