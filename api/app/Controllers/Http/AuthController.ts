@@ -37,6 +37,7 @@ export default class AuthController {
       const userExist = await User.getUserDetailsWithFirst('email', requestData.email)
       let role: any = await Role.getRoleByName(UserRoles.ADMIN)
 
+      //:: Check user isSupplier or invitedUser then assign role to it.
       if (requestData.isSupplier) {
         role = await Role.getRoleByName(UserRoles.SUPPLIER)
       } else if (requestData.invitedUser) {
@@ -72,6 +73,8 @@ export default class AuthController {
           },
           role
         )
+
+        //:: If invitedUser then update entry from organization-users table and return auth-token
         if (requestData.invitedUser) {
           let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
             'email',
@@ -84,8 +87,7 @@ export default class AuthController {
             })
             .save()
 
-          console.log('Organisations DAta ---->', organizationUserData)
-          //:: Condition true when user invited by super-admin
+          //:: Condition true when user invited by super-admin and send welcome mail to user
           if (organizationUserData?.firstName || organizationUserData?.lastName) {
             userData
               .merge({
@@ -146,7 +148,7 @@ export default class AuthController {
     }
   }
 
-  // update user data in second step
+  // update user data in second step (firstName and lastName)
   public async updateNewUser({ request, response, params }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -192,7 +194,7 @@ export default class AuthController {
         )
         // }
       } else {
-        //:: Only uninvited user
+        //:: Only uninvited user receive verify mail email
         const emailData = {
           user: userData,
           url: `${WEB_BASE_URL}/verify-email?token=${userData.emailVerifyToken}`,
@@ -246,7 +248,7 @@ export default class AuthController {
 
       const organizationData = await Organization.createOrganization(requestData)
 
-      //:: Add data in pivot table
+      //:: Add data in pivot table organization-users
       await userData.related('organizations').attach({
         [organizationData.id]: {
           id: uuidv4(),
@@ -257,6 +259,7 @@ export default class AuthController {
         },
       })
 
+      //:: if user supplier then update data in supplier-organizations pivot table
       if (requestData.isSupplier) {
         let supplierData = await Supplier.getSupplierDetails('email', userData.email)
         await SupplierOrganization.query()
@@ -433,6 +436,8 @@ export default class AuthController {
     }
   }
 
+
+  /*Forgot password API function */
   public async forgotPassword({ request, response }: HttpContextContract) {
     try {
       const payload = await request.validate(ForgotPasswordValidator)
@@ -440,7 +445,7 @@ export default class AuthController {
       //::Lookup user manually
       const user = await User.query()
         .where('email', payload.email)
-        .where('userStatus', activeStatus)
+        .where('userStatus', activeStatus)  // as of now default value is active 
         .first()
 
       //::Verify password
@@ -608,21 +613,13 @@ export default class AuthController {
         })
         .whereNotNull('supplier_id')
 
-      // if (!invitedUserExist) {
-      //     return apiResponse(response, false, 422, {
-      //         'errors': [{
-      //             field: 'email',
-      //             message: Config.get('responsemessage.AUTH_RESPONSE.notMatchInvitedData')
-      //         }]
-      //     },
-      //         Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
-      // }
-
       const userExist = await User.getUserDetailsWithSocialToken(
         'email',
         requestData.email,
         requestData.socialLoginToken
       )
+
+      //:: Findout role value of user
       var role: any = await Role.getRoleByName(UserRoles.ADMIN)
       if (invitedUserExist) {
         role = await Role.getRoleByName(UserRoles.SUB_ADMIN)
@@ -630,6 +627,7 @@ export default class AuthController {
         role = await Role.getRoleByName(UserRoles.SUPPLIER)
       }
 
+      //:: If user not exist create new one
       if (!userExist) {
         const userData = await User.createUserWithRole(
           {
@@ -646,7 +644,7 @@ export default class AuthController {
           role
         )
 
-        //:: If invitedUserExist then update details otherwise create new in organizationUsers table
+        //:: If invitedUserExist then update details
         if (invitedUserExist) {
           let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
             'email',
@@ -673,7 +671,6 @@ export default class AuthController {
             'email',
             requestData.email
           )
-          console.log('organizationUserData', organizationUserData)
           organizationUserData
             ?.merge({
               user_id: userExist?.id,
@@ -721,6 +718,8 @@ export default class AuthController {
     }
   }
 
+
+  //:: Just only social login 
   public async socialLogin({ request, response, auth }: HttpContextContract) {
     try {
       await request.validate(SocialSignupOrLoginValidator)

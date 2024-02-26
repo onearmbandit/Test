@@ -15,8 +15,6 @@ import Role from './Role'
 import { v4 as uuidv4 } from 'uuid'
 import ApiToken from './ApiToken'
 
-// import { SoftDeletes } from '@ioc:Adonis/Addons/LucidSoftDeletes';
-// import { compose } from '@ioc:Adonis/Core/Helpers';
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -90,11 +88,6 @@ export default class User extends BaseModel {
   })
   public api_token: HasMany<typeof ApiToken>
 
-  // Relationship
-  // @hasOne(() => Organization, {
-  //   foreignKey: 'user_id',
-  // })
-  // public organization: HasOne<typeof Organization>
 
   //::_____Relationships Start_____:://
 
@@ -108,7 +101,6 @@ export default class User extends BaseModel {
   })
   public roles: ManyToMany<typeof Role>
 
-  //::_____Relationships End_____:://
 
   @manyToMany(() => Organization, {
     localKey: 'id',
@@ -119,6 +111,8 @@ export default class User extends BaseModel {
     pivotTimestamps: true,
   })
   public organizations: ManyToMany<typeof Organization>
+
+  //::_____Relationships End_____:://
 
   //:: Just with first() method
   public static async getUserDetailsWithFirst(field, value) {
