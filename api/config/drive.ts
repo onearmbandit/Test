@@ -96,11 +96,11 @@ export default driveConfig({
     s3: {
       driver: 's3',
       visibility: 'public',
-      key: Env.get('AWS_ACCESS_KEY_ID'),
-      secret: Env.get('AWS_SECRET_ACCESS_KEY'),
-      region: Env.get('AWS_DEFAULT_REGION'),
-      bucket: Env.get('AWS_BUCKET'),
-      endpoint: Env.get('AWS_ENDPOINT'),
+      key: Env.get('S3_ACCESS_KEY_ID'),
+      secret: Env.get('S3_SECRET_ACCESS_KEY'),
+      region: Env.get('S3_DEFAULT_REGION'),
+      bucket: Env.get('S3_BUCKET'),
+      endpoint: Env.get('S3_ENDPOINT'),
     
      // For minio to work
      // forcePathStyle: true,

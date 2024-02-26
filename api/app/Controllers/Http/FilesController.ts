@@ -109,14 +109,14 @@ export default class FilesController {
       var payload = await request.validate(ImageUploadValidator);
 
       //using aws-sdk
-      const bucket = process.env.AWS_BUCKET
-      const accessKeyId = process.env.AWS_ACCESS_KEY_ID
-      const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+      const bucket = process.env.S3_BUCKET
+      const accessKeyId = process.env.S3_ACCESS_KEY_ID
+      const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY
 
       if (bucket && accessKeyId && secretAccessKey) {
         // Set your AWS credentials and region
         const s3Client = new S3Client({
-          region: process.env.AWS_DEFAULT_REGION,
+          region: process.env.S3_DEFAULT_REGION,
           credentials: {
             accessKeyId: accessKeyId,
             secretAccessKey: secretAccessKey,
