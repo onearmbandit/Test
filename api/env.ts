@@ -39,11 +39,11 @@ export default Env.rules({
   MAIL_FROM_NAME: Env.schema.string(),
 
 
-  AWS_ACCESS_KEY_ID: Env.schema.string(),
-  AWS_SECRET_ACCESS_KEY: Env.schema.string(),
-  AWS_BUCKET: Env.schema.string(),
-  AWS_DEFAULT_REGION: Env.schema.string(),
-  AWS_ENDPOINT: Env.schema.string.optional(),
-  AWS_URL:Env.schema.string.optional()
+  S3_ACCESS_KEY_ID: Env.schema.string(),
+  S3_SECRET_ACCESS_KEY: Env.schema.string(),
+  S3_BUCKET: Env.schema.string(),
+  S3_DEFAULT_REGION: Env.schema.string(),
+  S3_ENDPOINT: Env.schema.string.optional(),
+  S3_URL:Env.schema.string.optional()
 
 })
