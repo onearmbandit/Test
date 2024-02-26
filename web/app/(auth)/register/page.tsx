@@ -419,8 +419,9 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
             </Link>
           </div>
           <div className="text-slate-700 text-center text-xs font-light leading-4 mt-6 max-md:max-w-full">
-            By clicking &apos;Continue&apos; above, you agree to our Terms of
-            Service and Privacy Policy.
+            By clicking &apos;Continue&apos; above, you agree to our{" "}
+            <a href="/terms-of-service">Terms of Service</a> and{" "}
+            <a href="/privacy-policy">Privacy Policy.</a>
           </div>
         </form>
       ) : (

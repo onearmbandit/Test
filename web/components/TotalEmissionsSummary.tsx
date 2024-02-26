@@ -41,7 +41,7 @@ export const options: ChartOptions<"bar"> = {
     },
   },
   responsive: true,
-
+  maintainAspectRatio: false,
   scales: {
     x: { stacked: true },
     y: {
@@ -185,7 +185,7 @@ const TotalEmissionsSummary = () => {
                   <CardHeader>
                     <p className="font-bold text-lg">Scope Emissions</p>
                   </CardHeader>
-                  <CardContent className="w-[40rem] h-[14rem]">
+                  <CardContent className="w-full h-[14rem] p-6 pt-3">
                     {dashboardDetails.isLoading && (
                       <Loader2 className="text-blue-600 animate-spin" />
                     )}
