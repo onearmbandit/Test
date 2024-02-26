@@ -27,7 +27,6 @@ export default class OrganizationUsersController {
     try {
       await bouncer.with('OrganizationUserPolicy').authorize('invite')
       const invitedBy = await User.getUserDetails('id', auth?.user?.id)
-      console.log('invited by : ', invitedBy)
 
       //:: only super admin can access this endpoint to invite an organization
 

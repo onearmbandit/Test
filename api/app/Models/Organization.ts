@@ -46,11 +46,6 @@ export default class Organization extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  // Relationship
-  // @belongsTo(() => User, {
-  //   localKey: 'user_id',
-  // })
-  // public user: BelongsTo<typeof User>
 
   //::_____Relationships Start_____:://
 

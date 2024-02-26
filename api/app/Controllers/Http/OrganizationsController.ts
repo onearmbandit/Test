@@ -113,15 +113,6 @@ export default class OrganizationsController {
             'emails/invite_sub_user',
             emailData
           )
-
-          //:: If email different then only new user added in user table
-          // const role = await Role.getRoleByName(UserRoles.SUB_ADMIN)  //sub admin
-          // const userData = await User.createUserWithRole({
-          //   id: uuidv4(),
-          //   email: requestData.companyEmail,
-          //   password: string.generateRandom(8),
-          //   registrationStep: 1,
-          // }, role)
         
           //:: Add data in pivot table organization_users
           await auth.user?.related('organizations').attach({
