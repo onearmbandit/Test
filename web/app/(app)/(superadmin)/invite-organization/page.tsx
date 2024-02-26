@@ -1,16 +1,6 @@
 "use client";
-import AutocompleteInput from "@/components/Autocomplete";
 import { Input } from "@/components/ui/input";
 import * as React from "react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { z } from "zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
@@ -19,7 +9,7 @@ import { getRoleByName, updateUser } from "@/services/user.api";
 import { toast } from "sonner";
 import {
   createOrganization,
-  getAllOrganizations,
+  getAllOrganizationsSuperAdmin,
   inviteOrganization,
 } from "@/services/organizations.api";
 import { useSession } from "next-auth/react";
@@ -47,9 +37,11 @@ const InviteOrganization = () => {
   } | null>(null);
   const organizationsQ = useQuery({
     queryKey: ["organizations"],
-    queryFn: () => getAllOrganizations(),
+    queryFn: () => getAllOrganizationsSuperAdmin(),
   });
-  const organizations = organizationsQ.isSuccess ? organizationsQ.data : [];
+  const organizations = organizationsQ.isSuccess
+    ? organizationsQ.data?.data
+    : [];
 
   const roleQ = useQuery({
     queryKey: ["role"],
@@ -57,11 +49,9 @@ const InviteOrganization = () => {
   });
   const role: any = roleQ.isSuccess ? roleQ.data : null;
 
-  console.log(role);
-
   const validation = z.object({
-    first_name: z.string().min(3, { message: "length" }),
-    last_name: z.string().min(3, { message: "length" }),
+    first_name: z.string().min(3, { message: "Required Minimum 3 Characters" }),
+    last_name: z.string().min(3, { message: "Required Minimum 3 Characters" }),
     email: z.string().email({ message: "Please enter valid email" }),
     organization_id: z.string({
       required_error: "Please select company",

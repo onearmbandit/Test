@@ -29,7 +29,9 @@ const EditClimateConditions = ({
     queryKey: ["climate-details"],
     queryFn: () => getUser(),
   });
-  const user = userQ.isSuccess ? userQ.data : null;
+  const user = userQ.isSuccess ? userQ.data?.data : null;
+
+  const organizationId = user?.organizations[0]?.id!;
 
   const { mutate, isSuccess, isPending } = useMutation({
     mutationFn: setupOrganizationStep4,
@@ -53,7 +55,6 @@ const EditClimateConditions = ({
       profileStep: 4,
     },
     onSubmit: (data: any) => {
-      const organizationId = user?.organizations[0]?.id!;
       const newTargets =
         currentTarget.length > 0 ? [...targets, currentTarget] : targets;
       if (organizationId) {
@@ -71,7 +72,7 @@ const EditClimateConditions = ({
 
   useEffect(() => {
     if (userQ.isSuccess) {
-      const targetArray = user?.data?.organizations[0].climate_targets;
+      const targetArray = user?.organizations[0].climate_targets;
       climateForm.setFieldValue(
         "climateTargets",
         targetArray == null ? [] : targetArray
@@ -137,7 +138,7 @@ const EditClimateConditions = ({
         />
         <p
           className={cn(
-            "text-slate-500 text-xs font-light",
+            "text-slate-500 text-xs font-light mt-1",
             currentTarget.length > 50 && "text-red-500"
           )}
         >

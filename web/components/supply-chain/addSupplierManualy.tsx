@@ -75,8 +75,8 @@ export const AddSupplierManualy = () => {
       name: "",
       type: "",
       quantity: null,
-      functionalUnit: "",
-      scope_3Contribution: null,
+      functionalUnit: null,
+      scope_3Contribution: 0,
     },
   ]);
 
@@ -162,7 +162,7 @@ export const AddSupplierManualy = () => {
         throw new Error(data.errors[0].message);
       }
 
-      toast.success("Supplier Created", { style: { color: "green" } });
+      toast.success("Supplier Products Created", { style: { color: "green" } });
       setEditProductTable(false);
       router.push("/supply-chain");
     },
@@ -406,8 +406,9 @@ export const AddSupplierManualy = () => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm font-light leading-5  bg-gray-50 py-6 rounded-md max-md:max-w-full",
-                          errors?.organizationRelationship && " border-red-500"
+                          "text-slate-500 text-sm font-light leading-5 border-none bg-gray-50 py-6 rounded-md max-md:max-w-full",
+                          errors?.organizationRelationship &&
+                            "border border-red-500"
                         )}
                       >
                         <SelectValue placeholder="Relationship" />
@@ -416,7 +417,7 @@ export const AddSupplierManualy = () => {
                         <SelectGroup className="text-sm">
                           {relationShips?.map((rel: string, index: number) => (
                             <SelectItem key={index} value={rel}>
-                              {rel}
+                              {_.capitalize(rel)}
                             </SelectItem>
                           ))}
                         </SelectGroup>
@@ -486,8 +487,9 @@ export const AddSupplierManualy = () => {
             <div className="text-sm mt-2 leading-5 text-slate-800 max-md:max-w-full">
               Enter the product type, product name, units created each year, and
               the functional unit associated with the product. If you know the
-              total Scope 3 contributions for the given quantity of each
-              product, enter it here
+              Scope 3 contributions for each product, enter it here. If
+              you&apos;re unable to provide this information, we can collaborate
+              with your supplier to gather the data.
             </div>
           </div>
 
@@ -522,7 +524,10 @@ export const AddSupplierManualy = () => {
                     <TooltipProvider delayDuration={800}>
                       <Tooltip>
                         <TooltipTrigger>
-                          <HelpCircle className="ml-2" size={12}></HelpCircle>
+                          <HelpCircle
+                            className="ml-2 text-white fill-slate-600"
+                            size={12}
+                          ></HelpCircle>
                         </TooltipTrigger>
                         <TooltipContent className="bg-slate-800 max-w-[246px]">
                           <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">
@@ -649,7 +654,11 @@ export const AddSupplierManualy = () => {
                         <Input
                           name="scope_3Contribution"
                           type="number"
-                          value={item.scope_3Contribution}
+                          value={
+                            item.scope_3Contribution === 0
+                              ? ""
+                              : item.scope_3Contribution
+                          }
                           placeholder="kgCO2"
                           onChange={(e) => {
                             const newCopy = _.cloneDeep(productList);
@@ -687,8 +696,8 @@ export const AddSupplierManualy = () => {
                               name: null,
                               type: null,
                               quantity: "",
-                              functionalUnit: "",
-                              scope_3Contribution: null,
+                              functionalUnit: null,
+                              scope_3Contribution: 0,
                             });
 
                             setProductList(newCopy);
@@ -713,39 +722,83 @@ export const AddSupplierManualy = () => {
             <Button
               variant="ghost"
               onClick={() => {
-                const data: any = {
-                  supplierId: supplier?.data?.id,
-                  supplierProducts: productList,
-                };
+                let ress: any;
 
-                const ress = z
-                  .array(
-                    z.object({
-                      name: z.string().min(3, {
-                        message: "description minimum lenth should be 3",
-                      }),
-                      type: z.string().trim().min(1, { message: "Required" }),
-                      quantity: z.string(),
-                      functionalUnit: z
-                        .string()
-                        .trim()
-                        .min(1, { message: "Required" }),
-                      scope_3Contribution: z.number(),
-                    })
-                  )
-                  .safeParse(productList);
+                if (productList.length > 1) {
+                  ress = z
+                    .array(
+                      z.object({
+                        name: z
+                          .string()
+                          .min(3, {
+                            message: "Minimum length should be 3",
+                          })
+                          .optional()
+                          .nullable(),
+                        type: z
+                          .string()
+                          .trim()
+                          .min(1, { message: "Required" })
+                          .optional()
+                          .nullable(),
+                        quantity: z
+                          .string({
+                            invalid_type_error: "Please enter a valid number",
+                          })
+                          .optional()
+                          .nullable(),
+                        functionalUnit: z
+                          .string({
+                            invalid_type_error: "Please enter a valid unit",
+                          })
+                          .trim()
+                          .min(1, { message: "Required" })
+                          .optional()
+                          .nullable(),
+                        scope_3Contribution: z.number().optional().nullable(),
+                      })
+                    )
+                    .safeParse(productList);
+                } else {
+                  ress = z
+                    .array(
+                      z.object({
+                        name: z.string().min(3, {
+                          message: "Minimum length should be 3",
+                        }),
+                        type: z.string().trim().min(1, { message: "Required" }),
+                        quantity: z.string({
+                          invalid_type_error: "Please enter a valid number",
+                        }),
+                        functionalUnit: z
+                          .string({
+                            invalid_type_error: "Please enter a valid unit",
+                          })
+                          .trim()
+                          .min(1, { message: "Required" }),
+                        scope_3Contribution: z.number().optional(),
+                      })
+                    )
+                    .safeParse(productList);
+                }
 
                 if (ress.success) {
                   setErr([]);
+                  const filteredData = productList.filter(
+                    (item: any) =>
+                      item.name !== null &&
+                      item.type !== null &&
+                      item.functionalUnit !== null
+                  );
+                  const data: any = {
+                    supplierId: supplier?.data?.id,
+                    supplierProducts: filteredData,
+                  };
                   addSupplierProductsMut(data);
                   setCompleteStep(true);
-
-                  toast.success("The changes have been saved.", {
-                    style: { color: "green" },
-                  });
                 } else {
                   let errors: { [key: string]: string }[] = [];
-                  ress.error.errors.map((item) => {
+                  ress.error.errors.map((item: any) => {
                     const [index, key] = item.path;
                     const message = item.message;
                     if (!errors[index as number]) {

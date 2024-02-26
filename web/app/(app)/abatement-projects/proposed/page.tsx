@@ -72,7 +72,7 @@ const ProposedPage = async () => {
                   </CardTitle>
                   {item.photo_url && (
                     <img
-                      className="h-[102px] w-[300px] object-cover"
+                      className="h-[102px] w-full object-cover"
                       src={item.photo_url}
                       alt="project image"
                     />

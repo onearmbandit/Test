@@ -75,7 +75,7 @@ const CompletedPage = async () => {
                   </CardTitle>
                   {item.photo_url && (
                     <img
-                      className="h-full w-full object-contain"
+                      className="h-[102px] w-full object-cover"
                       src={item.photo_url}
                       alt="project image"
                     />

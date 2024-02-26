@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { formatUrl } from "@/lib/utils";
 import { getActiveAbatementProjectById } from "@/services/abatement.api";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
@@ -39,17 +40,20 @@ const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
           <div className="p-[10px] space-y-2">
             <p className="text-xs font-medium text-slate-800">Proposed By</p>
 
-            <img
-              src={project.logo_url}
-              height={54}
-              width={223}
-              alt="company logo"
-            />
+            {project?.logo_url && (
+              <img
+                src={project.logo_url}
+                height={54}
+                width={223}
+                alt="company logo"
+              />
+            )}
           </div>
 
           {project.website_url && (
             <a
-              href={project.website_url}
+              href={formatUrl(project?.website_url!)}
+              target="_blank"
               className="text-blue-600 text-xs font-medium gap-1 flex"
             >
               <ArrowUpRight size={16} />
@@ -63,7 +67,7 @@ const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
           {project.photo_url && (
             <div className="w-full h-[205px] relative">
               <img
-                className="h-full w-full object-contain"
+                className="h-full w-full object-cover"
                 src={project.photo_url}
                 alt="project image"
               />

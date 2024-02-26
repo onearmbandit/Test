@@ -71,9 +71,9 @@ export const EditSupplier = () => {
       id: "",
       name: "",
       type: "",
-      quantity: "",
-      functional_unit: "",
-      scope_3Contribution: "",
+      quantity: null,
+      functional_unit: null,
+      scope_3Contribution: 0,
     },
   ]);
   const [err, setErr] = useState<
@@ -551,7 +551,10 @@ export const EditSupplier = () => {
                     <TooltipProvider delayDuration={800}>
                       <Tooltip>
                         <TooltipTrigger>
-                          <HelpCircle className="ml-2" size={12}></HelpCircle>
+                          <HelpCircle
+                            className="ml-2 text-white fill-slate-600"
+                            size={12}
+                          ></HelpCircle>
                         </TooltipTrigger>
                         <TooltipContent className="bg-slate-800 max-w-[246px]">
                           <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">
@@ -589,7 +592,7 @@ export const EditSupplier = () => {
                           placeholder="Add Product name"
                           onCreateOption={(e) => handleCreate(e, i)}
                           value={
-                            item.name == ""
+                            item.name == null
                               ? null
                               : { label: item.name, value: item.name }
                           }
@@ -613,13 +616,13 @@ export const EditSupplier = () => {
                             copy[i].type = newValue?.value;
                             setProductList(copy);
                           }}
-                          placeholder="Add Product Type"
-                          onCreateOption={(e) => handleCreateType(e, i)}
                           value={
-                            item.type == ""
+                            item.type == null
                               ? null
                               : { label: item.type, value: item.type }
                           }
+                          placeholder="Add Product Type"
+                          onCreateOption={(e) => handleCreateType(e, i)}
                         />
                       </div>
                     </TableCell>
@@ -668,7 +671,11 @@ export const EditSupplier = () => {
                       <div className="2xl:w-[215px] w-[125px]">
                         <Input
                           type="number"
-                          value={item.scope_3Contribution}
+                          value={
+                            item.scope_3Contribution === 0
+                              ? ""
+                              : item.scope_3Contribution
+                          }
                           placeholder="kgCO2"
                           onChange={(e) => {
                             const newCopy = _.cloneDeep(productList);
@@ -694,11 +701,11 @@ export const EditSupplier = () => {
                             const newCopy = _.cloneDeep(productList);
                             newCopy.push({
                               id: "",
-                              name: "",
-                              type: "",
+                              name: null,
+                              type: null,
                               quantity: "",
-                              functional_unit: "",
-                              scope_3Contribution: "",
+                              functional_unit: null,
+                              scope_3Contribution: 0,
                             });
 
                             setProductList(newCopy);
@@ -723,36 +730,86 @@ export const EditSupplier = () => {
             <Button
               variant={"ghost"}
               onClick={() => {
-                const data: any = {
-                  supplierId: supplier?.id,
-                  supplierProducts: productList,
-                };
-
-                const res = z
-                  .array(
-                    z.object({
-                      name: z.string().min(3, {
-                        message: "description minimum lenth should be 3",
-                      }),
-                      type: z.string().min(1, { message: "Required" }).trim(),
-                      quantity: z.string(),
-                      functional_unit: z.string(),
-                      scope_3Contribution: z.number(),
-                    })
-                  )
-                  .safeParse(productList);
+                let res: any;
+                if (productList.length > 1) {
+                  res = z
+                    .array(
+                      z.object({
+                        name: z
+                          .string()
+                          .min(3, {
+                            message: "Minimum length should be 3",
+                          })
+                          .optional()
+                          .nullable(),
+                        type: z
+                          .string()
+                          .trim()
+                          .min(1, { message: "Required" })
+                          .optional()
+                          .nullable(),
+                        quantity: z
+                          .string({
+                            invalid_type_error: "Please enter a valid number",
+                          })
+                          .optional()
+                          .nullable(),
+                        functional_unit: z
+                          .string({
+                            invalid_type_error: "Please enter a valid unit",
+                          })
+                          .trim()
+                          .min(1, { message: "Required" })
+                          .optional()
+                          .nullable(),
+                        scope_3Contribution: z.number().optional().nullable(),
+                      })
+                    )
+                    .safeParse(productList);
+                } else {
+                  res = z
+                    .array(
+                      z.object({
+                        name: z.string().min(3, {
+                          message: "Minimum length should be 3",
+                        }),
+                        type: z.string().trim().min(1, { message: "Required" }),
+                        quantity: z.string({
+                          invalid_type_error: "Please enter a valid number",
+                        }),
+                        functional_unit: z
+                          .string({
+                            invalid_type_error: "Please enter a valid unit",
+                          })
+                          .trim()
+                          .min(1, { message: "Required" }),
+                        scope_3Contribution: z.number().optional(),
+                      })
+                    )
+                    .safeParse(productList);
+                }
 
                 if (res.success) {
                   setErr([]);
+
+                  const filteredData = productList.filter(
+                    (item: any) =>
+                      item.name !== null &&
+                      item.type !== null &&
+                      item.functional_unit !== null
+                  );
+                  const data: any = {
+                    supplierId: supplier?.id,
+                    supplierProducts: filteredData,
+                  };
+
+                  console.log("data: ", data);
+
                   addSupplierProductsMut(data);
                   // setCompleteStep(true);
-
-                  toast.success("The changes have been saved.", {
-                    style: { color: "green" },
-                  });
                 } else {
                   let errorList: { [key: string]: string }[] = [];
-                  res.error.errors.map((item) => {
+                  res.error.errors.map((item: any) => {
                     const [index, key] = item.path;
                     const message = item.message;
                     if (!errorList[index as number]) {
