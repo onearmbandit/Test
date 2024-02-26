@@ -561,7 +561,7 @@ const Step4 = ({ setStep, user }: any) => {
               {targets.map((target, index) => (
                 <div
                   key={index}
-                  className="justify-between items-stretch border border-green-100 bg-green-50 flex gap-0.5 px-2.5 py-2 rounded-md border-solid"
+                  className="justify-between items-center border border-green-100 bg-green-50 flex gap-0.5 px-2.5 py-2 rounded-md border-solid"
                 >
                   <div className="text-green-800 text-xs font-medium leading-4 grow whitespace-nowrap">
                     {target}
@@ -571,7 +571,6 @@ const Step4 = ({ setStep, user }: any) => {
                     onClick={() => removeTarget(index)}
                     className="self-end"
                   >
-                    {" "}
                     <X size={12} className="text-green-800" />{" "}
                   </button>
                   {/* Add the cross button */}
