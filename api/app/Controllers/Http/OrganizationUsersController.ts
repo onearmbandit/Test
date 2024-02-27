@@ -45,7 +45,7 @@ export default class OrganizationUsersController {
 
       await sendMail(
         emailData.email,
-        'Welcome to C3insets.ai!',
+        `You've been invited to Terralab Insets by Terralab`,
         'emails/invite_organization',
         emailData
       )
