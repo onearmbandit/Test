@@ -16,6 +16,11 @@ import { sendMail } from 'App/helpers/sendEmail'
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
 export default class SuppliersController {
+
+  /**
+ * Gets all suppliers for the authenticated user with optional filtering.
+ * @returns A JSON response with suppliers data and metadata.
+ */
   public async index({ request, response }: HttpContextContract) {
     try {
       const queryParams = request.qs()
@@ -53,6 +58,15 @@ export default class SuppliersController {
     }
   }
 
+  /**
+ * Creates a new supplier.
+ * 
+ * Validates request data, authorizes user, initializes transaction, creates supplier, 
+ * sends invite email, attaches supplier to organization in pivot table, 
+ * commits transaction or rolls back on error.
+ * @param auth - The authenticated user
+ * @param bouncer - The authorization service  
+*/
   public async store({ request, response, auth, bouncer }: HttpContextContract) {
     //::Initialize database transaction
     const trx = await Database.transaction()
@@ -94,7 +108,7 @@ export default class SuppliersController {
           supplier_id: [supplierData.id],
           supplier_organization_id: [null]
         },
-      },trx)
+      }, trx)
 
       //::commit database transaction
       await trx.commit()
@@ -131,12 +145,20 @@ export default class SuppliersController {
     }
   }
 
-  public async show({ response, params,bouncer }: HttpContextContract) {
+  /**
+ * Gets supplier details by ID. 
+ * 
+ * Authorizes the request using the SuppliersPolicy. 
+ * Calculates the total scope 3 contribution value.
+ * @param params 
+ * @param bouncer 
+ */
+  public async show({ response, params, bouncer }: HttpContextContract) {
     try {
       var supplierData = await Supplier.getSupplierDetails('id', params.id)
 
-       //:: Authorization (auth user can access only their supplier data)
-       await bouncer.with('SuppliersPolicy').authorize('show', supplierData.toJSON())
+      //:: Authorization (auth user can access only their supplier data)
+      await bouncer.with('SuppliersPolicy').authorize('show', supplierData.toJSON())
 
       //;: Calculate total value of scope3Contribution
       let totalOfScopeContribution = 0
@@ -178,15 +200,21 @@ export default class SuppliersController {
     }
   }
 
-  public async update({ request, response, params, auth ,bouncer}: HttpContextContract) {
+  /**
+ * Updates a supplier record by ID.
+ * @param params - Route parameters containing the supplier ID to update.
+ * @param auth - The authenticated user instance.  
+ * @param bouncer - The authorization service instance.
+ */
+  public async update({ request, response, params, auth, bouncer }: HttpContextContract) {
     try {
       let requestData = request.all()
 
       var supplierData = await Supplier.getSupplierDetails('id', params.id)
 
       if (supplierData) {
-         //:: Authorization (auth user can update only their supplier data)
-       await bouncer.with('SuppliersPolicy').authorize('update', supplierData.toJSON())
+        //:: Authorization (auth user can update only their supplier data)
+        await bouncer.with('SuppliersPolicy').authorize('update', supplierData.toJSON())
 
         await request.validate(UpdateSupplierDatumValidator)
 
@@ -224,7 +252,15 @@ export default class SuppliersController {
 
   public async destroy({ }: HttpContextContract) { }
 
-  //:: Create supplier data using csv file
+  /**
+ * Bulk creation of suppliers by uploading CSV file.
+ * 
+ * Validates CSV file format. Reads supplier data from CSV file rows. 
+ * Creates unique supplier records from CSV data. Attaches suppliers to organization.
+ * Sends invite emails to supplier emails. Handles database transaction commit/rollback.
+ * @param auth - The authenticated user instance.
+ * @param bouncer - The authorization service instance.  
+ */
   public async bulkCreationOfSupplier({ request, response, auth, bouncer }: HttpContextContract) {
     //::Initialize database transaction
     const trx = await Database.transaction()
@@ -292,20 +328,16 @@ export default class SuppliersController {
 
       await worksheet?.eachRow(async function (row, rowNumber) {
         if (rowNumber !== 1) {
-          // let supplierProductTypes = row.values[7].split(",");
           let supplierProducts: any = []
-          // await supplierProductTypes.forEach(type => {
           let productData = {
             id: uuidv4(),
             name: row.values[6] ?? null,
             type: row.values[7],
-            // 'type': type ?? null,
             quantity: row.values[8] ?? null,
             functionalUnit: row.values[9] ?? null,
             scope_3Contribution: row.values[10] ?? null,
           }
           supplierProducts.push(productData)
-          // });
 
           let supplier = {
             id: uuidv4(),
@@ -373,7 +405,7 @@ export default class SuppliersController {
             fullName: `${auth.user?.firstName} ${auth.user?.lastName}`,
             organizationName: reportPeriodData.organization?.toJSON().company_name,
             email: elementData.email,
-            url: `${WEB_BASE_URL}?isSupplier=true`,   // isSupplier required to know invited user is supplier 
+            url: `${WEB_BASE_URL}/register?email=${elementData.email}&isSupplier=true`,   // isSupplier required to know invited user is supplier 
           }
 
           await sendMail(
@@ -432,6 +464,10 @@ export default class SuppliersController {
   }
 
   //:: Compare two CSVs for field format
+  /**
+ * Compares the header row values of a given worksheet to the header row values from the supplier CSV template file.
+ * Returns true if the header values match, false otherwise. Used to validate format of uploaded supplier CSV files.
+ */
   private async compareSupplierCSVFileWithTemplate(worksheet) {
     const filePath = Application.publicPath('downloads/Supplier_GHG_Emissions_CSV_Template.csv')
     const csvFilePath = filePath ? filePath : ''
@@ -451,7 +487,13 @@ export default class SuppliersController {
     return true
   }
 
-  //export supplier data using csv file
+  /**
+ * Exports supplier data for the given organization and reporting period as a CSV file.
+ * 
+ * Fetches the supplier data from the database for the given organization ID and reporting period ID. 
+ * Creates an Excel workbook, adds a worksheet, populates it with headers and the supplier data.
+ * Converts the worksheet to a CSV string, base64 encodes it, and sends it as the response.
+*/
   public async exportSupplierData({ request, response }: HttpContextContract) {
     try {
       // Fetch data from the database

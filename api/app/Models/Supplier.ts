@@ -3,7 +3,6 @@ import { BaseModel, column, belongsTo, BelongsTo, hasMany, HasMany, manyToMany, 
 import SupplyChainReportingPeriod from './SupplyChainReportingPeriod'
 import SupplierProduct from './SupplierProduct'
 import { ParsedQs } from 'qs'
-// import AbatementProject from './AbatementProject'
 import Organization from './Organization'
 
 export default class Supplier extends BaseModel {
@@ -72,6 +71,18 @@ export default class Supplier extends BaseModel {
 
   //::_____Relationships End_____:://
 
+
+
+  /**
+ * Creates a new Supplier record in the database.
+ * 
+ * @param reportPeriodData - The SupplyChainReportingPeriod instance to associate the supplier with
+ * @param requestData - The request data containing the supplier details
+ * @param auth - The authentication details of the user creating the supplier 
+ * @param trx - Optional transaction object for database operations
+ * 
+ * @returns The newly created Supplier instance
+ */
   public static async createSupplier(reportPeriodData, requestData, auth, trx: any = undefined) {
     const supplierData = await reportPeriodData.related('supplier').create(
       {
@@ -87,14 +98,17 @@ export default class Supplier extends BaseModel {
     return supplierData
   }
 
+  /**
+ * Fetches a supplier's details by the given field and value.
+ */
   public static async getSupplierDetails(field, value) {
     var supplierData = await Supplier.query()
       .where(field, value)
       .andWhereNull('deletedAt')
       .preload('supplyChainReportingPeriod', (query) => {
-        query.select('id','organization_id', 'reporting_period_from', 'reporting_period_to')
+        query.select('id', 'organization_id', 'reporting_period_from', 'reporting_period_to')
       })
-      .preload('supplierProducts',(query)=>{
+      .preload('supplierProducts', (query) => {
         query.whereNull('deleted_at')
       })
       .firstOrFail()
@@ -102,6 +116,9 @@ export default class Supplier extends BaseModel {
     return supplierData
   }
 
+  /**
+ * Updates the details of an existing supplier record.
+ */
   public static async updateSupplier(supplierData, requestData, auth) {
     supplierData
       .merge({
@@ -116,10 +133,14 @@ export default class Supplier extends BaseModel {
     return supplierData
   }
 
-  //:: Need to check
+  /**
+ * Gets all suppliers for the authenticated user with pagination, sorting, filtering and including relationships.
+ * 
+ * @param queryParams - The query parameters containing pagination, sorting, filtering and include params.
+ * @returns A paginated result with suppliers matching the criteria.
+*/
   public static async getAllSuppliersForSpecificUser(queryParams: ParsedQs) {
     let allSuppliersData: any = {}
-    // let allOrganizationData: any = {}
 
     const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
@@ -158,10 +179,6 @@ export default class Supplier extends BaseModel {
     else {
       allSuppliersData = await query
     }
-
-
-    //:: ORganization data handling
-
 
     return allSuppliersData
   }

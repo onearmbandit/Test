@@ -37,6 +37,13 @@ export default class OrganizationUser extends BaseModel {
     return this.query().where('user_id', userId).first()
   }
 
+  /**
+ * Creates a new organization user invite.
+ * 
+ * Generates a new UUID for the id field, merges it with the provided 
+ * organizationInvite data, saves the new organization user record,
+ * and returns the result.
+*/
   public static async createInvite(organizationInvite: any) {
     // Generate a new UUID for the id field
     const id = uuidv4()
@@ -50,6 +57,9 @@ export default class OrganizationUser extends BaseModel {
   }
 
 
+  /**
+ * Gets organization user details by the provided field and value.
+ */
   public static async getOrganizationUserDetails(field, value) {
     var data = await OrganizationUser.query()
       .where(field, value)

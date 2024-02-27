@@ -7,12 +7,16 @@ import Hash from '@ioc:Adonis/Core/Hash'
 import Role from 'App/Models/Role'
 
 export default class UsersController {
-  // public async index({}: HttpContextContract) {}
 
-  // public async create({}: HttpContextContract) {}
 
-  // public async store({}: HttpContextContract) {}
-
+  /**
+ * Handles showing the details of the currently authenticated user.
+ * 
+ * Tries to get the user details for the authenticated user from the auth object.
+ * 
+ * Returns a success response with the user details if authenticated.
+ * Returns an unauthorized error response if not authenticated.
+*/
   public async show({ response, auth }: HttpContextContract) {
     try {
       if (auth.user) {
@@ -33,6 +37,14 @@ export default class UsersController {
     }
   }
 
+  /**
+ * Handles updating the details of the currently authenticated user.
+ * 
+ * Checks for authentication and gets user details.
+ * Validates password if updating password. 
+ * Validates updated fields against schema.
+ * Updates user details in database.
+*/
   public async update({ request, response, auth }: HttpContextContract) {
     try {
       if (auth.user) {
@@ -99,6 +111,10 @@ export default class UsersController {
     }
   }
 
+  /**
+ * Deletes the authenticated user from the database.
+ * Confirms the user's email and password before deleting.
+ */
   public async destroy({ request, response, auth }: HttpContextContract) {
     try {
       // Get the authenticated user
@@ -179,6 +195,12 @@ export default class UsersController {
     }
   }
 
+/**
+ * Gets a role by name.
+ * 
+ * @param params - The HTTP request parameters.
+ * @returns The API response with the role data if found, otherwise a not found error.
+*/
   public async getRoleByName({ response, params }: HttpContextContract) {
     try {
       // Get the authenticated user

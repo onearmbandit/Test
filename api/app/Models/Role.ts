@@ -29,8 +29,13 @@ export default class Role extends BaseModel {
   //::_____Relationships End_____:://
 
 
+  /**
+ * Gets a Role model instance by name.
+ * 
+ * @returns {Promise<Role>} The Role model instance.
+ */
   public static async getRoleByName(name) {
-    const role: any = await Role.findBy('name',name)
+    const role: any = await Role.findBy('name', name)
     return role;
   }
 }

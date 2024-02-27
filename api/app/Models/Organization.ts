@@ -46,11 +46,6 @@ export default class Organization extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  // Relationship
-  // @belongsTo(() => User, {
-  //   localKey: 'user_id',
-  // })
-  // public user: BelongsTo<typeof User>
 
   //::_____Relationships Start_____:://
 
@@ -110,6 +105,9 @@ export default class Organization extends BaseModel {
     return organizationData
   }
 
+  /**
+ * Creates a new Organization record in the database.
+ */
   public static async createOrganization(requestData) {
     const organizationData = await Organization.create({
       id: uuidv4(),
@@ -119,11 +117,22 @@ export default class Organization extends BaseModel {
     return organizationData
   }
 
+  /**
+ * Updates an existing Organization record in the database 
+ * @param organization - The existing Organization object to update 
+ * @param requestData - The new data to merge into the organization
+ */
   public static async updateOrganization(organization, requestData) {
     await organization.merge(requestData).save()
     const organizationData = await Organization.getOrganizationDetails('id', organization.id)
     return organizationData
   }
+  
+  /**
+   * Gets all organizations with optional filtering and pagination.
+   * @param queryParams - The query parameters for filtering, sorting, pagination.
+   * @returns A paginated list of organizations.
+   */
 
   public static async getAllOrganizations(queryParams: ParsedQs) {
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8

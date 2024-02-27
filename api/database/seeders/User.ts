@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 export default class extends BaseSeeder {
   public async run() {
-    // Write your database queries inside the run method
     try {
       const superAdminRole = await Role.getRoleByName(UserRoles.SUPER_ADMIN)
       await User.createUserWithRole(

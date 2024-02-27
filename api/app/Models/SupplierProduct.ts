@@ -35,15 +35,16 @@ export default class SupplierProduct extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  //::_____Relationships Start_____:://
-
   @belongsTo(() => Supplier, {
     foreignKey: 'supplierId',
   })
   public supplier: BelongsTo<typeof Supplier>
 
-  //::_____Relationships End_____:://
 
+  /**
+ * Creates multiple supplier products by taking in supplier data, request data, 
+ * and auth details. 
+ */
   public static async createSupplierProducts(supplierData, requestData, auth) {
     let products: any = []
     requestData.supplierProducts.forEach((element) => {
@@ -64,30 +65,35 @@ export default class SupplierProduct extends BaseModel {
     return result
   }
 
-  //:: If id present then update data otherwise create new data
+  /**
+ * Updates or creates multiple supplier products.
+ * 
+ * Takes in supplier data, request data, and auth details. 
+ * Checks for existing supplier product IDs in the request.
+ * Updates existing products if ID found, or creates new product if no ID.
+ * Deletes any products no longer in request.
+ * Updates supplier updatedBy and updatedAt.
+ * Uses updateOrCreateMany to update/create products.
+ * Returns the update/create results.
+ */
   public static async updateOrCreateSupplierProducts(supplierData, requestData, auth) {
     let products: any = []
     let updateProductIds: any = []
     let allProductsOfSupplier: any = supplierData.supplierProducts?.map((item) => item.id)
 
     requestData.supplierProducts.forEach((element: any) => {
-      console.log('element=>', element)
       var singleData: any = {}
       element.scope_3Contribution = element.scope_3Contribution ? element.scope_3Contribution : null
       if (element?.id && element?.id !== '') {
-        console.log('Inside if id is not null')
         singleData = { ...element }
         updateProductIds.push(element.id)
       } else {
-        console.log('Inside else id is null')
         element.id = uuidv4()
         singleData = { ...element }
-        console.log('singleData=>', singleData)
       }
       products.push(singleData)
     })
 
-    console.log('products : ', products)
 
     //:: Delete products whose ids not in requestData of update product
     const idsToDelete = await allProductsOfSupplier.filter(
@@ -112,7 +118,11 @@ export default class SupplierProduct extends BaseModel {
     return result
   }
 
-  //:: Delete multiple supplier-products
+  /**
+ * Deletes multiple supplier products by ID.
+ * 
+ * @param requestData - Object containing array of product IDs to delete in products property.
+ */
   public static async deleteMultipleSupplierProducts(requestData) {
     await this.query().whereIn('id', requestData.products).update({
       deletedAt: new Date(),
@@ -120,6 +130,18 @@ export default class SupplierProduct extends BaseModel {
     return
   }
 
+  /**
+ * Gets all supplier products for a specific supply chain reporting period, paginated.
+ * 
+ * @param queryParams - Query parameters object containing:
+ * - perPage - Number of records per page
+ * - page - Page number
+ * - order - Sort order ('asc' or 'desc')
+ * - sort - Sort column (default 'updated_at') 
+ * - supplyChainReportingPeriodId - Filter by supply chain reporting period ID
+ * 
+ * @returns Paginated collection of supplier products preloaded with supplier, filtered and sorted based on queryParams
+ */
   public static async getAllSupplierProductsForSpecificPeriod(queryParams: ParsedQs) {
     const perPage = queryParams.perPage ? parseInt(queryParams.perPage as string, 10) : 20
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
@@ -151,6 +173,15 @@ export default class SupplierProduct extends BaseModel {
     return allSupplierProductsData
   }
 
+  
+  /**
+ * Gets emission data for all supplier products for a specific supply chain reporting period.
+ * 
+ * @param queryParams - Query parameters object containing: 
+ * - supplyChainReportingPeriodId - Filter by supply chain reporting period ID
+ * 
+ * @returns Collection of supplier products preloaded with supplier, filtered by reporting period
+ */
   public static async getProductsEmissionDataForSpecificPeriod(queryParams: ParsedQs) {
     const supplyChainReportingPeriodId = queryParams.supplyChainReportingPeriodId
       ? queryParams.supplyChainReportingPeriodId.toString()
@@ -168,6 +199,17 @@ export default class SupplierProduct extends BaseModel {
     return JSON.parse(JSON.stringify(allSupplierProductsData))
   }
 
+
+  /**
+ * Gets all product types for a specific supplier.
+ * 
+ * @param queryParams - Query parameters object containing:
+ * - supplierId - Filter results by supplier ID
+ * - order - Sort order (asc or desc)
+ * - sort - Sort column (default is type)
+ * 
+ * @returns Collection of distinct product types for the supplier
+*/
   public static async getAllProductTypesOfSuppliers(queryParams: ParsedQs) {
     const supplierId = queryParams.supplierId ? queryParams.supplierId.toString() : ''
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
@@ -185,6 +227,17 @@ export default class SupplierProduct extends BaseModel {
     return JSON.parse(JSON.stringify(allProductTypesOfSupplier))
   }
 
+
+  /**
+ * Gets all product names for a specific supplier.
+ * 
+ * @param queryParams - Query parameters object containing:
+ * - supplierId - Filter results by supplier ID  
+ * - order - Sort order (asc or desc)
+ * - sort - Sort column (default is name)
+ *
+ * @returns Collection of distinct product names for the supplier
+ */
   public static async getAllProductNamesOfSuppliers(queryParams: ParsedQs) {
     const supplierId = queryParams.supplierId ? queryParams.supplierId.toString() : ''
     let query = this.query().whereNull('deleted_at') // Exclude soft-deleted records;
@@ -202,6 +255,14 @@ export default class SupplierProduct extends BaseModel {
     return JSON.parse(JSON.stringify(allProductNamesOfSupplier))
   }
 
+
+  /**
+ * Gets product details by searching on the given field and value.
+ * 
+ * @param field - The field to search on.
+ * @param value - The value to search for.
+ * @returns The matching product details if found, throws error if not found.
+ */
   public static async getProductDetailsData(field, value) {
     const productDetails = await SupplierProduct.query()
       .where(field, value)

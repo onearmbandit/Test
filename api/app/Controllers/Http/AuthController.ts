@@ -28,7 +28,12 @@ import { createSlug } from 'App/helpers/helper'
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
 export default class AuthController {
-  //register new user in first step of registration
+  /**
+ * Registers a new user in first step of registration
+ * 
+ * Validates user data, checks for duplicate email, assigns user role, 
+ * generates auth token if invited user, saves user, and returns API response.
+*/
   public async register({ request, response, auth }: HttpContextContract) {
     try {
       await request.validate(SignupValidator)
@@ -37,6 +42,7 @@ export default class AuthController {
       const userExist = await User.getUserDetailsWithFirst('email', requestData.email)
       let role: any = await Role.getRoleByName(UserRoles.ADMIN)
 
+      //:: Check user isSupplier or invitedUser then assign role to it.
       if (requestData.isSupplier) {
         role = await Role.getRoleByName(UserRoles.SUPPLIER)
       } else if (requestData.invitedUser) {
@@ -72,6 +78,8 @@ export default class AuthController {
           },
           role
         )
+
+        //:: If invitedUser then update entry from organization-users table and return auth-token
         if (requestData.invitedUser) {
           let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
             'email',
@@ -84,8 +92,7 @@ export default class AuthController {
             })
             .save()
 
-          console.log('Organisations DAta ---->', organizationUserData)
-          //:: Condition true when user invited by super-admin
+          //:: Condition true when user invited by super-admin and send welcome mail to user
           if (organizationUserData?.firstName || organizationUserData?.lastName) {
             userData
               .merge({
@@ -146,7 +153,17 @@ export default class AuthController {
     }
   }
 
-  // update user data in second step
+  /**
+ * Updates user data for a new user in the second step of registration.
+ *
+ * Accepts firstName, lastName, emailVerifyToken, and registrationStep in the request body.
+ * Updates the user's firstName, lastName, emailVerifyToken, and registrationStep fields.
+ *
+ * Sends a verification email if user was not invited. 
+ * Sends a welcome email if user was invited.
+ *
+ * Returns API response with updated user data on success, validation errors or error message on failure.
+ */
   public async updateNewUser({ request, response, params }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -192,7 +209,7 @@ export default class AuthController {
         )
         // }
       } else {
-        //:: Only uninvited user
+        //:: Only uninvited user receive verify mail email
         const emailData = {
           user: userData,
           url: `${WEB_BASE_URL}/verify-email?token=${userData.emailVerifyToken}`,
@@ -233,7 +250,15 @@ export default class AuthController {
     }
   }
 
-  // Crate create Organization in third step of register
+  /**
+ * Creates an organization for the user.
+ * 
+ * Validates the request data. Gets the user details. Creates the organization. 
+ * Attaches the organization to the user. If user is a supplier, updates the supplier-organizations pivot.
+ * Sends a confirmation email. 
+ * 
+ * Returns API response.
+*/
   public async createOrganization({ request, response }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -246,7 +271,7 @@ export default class AuthController {
 
       const organizationData = await Organization.createOrganization(requestData)
 
-      //:: Add data in pivot table
+      //:: Add data in pivot table organization-users
       await userData.related('organizations').attach({
         [organizationData.id]: {
           id: uuidv4(),
@@ -257,6 +282,7 @@ export default class AuthController {
         },
       })
 
+      //:: if user supplier then update data in supplier-organizations pivot table
       if (requestData.isSupplier) {
         let supplierData = await Supplier.getSupplierDetails('email', userData.email)
         await SupplierOrganization.query()
@@ -308,7 +334,14 @@ export default class AuthController {
     }
   }
 
-  //:: Verify email functionality
+  /**
+ * Verifies the user's email address using a verification token.
+ * 
+ * Checks if the provided token matches a user record. 
+ * If so, marks the user's email as verified and clears the token.
+ * 
+ * Returns success/error responses.
+ */
   public async verifyEmail({ request, response }: HttpContextContract) {
     try {
       const token = request.input('token')
@@ -365,7 +398,16 @@ export default class AuthController {
     }
   }
 
-  //login existing user
+  /**
+ * Logs in an existing user.
+ * 
+ * Looks up the user by email, verifies their password, 
+ * generates a JWT token, and returns the token and user details.
+ * 
+ * Validates the login request payload, returns 422 if validation fails.
+ * Returns 401 if email or password is incorrect. 
+ * Returns 500 for any other errors.
+ */
   public async login({ auth, request, response }: HttpContextContract) {
     try {
       const payload = await request.validate(LoginValidator)
@@ -433,6 +475,13 @@ export default class AuthController {
     }
   }
 
+
+  /**
+ * Handles forgot password request. 
+ * Validates email, generates reset token, 
+ * updates user record with token, 
+ * sends reset password email,
+*/
   public async forgotPassword({ request, response }: HttpContextContract) {
     try {
       const payload = await request.validate(ForgotPasswordValidator)
@@ -440,7 +489,7 @@ export default class AuthController {
       //::Lookup user manually
       const user = await User.query()
         .where('email', payload.email)
-        .where('userStatus', activeStatus)
+        .where('userStatus', activeStatus)  // as of now default value is active 
         .first()
 
       //::Verify password
@@ -580,7 +629,12 @@ export default class AuthController {
     }
   }
 
-  //:: Used for create reset-token
+  /**
+ * Generates a random token string to be used as a remember token. 
+ * Checks if the generated token already exists for another user. 
+ * If so, recursively calls this function to generate a new unique token.
+ * @returns {string} A unique random token string.
+*/
   private async createToken() {
     let token = string.generateRandom(25)
     const user = await User.findBy('remember_token', token)
@@ -592,6 +646,18 @@ export default class AuthController {
   }
 
   //:: Social signup and login
+  /**
+ * Handles social signup and login for a user.
+ * 
+ * If the user does not exist, creates a new user with the provided info. 
+ * If the user was invited, links them to the organization.
+ * If the user is a supplier, assigns supplier role.
+ * 
+ * If user exists, generates a new token.
+ * If user was invited, links them to the organization.
+ * 
+ * Returns API response with user info and auth token on success.
+*/
   public async socialSignupAndLogin({ request, response, auth }: HttpContextContract) {
     try {
       await request.validate(SocialSignupOrLoginValidator)
@@ -608,21 +674,13 @@ export default class AuthController {
         })
         .whereNotNull('supplier_id')
 
-      // if (!invitedUserExist) {
-      //     return apiResponse(response, false, 422, {
-      //         'errors': [{
-      //             field: 'email',
-      //             message: Config.get('responsemessage.AUTH_RESPONSE.notMatchInvitedData')
-      //         }]
-      //     },
-      //         Config.get('responsemessage.COMMON_RESPONSE.validation_failed'));
-      // }
-
       const userExist = await User.getUserDetailsWithSocialToken(
         'email',
         requestData.email,
         requestData.socialLoginToken
       )
+
+      //:: Findout role value of user
       var role: any = await Role.getRoleByName(UserRoles.ADMIN)
       if (invitedUserExist) {
         role = await Role.getRoleByName(UserRoles.SUB_ADMIN)
@@ -630,6 +688,7 @@ export default class AuthController {
         role = await Role.getRoleByName(UserRoles.SUPPLIER)
       }
 
+      //:: If user not exist create new one
       if (!userExist) {
         const userData = await User.createUserWithRole(
           {
@@ -646,7 +705,7 @@ export default class AuthController {
           role
         )
 
-        //:: If invitedUserExist then update details otherwise create new in organizationUsers table
+        //:: If invitedUserExist then update details
         if (invitedUserExist) {
           let organizationUserData = await OrganizationUser.getOrganizationUserDetails(
             'email',
@@ -673,7 +732,6 @@ export default class AuthController {
             'email',
             requestData.email
           )
-          console.log('organizationUserData', organizationUserData)
           organizationUserData
             ?.merge({
               user_id: userExist?.id,
@@ -721,6 +779,8 @@ export default class AuthController {
     }
   }
 
+
+  //:: Just only social login 
   public async socialLogin({ request, response, auth }: HttpContextContract) {
     try {
       await request.validate(SocialSignupOrLoginValidator)

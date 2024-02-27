@@ -6,10 +6,21 @@ import SupplierProduct from 'App/Models/SupplierProduct';
 import Supplier from 'App/Models/Supplier';
 import SupplyChainReportingPeriod from 'App/Models/SupplyChainReportingPeriod';
 import { DateTime } from 'luxon'
-// import DeleteMultipleSupplierProductValidator from 'App/Validators/Supplier/DeleteMultipleSupplierProductValidator';
 import User from 'App/Models/User';
 
 export default class SupplierProductsController {
+  /**
+ * Returns a paginated list of all supplier products for a given supply chain reporting period. 
+ * 
+ * Authenticates the user and checks if the reporting period ID matches the user's organization.
+ * 
+ * Query parameters:
+ * - supplyChainReportingPeriodId: ID of the supply chain reporting period to get products for
+ * 
+ * Returns:
+ * - Paginated list of supplier products
+ * - 403 if reporting period doesn't match user's organization 
+*/
   public async index({ request, response, auth }: HttpContextContract) {
     try {
       const queryParams = request.qs();
@@ -59,6 +70,13 @@ export default class SupplierProductsController {
     }
   }
 
+  /**
+ * Creates or updates supplier products based on the request data.
+ * 
+ * Validates the request data against the validation rules. 
+ * Gets the supplier details.
+ * Calls the SupplierProduct model method to update or create the supplier products.
+ */
   public async store({ request, response, auth }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -102,6 +120,11 @@ export default class SupplierProductsController {
 
   }
 
+
+  /**
+ * Deletes multiple supplier products.
+ * Returns success or error response.
+*/
   public async deleteMultipleSupplierProducts({ request, response }: HttpContextContract) {
     try {
       let requestData = request.all()
@@ -132,6 +155,15 @@ export default class SupplierProductsController {
     }
   }
 
+
+  /**
+ * Deletes a supplier product by ID.
+ * 
+ * @param bouncer - The authorization service  
+ * 
+ * Gets the product details. Authorizes the deletion. 
+ * Sets the deletedAt timestamp. Saves the product.
+*/
   public async destroy({ response, request, bouncer }: HttpContextContract) {
     try {
       const productDetailsData = await SupplierProduct.getProductDetailsData('id', request.param('id'));
@@ -171,6 +203,14 @@ export default class SupplierProductsController {
 
   }
 
+
+  /**
+ * Calculates product-level emission data for the given supply chain reporting period.
+ * 
+ * Fetches all product emission data for the period. 
+ * Calculates total product emissions and percentage with missing data.
+ * Returns aggregated emission data for the period.
+*/
   public async calculateProductEmissionData({ response, request }: HttpContextContract) {
     try {
       const queryParams = request.qs();
@@ -204,9 +244,6 @@ export default class SupplierProductsController {
           let productData = {
             name: ele.name,
             scope_3_contribution: ele.scope_3_contribution,
-            // functional_unit: ele.functional_unit,
-            // quantity: ele.quantity,
-            // type: ele.type
           }
 
           //:: Findout NA element count
@@ -254,6 +291,12 @@ export default class SupplierProductsController {
   }
 
 
+  /**
+ * Gets all product types for a supplier.
+ * Checks if the supplier exists based on the supplierId query parameter. 
+ * If supplier exists, calls SupplierProduct.getAllProductTypesOfSuppliers() to get all product types for that supplier.
+ * Returns API response with product types data and success message on success, validation error or error response on failure.
+*/
   public async getAllProductTypes({ response, request }: HttpContextContract) {
     try {
       const queryParams = request.qs();
@@ -287,6 +330,12 @@ export default class SupplierProductsController {
 
   }
 
+  /**
+ * Gets all product names for a supplier.
+ * Checks if the supplier exists based on the supplierId query parameter.
+ * If supplier exists, calls SupplierProduct.getAllProductNamesOfSuppliers() to get all product names for that supplier. 
+ * Returns API response with product names data and success message on success, validation error or error response on failure.
+*/
   public async getAllProductNames({ response, request }: HttpContextContract) {
     try {
       const queryParams = request.qs();

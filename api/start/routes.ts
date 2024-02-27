@@ -25,5 +25,9 @@ Route.get('/', async () => {
   return { hello: 'world' }
 })
 
-//:: Download any file 
+/**
+ * Defines a route to download a file by fileName. 
+ * The fileName parameter specifies the name of the file to download.
+ * Calls the download action on the FilesController to handle the download.
+*/
 Route.get('/download/:fileName', 'FilesController.download')

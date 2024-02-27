@@ -9,25 +9,21 @@ import User from 'App/Models/User'
 const WEB_BASE_URL = process.env.WEB_BASE_URL
 
 export default class OrganizationUsersController {
-  public async index({}: HttpContextContract) {}
 
-  public async create({}: HttpContextContract) {}
 
-  public async store({}: HttpContextContract) {}
-
-  public async show({}: HttpContextContract) {}
-
-  public async edit({}: HttpContextContract) {}
-
-  public async update({}: HttpContextContract) {}
-
-  public async destroy({}: HttpContextContract) {}
-
+  /**
+ * Invites a user to join the organization via email.
+ * 
+ * Validates the invite request data, creates an OrganizationUser invite record, 
+ * generates a welcome email with invite link, and sends it to the invited user.
+ * 
+ * Returns API response with invite result on success, validation errors or 
+ * error messages on failure.
+ */
   public async inviteOrganization({ request, response, bouncer, auth }: HttpContextContract) {
     try {
       await bouncer.with('OrganizationUserPolicy').authorize('invite')
       const invitedBy = await User.getUserDetails('id', auth?.user?.id)
-      console.log('invited by : ', invitedBy)
 
       //:: only super admin can access this endpoint to invite an organization
 

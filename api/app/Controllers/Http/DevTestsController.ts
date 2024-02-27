@@ -17,6 +17,17 @@ export default class DevTestsController {
   public async update({}: HttpContextContract) {}
 
   public async destroy({}: HttpContextContract) {}
+  /**
+   * Sends a test email based on the provided email type.
+   * 
+   * Valid email types:
+   * - verify-email
+   * - invite-organization 
+   * - reset-password
+   * - welcome-user
+   * - user-new-account
+   * - invite-sub-user
+   */
 
   public async sendTestMail({ request, response }: HttpContextContract) {
     try {

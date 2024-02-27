@@ -4,6 +4,11 @@ import Config from '@ioc:Adonis/Core/Config'
 import SupplierOrganization from 'App/Models/SupplierOrganization'
 
 export default class SupplierOrganizationsController {
+  /**
+ * Gets all suppliers with their organization details. 
+ * 
+ * @returns The API response with suppliers data.
+ */
   public async index({ request, response }: HttpContextContract) {
     try {
       const queryParams = request.qs()
@@ -38,16 +43,5 @@ export default class SupplierOrganizationsController {
     }
   }
 
-  public async store({ }: HttpContextContract) {
-  }
 
-  public async show({ }: HttpContextContract) {
-  }
-
-
-  public async update({ }: HttpContextContract) {
-  }
-
-  public async destroy({ }: HttpContextContract) {
-  }
 }

@@ -49,6 +49,12 @@ export default class SupplyChainReportingPeriod extends BaseModel {
   //::_____Relationships End_____:://
 
 
+  /**
+ * Gets all reporting periods for an organization with pagination.
+ * 
+ * @param queryParams - The query string parameters.
+ * @returns The paginated reporting periods for the organization.
+*/
   public static async getAllReportingPeriod(queryParams: ParsedQs) {
     let organizationReportingPeriods: any = {}
 
@@ -74,23 +80,17 @@ export default class SupplyChainReportingPeriod extends BaseModel {
       organizationReportingPeriods = await query.preload('supplier')
     }
 
-    // Format reportingPeriodFrom and reportingPeriodTo
-    //  const formattedReportingPeriods = organizationReportingPeriods.map((period) => {
-    //   return {
-    //     ...period,
-    //     reportingPeriodFrom: period.reportingPeriodFrom.toFormat("LLL yyyy"),
-    //     reportingPeriodTo: period.reportingPeriodTo.toFormat("LLL yyyy"),
-    //   };
-    // });
-    // console.log("formattedReportingPeriods",formattedReportingPeriods)
-
-    // return formattedReportingPeriods;
-
     return organizationReportingPeriods
   }
 
 
-
+  /**
+ * Creates a new reporting period for the given organization.
+ *
+ * @param requestData - The request data containing the organization ID and reporting period dates. 
+ * @param organizationIds - The ID of the organization to create the reporting period for.
+ * @returns The newly created reporting period object.
+ */
   public static async createReportPeriod(requestData, organizationIds) {
     var organizationData;
     if (requestData.organizationId) {
@@ -108,6 +108,13 @@ export default class SupplyChainReportingPeriod extends BaseModel {
   }
 
 
+  /**
+ * Gets the details of a reporting period by the given field and value.
+ * 
+ * @param field - The field to search by (e.g. 'id').
+ * @param value - The value to search for.
+ * @returns The reporting period object if found.
+ */
   public static async getReportPeriodDetails(field, value) {
     const reportPeriodData = await SupplyChainReportingPeriod.query()
       .where(field, value)
@@ -123,6 +130,9 @@ export default class SupplyChainReportingPeriod extends BaseModel {
     return reportPeriodData;
   }
 
+  /**
+ * Updates the given reporting period with new date values from the request data.
+ */
   public static async updateReportPeriod(reportPeriodData, requestData) {
     reportPeriodData.merge({
       reportingPeriodFrom: DateTime.fromJSDate(new Date(requestData.reportingPeriodFrom)),
@@ -135,6 +145,9 @@ export default class SupplyChainReportingPeriod extends BaseModel {
 
 
 
+  /**
+ * Deletes the given reporting period by setting its deletedAt timestamp.
+ */
   public static async deleteReportPeriod(reportPeriodData) {
     await reportPeriodData.merge({ deletedAt: DateTime.now() }).save()
     return
