@@ -15,7 +15,7 @@ Route.group(() => {
     Route.post('/reset-password', 'AuthController.resetPassword')
     Route.post('/logout', 'AuthController.logout').middleware('auth')
 
-    Route.post('/send-email', 'CommonController.sendEmail')
+    // Route.post('/send-email', 'CommonController.sendEmail')
 
     // social login or signup API
     Route.post('/social-signup', 'AuthController.socialSignupAndLogin')
