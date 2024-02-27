@@ -125,16 +125,15 @@ const Page = () => {
 
   useEffect(() => {
     if (periodsQ.isSuccess) {
-      console.log(reportingPeriods, "reportingPeriods");
       if (
         !reportingPeriods ||
-        !reportingPeriods.length ||
+        reportingPeriods.length == 0 ||
         !reportingPeriods[0]?.id
       ) {
         setShowNew(true);
       }
-      reportingPeriods && reportingPeriods[0].id
-        ? setCurrentTab(reportingPeriods[0].id)
+      reportingPeriods && reportingPeriods[0]?.id
+        ? setCurrentTab(reportingPeriods[0]?.id)
         : null;
       // setCurrentTab(reportingPeriods[0]?.id);
     }

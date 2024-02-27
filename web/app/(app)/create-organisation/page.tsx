@@ -567,10 +567,7 @@ const Step4 = ({ setStep, user }: any) => {
                     {target}
                   </div>
 
-                  <button
-                    onClick={() => removeTarget(index)}
-                    className="self-end"
-                  >
+                  <button onClick={() => removeTarget(index)}>
                     <X size={12} className="text-green-800" />{" "}
                   </button>
                   {/* Add the cross button */}

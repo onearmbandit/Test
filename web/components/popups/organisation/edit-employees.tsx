@@ -23,7 +23,7 @@ const EditEmployees = ({
     queryKey: ["employee-details"],
     queryFn: () => getUser(),
   });
-  const user = userQ.isSuccess ? userQ.data : null;
+  const user = userQ.isSuccess ? userQ.data.data : null;
 
   const sizes = [
     "1 to 10",
@@ -53,14 +53,14 @@ const EditEmployees = ({
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    const orgId = user.organizations[0].id;
+    const orgId = user?.organizations[0]?.id;
 
     mutate({ id: orgId!, formdata: { companySize: sizes[selected!] } });
   };
 
   useEffect(() => {
     if (userQ.isSuccess) {
-      const companySize = user.data.organizations[0].company_size;
+      const companySize = user?.organizations[0]?.company_size;
       const index = sizes.indexOf(companySize);
       setSelected(index);
     }
