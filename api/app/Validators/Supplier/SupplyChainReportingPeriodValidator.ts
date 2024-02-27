@@ -6,6 +6,10 @@ export default class SupplyChainReportingPeriodValidator {
   constructor(protected ctx: HttpContextContract) {    
   }
 
+  /**
+ * Defines schema references for validating the allowed date. 
+ * The allowed date is parsed from the request body's reportingPeriodFrom property.
+*/
   public refs = schema.refs({
     allowedDate: DateTime.fromJSDate(new Date(this.ctx.request.body().reportingPeriodFrom))
   })
