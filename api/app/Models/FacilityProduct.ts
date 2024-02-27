@@ -42,15 +42,17 @@ export default class FacilityProduct extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  //::_____Relationships Start_____:://
 
   @belongsTo(() => FacilityEmission, {
     foreignKey: 'facilityEmissionId',
   })
   public FacilityEmission: BelongsTo<typeof FacilityEmission>
 
-  //::_____Relationships End_____:://
 
+  /**
+ * Gets all facility products from the database.
+ * Accepts query parameters to filter, sort, paginate and include relationships.
+ */
   public static async getAllFacilityProducts(queryParams: ParsedQs) {
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
@@ -84,6 +86,18 @@ export default class FacilityProduct extends BaseModel {
     return facilityProducts
   }
 
+  /**
+* Creates facility products and related data from emission data and request data.
+*
+* Loops through the facilityProducts array in the request data to create a 
+* product data object for each one with a new UUID. Saves the products 
+* array to the database related to the emission data.
+*
+* If equalityAttribute is in the request data, saves a new FacilityEqualityAttribute
+* related to the emission data.
+*
+* Returns the result of creating the facility products.
+*/
   public static async createFacilityProducts(emissionData, requestData) {
     const products: any = []
     for (const element of requestData.facilityProducts) {
@@ -111,6 +125,9 @@ export default class FacilityProduct extends BaseModel {
     return result
   }
 
+  /**
+ * Gets facility product data by the given field and value.
+ */
   public static async getFacilityProductData(field, value) {
     const facilityProductDetails = await this.query()
       .where(field, value)
@@ -119,6 +136,19 @@ export default class FacilityProduct extends BaseModel {
     return facilityProductDetails
   }
 
+  /**
+ * Updates or creates facility products for the given facility emission data 
+ * based on the facilityProducts array in the request data. 
+ * 
+ * Loops through the facilityProducts array and checks if the product ID exists.
+ * If so, updates that product. If not, creates a new product.
+ * 
+ * Deletes any existing products for the facility that are not in the 
+ * request data facilityProducts array by soft-deleting them.
+ * 
+ * If equalityAttribute is in the request data, updates the equality attribute 
+ * value for the facility emission data.
+ */
   public static async updateOrCreateFacilityProducts(
     facilityEmissionData,
     requestData,
@@ -180,6 +210,18 @@ export default class FacilityProduct extends BaseModel {
     return result
   }
 
+  /**
+ * Calculates the carbon emission percentages for each product 
+ * based on the total emissions and number of products for the facility.
+ * 
+ * Takes the total scope 1, 2, and 3 emissions for the facility, 
+ * gets all the products for the facility, 
+ * calculates the average emission per product by dividing the totals by number of products,
+ * then calculates the percentage of each scope's total contributed by each product.
+ * 
+ * Returns an array of objects containing the product name, quantity, 
+ * and emission percentages for each scope.
+ */
   public static async calculateCarbonEmission(facilityEmissionData) {
     const productEmissions: {
       name: string
@@ -233,6 +275,15 @@ export default class FacilityProduct extends BaseModel {
     return productEmissions
   }
 
+  /**
+ * Gets all unique product names from the facility emissions data. 
+ * 
+ * Queries the database for facility emissions data based on the provided organization ID. 
+ * Preloads the related facility products data.
+ * Extracts a unique array of product names from the facility products.
+ * Sorts the product name array based on provided order param.
+ * Returns the sorted array of unique product names.
+ */
   public static async getAllProductNames(queryParams) {
     const organizationId = queryParams.organizationId ? queryParams.organizationId.toString() : ''
     const order = queryParams.order ? queryParams.order.toString() : 'desc'

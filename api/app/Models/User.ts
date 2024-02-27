@@ -114,7 +114,11 @@ export default class User extends BaseModel {
 
   //::_____Relationships End_____:://
 
-  //:: Just with first() method
+  /**
+ * Gets user details by the given field and value, preloading roles and organizations.
+ * 
+ * @returns The user object if found, null if not.
+ */
   public static async getUserDetailsWithFirst(field, value) {
     const user = await User.query()
       .where(field, value)
@@ -125,6 +129,10 @@ export default class User extends BaseModel {
     return user
   }
 
+  /**
+ * Gets user details by the given field and value, preloading roles and organizations.
+ * @returns The user object if found, throws error if not.
+ */
   public static async getUserDetails(field, value) {
     const userData = await User.query()
       .where(field, value)
@@ -136,6 +144,12 @@ export default class User extends BaseModel {
     return userData
   }
 
+  /**
+ * Gets user details by ID, preloading roles and organizations.
+ * 
+ * @param id - The ID of the user to get.
+ * @returns The user object if found, throws error if not.
+ */
   public static async getUserDetailsWithPreloads(id) {
     const user = await User.query()
       .where('id', id)
@@ -147,6 +161,15 @@ export default class User extends BaseModel {
     return user
   }
 
+  /**
+ * Gets user details by the given field and value, preloading roles and organizations. 
+ * Also searches by social login token if provided.
+ * 
+ * @param field - The field to search by.
+ * @param value - The value to search for.
+ * @param token - Optional social login token to search by.
+ * @returns The user object if found, null if not.
+ */
   public static async getUserDetailsWithSocialToken(field, value, token) {
     const user = await User.query()
       .where(field, value)
@@ -158,6 +181,10 @@ export default class User extends BaseModel {
     return user
   }
 
+  /**
+ * Creates a new user with the given user data and assigns them the provided role.
+ * @returns The newly created user with role assigned.
+ */
   public static async createUserWithRole(userData, roleData) {
     const result = await User.create(userData)
     //:: Assign admin role to new user
@@ -171,6 +198,12 @@ export default class User extends BaseModel {
     return user
   }
 
+  /**
+ * Gets details of the currently logged in user, preloading roles and organizations.
+ * 
+ * @param authUser - The authenticated user object. 
+ * @returns The user object for the authenticated user.
+*/
   public static async getLoggedInUser(authUser) {
     const user = await User.query()
       .where('id', authUser.id)
@@ -181,6 +214,12 @@ export default class User extends BaseModel {
     return user
   }
 
+  /**
+ * Deletes the given user by setting their deletedAt timestamp 
+ * and appending the current timestamp to their email.
+ * 
+ * @param user - The user to delete.
+ */
   public static async deleteUser(user) {
     await ApiToken.expireApiToken(user)
     const userEmail = DateTime.now() + '_' + user.email
@@ -188,12 +227,23 @@ export default class User extends BaseModel {
     return
   }
 
+  /**
+ * Updates the given user with the provided request data.
+ *
+ * @param user - The user to update. 
+ * @param requestData - The data to update on the user.
+ * @returns The updated user details.
+ */
   public static async updateUser(user, requestData) {
     await user.merge(requestData).save()
     const userDetails = await User.find(user.id)
     return userDetails
   }
 
+  /**
+ * Verifies a plain text password against the hashed password stored for this user.
+ * @returns A Promise resolving to true if the password matches, false otherwise.
+ */
   public async verifyPassword(plainPassword: string): Promise<boolean> {
     return Hash.verify(plainPassword, this.password)
   }

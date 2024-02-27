@@ -64,24 +64,10 @@ export default class AbatementProject extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  //::_____Relationships Start_____:://
-
-  // @belongsTo(() => Supplier, {
-  //   localKey: 'id',
-  // })
-  // public supplier: BelongsTo<typeof Supplier>
-
   @belongsTo(() => Organization, {
     localKey: 'id',
   })
   public organization: BelongsTo<typeof Organization>
-
-  // @belongsTo(() => Supplier, {
-  //   foreignKey: 'proposedTo',
-  // })
-  // public proposedSupplier: BelongsTo<typeof Supplier>
-
-  //::_____Relationships End_____:://
 
   @computed()
   public proposedSupplier: any

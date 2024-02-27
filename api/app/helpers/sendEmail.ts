@@ -2,7 +2,6 @@ import Mail from '@ioc:Adonis/Addons/Mail'
 import Env from '@ioc:Adonis/Core/Env'
 
 export const sendMail = async (to: string, subject: string, html: string, data) => {
-  console.log('Inside send mail')
   try {
     await Mail.send((message) => {
       message

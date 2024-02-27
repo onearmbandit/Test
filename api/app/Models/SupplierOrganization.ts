@@ -45,17 +45,28 @@ export default class SupplierOrganization extends BaseModel {
   //::_____Relationships End_____:://
 
 
+  /**
+ * Gets all suppliers and organizations based on query parameters. 
+ * Merges supplier and organization data into a single array, removes duplicates, and sorts alphabetically.
+ * 
+ * @param queryParams - The query parameters object. Can contain:
+ * - order - Sort order ('asc' or 'desc'). Default is 'desc'.
+ * - include - Relationships to eager load, comma separated.
+ * - organizationId - Filter by organization ID.
+ * 
+ * @returns Sorted array of supplier and organization data objects containing name, id and type.
+ */
   public static async getAllSuppliersWithOrganization(queryParams: ParsedQs) {
     const order = queryParams.order ? queryParams.order.toString() : 'desc'
     let includes: string[] = queryParams.include ? (queryParams.include).split(',') : [];
     let organizationId = queryParams.organizationId
-    ? queryParams.organizationId.toString()
-    : ''
+      ? queryParams.organizationId.toString()
+      : ''
 
     // Step 1: Iterate through the array
     const mergedArray: DataObject[] = [];
 
-    let query = this.query().where('organization_id',organizationId)
+    let query = this.query().where('organization_id', organizationId)
 
     // Step 2: Include Relationship
     if (includes.length > 0) {

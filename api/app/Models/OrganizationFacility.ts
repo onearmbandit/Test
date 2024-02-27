@@ -37,6 +37,13 @@ export default class OrganizationFacility extends BaseModel {
   })
   public facilityEmission: HasMany<typeof FacilityEmission>
 
+
+
+  /**
+ * Creates a new OrganizationFacility record with the provided facilityData and organization ID.
+ * Generates a new UUID for the id field and merges it into the facilityData. 
+ * Defaults the organization_id to the provided organizationIds if not already set in facilityData.
+ */
   public static async createFacility(facilityData, organizationIds) {
     // Generate a new UUID for the id field
     const id = uuidv4()
@@ -55,6 +62,10 @@ export default class OrganizationFacility extends BaseModel {
     return result
   }
 
+  /**
+ * Gets all OrganizationFacility records.
+ * Handles pagination, sorting, filtering, and eager loading of relationships.
+ */
   public static async getAllFacilities(queryParams: ParsedQs) {
     let organizationFacilities: any = {}
 
@@ -89,6 +100,10 @@ export default class OrganizationFacility extends BaseModel {
     return organizationFacilities
   }
 
+  /**
+ * Gets an OrganizationFacility record by the provided field and value.
+ * Handles eager loading of relationships.
+ */
   public static async getOrganizationFacilityData(field, value) {
     const facilityDetails = await OrganizationFacility.query()
       .where(field, value)
@@ -101,6 +116,11 @@ export default class OrganizationFacility extends BaseModel {
     return facilityDetails
   }
 
+  /**
+ * Updates an OrganizationFacility record with the provided data.
+ * Merges the provided data into the existing OrganizationFacility record.
+ * Handles saving the updated record to the database.
+*/
   public static async updateOrganizationFacility(
     organizationFacilityData: OrganizationFacility,
     data: {
