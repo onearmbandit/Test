@@ -39,9 +39,7 @@ const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
   });
 
   const validation = z.object({
-    naicsCode: z
-      .string()
-      .regex(/^[0-9]{4,5}$/, "Please enter a valid NAICS code"),
+    naicsCode: z.string().regex(/^[0-9]{4,5}$/, "NAICS codes are 4-5 digits"),
   });
 
   const naicsForm = useFormik({
@@ -101,7 +99,9 @@ const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
           )}
           placeholder="3241"
         />
-        <p className="text-red-500 text-xs">{naicsForm.errors?.naicsCode}</p>
+        <p className="text-red-500 text-xs mt-1">
+          {naicsForm.errors?.naicsCode}
+        </p>
       </div>
 
       <Button

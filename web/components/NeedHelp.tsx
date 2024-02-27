@@ -27,13 +27,13 @@ const NeedHelp = () => {
             <ChevronDown className="h-6 w-6 text-slate-500 shrink-0 transition-transform duration-200" />
             <p className="text-lg font-bold text-gray-700 transition-opacity duration-200">
               Need help? <span className="text-blue-600">Click here</span> to
-              learn how to set up your C3 dashboard
+              learn how to set up your Terralab dashboard
             </p>
           </AccordionTrigger>
           <AccordionContent className="rounded-b-lg border-none">
             <section className="items-center bg-green-50 p-6 flex flex-col rounded-xl border-solid max-md:px-5">
               <h1 className="text-gray-700 text-center text-xl font-semibold leading-7 self-stretch max-md:max-w-full">
-                Welcome to C3 Insets. Let&apos;s make sustainability a seamless
+                Welcome to Terralab. Let&apos;s make sustainability a seamless
                 part of your business.
               </h1>
               <p className="text-gray-700 text-center text-xl leading-7 self-stretch mt-4 max-md:max-w-full">
