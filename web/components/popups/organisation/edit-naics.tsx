@@ -22,7 +22,7 @@ const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
     queryFn: () => getUser(),
   });
   const user = userQ.isSuccess ? userQ.data.data : null;
-  const orgId = user?.organizations[0].id!;
+  const orgId = user?.organizations[0]?.id!;
 
   const { mutate, isPending } = useMutation({
     mutationFn: setupOrganizationStep3,
@@ -48,7 +48,7 @@ const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      console.log(data);
+      // console.log(data);
       mutate({
         id: orgId,
         formdata: data,
@@ -58,9 +58,11 @@ const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
 
   useEffect(() => {
     if (userQ.isSuccess) {
-      const naics = user?.organizations[0].naics_code;
+      const naics = user?.organizations[0]?.naics_code;
       console.log(naics);
-      naicsForm.setFieldValue("naicsCode", naics);
+      if (naics) {
+        naicsForm.setFieldValue("naicsCode", naics);
+      }
     }
   }, [userQ.status]);
   return (
