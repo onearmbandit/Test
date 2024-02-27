@@ -135,7 +135,7 @@ const InviteOrganization = () => {
   }, [organizationsQ.isSuccess, organizationsQ.data]);
 
   return (
-    <div className="min-h-screen w-full grid place-items-center bg-gray-50 absolute inset-0 overflow-auto">
+    <div className="min-h-screen w-full grid place-items-center bg-gray-50 overflow-auto">
       <img
         src={"https://diw3xy9w4etxp.cloudfront.net/terralab_logo.png"}
         height={"39px"}

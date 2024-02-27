@@ -375,11 +375,14 @@ const AddProposedPage = () => {
                           .refine(
                             (url) => {
                               // Regular expression to validate URLs without the scheme
-                              return url.match(urlPattern) !== null;
+                              return (
+                                url === "" || url.match(urlPattern) !== null
+                              );
                             },
                             { message: "Invalid URL" }
                           )
-                          .optional(),
+                          .optional()
+                          .nullable(),
                       })
                       .safeParse({
                         description: projectDetails[2].description,

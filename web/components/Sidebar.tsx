@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -11,13 +11,15 @@ import Accounts from "./popups/accounts/accounts";
 import { signOut, useSession } from "next-auth/react";
 import { ChevronDown, MailPlus } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn, isSuperAdmin } from "@/lib/utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { exportSupplierDataCsv, getUser } from "@/services/user.api";
 import { toast } from "sonner";
+import { first } from "lodash";
 
 const Sidebar = () => {
+  const router = useRouter();
   const pathname = usePathname();
   // const session = useSession();
   const userQ = useQuery({
@@ -82,6 +84,11 @@ const Sidebar = () => {
     },
   });
 
+  useEffect(() => {
+    if (userQ.isSuccess && superAdmin) {
+      router.push("/invite-organization");
+    }
+  }, [userQ.isSuccess, userQ?.data]);
   console.log(user);
 
   return (
