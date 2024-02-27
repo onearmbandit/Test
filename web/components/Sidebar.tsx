@@ -89,6 +89,7 @@ const Sidebar = () => {
       router.push("/invite-organization");
     }
   }, [userQ.isSuccess, userQ?.data]);
+  console.log(user);
 
   return (
     <div className="flex flex-col sticky top-0 bg-gray-50 border-r border-gray-200 justify-between w-full h-screen max-w-[240px] px-4 py-5">
@@ -102,7 +103,7 @@ const Sidebar = () => {
             <h1 className="overflow-hidden text-slate-800 text-ellipsis text-sm font-semibold leading-5 whitespace-nowrap">
               {user?.first_name} {user?.last_name}
             </h1>
-            <div className="overflow-hidden text-slate-500 text-ellipsis text-xs leading-4 whitespace-nowrap">
+            <div className="overflow-hidden text-slate-500 text-ellipsis text-xs leading-4 text-wrap">
               {user?.organizations?.length! > 0 &&
                 user?.organizations[0]?.company_name}
             </div>
