@@ -72,7 +72,7 @@ const EditClimateConditions = ({
 
   useEffect(() => {
     if (userQ.isSuccess) {
-      const targetArray = user?.organizations[0].climate_targets;
+      const targetArray = user?.organizations[0]?.climate_targets;
       climateForm.setFieldValue(
         "climateTargets",
         targetArray == null ? [] : targetArray
