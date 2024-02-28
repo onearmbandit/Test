@@ -21,7 +21,7 @@ import { first } from "lodash";
 const Sidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  // const session = useSession();
+
   const userQ = useQuery({
     queryKey: ["user-data"],
     queryFn: () => getUser(),
@@ -86,10 +86,9 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (userQ.isSuccess && superAdmin) {
-      router.push("/invite-organization");
+      router.push("/invite-organization"); // if super admin, move to inviteOrganization page
     }
   }, [userQ.isSuccess, userQ?.data]);
-  console.log(user);
 
   return (
     <div className="flex flex-col sticky top-0 bg-gray-50 border-r border-gray-200 justify-between w-full h-screen max-w-[240px] px-4 py-5">
@@ -114,7 +113,7 @@ const Sidebar = () => {
           <Link
             href={"/"}
             className={cn(
-              "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
+              "items-center hover:bg-gray-200 group hover:text-slate-800 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
               (urlContainsElements(pathname, organizationLinks) ||
                 pathname == "/") &&
                 "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
@@ -126,7 +125,7 @@ const Sidebar = () => {
               viewBox="0 0 16 16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="fill-gray-500 group-hover:fill-blue-500"
+              className="fill-gray-500 group-hover:fill-slate-800"
             >
               <g id="home">
                 <path
@@ -146,7 +145,7 @@ const Sidebar = () => {
         {!superAdmin && (
           <Accordion type="single" collapsible>
             <AccordionItem value="item-1" className="border-none">
-              <AccordionTrigger className="hover:bg-blue-100 group hover:text-blue-700 rounded-md mt-2 text-slate-800 py-1.5 pr-2">
+              <AccordionTrigger className="hover:bg-gray-200 group hover:text-slate-800 rounded-md mt-2 text-slate-800 py-1.5 pr-2">
                 <div className="items-stretch flex gap-3 px-2">
                   <svg
                     width="16"
@@ -154,7 +153,7 @@ const Sidebar = () => {
                     viewBox="0 0 16 16"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="group-hover:fill-blue-600 fill-gray-500"
+                    className="group-hover:fill-slate-800 fill-gray-500"
                   >
                     <g id="folder-open">
                       <path
@@ -174,7 +173,7 @@ const Sidebar = () => {
                   <Link
                     href={"/abatement-projects/active"}
                     className={cn(
-                      "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700  text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                      "text-slate-800 pl-9 hover:bg-gray-200 hover:text-slate-800  text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
                       urlContainsElements(pathname, ["active"]) &&
                         "bg-blue-100 text-blue-700 pl-9"
                     )}
@@ -184,7 +183,7 @@ const Sidebar = () => {
                   <Link href="/abatement-projects/completed">
                     <div
                       className={cn(
-                        "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                        "text-slate-800 pl-9 hover:bg-gray-200 hover:text-slate-800  text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
                         urlContainsElements(pathname, ["completed"]) &&
                           "bg-blue-100 text-blue-700"
                       )}
@@ -195,7 +194,7 @@ const Sidebar = () => {
                   <Link href="/abatement-projects/proposed">
                     <div
                       className={cn(
-                        "text-slate-800 pl-9 hover:bg-blue-100 hover:text-blue-700 text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
+                        "text-slate-800 pl-9 hover:bg-gray-200 hover:text-slate-800  text-xs font-medium leading-5 whitespace-nowrap py-1.5 rounded-md",
                         urlContainsElements(pathname, ["proposed"]) &&
                           "bg-blue-100 text-blue-700"
                       )}
@@ -213,7 +212,7 @@ const Sidebar = () => {
           <Link
             href={"/supply-chain"}
             className={cn(
-              "items-center hover:bg-blue-100 group hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
+              "items-center hover:bg-gray-200 hover:text-slate-800 group text-slate-800 flex justify-between gap-3 mt-3 px-2 py-1.5 rounded-md",
               pathname == "/supply-chain" &&
                 "bg-blue-100 text-blue-700 [&>svg]:fill-blue-500"
             )}
@@ -224,7 +223,7 @@ const Sidebar = () => {
               viewBox="0 0 16 16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="fill-gray-500 group-hover:fill-blue-600"
+              className="fill-gray-500 group-hover:fill-slate-800"
             >
               <g id="chart-bar">
                 <path
@@ -243,9 +242,9 @@ const Sidebar = () => {
           <>
             <Link
               href={"/invite-organization"}
-              className="items-center group hover:bg-blue-100 hover:text-blue-700 text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
+              className="items-center group hover:bg-gray-200 hover:text-slate-800  text-slate-800 flex justify-between gap-3 mt-2 px-2 py-1.5 rounded-md"
             >
-              <MailPlus />
+              <MailPlus className="hover:text-slate-800 " />
 
               <h2 className="text-xs font-medium leading-5 self-stretch grow whitespace-nowrap">
                 Invite Organization
@@ -270,14 +269,14 @@ const Sidebar = () => {
         {!superAdmin && (
           <Dialog>
             <DialogTrigger className="w-full">
-              <div className="items-center hover:bg-blue-100 hover:text-blue-700 group text-slate-800 flex gap-3 px-2 py-1.5 rounded-md">
+              <div className="items-center hover:bg-gray-200 hover:text-slate-800 group text-slate-800 flex gap-3 px-2 py-1.5 rounded-md">
                 <svg
                   width="16"
                   height="16"
                   viewBox="0 0 16 16"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="fill-gray-500 group-hover:fill-blue-600"
+                  className="fill-gray-500 group-hover:fill-slate-800"
                 >
                   <g id="user-circle">
                     <path
@@ -301,14 +300,14 @@ const Sidebar = () => {
         )}
 
         <a href={`mailto:hello@terralab.ai`}>
-          <div className="items-center hover:bg-blue-100 hover:text-blue-700 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md">
+          <div className="items-center hover:bg-gray-200 hover:text-slate-800 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md">
             <svg
               width="16"
               height="16"
               viewBox="0 0 16 16"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="fill-gray-500 group-hover:fill-blue-600"
+              className="fill-gray-500 group-hover:fill-slate-800"
             >
               <g id="question-mark-circle">
                 <path
@@ -327,7 +326,7 @@ const Sidebar = () => {
         <div
           role="button"
           onClick={() => signOut()}
-          className="items-center hover:bg-blue-100 hover:text-red-600 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md"
+          className="items-center hover:bg-gray-200 hover:text-red-600 group text-slate-800 flex justify-between gap-3 px-2 py-1.5 rounded-md"
         >
           <svg
             width="14"

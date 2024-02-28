@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
 import { authOptions, calculateTotals, cn } from "@/lib/utils";
 import { getCompletedAbatementProjects } from "@/services/abatement.api";
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { getServerSession } from "next-auth/next";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -28,9 +28,15 @@ const CompletedPage = async () => {
   return (
     <div className="px-8">
       <Header />
-      {projectsQ.isSuccess && projects?.length == 0 ? (
+      {projectsQ.isLoading && (
+        <div className="flex justify-center h-[600px] items-center">
+          <Loader2 className="animate-spin text-blue-600" />
+        </div>
+      )}
+      {projectsQ.isSuccess && projects?.length == 0 && (
         <EmptyState link="/abatement-projects/completed/add" />
-      ) : (
+      )}
+      {projectsQ.isSuccess && projects?.length > 0 && (
         <div className="bg-white rounded-md p-6 border border-slate-100 space-y-6">
           <div className="flex items-center space-x-2">
             <Image
