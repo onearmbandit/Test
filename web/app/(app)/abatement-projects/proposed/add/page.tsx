@@ -138,7 +138,7 @@ const AddProposedPage = () => {
         <ChevronLeft size={24} className="text-slate-500" />
         <nav className="text-blue-700 text-sm justify-center items-stretch grow py-1.5 max-md:max-w-full">
           <a href="/abatement-projects/proposed" className="text-slate-500">
-            Active Abatement Projects
+            Proposed Abatement Projects
           </a>{" "}
           &gt;{" "}
           <span className="text-blue-600 font-bold">
