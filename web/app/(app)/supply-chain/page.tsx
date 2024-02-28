@@ -147,7 +147,9 @@ const Page = () => {
           </div>
           <div className="justify-center self-stretch flex flex-col pl-16 py-6 items-end max-md:max-w-full max-md:pl-5">
             <div className="text-gray-900 text-xs font-medium leading-4 whitespace-nowrap justify-center items-stretch bg-gray-50 p-2 rounded-md">
-              NAICS: {user?.organizations[0]?.naics_code}
+              {user?.organizations[0]?.naics_code && (
+                <>NAICS: {user?.organizations[0]?.naics_code}</>
+              )}
             </div>
           </div>
         </header>
