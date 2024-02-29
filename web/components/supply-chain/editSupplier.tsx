@@ -557,7 +557,7 @@ export const EditSupplier = () => {
                           ></HelpCircle>
                         </TooltipTrigger>
                         <TooltipContent className="bg-slate-800 max-w-[246px]">
-                          <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">
+                          <p className="pt-2 pb-2.5 text-xs leading-4 text-white font-normal rounded shadow-sm ">
                             A functional unit in sustainability is a measure of
                             performance that quantifies the environmental
                             impacts of a system, used to compare different
