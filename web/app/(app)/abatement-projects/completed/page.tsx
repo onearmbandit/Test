@@ -135,7 +135,9 @@ const CompletedPage = async () => {
               <Card className="h-[302px] w-full col-span-1 flex justify-center items-center">
                 <div className="flex items-center space-x-2">
                   <Plus size={24} className="text-slate-400" />
-                  <p className="text-slate-400 font-semibold">Add a project</p>
+                  <p className="text-slate-400 font-semibold">
+                    Propose a project
+                  </p>
                 </div>
               </Card>
             </Link>

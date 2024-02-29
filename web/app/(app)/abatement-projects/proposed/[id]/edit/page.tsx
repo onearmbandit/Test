@@ -590,7 +590,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5 bg-gray-50 mx-3    rounded-md ",
+                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5 bg-gray-50 mx-3 border-none rounded-md ",
                           errors?.emissionUnit && "border border-red-500"
                         )}
                       >
