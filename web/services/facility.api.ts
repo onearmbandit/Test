@@ -52,9 +52,7 @@ export const getFacilities = async () => {
   // const session = await getServerSession(authOptions);
   const user = await getUser();
   const orgId = user?.data?.organizations[0]?.id;
-  return fetchApi(
-    `/auth/facility?organization_id=${orgId}&include=facilityEmission`
-  );
+  return fetchApi(`/auth/facility?organization_id=${orgId}`);
 };
 
 export const addFacilityReportingPeriod = (formData: any) => {

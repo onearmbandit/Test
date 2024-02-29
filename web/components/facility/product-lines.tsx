@@ -252,7 +252,7 @@ const EditProducts = ({
               <TooltipTrigger>
                 <HelpCircle size={16} className="text-white fill-slate-600" />
               </TooltipTrigger>
-              <TooltipContent className="bg-slate-800 max-w-[246px] px-2.5 py-3 rounded shadow-sm">
+              <TooltipContent className="bg-slate-800 max-w-[246px] px-2.5 py-3 font-normal rounded shadow-sm">
                 <p className=" text-xs leading-4 text-white">
                   A functional unit in sustainability is a measure of
                   performance that quantifies the environmental impacts of a

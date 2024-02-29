@@ -91,7 +91,8 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
             <TrendingDown size={18} className="text-slate-500" />
 
             <p className="text-xs font-medium text-slate-800">
-              Estimated Emission Reduction: {project.emission_reductions}
+              Estimated Emission Reduction: {project.emission_reductions}{" "}
+              {project.emission_unit}
             </p>
           </div>
 
@@ -106,6 +107,7 @@ const ProposedDetailPage = async ({ params }: { params: { id: string } }) => {
           <a
             href={emailHref}
             style={{ textDecoration: "none", color: "inherit" }}
+            className="inline-block"
           >
             <Button type="button">Contact Project Owner</Button>
           </a>

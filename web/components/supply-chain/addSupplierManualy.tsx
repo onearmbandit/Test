@@ -493,7 +493,7 @@ export const AddSupplierManualy = () => {
             </div>
           </div>
 
-          {completeStep && (
+          {completeStep ? (
             <Button
               variant={"ghost"}
               onClick={() => {
@@ -504,7 +504,7 @@ export const AddSupplierManualy = () => {
             >
               Edit
             </Button>
-          )}
+          ) : null}
         </div>
 
         {!completeStep && editProductTable ? (
@@ -530,7 +530,7 @@ export const AddSupplierManualy = () => {
                           ></HelpCircle>
                         </TooltipTrigger>
                         <TooltipContent className="bg-slate-800 max-w-[246px]">
-                          <p className="pt-2 pb-2.5 text-xs leading-4 text-white rounded shadow-sm ">
+                          <p className="pt-2 pb-2.5 text-xs leading-4 font-normal text-white rounded shadow-sm ">
                             A functional unit in sustainability is a measure of
                             performance that quantifies the environmental
                             impacts of a system, used to compare different
@@ -831,7 +831,11 @@ export const AddSupplierManualy = () => {
                   <p className="text-sm">{item.type}</p>
                 </div>
 
-                <p>{item.scope_3Contribution}</p>
+                <p>
+                  {item?.scope_3Contribution == 0
+                    ? null
+                    : item?.scope_3Contribution}
+                </p>
               </div>
             ))}
           </div>

@@ -28,7 +28,6 @@ import {
   ChartOptions,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { useSession } from "next-auth/react";
 import { getUser } from "@/services/user.api";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
@@ -53,12 +52,11 @@ export const options: ChartOptions<"bar"> = {
 const labels = ["Scope 1", "Scope 2", "Scope 3"];
 
 const TotalEmissionsSummary = () => {
-  // const { data: session } = useSession();
   const [toFromDate, setToFromDate] = useState({
-    from: dayjs().format("YYYY-MM-DD"),
-    to: dayjs().format("YYYY-MM-DD"),
+    from: "",
+    to: "",
   });
-  const [currentPeriod, setCurrentPeriod] = useState("");
+  const [currentPeriod, setCurrentPeriod] = useState("all");
 
   const userQ = useQuery({
     queryKey: ["user-profile"],
@@ -80,7 +78,6 @@ const TotalEmissionsSummary = () => {
         from: toFromDate.from,
         to: toFromDate.to,
       }),
-    enabled: reportingList.length > 0,
   });
 
   const dashboard = dashboardDetails.isSuccess
@@ -112,16 +109,6 @@ const TotalEmissionsSummary = () => {
     ],
   };
 
-  useEffect(() => {
-    if (reporting.isSuccess && reportingList.length > 0) {
-      setCurrentPeriod(reportingList[0].id);
-      setToFromDate({
-        from: reportingList[0].reporting_period_from,
-        to: reportingList[0].reporting_period_to,
-      });
-    }
-  }, [reporting.isSuccess, reporting.data]);
-
   if (reportingList.length == 0) {
     return null;
   }
@@ -145,8 +132,15 @@ const TotalEmissionsSummary = () => {
               <Select
                 defaultValue={currentPeriod}
                 onValueChange={(e) => {
+                  if (e == "all") {
+                    setToFromDate({
+                      from: "",
+                      to: "",
+                    });
+                    return;
+                  }
                   const toFrom = reportingList.find(
-                    (item: any) => item.id == e
+                    (item: any) => item.reporting_period_from == e
                   );
                   setCurrentPeriod(e);
                   setToFromDate({
@@ -160,10 +154,17 @@ const TotalEmissionsSummary = () => {
                   <ChevronDown size={16} className="text-slate-600" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem
+                    value={"all"}
+                    key={"all periods"}
+                    className="text-sm"
+                  >
+                    All periods
+                  </SelectItem>
                   {reportingList?.map((item: any) => (
                     <SelectItem
-                      value={item.id}
-                      key={item.id}
+                      value={item.reporting_period_from}
+                      key={item.reporting_period_from}
                       className="text-sm"
                     >
                       {dayjs(item.reporting_period_from).format("MM/YY")} -{" "}

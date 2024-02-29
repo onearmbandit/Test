@@ -66,6 +66,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { TooltipProvider } from "../ui/tooltip";
 
 const SupplierData = ({ periodId }: { periodId: string }) => {
   console.log(periodId, "periodId");
@@ -386,54 +387,58 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
             Suppliers
           </div>
           <div>
-            <Button
-              onClick={handleSelectAllButtonClick}
-              variant="outline"
-              className="mr-3"
-            >
-              {areAllSelected() ? "Deselect All" : "Select All"}
-            </Button>
-            <Dialog>
-              <DialogTrigger>
-                <Button variant="outline" className="mr-4">
-                  {" "}
-                  <Badge
-                    variant="outline"
-                    className="justify-center items-center px-1.5 h-5 mr-4 text-xs font-semibold leading-4 text-blue-800 whitespace-nowrap bg-blue-200 rounded-[100px]"
-                  >
-                    {selectedProductIds.length}
-                  </Badge>
-                  Delete
+            {supplierProducts.length > 0 && (
+              <>
+                <Button
+                  onClick={handleSelectAllButtonClick}
+                  variant="outline"
+                  className="mr-3"
+                >
+                  {areAllSelected() ? "Deselect All" : "Select All"}
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="p-6 space-y-5">
-                <p className="text">
-                  Are you sure you want to delete these entries? This action
-                  cannot be undone.
-                </p>
-                <DialogClose asChild>
-                  <Button
-                    type="button"
-                    variant={"outline"}
-                    className="font-semibold leading-4 text-center hover:text-blue-600 text-blue-600 rounded border-2 border-solid border-[color:var(--Blue-600,#2B73D0)]"
-                  >
-                    No, don&apos;t erase my entry
-                  </Button>
-                </DialogClose>
-                <DialogClose>
-                  <Button
-                    type="button"
-                    variant={"outline"}
-                    onClick={() => {
-                      deleteProductsMut.mutate(selectedProductIds);
-                    }}
-                    className="border-2 border-red-500 w-full font-semibold text-red-500 hover:bg-red-50 hover:text-red-600"
-                  >
-                    Yes, continue
-                  </Button>
-                </DialogClose>
-              </DialogContent>
-            </Dialog>
+                <Dialog>
+                  <DialogTrigger>
+                    <Button variant="outline" className="mr-4">
+                      {" "}
+                      <Badge
+                        variant="outline"
+                        className="justify-center items-center px-1.5 h-5 mr-4 text-xs font-semibold leading-4 text-blue-800 whitespace-nowrap bg-blue-200 rounded-[100px]"
+                      >
+                        {selectedProductIds.length}
+                      </Badge>
+                      Delete
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="p-6 space-y-5">
+                    <p className="text">
+                      Are you sure you want to delete these entries? This action
+                      cannot be undone.
+                    </p>
+                    <DialogClose asChild>
+                      <Button
+                        type="button"
+                        variant={"outline"}
+                        className="font-semibold leading-4 text-center hover:text-blue-600 text-blue-600 rounded border-2 border-solid border-[color:var(--Blue-600,#2B73D0)]"
+                      >
+                        No, don&apos;t erase my entry
+                      </Button>
+                    </DialogClose>
+                    <DialogClose>
+                      <Button
+                        type="button"
+                        variant={"outline"}
+                        onClick={() => {
+                          deleteProductsMut.mutate(selectedProductIds);
+                        }}
+                        className="border-2 border-red-500 w-full font-semibold text-red-500 hover:bg-red-50 hover:text-red-600"
+                      >
+                        Yes, continue
+                      </Button>
+                    </DialogClose>
+                  </DialogContent>
+                </Dialog>
+              </>
+            )}
 
             <Popover>
               <PopoverTrigger>
@@ -475,7 +480,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
 
         <div className="items-stretch bg-white flex w-full flex-col pb-12 max-md:max-w-full max-md:mb-10">
           <div className="items-center border-b-[color:var(--Gray-200,#E5E7EB)] flex justify-between gap-5 pr-4 pl-4 py-2.5 border-b border-solid max-md:max-w-full max-md:flex-wrap max-md:pr-5">
-            <div className="flex items-center min-w-[280px] text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 whitespace-nowrap">
+            <div className="flex items-center min-w-[245px] text-slate-800 text-ellipsis flex-1 text-sm font-bold leading-5 whitespace-nowrap">
               <div className="mr-3 mt-2">
                 <div className="inline-flex items-center">
                   <label
@@ -484,26 +489,11 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                   >
                     <input
                       type="checkbox"
-                      className="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-[#2C75D3] checked:before:bg-[#2C75D3] hover:before:opacity-10"
+                      className="before:content[''] peer relative h-5 w-5 appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:bg-[#2C75D3] checked:before:bg-[#2C75D3] opacity-0"
+                      disabled
                       checked={areAllSelected()}
                       onChange={handleSelectAllChange}
                     />
-                    <span className="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-3.5 w-3.5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        stroke="currentColor"
-                        stroke-width="1"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clip-rule="evenodd"
-                        ></path>
-                      </svg>
-                    </span>
                   </label>
                 </div>
               </div>
@@ -588,12 +578,14 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                     {product?.name}
                   </p>
                 </div>
+
                 <div
                   className="overflow-hidden pr-4 pl-4 whitespace-nowrap py-2.5 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800 text-ellipsis flex-1 text-sm leading-5 truncate"
                   title={product?.type}
                 >
                   {product?.type}
                 </div>
+
                 <div className="overflow-hidden pr-4 whitespace-nowrap pl-4 py-2.5 border-r border-solid border-r-[color:var(--Gray-200,#E5E7EB)] text-slate-800 text-ellipsis flex-1 truncate text-sm leading-5">
                   {product?.scope_3_contribution == null
                     ? "Not Available"
