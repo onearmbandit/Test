@@ -96,19 +96,13 @@ export default class FacilityEmission extends BaseModel {
     if (organizationFacilityId) {
       query = query.where('organization_facility_id', organizationFacilityId)
     } else if (organizationId) {
-      // query = query.whereHas('OrganizationFacility', (orgQuery) => {
-      //   orgQuery.where('organization_id', organizationId)
-      // })
-
-      query = query
-        .whereHas('OrganizationFacility', (orgQuery) => {
-          orgQuery.where('organization_id', organizationId)
-        })
-        .select('reporting_period_from', 'reporting_period_to', 'created_at')
-        .distinct()
+      query = query.whereHas('OrganizationFacility', (orgQuery) => {
+        orgQuery.where('organization_id', organizationId)
+      }).groupBy('reportingPeriodFrom', 'reportingPeriodTo')
+        .select('reportingPeriodFrom', 'reportingPeriodTo');
     }
 
-    query = query.orderBy(sort, order)
+    // query = query.orderBy(sort, order)
 
     const facilityEmissions = await query.paginate(page, perPage)
 
