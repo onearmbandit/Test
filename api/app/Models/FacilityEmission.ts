@@ -83,8 +83,8 @@ export default class FacilityEmission extends BaseModel {
   public static async getAllFacilityEmissions(queryParams: ParsedQs) {
     const perPage = queryParams.per_page ? parseInt(queryParams.per_page as string, 10) : 8
     const page = queryParams.page ? parseInt(queryParams.page as string, 10) : 1
-    const order = queryParams.order ? queryParams.order.toString() : 'desc'
-    const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at'
+    // const order = queryParams.order ? queryParams.order.toString() : 'desc'
+    // const sort = queryParams.sort ? queryParams.sort.toString() : 'created_at'
     const organizationFacilityId = queryParams.organization_facility_id
       ? queryParams.organization_facility_id.toString()
       : ''
