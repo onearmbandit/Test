@@ -52,22 +52,25 @@ const ActivePage = async () => {
           {/* todo: make it dynamic */}
           <p className="text-slate-800 font-semibold">
             Total Abatement to date:{" "}
-            {Object.keys(emissionTotals).map((unit) => (
-              <>
-                <span
-                  className={cn(
-                    "font-normal mr-4 rounded-md",
-                    unit === "tCO2e" && "bg-green-50 text-[#1E293B] p-2 ml-2",
-                    unit === "Gallons of water" &&
-                      "bg-cyan-50 text-cyan-800 p-2",
-                    unit === "Metric tonnes of waste" &&
-                      "bg-red-50 text-orange-800 p-2"
-                  )}
-                >
-                  {emissionTotals[unit]} {unit}/year
-                </span>
-              </>
-            ))}
+            {Object.keys(emissionTotals).map((unit) => {
+              if (emissionTotals[unit] == 0) return;
+              return (
+                <>
+                  <span
+                    className={cn(
+                      "font-normal mr-4 rounded-md text-sm",
+                      unit === "tCO2e" && "bg-green-50 text-[#1E293B] p-2 ml-2",
+                      unit === "Gallons of water" &&
+                        "bg-cyan-50 text-cyan-800 p-2",
+                      unit === "Metric tonnes of waste" &&
+                        "bg-red-50 text-orange-800 p-2"
+                    )}
+                  >
+                    {emissionTotals[unit]} {unit}/year
+                  </span>
+                </>
+              );
+            })}
           </p>
 
           <div className="grid grid-cols-3 gap-6">
@@ -79,7 +82,7 @@ const ActivePage = async () => {
                   </CardTitle>
                   {item.photo_url && (
                     <img
-                      className="h-[102px] w-full object-cover"
+                      className="h-[150px] 2xl:h-[200px] w-full object-cover"
                       src={item.photo_url}
                       alt="project image"
                     />
@@ -131,7 +134,9 @@ const ActivePage = async () => {
               <Card className="h-[302px] w-full col-span-1 flex justify-center items-center">
                 <div className="flex items-center space-x-2">
                   <Plus size={24} className="text-slate-400" />
-                  <p className="text-slate-400 font-semibold">Add a project</p>
+                  <p className="text-slate-400 font-semibold">
+                    Propose a project
+                  </p>
                 </div>
               </Card>
             </Link>

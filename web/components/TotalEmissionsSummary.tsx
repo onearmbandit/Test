@@ -114,7 +114,7 @@ const TotalEmissionsSummary = () => {
 
   useEffect(() => {
     if (reporting.isSuccess && reportingList.length > 0) {
-      setCurrentPeriod(reportingList[0].id);
+      setCurrentPeriod(reportingList[0].reporting_period_from);
       setToFromDate({
         from: reportingList[0].reporting_period_from,
         to: reportingList[0].reporting_period_to,
@@ -146,7 +146,7 @@ const TotalEmissionsSummary = () => {
                 defaultValue={currentPeriod}
                 onValueChange={(e) => {
                   const toFrom = reportingList.find(
-                    (item: any) => item.id == e
+                    (item: any) => item.reporting_period_from == e
                   );
                   setCurrentPeriod(e);
                   setToFromDate({
@@ -162,8 +162,8 @@ const TotalEmissionsSummary = () => {
                 <SelectContent>
                   {reportingList?.map((item: any) => (
                     <SelectItem
-                      value={item.id}
-                      key={item.id}
+                      value={item.reporting_period_from}
+                      key={item.reporting_period_from}
                       className="text-sm"
                     >
                       {dayjs(item.reporting_period_from).format("MM/YY")} -{" "}

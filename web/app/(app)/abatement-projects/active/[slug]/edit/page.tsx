@@ -307,7 +307,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                     if (res.success) {
                       setErr({});
                       setCurrentSection(0);
-                      toast.success("The changes have been saved.", {
+                      toast.success("Successfully updated.", {
                         style: { color: "green" },
                       });
                     } else {
@@ -484,7 +484,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                       );
                       setFieldValue("websiteUrl", projectDetails[2].websiteUrl);
                       setCurrentSection(0);
-                      toast.success("The changes have been saved.", {
+                      toast.success("Successfully updated.", {
                         style: { color: "green" },
                       });
                     } else {
@@ -583,7 +583,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                     >
                       <SelectTrigger
                         className={cn(
-                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5  bg-gray-50 mx-3    rounded-md ",
+                          "text-slate-500 text-sm w-[200px] h-16 font-light leading-5  bg-gray-50 mx-3 border-none rounded-md ",
                           errors?.emissionUnit && "border border-red-500"
                         )}
                       >
@@ -642,7 +642,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                         projectDetails[3].emissionReductions
                       );
                       setCurrentSection(0);
-                      toast.success("The changes have been saved.", {
+                      toast.success("Successfully updated.", {
                         style: { color: "green" },
                       });
                     } else {
@@ -753,7 +753,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
 
                     if (projectDetails[4].organizationId.id != "") {
                       setCurrentSection(5);
-                      toast.success("The changes have been saved.", {
+                      toast.success("Successfully updated.", {
                         style: { color: "green" },
                       });
                     } else {
@@ -976,7 +976,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                     if (res1 != null || res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
-                      toast.success("The changes have been saved.", {
+                      toast.success("Successfully updated.", {
                         style: { color: "green" },
                       });
                     }
@@ -989,7 +989,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
             </>
           ) : (
             <CardContent className="space-y-6">
-              {values.photoUrl == "" && values.logoUrl ? (
+              {values.photoUrl == "" && values.logoUrl == "" ? (
                 <p className="text-sm">
                   Upload a photo representing the project proposal
                 </p>
