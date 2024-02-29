@@ -72,7 +72,6 @@ const TotalEmissionsSummary = () => {
     enabled: userQ.isSuccess,
   });
   const reportingList = reporting.isSuccess ? reporting.data.data : [];
-  console.log(reportingList);
 
   const dashboardDetails = useQuery({
     queryKey: ["dashboard", toFromDate],

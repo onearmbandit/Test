@@ -390,7 +390,7 @@ export const EditSupplier = () => {
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="flex gap-5 pr-20 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-                  <div className=" my-auto font-medium text-slate-700">
+                  <div className=" my-auto w-[88px] font-medium text-slate-700">
                     Supplier Name
                   </div>
                   <Input
@@ -405,7 +405,7 @@ export const EditSupplier = () => {
                 </div>
 
                 <div className="flex gap-5 self-stretch pr-20 mt-6 text-xs leading-4 whitespace-nowrap max-md:flex-wrap max-md:pr-5">
-                  <div className=" my-auto font-medium text-slate-700">
+                  <div className=" my-auto w-[88px] font-medium text-slate-700">
                     Contact Email{" "}
                   </div>
                   <div className="w-[337px] relative">
@@ -414,7 +414,7 @@ export const EditSupplier = () => {
                       value={values.email}
                       onChange={handleChange}
                       className={cn(
-                        "grow justify-center py-3.5 pr-8 pl-2 bg-gray-50  rounded-md text-slate-700 max-md:pr-5",
+                        "grow justify-center bg-gray-50  rounded-md text-slate-700 max-md:pr-5",
                         errors?.email && "border border-red-500"
                       )}
                     />
@@ -425,7 +425,7 @@ export const EditSupplier = () => {
                 </div>
 
                 <div className="flex gap-5  pr-20 mt-6 text-xs max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-                  <div className="my-auto font-medium leading-4 text-slate-700">
+                  <div className="my-auto w-[88px] font-medium leading-4 text-slate-700">
                     Relationship <br />
                     to organization
                   </div>
