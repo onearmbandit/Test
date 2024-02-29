@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, BelongsTo, belongsTo, HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, BelongsTo, belongsTo, HasMany, hasMany, ModelQueryBuilderContract } from '@ioc:Adonis/Lucid/Orm'
 import Organization from './Organization'
 import { v4 as uuidv4 } from 'uuid'
 import { ParsedQs } from 'qs'
@@ -41,7 +41,7 @@ export default class OrganizationFacility extends BaseModel {
 
   /**
  * Creates a new OrganizationFacility record with the provided facilityData and organization ID.
- * Generates a new UUID for the id field and merges it into the facilityData. 
+ * Generates a new UUID for the id field and merges it into the facilityData.
  * Defaults the organization_id to the provided organizationIds if not already set in facilityData.
  */
   public static async createFacility(facilityData, organizationIds) {
@@ -80,13 +80,15 @@ export default class OrganizationFacility extends BaseModel {
 
     if (organizationId) {
       query = query.where('organization_id', organizationId)
+        .preload('facilityEmission', (facilityEmissionQuery) => {
+          facilityEmissionQuery.whereNull('deleted_at')
+        })
     }
 
     query = query.orderBy(sort, order)
 
     //::Include Relationship
     if (includes.length > 0) {
-      console.log('includes >>', includes)
       includes.forEach((include: any) => query.preload(include.trim()))
     }
 
