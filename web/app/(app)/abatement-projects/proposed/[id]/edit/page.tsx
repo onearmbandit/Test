@@ -308,7 +308,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                     if (res.success) {
                       setErr({});
                       setCurrentSection(0);
-                      toast.success("The changes have been saved.", {
+                      toast.success("Successfully updated.", {
                         style: { color: "green" },
                       });
                     } else {
@@ -491,7 +491,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       );
                       setFieldValue("websiteUrl", projectDetails[2].websiteUrl);
                       setCurrentSection(0);
-                      toast.success("The changes have been saved.", {
+                      toast.success("Successfully updated.", {
                         style: { color: "green" },
                       });
                     } else {
@@ -656,7 +656,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                         projectDetails[3].emissionReductions
                       );
                       setCurrentSection(0);
-                      toast.success("The changes have been saved.", {
+                      toast.success("Successfully updated.", {
                         style: { color: "green" },
                       });
                     } else {
@@ -760,7 +760,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       "proposedType",
                       projectDetails[4].organizationId.type
                     );
-                    toast.success("The changes have been saved.", {
+                    toast.success("Successfully updated.", {
                       style: { color: "green" },
                     });
 
@@ -990,7 +990,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                     if (res1 != null || res2 != null) {
                       setUploading(false);
                       setCurrentSection(0);
-                      toast.success("The changes have been saved.", {
+                      toast.success("Successfully updated.", {
                         style: { color: "green" },
                       });
                     }
