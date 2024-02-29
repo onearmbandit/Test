@@ -106,6 +106,7 @@ const CompletedDetailPage = async ({ params }: { params: { id: string } }) => {
           <a
             href={emailHref}
             style={{ textDecoration: "none", color: "inherit" }}
+            className="inline-block"
           >
             <Button type="button">Contact Project Owner</Button>
           </a>

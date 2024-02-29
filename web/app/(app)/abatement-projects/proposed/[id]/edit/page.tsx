@@ -1003,7 +1003,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
             </>
           ) : (
             <CardContent className="space-y-6">
-              {values.photoUrl == "" && values.logoUrl ? (
+              {values.photoUrl == "" && values.logoUrl == "" ? (
                 <p className="text-sm">
                   Upload a photo representing the project proposal
                 </p>
