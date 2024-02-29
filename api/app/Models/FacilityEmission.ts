@@ -76,7 +76,7 @@ export default class FacilityEmission extends BaseModel {
 
   /**
  * Gets all facility emissions records filtered by the provided query parameters.
- * 
+ *
  * Accepts pagination, sorting and filtering params.
  * Returns a paginated result of facility emission records matching the criteria.
  */
@@ -96,9 +96,16 @@ export default class FacilityEmission extends BaseModel {
     if (organizationFacilityId) {
       query = query.where('organization_facility_id', organizationFacilityId)
     } else if (organizationId) {
-      query = query.whereHas('OrganizationFacility', (orgQuery) => {
-        orgQuery.where('organization_id', organizationId)
-      })
+      // query = query.whereHas('OrganizationFacility', (orgQuery) => {
+      //   orgQuery.where('organization_id', organizationId)
+      // })
+
+      query = query
+        .whereHas('OrganizationFacility', (orgQuery) => {
+          orgQuery.where('organization_id', organizationId)
+        })
+        .select('reporting_period_from', 'reporting_period_to', 'created_at')
+        .distinct()
     }
 
     query = query.orderBy(sort, order)
@@ -127,8 +134,8 @@ export default class FacilityEmission extends BaseModel {
 
   /**
  * Gets facility emission data by the provided field and value.
- * 
- * Queries for the facility emission record matching the provided 
+ *
+ * Queries for the facility emission record matching the provided
  * field and value. Returns the facility emission details if found.
 */
   public static async getFacilityEmissionData(field, value) {
@@ -146,12 +153,12 @@ export default class FacilityEmission extends BaseModel {
   }
 
   /**
- * Updates the facility emission data for the provided facility emission record 
+ * Updates the facility emission data for the provided facility emission record
  * with the new data in the request. Updates the reporting period fields if they exist in the
- * request. Also updates the emission total fields (scope1TotalEmission, 
+ * request. Also updates the emission total fields (scope1TotalEmission,
  * scope2TotalEmission, scope3TotalEmission) if they exist. Saves the changes to the database.
- * 
- * @param {Object} facilityEmission - The facility emission record to update 
+ *
+ * @param {Object} facilityEmission - The facility emission record to update
  * @param {Object} requestData - The request data containing the fields to update
  * @returns {Object} The updated facility emission record
 */
@@ -187,12 +194,12 @@ export default class FacilityEmission extends BaseModel {
   }
 
   /**
- * Retrieves dashboard data for facilities in the given organization based on the provided query parameters. 
- * 
+ * Retrieves dashboard data for facilities in the given organization based on the provided query parameters.
+ *
  * Sums the total emissions by scope for each facility. Also calculates the totals for all facilities.
- * 
+ *
  * @param queryParams - Object containing reportingPeriodFrom and reportingPeriodTo filters
- * @param organizationId - ID of the organization to get facilities for 
+ * @param organizationId - ID of the organization to get facilities for
  * @returns Object containing final results array and total emissions by scope sums
 */
   public static async getFacilitiesDashboardData(queryParams, organizationId) {
