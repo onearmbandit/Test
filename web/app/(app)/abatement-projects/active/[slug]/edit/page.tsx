@@ -53,7 +53,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Dropzone from "react-dropzone";
 import { toast } from "sonner";
-import style from "styled-jsx/style";
+
 import { z } from "zod";
 
 const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
@@ -122,7 +122,6 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
 
       queryClient.invalidateQueries();
       router.push("/abatement-projects/active");
-      console.log(data);
     },
     onError(error, variables, context) {
       toast.error(error.message, { style: { color: "red" } });
@@ -141,7 +140,6 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
       });
       queryClient.invalidateQueries();
       router.push("/abatement-projects/active");
-      console.log(data);
     },
     onError(error, variables, context) {
       toast.error(error.message, { style: { color: "red" } });
@@ -171,8 +169,6 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
       status: 0,
     },
     onSubmit: (data) => {
-      console.log("formdata", data);
-
       mutate({ id: project.id, obj: data });
     },
   });
@@ -823,7 +819,6 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                       const copy = _.cloneDeep(projectDetails);
                       copy[5].photoUrl.file = accpeted[0];
                       copy[5].photoUrl.name = accpeted[0].name;
-                      console.log(accpeted[0]);
                       setProjectDetails(copy);
                     }}
                   >
@@ -876,7 +871,7 @@ const EditActiveAbatement = ({ params }: { params: { slug: string } }) => {
                   <Dropzone
                     onDrop={(accpeted, rejected) => {
                       const copy = _.cloneDeep(projectDetails);
-                      console.log(accpeted);
+
                       copy[5].logoUrl.file = accpeted[0];
                       copy[5].logoUrl.name = accpeted[0].name;
                       setProjectDetails(copy);

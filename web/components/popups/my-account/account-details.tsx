@@ -82,7 +82,6 @@ const AccountDetails = () => {
       lastName: "",
     },
     onSubmit: (data) => {
-      console.log(data);
       changeName({ formBody: data });
     },
   });

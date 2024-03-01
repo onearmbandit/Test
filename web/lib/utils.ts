@@ -41,7 +41,6 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
       tenantId: process.env.AZURE_AD_TENANT_ID,
       profile(profile, tokens) {
-        // console.log({ tokens, profile });
         const name = profile.name.split(" ");
         return {
           ...profile,
@@ -66,14 +65,13 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials, req) {
-        console.log(credentials, "nwwe", { req });
         const formBody = new FormData();
         formBody.append("email", credentials?.email as string);
         formBody.append("password", credentials?.password as string);
         try {
           let res = null;
+          // if user is invited signup else login
           if (req.body?.isInvited && req.body?.isInvited == "true") {
-            console.log("if block");
             const formData = {
               email: credentials?.email,
               password: credentials?.password,
@@ -90,7 +88,6 @@ export const authOptions: NextAuthOptions = {
             });
             res = await response.json();
           } else {
-            console.log("else block");
             const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/login`;
             const response = await fetch(url, {
               method: "POST",
@@ -101,7 +98,6 @@ export const authOptions: NextAuthOptions = {
           }
 
           if (!res?.status) {
-            console.log("err", res);
             if (res.errors) {
               throw new Error(res.errors.message);
             } else {
@@ -109,10 +105,8 @@ export const authOptions: NextAuthOptions = {
             }
           }
 
-          // console.log("ress => ", res);
           return res.data;
         } catch (error: any) {
-          console.log(error);
           throw new Error(error || "Invalid credentials");
         }
       },
@@ -130,7 +124,6 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      // console.log("jwt ==> ", { token });
       return { ...token, ...user };
     },
     async signIn({ user, account, email, credentials, profile }) {
@@ -157,7 +150,6 @@ export const authOptions: NextAuthOptions = {
 
           return true;
         } catch (err: any) {
-          console.log({ err });
           throw new Error(err);
         }
       }

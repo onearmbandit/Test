@@ -48,7 +48,6 @@ const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
     },
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      // console.log(data);
       mutate({
         id: orgId,
         formdata: data,
@@ -59,7 +58,7 @@ const EditNaics = ({ setSection }: { setSection: (val: string) => void }) => {
   useEffect(() => {
     if (userQ.isSuccess) {
       const naics = user?.organizations[0]?.naics_code;
-      console.log(naics);
+
       if (naics) {
         naicsForm.setFieldValue("naicsCode", naics);
       }

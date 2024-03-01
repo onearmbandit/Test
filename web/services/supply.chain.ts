@@ -28,7 +28,7 @@ const fetchApi = async (
   // const session = await getServerSession(authOptions);
   const session = await getServerSession(authOptions);
   const token = session?.token.token;
-  console.log(token, "token");
+
   const authHeader = {
     Authorization: `bearer ${token}`,
   };
@@ -46,6 +46,7 @@ const fetchApi = async (
 
   return response;
 };
+
 export const importFile = (data: any) => {
   const formbody = data;
   return fetchApi("/auth/supplier-csv-upload", {
@@ -53,6 +54,7 @@ export const importFile = (data: any) => {
     body: formbody,
   });
 };
+
 export const addReportingPeriod = (data: any) => {
   const formbody = data;
   return fetchApi("/auth/supplier-period", {
@@ -60,12 +62,13 @@ export const addReportingPeriod = (data: any) => {
     body: formbody,
   });
 };
+
 export const getAllReportingPeriods = (organizationId: string) => {
-  console.log(organizationId, "organizationId");
   return fetchApi(
     `/auth/supplier-period?page=1&per_page=10&organizationId=${organizationId}`
   );
 };
+
 export const editReportingPerid = ({ id, formData }: any) => {
   const formbody = formData;
   return fetchApi(`/auth/supplier-period/${id}`, {
@@ -73,11 +76,13 @@ export const editReportingPerid = ({ id, formData }: any) => {
     body: formbody,
   });
 };
+
 export const deleteReportingPerid = (id: string) => {
   return fetchApi(`/auth/supplier-period/${id}`, {
     method: "DELETE",
   });
 };
+
 export const downloadCsvTemplate = () => {
   return fetchApi("/download-supplier-csv", {
     method: "GET",
@@ -107,6 +112,7 @@ export const updateSupplier = (data: any) => {
     body: formbody,
   });
 };
+
 export const getAllEmissioScopeData = (id: string) => {
   return fetchApi(
     `/auth/supplier-period-emission?supplyChainReportingPeriodId=${id}`,
@@ -160,6 +166,7 @@ export const deleteMultipleSupplierProducts = (ids: any): any => {
 export const getSupplierDetailsById = (supplierId: string) => {
   return fetchApi(`/auth/suppliers/${supplierId}`);
 };
+
 export const exportSuppliersDataCsv = async ({
   organizationId,
   supplyChainReportingPeriodId,
@@ -169,8 +176,7 @@ export const exportSuppliersDataCsv = async ({
 }) => {
   "use server";
   const session = await getServerSession(authOptions);
-  console.log(organizationId, "organizationId");
-  console.log(supplyChainReportingPeriodId, "supplyChainReportingPeriodId");
+
   const token: any = session?.token.token;
   const authHeader = {
     Authorization: `bearer ${token}`,
@@ -188,8 +194,6 @@ export const exportSuppliersDataCsv = async ({
       console.log(err, "errror");
       throw new Error(err);
     });
-
-  // console.log("response:", response);
 
   return response;
 };

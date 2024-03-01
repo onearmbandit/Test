@@ -219,7 +219,6 @@ const Step2 = ({ setStep, user }: any) => {
     queryFn: () => getOrganizationDetails(user?.organizations[0]?.id!),
   });
   const organization = orgDetail.isSuccess ? orgDetail.data.data : {};
-  console.log(organization);
 
   const validation = z.object({
     companySize: z.string(),

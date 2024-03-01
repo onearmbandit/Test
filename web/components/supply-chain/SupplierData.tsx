@@ -69,7 +69,6 @@ import {
 import { TooltipProvider } from "../ui/tooltip";
 
 const SupplierData = ({ periodId }: { periodId: string }) => {
-  console.log(periodId, "periodId");
   const queryClient = useQueryClient();
 
   const [modalStatus, setModalStatus] = useState(false);
@@ -79,17 +78,13 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
   const [showCsvUploadModal, setShowCsvUploadModal] = useState(false);
   const [selectedProductIds, setSelectedProductIds] = useState<any>([]);
 
-  console.log(periodId, "periodId");
-
   const supplierDataQ = useQuery({
     queryKey: ["supplier-data", periodId],
     queryFn: () => getAllEmissioScopeData(periodId ? periodId : ""),
   });
-  console.log(supplierDataQ, "supplierDataQ");
+
   const supplierData = supplierDataQ.isSuccess ? supplierDataQ.data.data : null;
   const chartData = supplierData?.productWise;
-  console.log(supplierData, "supplierData");
-  console.log(chartData, "chartData");
 
   const CustomBarLabel = (props: any) => {
     const { x, y, value } = props;
@@ -100,7 +95,6 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
     );
   };
   const RenderLabel = (props: any) => {
-    console.log(props, "graph props");
     const { x, y, fill, value } = props;
     return (
       <text x={"90%"} y={y} dy={14} dx={0} fill="#334155">
@@ -151,7 +145,6 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
     mutationKey: ["supplier-data-csv"],
     mutationFn: exportSuppliersDataCsv,
     onSuccess: (data: any) => {
-      console.log(data, "data");
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
@@ -183,7 +176,6 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
       toast.success("Data exported successfully");
     },
     onError: (error) => {
-      console.log(error, "error");
       toast.error("Error exporting data:" + error.message);
     },
   });
@@ -219,7 +211,6 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
     },
   });
 
-  // console.log(session.data? session.data.user.organizations[0].id:"", 'session.data');
   const { mutate, isPending } = useMutation({
     mutationFn: importFile,
     onSuccess: (data) => {},

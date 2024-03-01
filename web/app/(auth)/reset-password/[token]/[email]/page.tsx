@@ -75,7 +75,6 @@ const Page = ({ params }: { params: ParsedUrlQuery | undefined }) => {
       // setCurrentStep(2);
     },
     onError: (err) => {
-      console.log(err.message);
       toast.error(err.message, { style: { color: "red" } });
     },
   });

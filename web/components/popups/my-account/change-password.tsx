@@ -64,12 +64,9 @@ const ChangePassword = () => {
     validationSchema: toFormikValidationSchema(validation),
 
     onSubmit: (data: any) => {
-      console.log("Update pass data: ", data);
       mutate({ formBody: data });
     },
   });
-
-  console.log("errors", updatePasswordForm.errors);
 
   return (
     <form

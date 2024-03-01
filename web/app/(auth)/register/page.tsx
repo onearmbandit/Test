@@ -162,11 +162,10 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
     mutationKey: ["step1"],
     mutationFn: register,
     onSuccess: (user) => {
-      // console.log(user);
       if (user.errors) {
         throw new Error(user.errors[0].message);
       }
-      console.log("reg 1 ", user);
+
       setUserId(user.duserata?.id);
       if (invitedEmail) {
         router.push(`/register?step=2&invited=true&slug=${user.data?.slug}`);
@@ -196,7 +195,6 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
     validateOnChange: false,
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: async (data) => {
-      console.log("mutate", data);
       if (errors.length > 0) {
         return;
       }
@@ -207,7 +205,6 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
           redirect: false,
         });
         if (res?.ok) {
-          console.log(session?.user);
           router.push("/register?step=2&invited=true");
         }
         if (res?.error) {
@@ -509,8 +506,6 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
         throw new Error(data.errors[0].message);
       }
 
-      console.log("user", data);
-
       if (isInvited == "true") {
         router.push(`/register?step=setup-done&slug=${data.data?.slug}`);
         return;
@@ -559,7 +554,6 @@ const Step2 = ({ ssoReg, setSSOReg, userId, setUserSlug }: any) => {
   if (isInvited == "true" && session?.user.first_name) {
     router.push("/register?step=setup-done");
   }
-  console.log("step2", session);
 
   return (
     <form
@@ -673,7 +667,7 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
 
       setUserEmail(data.data.email);
       // setCurrentStep(4);
-      // console.log("data", data.data.organizations);
+
       // update({ orgs: data.data.organizations });
       if (session) {
         router.push("/create-organisation");
@@ -698,7 +692,6 @@ const Step3 = ({ userSlug, setUserEmail }: any) => {
     validateOnBlur: true,
     validateOnMount: false,
     onSubmit: (data) => {
-      console.log({ slug });
       if (!slug) {
         mutate({
           ...data,

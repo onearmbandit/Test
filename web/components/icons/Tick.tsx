@@ -33,7 +33,7 @@ const Tick = ({
     default:
       btnSize = { width: "19", height: "18", vBox: "0 0 19 18" };
   }
-  //   console.log(variant);
+
   return (
     <svg
       width={btnSize.width}

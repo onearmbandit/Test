@@ -132,7 +132,6 @@ export const AddSupplierManualy = () => {
       //router.push('/supply-chain');
     },
     onError: (err: any) => {
-      console.log(err);
       toast.error(err.message, { style: { color: "red" } });
     },
   });
@@ -150,7 +149,6 @@ export const AddSupplierManualy = () => {
       setEditSupplier(true);
     },
     onError: (err: any) => {
-      console.log(err);
       toast.error(err.message, { style: { color: "red" } });
     },
   });
@@ -167,7 +165,6 @@ export const AddSupplierManualy = () => {
       router.push("/supply-chain");
     },
     onError: (err: any) => {
-      console.log(err);
       toast.error(err.message, { style: { color: "red" } });
     },
   });
@@ -192,7 +189,6 @@ export const AddSupplierManualy = () => {
     validateOnChange: false,
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      console.log("add supplier : ", data);
       data = { ...data, supplyChainReportingPeriodId: reportingId };
       if (supplier?.data?.id) {
         editSupplierMut(data);
@@ -248,8 +244,6 @@ export const AddSupplierManualy = () => {
     setProductList(newCopy);
     setCreatableTypeValue(newOption);
   };
-
-  console.log(productList);
 
   return (
     <div className="flex flex-col flex-start p-6 w-full">
@@ -400,7 +394,6 @@ export const AddSupplierManualy = () => {
                     <Select
                       value={values.organizationRelationship}
                       onValueChange={(e) => {
-                        console.log("value changed : ", e);
                         setFieldValue("organizationRelationship", e);
                       }}
                     >
@@ -436,8 +429,6 @@ export const AddSupplierManualy = () => {
                     setAddress={(a: string) => {
                       /** TODO: add the autocompleted address */
                       setFieldValue("address", a);
-                      console.log(a, "address");
-                      console.log("first");
                     }}
                     address={values.address}
                   />
@@ -807,9 +798,7 @@ export const AddSupplierManualy = () => {
                     errors[index as number][key] = message;
                   });
                   setErr(errors);
-                  console.log(ress.error, "err");
                 }
-                console.log(productList, "productList");
                 // addSupplierProductsMut(data);
                 // setCompleteStep(true);
               }}

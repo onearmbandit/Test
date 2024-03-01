@@ -46,7 +46,6 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
       router.push("/facilities");
     },
     onError: (err) => {
-      console.log(err);
       toast.error(err.message, { style: { color: "red" } });
     },
   });
@@ -134,7 +133,6 @@ const AddFacility = ({ serialNo = 1 }: { serialNo?: number }) => {
           <AutocompleteInput
             isDisabled={!isEdit}
             setAddress={(e: any) => {
-              // console.log(e);
               setFieldValue("address", e);
             }}
             address={facility.address}

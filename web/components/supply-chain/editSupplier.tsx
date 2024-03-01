@@ -88,9 +88,7 @@ export const EditSupplier = () => {
   const [createableValue, setCreatableValue] = useState<any>("");
   const [createableTypeValue, setCreatableTypeValue] = useState<any>("");
   const session = useSession();
-  console.log(currentReportingPeriod, "reportingId");
 
-  //console.log(reportingPeriod, 'reportingPeriod');
   const supplierQ = useQuery({
     queryKey: ["supplier", supplierId],
     queryFn: () => getSupplierDetailsById(supplierId!),
@@ -107,7 +105,6 @@ export const EditSupplier = () => {
     ? reportingPeriodQ.data.data
     : null;
   const supplier = supplierQ.isSuccess ? supplierQ.data.data : {};
-  // console.log('supplier', supplier);
   const formattedDate = dayjs(supplier.updated_at).format("DD/MM/YYYY");
 
   const relationShips = ["OWNED", "CONTRACTED"];
@@ -133,7 +130,6 @@ export const EditSupplier = () => {
       setEditSupplier(true);
     },
     onError: (err: any) => {
-      console.log(err);
       toast.error(err.message, { style: { color: "red" } });
     },
   });
@@ -144,7 +140,7 @@ export const EditSupplier = () => {
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      console.log("supplier updated : ", data);
+
       queryClient.invalidateQueries({
         queryKey: ["supplier", supplierId],
       });
@@ -155,7 +151,6 @@ export const EditSupplier = () => {
       // router.push('/supply-chain');
     },
     onError: (err: any) => {
-      console.log(err);
       toast.error(err.message, { style: { color: "red" } });
     },
   });
@@ -170,14 +165,12 @@ export const EditSupplier = () => {
         queryKey: ["supplier", supplierId],
       });
 
-      // console.log('supplier products created: ', data);
       toast.success("Supplier Created", { style: { color: "green" } });
 
       setEditProductTable(false);
       router.push("/supply-chain");
     },
     onError: (err: any) => {
-      console.log(err);
       toast.error(err.message, { style: { color: "red" } });
     },
   });
@@ -202,7 +195,6 @@ export const EditSupplier = () => {
     validateOnChange: false,
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: (data) => {
-      console.log("add supplier : ", data);
       data = { ...data, supplyChainReportingPeriodId: reportingId };
       if (supplier?.id) {
         editSupplierMut(data);
@@ -267,7 +259,6 @@ export const EditSupplier = () => {
       setValues(supplier);
       setCurrentReportingPeriod(supplier.supplyChainReportingPeriod.id);
 
-      console.log(supplier, "supplier1");
       setFieldValue(
         "organizationRelationship",
         supplier.organization_relationship
@@ -285,8 +276,6 @@ export const EditSupplier = () => {
       setTotalScopeValue(total);
     }
   }, [supplierQ.status]);
-
-  console.log(err);
 
   return (
     <div className="flex flex-col flex-start p-6 w-full">
@@ -433,7 +422,6 @@ export const EditSupplier = () => {
                     <Select
                       value={values.organizationRelationship}
                       onValueChange={(e) => {
-                        console.log("value changed : ", e);
                         setFieldValue("organizationRelationship", e);
                       }}
                     >
@@ -474,8 +462,6 @@ export const EditSupplier = () => {
                     isDisabled={!isAddEdit}
                     setAddress={(a: string) => {
                       setFieldValue("address", a);
-                      console.log(a, "address");
-                      console.log("first");
                     }}
                     address={values.address}
                   />
@@ -803,8 +789,6 @@ export const EditSupplier = () => {
                     supplierProducts: filteredData,
                   };
 
-                  console.log("data: ", data);
-
                   addSupplierProductsMut(data);
                   // setCompleteStep(true);
                 } else {
@@ -819,9 +803,6 @@ export const EditSupplier = () => {
                   });
                   setErr(errorList);
                 }
-                // console.log(productList, "productList");
-
-                // console.log("edit list : ", productList);
                 // addSupplierProductsMut(data);
               }}
               className="justify-center self-end px-4 py-2 mt-6 text-sm font-semibold leading-4 text-center text-blue-600 whitespace-nowrap rounded border-2 border-solid aspect-[2.03] border-[color:var(--Accent-colors-Sparkle---Active,#2C75D3)]"

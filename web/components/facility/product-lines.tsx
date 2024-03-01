@@ -213,10 +213,8 @@ const EditProducts = ({
       facilityProducts: copy,
     };
     if (productLines.data?.FacilityProducts?.length == 0) {
-      // console.log("add", formData);
       mutate({ ...formData, equalityAttribute: true });
     } else {
-      // console.log("edit ", formData);
       editMutate(formData);
     }
   };
@@ -230,7 +228,7 @@ const EditProducts = ({
               functionalUnit: item?.functional_unit,
             }))
           : [{ name: "", quantity: 0, functionalUnit: "" }];
-      // console.log(productLines?.data?.FacilityProducts.length);
+
       setProducts(updated);
       if (productLines?.data?.FacilityProducts.length == 0) {
         setEdit(true);
