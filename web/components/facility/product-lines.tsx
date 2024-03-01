@@ -92,7 +92,8 @@ const EditProducts = ({
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
-  const orgId = user?.organizations[0]?.id;
+  const orgId =
+    user?.organizations.length > 0 ? user?.organizations[0]?.id : null;
 
   const productNamesQ = useQuery({
     queryKey: ["product-names", orgId],

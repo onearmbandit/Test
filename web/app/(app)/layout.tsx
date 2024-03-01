@@ -42,7 +42,7 @@ export default async function RootLayout({
             {children}
           </Provider>
         </AuthProvider>
-        <Toaster position="bottom-center" />
+        <Toaster position="bottom-center" style={{ textAlign: "center" }} />
         <script
           async
           type="text/javascript"

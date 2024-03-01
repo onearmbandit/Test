@@ -420,8 +420,13 @@ const Step1 = ({ setSSOReg, setUserId }: any) => {
           </div>
           <div className="text-slate-700 text-center text-xs font-light leading-4 mt-6 max-md:max-w-full">
             By clicking &apos;Continue&apos; above, you agree to our{" "}
-            <a href="/terms-of-service">Terms of Service</a> and{" "}
-            <a href="/privacy-policy">Privacy Policy.</a>
+            <a href="/terms-of-service" className="underline">
+              Terms of Service
+            </a>{" "}
+            and{" "}
+            <a href="/privacy-policy" className="underline">
+              Privacy Policy.
+            </a>
           </div>
         </form>
       ) : (
