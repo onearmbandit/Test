@@ -57,7 +57,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import UploadCsvModal from "./UploadCsvModal";
-import { authOptions, convertDateToString } from "@/lib/utils";
+import { authOptions, cn, convertDateToString } from "@/lib/utils";
 import { exportSupplierDataCsv, getUser } from "@/services/user.api";
 import {
   TableBody,
@@ -97,7 +97,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
   const RenderLabel = (props: any) => {
     const { x, y, fill, value } = props;
     return (
-      <text x={"90%"} y={y} dy={14} dx={0} fill="#334155">
+      <text x={"90%"} y={y} dy={14} dx={"-15%"} fill="#334155">
         <tspan> {value} </tspan>
       </text>
     );
@@ -301,50 +301,54 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                           tCO2e
                         </div>
                       </div>
-                      <div className="flex h-[242px] overflow-auto">
-                        <div className="w-[90%] ">
-                          <div className="overflow-auto h-[340px] flex justify-start items-start">
-                            <ResponsiveContainer>
-                              <BarChart
-                                layout="vertical"
-                                data={chartData}
-                                margin={{
-                                  top: 20,
-                                  right: 100,
-                                  bottom: 20,
-                                  left: 0,
-                                }}
-                              >
-                                <XAxis
-                                  hide={true}
-                                  type="number"
-                                  // domain={['auto', 'auto']}
-                                />
-                                <YAxis
-                                  dataKey=""
-                                  hide={true}
-                                  type="category"
-                                  scale="band"
-                                  padding={{ top: 0, bottom: 0 }}
-                                />
+                      <div className="flex h-[242px] overflow-auto w-full">
+                        <div
+                          className={cn(
+                            "w-full flex justify-start items-start",
+                            chartData?.length > 3 ? "h-[440px]" : "h-full"
+                          )}
+                        >
+                          <ResponsiveContainer>
+                            <BarChart
+                              layout="vertical"
+                              data={chartData}
+                              margin={{
+                                top: 20,
+                                right: 100,
+                                bottom: 20,
+                                left: 0,
+                              }}
+                            >
+                              <XAxis
+                                hide={true}
+                                type="number"
+                                // domain={['auto', 'auto']}
+                              />
+                              <YAxis
+                                dataKey=""
+                                hide={true}
+                                type="category"
+                                scale="band"
+                                padding={{ top: 0, bottom: 0 }}
+                              />
 
-                                <Bar
-                                  dataKey="scope_3_contribution"
-                                  barSize={20}
-                                  radius={4}
-                                  label={<RenderLabel position="right" />}
-                                  fill="#BBF7D0"
-                                >
-                                  <LabelList
-                                    dataKey="name"
-                                    position="top"
-                                    content={<CustomBarLabel />}
-                                  />
-                                </Bar>
-                              </BarChart>
-                            </ResponsiveContainer>
-                          </div>
+                              <Bar
+                                dataKey="scope_3_contribution"
+                                barSize={20}
+                                radius={4}
+                                label={<RenderLabel position="right" />}
+                                fill="#BBF7D0"
+                              >
+                                <LabelList
+                                  dataKey="name"
+                                  position="top"
+                                  content={<CustomBarLabel />}
+                                />
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
                         </div>
+
                         {/* {chartData.length == 1 && (
                           <div className='w-[20%] flex flex-auto flex-col'>
                             {chartData?.map((product: any, index: number) => (
