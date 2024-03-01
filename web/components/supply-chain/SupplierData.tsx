@@ -239,117 +239,121 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
       )}
 
       {supplierData?.productWise?.length < 1 &&
-      supplierData?.totalProductLevelEmission < 1 &&
-      supplierData?.missingCarbonFootPrint < 1 ? (
-        <div className="justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-16 rounded-lg border-solid max-md:px-5">
-          <img
-            loading="lazy"
-            src="/assets/images/supply-chain-logo.svg"
-            className="aspect-[1.17] object-contain object-center w-[54px] overflow-hidden self-center max-w-full mt-9"
-          />
-          <div className="text-slate-700 text-3xl font-semibold leading-9 self-center mt-3 max-md:max-w-full">
-            Upload supplier product level emissions data
+        supplierData?.totalProductLevelEmission < 1 &&
+        supplierData?.missingCarbonFootPrint < 1 && (
+          <div className="justify-center items-center self-stretch border border-[color:var(--Gray-50,#F9FAFB)] bg-white flex flex-col px-20 py-16 rounded-lg border-solid max-md:px-5">
+            <img
+              loading="lazy"
+              src="/assets/images/supply-chain-logo.svg"
+              className="aspect-[1.17] object-contain object-center w-[54px] overflow-hidden self-center max-w-full mt-9"
+            />
+            <div className="text-slate-700 text-3xl font-semibold leading-9 self-center mt-3 max-md:max-w-full">
+              Upload supplier product level emissions data
+            </div>
+            <div className="text-slate-700 text-center text-lg font-light leading-7 self-stretch w-full mt-6 max-md:max-w-full max-md:mr-2">
+              Your suppliers product-level emission data encompasses the Scope 3
+              emissions directly linked to your products. To begin, upload this
+              information using a CSV file or enter the data manually in the
+              table below.
+              <br />
+            </div>
+            <UploadCsvModal
+              open={showCsvUploadModal}
+              setOpen={setShowCsvUploadModal}
+              periodId={periodId!}
+            ></UploadCsvModal>
           </div>
-          <div className="text-slate-700 text-center text-lg font-light leading-7 self-stretch w-full mt-6 max-md:max-w-full max-md:mr-2">
-            Your suppliers product-level emission data encompasses the Scope 3
-            emissions directly linked to your products. To begin, upload this
-            information using a CSV file or enter the data manually in the table
-            below.
-            <br />
-          </div>
-          <UploadCsvModal
-            open={showCsvUploadModal}
-            setOpen={setShowCsvUploadModal}
-            periodId={periodId!}
-          ></UploadCsvModal>
-        </div>
-      ) : (
-        <div className="flex flex-col justify-center self-stretch px-14 py-12 bg-white rounded-lg border border-solid border-[color:var(--Gray-50,#F9FAFB)] max-md:px-5">
-          <div className="max-md:max-w-full">
-            <div className="flex gap-5 max-md:flex-col max-md:gap-0 max-md:">
-              <div className="flex flex-col w-[33%] max-md:ml-0 max-md:w-full">
-                <div className="flex flex-col grow font-bold text-center whitespace-nowrap max-md:mt-2.5">
-                  <div className="flex flex-col items-center px-11 py-7 bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:px-5">
-                    <div className="self-stretch text-base leading-4 text-slate-800">
-                      Total Product Level Emissions
+        )}
+      {supplierData?.productWise?.length > 0 &&
+        supplierData?.totalProductLevelEmission > 0 && (
+          <div className="flex flex-col justify-center self-stretch px-14 py-12 bg-white rounded-lg border border-solid border-[color:var(--Gray-50,#F9FAFB)] max-md:px-5">
+            <div className="max-md:max-w-full">
+              <div className="flex gap-5 max-md:flex-col max-md:gap-0 max-md:">
+                <div className="flex flex-col w-[33%] max-md:ml-0 max-md:w-full">
+                  <div className="flex flex-col grow font-bold text-center whitespace-nowrap max-md:mt-2.5">
+                    <div className="flex flex-col items-center px-11 py-7 bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:px-5">
+                      <div className="self-stretch text-base leading-4 text-slate-800">
+                        Total Product Level Emissions
+                      </div>
+                      <div className="mt-1.5 text-4xl text-teal-800 leading-[84px]">
+                        {supplierData?.totalProductLevelEmission}
+                      </div>
+                      <div className="text-sm leading-4 text-gray-500">
+                        tCO2e
+                      </div>
                     </div>
-                    <div className="mt-1.5 text-4xl text-teal-800 leading-[84px]">
-                      {supplierData?.totalProductLevelEmission}
-                    </div>
-                    <div className="text-sm leading-4 text-gray-500">tCO2e</div>
-                  </div>
-                  <div className="flex flex-col items-center px-11 mt-3 py-7 bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:px-5">
-                    <div className="text-base leading-5 text-slate-800 whitespace-pre-wrap">
-                      % of missing Product Carbon Footprint
-                    </div>
-                    <div className="mt-1.5 text-4xl text-teal-800 leading-[84px]">
-                      {supplierData?.missingCarbonFootPrint}%
+                    <div className="flex flex-col items-center px-11 mt-3 py-7 bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:px-5">
+                      <div className="text-base leading-5 text-slate-800 whitespace-pre-wrap">
+                        % of missing Product Carbon Footprint
+                      </div>
+                      <div className="mt-1.5 text-4xl text-teal-800 leading-[84px]">
+                        {supplierData?.missingCarbonFootPrint}%
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              {chartData?.length > 0 && (
-                <div className="flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full">
-                  <div className=" flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full">
-                    <div className=" overflow-auto">
-                      <div className="mt-1.5 flex font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)] ">
-                        <div className="flex-auto w-[80%] text-2xl leading-5 text-slate-800 ">
-                          Scope 3 Emissions by Product Name
-                        </div>
+                {chartData?.length > 0 && (
+                  <div className="flex flex-col ml-5 w-[67%] max-md:ml-0 max-md:w-full">
+                    <div className=" flex flex-col grow justify-between pt-12 pb-4 pl-8 pr-8 w-full bg-white rounded-lg border border-solid shadow-sm border-[color:var(--Gray-100,#F3F4F6)] max-md:mt-2.5 max-md:max-w-full">
+                      <div className=" overflow-auto">
+                        <div className="mt-1.5 flex font-bold max-md:flex-wrap max-md:max-w-full border-b-2 pb-4 border-[#E5E5EF)] ">
+                          <div className="flex-auto w-[80%] text-2xl leading-5 text-slate-800 ">
+                            Scope 3 Emissions by Product Name
+                          </div>
 
-                        <div className="flex flex-auto w-[20%] mt-3 text-sm leading-4 text-center text-gray-500">
-                          tCO2e
+                          <div className="flex flex-auto w-[20%] mt-3 text-sm leading-4 text-center text-gray-500">
+                            tCO2e
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex h-[242px] overflow-auto w-full">
-                        <div
-                          className={cn(
-                            "w-full flex justify-start items-start",
-                            chartData?.length > 3 ? "h-[440px]" : "h-full"
-                          )}
-                        >
-                          <ResponsiveContainer>
-                            <BarChart
-                              layout="vertical"
-                              data={chartData}
-                              margin={{
-                                top: 20,
-                                right: 100,
-                                bottom: 20,
-                                left: 0,
-                              }}
-                            >
-                              <XAxis
-                                hide={true}
-                                type="number"
-                                // domain={['auto', 'auto']}
-                              />
-                              <YAxis
-                                dataKey=""
-                                hide={true}
-                                type="category"
-                                scale="band"
-                                padding={{ top: 0, bottom: 0 }}
-                              />
-
-                              <Bar
-                                dataKey="scope_3_contribution"
-                                barSize={20}
-                                radius={4}
-                                label={<RenderLabel position="right" />}
-                                fill="#BBF7D0"
+                        <div className="flex h-[242px] overflow-auto w-full">
+                          <div
+                            className={cn(
+                              "w-full flex justify-start items-start",
+                              chartData?.length > 3 ? "h-[440px]" : "h-full"
+                            )}
+                          >
+                            <ResponsiveContainer>
+                              <BarChart
+                                layout="vertical"
+                                data={chartData}
+                                margin={{
+                                  top: 20,
+                                  right: 100,
+                                  bottom: 20,
+                                  left: 0,
+                                }}
                               >
-                                <LabelList
-                                  dataKey="name"
-                                  position="top"
-                                  content={<CustomBarLabel />}
+                                <XAxis
+                                  hide={true}
+                                  type="number"
+                                  // domain={['auto', 'auto']}
                                 />
-                              </Bar>
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
+                                <YAxis
+                                  dataKey=""
+                                  hide={true}
+                                  type="category"
+                                  scale="band"
+                                  padding={{ top: 0, bottom: 0 }}
+                                />
 
-                        {/* {chartData.length == 1 && (
+                                <Bar
+                                  dataKey="scope_3_contribution"
+                                  barSize={20}
+                                  radius={4}
+                                  label={<RenderLabel position="right" />}
+                                  fill="#BBF7D0"
+                                >
+                                  <LabelList
+                                    dataKey="name"
+                                    position="top"
+                                    content={<CustomBarLabel />}
+                                  />
+                                </Bar>
+                              </BarChart>
+                            </ResponsiveContainer>
+                          </div>
+
+                          {/* {chartData.length == 1 && (
                           <div className='w-[20%] flex flex-auto flex-col'>
                             {chartData?.map((product: any, index: number) => (
                               <div key={index} className='pt-[7.5rem]'>
@@ -367,22 +371,22 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
                             ))}
                           </div>
                         )} */}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       <div className="items-stretch self-stretch flex flex-col pb-12 mt-8">
         <div className="items-center bg-gray-100 flex justify-between rounded-t-md  gap-5 px-5 py-5 max-md:max-w-full max-md:flex-wrap">
           <div className="text-slate-800 text-xs font-bold leading-4 grow max-md:max-w-full">
             Suppliers
           </div>
           <div>
-            {supplierProducts.length > 0 && (
+            {supplierProducts?.length > 0 && (
               <>
                 <Button
                   onClick={handleSelectAllButtonClick}
@@ -509,7 +513,7 @@ const SupplierData = ({ periodId }: { periodId: string }) => {
           </div>
           {/* supplier list start */}
           {supplierProducts &&
-            supplierProducts.length > 0 &&
+            supplierProducts?.length > 0 &&
             supplierProducts?.map((product: any, index: number) => (
               <div
                 key={index}
