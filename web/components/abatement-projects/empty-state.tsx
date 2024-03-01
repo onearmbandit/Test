@@ -46,13 +46,13 @@ const EmptyState = ({ link }: { link: string }) => {
           There are currently no {currentAbatement} abatement projects.
         </p>
 
-        {currentAbatement != "completed" && (
-          <Link href={link}>
-            <Button type="button" className="flex gap-1">
-              + Propose a Project
-            </Button>
-          </Link>
-        )}
+        {/* {currentAbatement != "completed" && ( */}
+        <Link href={link}>
+          <Button type="button" className="flex gap-1">
+            + Propose a Project
+          </Button>
+        </Link>
+        {/* )} */}
       </div>
     </div>
   );
