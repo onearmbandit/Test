@@ -57,7 +57,6 @@ const ReportingPeriod = ({
     reportingPeriodTo: z.date(),
   });
 
-  console.log("period", period);
   const editMut = useMutation({
     mutationFn: editFacilityReportingPeriod,
     onSuccess: (data) => {
@@ -94,7 +93,6 @@ const ReportingPeriod = ({
     mutationFn: addFacilityReportingPeriod,
     onSuccess: (data) => {
       if (data.errors) {
-        console.log("errror", data);
         throw new Error(data.errors[0].message);
       }
       queryClient.invalidateQueries({ queryKey: ["reporting-periods"] });

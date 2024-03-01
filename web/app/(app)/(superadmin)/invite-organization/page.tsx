@@ -104,7 +104,6 @@ const InviteOrganization = () => {
     validationSchema: toFormikValidationSchema(validation),
 
     onSubmit: async (data: any) => {
-      console.log("role : ", role);
       const formData = {
         ...data,
         role_id: role?.data?.id,
@@ -114,11 +113,11 @@ const InviteOrganization = () => {
         const res = await createOrganization({
           companyName: data.organization_id,
         });
-        console.log({ res });
+
         mutate({ ...formData, organization_id: res.data.id });
         return;
       }
-      console.log("data : ", formData);
+      // console.log("data : ", formData);
       mutate(formData);
     },
   });
@@ -256,7 +255,6 @@ const InviteOrganization = () => {
                   setSelectedOrg(e);
                 }}
                 onCreateOption={(e) => {
-                  console.log(e, "fists ");
                   inviteOrganizationForm.setFieldValue("organization_id", e);
                   setOptions([...options, { value: e, label: e }]);
                   setSelectedOrg({ value: e, label: e });

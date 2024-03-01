@@ -59,7 +59,7 @@ const Dashboard = () => {
             <ClimateCommitments
               climateTargets={user?.organizations[0]?.climate_targets}
             />
-            {facility?.data?.length == 0 && <NeedHelp />}
+            <NeedHelp facility={facility} user={user} />
             <TotalEmissionsSummary />
             <FacilityTable />
           </>

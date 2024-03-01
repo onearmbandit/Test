@@ -30,8 +30,7 @@ const Page = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      // console.log("success", data);
-      localStorage.setItem("token", data.data.token.token);
+      // localStorage.setItem("token", data.data.token.token);
       router.push("/");
     },
     onError: (err) => {
@@ -48,7 +47,6 @@ const Page = () => {
     validateOnBlur: true,
     validationSchema: toFormikValidationSchema(validation),
     onSubmit: async (data) => {
-      // console.log(data);
       const res = await signIn("credentials", { ...data, redirect: false });
       if (res?.error) {
         toast.error(res.error, { style: { color: "red" } });

@@ -25,7 +25,6 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
   });
 
   const user = userQ.isSuccess ? userQ.data?.data : null;
-  console.log(user);
 
   const { mutate, isPending } = useMutation({
     mutationFn: setupOrganizationStep1,
@@ -51,7 +50,6 @@ const EditAddress = ({ setSection }: { setSection: (val: string) => void }) => {
     ),
     validateOnBlur: true,
     onSubmit: (data) => {
-      // console.log(data);
       mutate({
         id: user?.organizations[0]?.id,
         formdata: data,

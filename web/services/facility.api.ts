@@ -63,7 +63,6 @@ export const addFacilityReportingPeriod = (formData: any) => {
 };
 
 export const editFacilityReportingPeriod = ({ id, formData }: any) => {
-  console.log(id, formData);
   return fetchApi(`/auth/facility-emission/${id}`, {
     method: "PATCH",
     body: formData,

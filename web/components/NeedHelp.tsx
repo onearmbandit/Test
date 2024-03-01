@@ -7,10 +7,35 @@ import {
   AccordionTrigger,
 } from "./ui/accordion";
 import { Check, ChevronDown } from "lucide-react";
-import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { getAllFacilityProductNames } from "@/services/facility.api";
 
-const NeedHelp = () => {
+const NeedHelp = ({ facility, user }: any) => {
   const [open, setOpen] = useState<string>("item-1");
+  const facilities = facility?.data;
+
+  const orgId = user?.organizations[0]?.id;
+
+  const productNamesQ = useQuery({
+    queryKey: ["product-names", orgId],
+    queryFn: () => getAllFacilityProductNames(orgId),
+    enabled: facilities?.length > 0,
+  });
+
+  const productNames = productNamesQ.isSuccess ? productNamesQ.data?.data : [];
+
+  const step1 = facilities?.length > 0;
+  const step2 =
+    facilities?.length > 0
+      ? facilities[facilities?.length - 1]?.facilityEmission?.length > 0
+      : false;
+  const step3 = productNamesQ.isSuccess ? productNames?.length : 0;
+
+  if (step1 && step2 && step3 > 0) {
+    return null;
+  }
+
   return (
     <div className="w-full mt-[0.625rem]">
       <Accordion type="single" value={open} collapsible>
@@ -50,13 +75,26 @@ const NeedHelp = () => {
                     >
                       <div className="step-items items-stretch flex gap-3">
                         <div className="h-full flex flex-col items-center gap-1">
-                          <div className="w-5 h-5 rounded-full bg-[#2C75D3] grid place-items-center">
-                            <Check size={16} className="text-white" />
-                            {/* <p className="text-xs font-semibold text-gray-700">
-                              1
-                            </p> */}
+                          <div
+                            className={cn(
+                              "w-5 h-5 rounded-full grid place-items-center",
+                              step1 ? "bg-[#2C75D3]" : "bg-gray-100"
+                            )}
+                          >
+                            {step1 ? (
+                              <Check size={16} className="text-white" />
+                            ) : (
+                              <p className="text-xs font-semibold text-gray-700">
+                                1
+                              </p>
+                            )}
                           </div>
-                          <div className="h-full w-1 flex-1 bg-[#2C75D3] rounded-full" />
+                          <div
+                            className={cn(
+                              "h-full w-1 flex-1 rounded-full",
+                              step1 ? "bg-[#2C75D3]" : "bg-gray-200"
+                            )}
+                          />
                         </div>
                         <div className="items-stretch flex grow flex-col pb-6">
                           <p className="text-slate-900 text-sm font-medium leading-5 whitespace-nowrap">
@@ -77,12 +115,26 @@ const NeedHelp = () => {
                     >
                       <div className="step-items items-stretch flex gap-3">
                         <div className="h-full flex flex-col items-center gap-1">
-                          <div className="w-5 h-5 rounded-full bg-gray-100 grid place-items-center">
-                            <p className="text-xs font-semibold text-gray-700">
-                              2
-                            </p>
+                          <div
+                            className={cn(
+                              "w-5 h-5 rounded-full grid place-items-center",
+                              step2 ? "bg-[#2C75D3]" : "bg-gray-100"
+                            )}
+                          >
+                            {step2 ? (
+                              <Check size={16} className="text-white" />
+                            ) : (
+                              <p className="text-xs font-semibold text-gray-700">
+                                2
+                              </p>
+                            )}
                           </div>
-                          <div className="h-full w-1 flex-1 bg-gray-200 rounded-full" />
+                          <div
+                            className={cn(
+                              "h-full w-1 flex-1 rounded-full",
+                              step2 ? "bg-[#2C75D3]" : "bg-gray-200"
+                            )}
+                          />
                         </div>
                         <div className="items-stretch flex grow flex-col pb-6">
                           <p className="text-slate-900 text-sm font-medium leading-5 whitespace-nowrap">
@@ -104,12 +156,26 @@ const NeedHelp = () => {
                     >
                       <div className="step-items items-stretch flex gap-3">
                         <div className="h-full flex flex-col items-center gap-1">
-                          <div className="w-5 h-5 rounded-full bg-gray-100 grid place-items-center">
-                            <p className="text-xs font-semibold text-gray-700">
-                              3
-                            </p>
+                          <div
+                            className={cn(
+                              "w-5 h-5 rounded-full grid place-items-center",
+                              step3 > 0 ? "bg-[#2C75D3]" : "bg-gray-100"
+                            )}
+                          >
+                            {step3 > 0 ? (
+                              <Check size={16} className="text-white" />
+                            ) : (
+                              <p className="text-xs font-semibold text-gray-700">
+                                2
+                              </p>
+                            )}
                           </div>
-                          <div className="h-full w-1 flex-1 bg-gray-200 rounded-full" />
+                          <div
+                            className={cn(
+                              "h-full w-1 flex-1 rounded-full",
+                              step3 > 0 ? "bg-[#2C75D3]" : "bg-gray-200"
+                            )}
+                          />
                         </div>
                         <div className="items-stretch flex grow flex-col pb-6">
                           <p className="text-slate-900 text-sm font-medium leading-5 whitespace-nowrap">

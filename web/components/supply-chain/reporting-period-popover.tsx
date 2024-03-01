@@ -82,7 +82,6 @@ const ReportingPeriodPopup = ({
       queryClient.invalidateQueries({ queryKey: ["reporting-periods"] });
       setNew(false);
 
-      // console.log(data, "data addd");
       toast.success("Reporting period Added.", { style: { color: "green" } });
     },
     onError: (error) => {

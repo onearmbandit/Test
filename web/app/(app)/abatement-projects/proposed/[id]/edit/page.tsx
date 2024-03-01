@@ -121,7 +121,6 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
 
       queryClient.invalidateQueries({ queryKey: ["proposedProjects"] });
       router.push("/abatement-projects/proposed");
-      console.log(data);
     },
     onError(error, variables, context) {
       toast.error(error.message, { style: { color: "red" } });
@@ -135,14 +134,11 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
         throw new Error(data.errors[0].message);
       }
 
-      console.log("edit pro: ", data);
-
       toast.success("Project Updated Successfully.", {
         style: { color: "green" },
       });
       queryClient.invalidateQueries();
       router.push("/abatement-projects/proposed");
-      console.log(data);
     },
     onError(error, variables, context) {
       toast.error(error.message, { style: { color: "red" } });
@@ -172,7 +168,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
       status: 0,
     },
     onSubmit: (data) => {
-      console.log("formdata", data);
+      // console.log("formdata", data);
 
       mutate({ id: project.id, obj: data });
     },
@@ -837,7 +833,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                       const copy = _.cloneDeep(projectDetails);
                       copy[5].photoUrl.file = accpeted[0];
                       copy[5].photoUrl.name = accpeted[0].name;
-                      console.log(accpeted[0]);
+
                       setProjectDetails(copy);
                     }}
                   >
@@ -890,7 +886,7 @@ const EditProposedAbatement = ({ params }: { params: { id: string } }) => {
                   <Dropzone
                     onDrop={(accpeted, rejected) => {
                       const copy = _.cloneDeep(projectDetails);
-                      console.log(accpeted);
+
                       copy[5].logoUrl.file = accpeted[0];
                       copy[5].logoUrl.name = accpeted[0].name;
                       setProjectDetails(copy);
