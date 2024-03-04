@@ -130,7 +130,7 @@ const ProductLineEmissions = ({
         setStatus({ ...completeStatus, 3: true });
       }
       setEmissions(productLines);
-      // // console.log("normal ===> ", productLines.FacilityProducts);
+
       if (productLines[0]?.FacilityEmission?.FacilityEqualityAttribute) {
         setIsEqual(
           productLines[0]?.FacilityEmission?.FacilityEqualityAttribute
@@ -151,7 +151,6 @@ const ProductLineEmissions = ({
 
   useEffect(() => {
     if (!isEqual) {
-      console.log("equal ===> ", productLines);
       setEmissions(productLines);
     } else {
       setEmissions(equalEmission.data);

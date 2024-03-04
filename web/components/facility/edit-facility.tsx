@@ -53,10 +53,9 @@ const EditFacility = ({
       if (data.errors) {
         throw new Error(data.errors[0].message);
       }
-      // console.log(data);
+
       toast.success("Facility is updated", { style: { color: "green" } });
       router.push("/facilities");
-      // revalidatePath("/facilities");
     },
     onError: (err) => {
       toast.error(err.message, { style: { color: "red" } });
@@ -76,8 +75,6 @@ const EditFacility = ({
         mutate({ id: facility.id, obj: data });
       },
     });
-
-  // console.log(facility);
 
   return (
     <section className="justify-center items-stretch self-stretch border border-[color:var(--Slate-200,#E2E8F0)] bg-white flex flex-col p-6 rounded-lg border-solid max-md:px-5">
@@ -142,7 +139,6 @@ const EditFacility = ({
           <AutocompleteInput
             isDisabled={!isEdit}
             setAddress={(e: any) => {
-              // console.log(e);
               setFieldValue("address", e);
             }}
             address={values.address}

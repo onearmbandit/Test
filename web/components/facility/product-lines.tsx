@@ -92,7 +92,8 @@ const EditProducts = ({
     queryFn: () => getProductLines(period!),
   });
   const productLines = prodLines.isSuccess ? prodLines.data : [];
-  const orgId = user?.organizations[0]?.id;
+  const orgId =
+    user?.organizations.length > 0 ? user?.organizations[0]?.id : null;
 
   const productNamesQ = useQuery({
     queryKey: ["product-names", orgId],
@@ -212,10 +213,8 @@ const EditProducts = ({
       facilityProducts: copy,
     };
     if (productLines.data?.FacilityProducts?.length == 0) {
-      // console.log("add", formData);
       mutate({ ...formData, equalityAttribute: true });
     } else {
-      // console.log("edit ", formData);
       editMutate(formData);
     }
   };
@@ -229,7 +228,7 @@ const EditProducts = ({
               functionalUnit: item?.functional_unit,
             }))
           : [{ name: "", quantity: 0, functionalUnit: "" }];
-      // console.log(productLines?.data?.FacilityProducts.length);
+
       setProducts(updated);
       if (productLines?.data?.FacilityProducts.length == 0) {
         setEdit(true);

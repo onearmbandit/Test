@@ -99,7 +99,6 @@ const UploadCsvModal = ({
         onUploadProgress: async (data) => {},
       })
       .then(async (response) => {
-        console.log(response, "response");
         setShowModal(false);
         setOpen(false);
         await delay(1000);
@@ -120,7 +119,6 @@ const UploadCsvModal = ({
         setUploadStatus("done");
       })
       .catch((error) => {
-        // console.log(error?.response?.data?.errors.message, "error");
         setError(error?.response?.data?.errors.message);
       });
   };

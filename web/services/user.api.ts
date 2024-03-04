@@ -38,11 +38,10 @@ const fetchApi = async (
     data: body,
   })
     .then((res) => {
-      // console.log("res", res);
       return res.data;
     })
     .catch((err) => {
-      // console.log(err.response.data.errors[0].message);
+      console.log(err.response.data.errors[0].message);
       return err.response.data;
     });
 
@@ -54,7 +53,6 @@ export const getUser = () => {
 };
 
 export const updateUser = ({ formBody }: { formBody: any }) => {
-  console.log("Formbody: ", formBody);
   return fetchApi(`/auth/user`, {
     method: "PATCH",
     body: formBody,
@@ -91,8 +89,6 @@ export const exportSupplierDataCsv = async ({
       console.log(err);
       throw new Error(err);
     });
-
-  // console.log("response:", response);
 
   return response;
 };

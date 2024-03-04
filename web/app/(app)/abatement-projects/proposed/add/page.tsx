@@ -92,7 +92,6 @@ const AddProposedPage = () => {
       });
       queryClient.invalidateQueries();
       router.push("/abatement-projects/proposed");
-      console.log(data);
     },
     onError(error, variables, context) {
       toast.error(error.message, { style: { color: "red" } });
@@ -123,7 +122,7 @@ const AddProposedPage = () => {
     },
 
     onSubmit: (data) => {
-      console.log("formdata", data);
+      // console.log("formdata", data);
       const modified = {
         ...data,
         organizationId,
@@ -625,7 +624,6 @@ const AddProposedPage = () => {
                   <div>
                     <Select
                       onValueChange={(e: any) => {
-                        console.log("on value change: ", e);
                         const copy = _.cloneDeep(projectDetails);
                         copy[4].organizationId = e;
                         setProjectDetails(copy);
@@ -739,7 +737,7 @@ const AddProposedPage = () => {
                       const copy = _.cloneDeep(projectDetails);
                       copy[5].photoUrl.file = accpeted[0];
                       copy[5].photoUrl.name = accpeted[0].name;
-                      console.log(accpeted[0]);
+
                       setProjectDetails(copy);
                     }}
                   >
@@ -792,7 +790,7 @@ const AddProposedPage = () => {
                   <Dropzone
                     onDrop={(accpeted, rejected) => {
                       const copy = _.cloneDeep(projectDetails);
-                      console.log(accpeted);
+
                       copy[5].logoUrl.file = accpeted[0];
                       copy[5].logoUrl.name = accpeted[0].name;
                       setProjectDetails(copy);

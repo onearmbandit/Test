@@ -43,7 +43,6 @@ const fetchApi = async (
 };
 
 export const register = (user: any) => {
-  // console.log("user", user);
   return fetchApi("/register", { method: "POST", body: user } as Options);
 };
 

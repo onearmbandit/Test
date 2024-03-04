@@ -58,7 +58,7 @@ const AutocompleteInput = ({
 
       getDetails(parameter)
         .then((details) => {
-          console.log("Details: ", details);
+          // console.log("Details: ", details);
         })
         .catch((error) => {
           console.log("Error: ", error);
@@ -67,7 +67,7 @@ const AutocompleteInput = ({
       // Get latitude and longitude via utility functions
       getGeocode({ address: description }).then((results) => {
         const { lat, lng } = getLatLng(results[0]);
-        console.log("📍 Coordinates: ", { lat, lng });
+        // console.log("📍 Coordinates: ", { lat, lng });
       });
     };
 
