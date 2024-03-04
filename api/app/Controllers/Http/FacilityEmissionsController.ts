@@ -12,7 +12,7 @@ import Database from '@ioc:Adonis/Lucid/Database';
 export default class FacilityEmissionsController {
 
   /**
- * Fetches all facility emissions records based on query parameters. 
+ * Fetches all facility emissions records based on query parameters.
  */
   public async index({ response, request }: HttpContextContract) {
     try {
@@ -37,11 +37,11 @@ export default class FacilityEmissionsController {
 
   /**
  * Creates a new facility emissions reporting period record.
- * 
- * Validates the request data, checks for overlapping reporting periods, 
- * converts the reporting period to YYYY-MM-DD format, 
+ *
+ * Validates the request data, checks for overlapping reporting periods,
+ * converts the reporting period to YYYY-MM-DD format,
  * and creates the new reporting period record.
- * 
+ *
  * Returns the created reporting period record in the response.
 */
   public async store({ request, response }: HttpContextContract) {
@@ -75,6 +75,7 @@ export default class FacilityEmissionsController {
       // Check for date overlap using raw SQL expressions
       const overlappingPeriods = await Database.query()
         .from('facility_emissions')
+        .andWhereNull('deleted_at')
         .where('organization_facility_id', requestData.organizationFacilityId)
         .where(function (query) {
           query
@@ -133,7 +134,7 @@ export default class FacilityEmissionsController {
 
   /**
  * Gets facility emission data by ID.
- * 
+ *
  * @param params - The route parameters containing the emission ID.
  * @param bouncer - The authorization service.
  *
@@ -157,9 +158,9 @@ export default class FacilityEmissionsController {
 
   /**
  * Updates facility emission data by ID.
- * 
+ *
  * @param bouncer - The authorization service.
- * 
+ *
  */
   public async update({ request, response, bouncer }: HttpContextContract) {
     try {
@@ -188,7 +189,7 @@ export default class FacilityEmissionsController {
 
   /**
  * Deletes facility emission data by ID.
- * 
+ *
  * @param bouncer - The authorization service.
  *
  * @returns The API response indicating whether deletion was successful.
@@ -216,10 +217,10 @@ export default class FacilityEmissionsController {
 
   /**
  * Gets dashboard data for a facility.
- * 
+ *
  * @param auth - The auth object with authenticated user details
- * 
- * Checks that the organization ID matches the authenticated user's organization. 
+ *
+ * Checks that the organization ID matches the authenticated user's organization.
  * Calls the model method to fetch dashboard data for the user's organization.
  * Returns API response with dashboard data if successful.
  */
